@@ -1,7 +1,7 @@
 <?php 
 include 'include/reconfig.php';
 include 'include/estate.php';
-
+include 'load_language.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
