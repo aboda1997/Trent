@@ -1,5 +1,5 @@
 <?php 
-$lang = loadLanguage($language_code);
+$lang = loadLanguage('');
 
 if(isset($_SESSION['restatename']))
 {

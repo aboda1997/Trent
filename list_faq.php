@@ -1,6 +1,8 @@
 <?php 
 require 'include/main_head.php';
-if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $faq_per)) {
+$faq_per = ['Create', 'Update', 'Read', 'Delete'];
+
+if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
     
 
     
@@ -61,7 +63,8 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $faq_per)) {
 											<th>Answer</th>
 												<th>Status</th>
 												<?php 
-												if($_SESSION['stype'] == 'Staff')
+                        
+												if($_SESSION['restatename'] == 'Staff')
 		{
 			if (in_array('Update', $faq_per)) {
 			?>
@@ -108,7 +111,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $faq_per)) {
 												<?php } ?>
 												
 												<?php 
-												if($_SESSION['stype'] == 'Staff')
+												if($_SESSION['restatename'] == 'Staff')
 		{
 			if (in_array('Update', $faq_per)) {
 				?>
