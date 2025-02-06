@@ -3,9 +3,14 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-$data = json_decode(file_get_contents('php://input'), true);
 header('Content-type: text/json');
-if ($data['mobile'] == '' or $data['password'] == '' or $data['ccode'] == '') {
+
+$input = file_get_contents('php://input');
+$input = str_replace("'", '"', $input);
+$data = json_decode($input, true);
+
+if (!isset($data['mobile']) || !isset($data['password']) || !isset($data['ccode'])) {
+    
     $returnArr = array(
         "ResponseCode" => "401",
         "Result" => "false",
