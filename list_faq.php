@@ -117,7 +117,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
 				?>
                                                 <td style="white-space: nowrap; width: 15%;"><div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                            <div class="btn-group btn-group-sm" style="float: none;">
-										   <a href="add_faq.php?id=<?php echo $row['id'];?>" class="tabledit-edit-button" style="float: none; margin: 5px;"><?xml version="1.0" encoding="UTF-8"?>
+										   <a href="add_faq.php?id=<?php echo $row['id'];?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="30" rx="15" fill="#79F9B4"/><path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C"/></svg></a>
 										   </div>
                                            
@@ -130,7 +130,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
 			?>
 			<td style="white-space: nowrap; width: 15%;"><div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                            <div class="btn-group btn-group-sm" style="float: none;">
-										   <a href="add_faq.php?id=<?php echo $row['id'];?>" class="tabledit-edit-button" style="float: none; margin: 5px;"><?xml version="1.0" encoding="UTF-8"?>
+										   <a href="add_faq.php?id=<?php echo $row['id'];?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="30" height="30" rx="15" fill="#79F9B4"/><path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C"/></svg></a>
 										   </div>
                                            
