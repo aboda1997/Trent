@@ -26,7 +26,9 @@ else
               <div id="sidebar-menu">
                 <ul class="sidebar-links" id="simple-bar">
                   <li class="back-btn"><a href="dashboard.php"><img class="img-fluid for-light" src="<?php echo $set['weblogo'];?>" alt=""><img class="img-fluid for-dark" src="assets/images/logo/logo-icon-dark.png" alt=""></a>
-                    <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
+                    <div class="mobile-back text-end"><span>
+                    <?= $lang['Back'] ?>  
+                    </span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
                   </li>
                   
                   <li class="sidebar-list">  <a class="sidebar-link sidebar-title link-nav" href="dashboard.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,10 +49,18 @@ else
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M3.61011 12C3.61011 18.937 5.70811 21.25 12.0011 21.25C18.2951 21.25 20.3921 18.937 20.3921 12C20.3921 5.063 18.2951 2.75 12.0011 2.75C5.70811 2.75 3.61011 5.063 3.61011 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                           </g>
                         </g>
-                      </svg><span >Category</span></a>
+                      </svg><span >
+                      <?= $lang['Category'] ?>  
+  
+                      </span></a>
                     <ul class="sidebar-submenu">
-                      <li><a href="add_category.php">Add Category</a></li>
-                      <li><a href="list_category.php">List Category</a></li>
+                      <li><a href="add_category.php">
+                      <?= $lang['Add_Category'] ?>  
+                      </a></li>
+                      <li><a href="list_category.php">
+                      <?= $lang['List_Category'] ?>  
+  
+                      </a></li>
                     </ul>
                   </li>
 				  

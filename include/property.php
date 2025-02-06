@@ -222,12 +222,19 @@ if (isset($_POST["type"])) {
         $question = mysqli_real_escape_string($rstate, $_POST['question']);
         $answer = mysqli_real_escape_string($rstate, $_POST['answer']);
         $okey = $_POST['status'];
-
+        $question_json = json_encode([
+            "en" => $question,
+            "ar" => $question
+        ], JSON_UNESCAPED_UNICODE);
+        
+        $answer_json = json_encode([
+            "en" => $answer,
+            "ar" => $answer
+        ], JSON_UNESCAPED_UNICODE);
 
         $table = "tbl_faq";
         $field_values = array("question", "answer", "status");
-        $data_values = array("$question", "$answer", "$okey");
-
+        $data_values = array("$question_json", "$answer_json", "$okey");
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
         if ($check == 1) {
@@ -238,9 +245,17 @@ if (isset($_POST["type"])) {
         $answer = mysqli_real_escape_string($rstate, $_POST['answer']);
         $okey = $_POST['status'];
         $id = $_POST['id'];
-
+        $question_json = json_encode([
+            "en" => $question,
+            "ar" => $question
+        ],JSON_UNESCAPED_UNICODE);
+        
+        $answer_json = json_encode([
+            "en" => $answer,
+            "ar" => $answer
+        ], JSON_UNESCAPED_UNICODE);
         $table = "tbl_faq";
-        $field = array('question' => $question, 'status' => $okey, 'answer' => $answer);
+        $field = array('question' => $question_json, 'status' => $okey, 'answer' => $answer_json);
         $where = "where id=" . $id . "";
         $h = new Estate();
         $check = $h->restateupdateData($field, $table, $where);

@@ -39,7 +39,9 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
               <div class="row">
                 <div class="col-6">
                   <h3>
-                     FAQ List Management</h3>
+                  <?= $lang['FAQ_List_Management'] ?>
+   
+                  </h3>
                 </div>
                 <div class="col-6">
                   
@@ -58,24 +60,35 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
             <table class="display" id="basic-1">
                         <thead>
                           <tr>
-											<th>Sr No.</th>
-											<th>Question</th>
-											<th>Answer</th>
-												<th>Status</th>
+											<th>
+                      <?= $lang['Sr_No'] ?>.</th>
+											<th>
+                      <?= $lang['Question'] ?>
+                      </th>
+											<th>
+                      <?= $lang['Answer'] ?>
+                      </th>
+												<th>Status
+                        <?= $lang['Status'] ?>
+                        </th>
 												<?php 
                         
 												if($_SESSION['restatename'] == 'Staff')
 		{
 			if (in_array('Update', $faq_per)) {
 			?>
-			<th>Action</th>
+			<th>
+      <?= $lang['Action'] ?>
+
+      </th>
 			<?php
 			}			
 		}
 		else 
 		{
 												?>
-												<th>Action</th>
+												<th>
+                        <?= $lang['Action'] ?></th>
 												<?php } ?>
 									</tr>
                                         </thead>
@@ -85,6 +98,9 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
 										$i=0;
 										while($row = $city->fetch_assoc())
 										{
+                      $question = json_decode($row['question'], true);
+                      $answer = json_decode($row['answer'], true);
+
 											$i = $i + 1;
 											?>
 											<tr>
@@ -93,21 +109,26 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
                                                 </td>
 												
 												<td>
-                                                    <?php echo $row['question']; ?>
+                                                    <?php echo $question['en']; ?>
                                                 </td>
                                                 
                                                <td>
-                                                    <?php echo $row['answer']; ?>
+                                                    <?php echo $answer['en']; ?>
                                                 </td>
                                                 
                                                
 												<?php if($row['status'] == 1) { ?>
 												
-                                                <td><span class="badge badge-success">Publish</span></td>
+                                                <td><span class="badge badge-success">
+                                                <?= $lang['Publish'] ?>  
+                                                </span></td>
 												<?php } else { ?>
 												
 												<td>
-												<span class="badge badge-danger">Unpublish</span></td>
+												<span class="badge badge-danger">
+                        <?= $lang['Unpublish'] ?>  
+  
+                        </span></td>
 												<?php } ?>
 												
 												<?php 

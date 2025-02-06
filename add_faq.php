@@ -1,6 +1,7 @@
 <?php
 require 'include/main_head.php';
 $faq_per = ['Create', 'Update', 'Read', 'Delete'];
+$lang = loadLanguage('');
 
 if (isset($_GET['id'])) {
   if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $faq_per)) {
@@ -57,7 +58,8 @@ if (isset($_GET['id'])) {
           <div class="row">
             <div class="col-6">
               <h3>
-                FAQ Management</h3>
+              <?= $lang['FAQ_Management'] ?>
+              </h3>
             </div>
             <div class="col-6">
 
@@ -79,7 +81,10 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label id="basic-addon1">Enter Question</label>
+                      <label id="basic-addon1">
+                      <?= $lang['Enter_Question'] ?>
+  
+                      </label>
 
                       <input type="text" class="form-control" placeholder="Enter Question" value="<?php echo $data['question']; ?>" name="question" aria-label="Username" aria-describedby="basic-addon1">
 
@@ -87,7 +92,10 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label id="basic-addon1">Enter Answer</label>
+                      <label id="basic-addon1">
+                      <?= $lang['Enter_Answer'] ?>
+  
+                      </label>
 
                       <input type="text" class="form-control" placeholder="Enter Answer" value="<?php echo $data['answer']; ?>" name="answer" aria-label="Username" aria-describedby="basic-addon1">
                       <input type="hidden" name="type" value="edit_faq" />
@@ -97,20 +105,32 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label for="inputGroupSelect01">Select Status</label>
+                      <label for="inputGroupSelect01">
+                      <?= $lang['Select_Status'] ?>
+  
+                      </label>
 
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
-                        <option value="">Choose...</option>
+                        <option value="">
+                        <?= $lang['Choose'] ?>...</option>
                         <option value="1" <?php if ($data['status'] == 1) {
                                             echo 'selected';
-                                          } ?>>Publish</option>
+                                          } ?>>
+                                           <?= $lang['Publish'] ?>
+                                          </option>
                         <option value="0" <?php if ($data['status'] == 0) {
                                             echo 'selected';
-                                          } ?>>Unpublish</option>
+                                          } ?>>
+                                          <?= $lang['Unpublish'] ?>
+
+                                          </option>
 
                       </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Edit FAQ</button>
+                    <button type="submit" class="btn btn-primary">
+                    <?= $lang['Edit_FAQ'] ?>
+  
+                    </button>
                   </form>
                 <?php
                 } else {
@@ -119,7 +139,10 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label id="basic-addon1">Enter Question</label>
+                      <label id="basic-addon1">
+                      <?= $lang['Enter_Question'] ?>
+  
+                      </label>
 
                       <input type="text" class="form-control" placeholder="Enter Question" name="question" aria-label="Username" aria-describedby="basic-addon1">
 
@@ -127,7 +150,8 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label id="basic-addon1">Enter Answer</label>
+                      <label id="basic-addon1">                      <?= $lang['Enter_Answer'] ?>
+                      </label>
 
                       <input type="text" class="form-control" placeholder="Enter Answer" name="answer" aria-label="Username" aria-describedby="basic-addon1">
                       <input type="hidden" name="type" value="add_faq" />
@@ -136,16 +160,23 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group mb-3">
 
-                      <label for="inputGroupSelect01">Select Status</label>
+                      <label for="inputGroupSelect01">                      <?= $lang['Select_Status'] ?>
+                      </label>
 
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
-                        <option value="">Choose...</option>
-                        <option value="1">Publish</option>
-                        <option value="0">Unpublish</option>
+                        <option value="">
+                        <?= $lang['Choose'] ?>
+                        ...</option>
+                        <option value="1">                                           <?= $lang['Publish'] ?>
+                        </option>
+                        <option value="0">                                          <?= $lang['Unpublish'] ?>
+                        </option>
 
                       </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add FAQ</button>
+                    <button type="submit" class="btn btn-primary">
+                    <?= $lang['Add_FAQ'] ?>  
+                    </button>
                   </form>
                 <?php } ?>
               </div>
