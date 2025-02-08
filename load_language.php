@@ -1,12 +1,39 @@
 <?php 
-function loadLanguage() {
-    if (isset($_POST['language'])) {
-        $_SESSION['language'] = $_POST['language'];
+function load_language() {
+    if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
+        $_SESSION['lang'] = $_GET['lang'];
     }
-
-    $language_code = $_SESSION['language'] ?? 'en'; // Default to 'en'
+     
+    if(!isset($_GET['lang'])){
+        $_SESSION['lang'] = "en";
+    }
+    $language_code = $_SESSION['lang'] ?? 'en'; 
 
     $filePath = __DIR__ . "/languages/{$language_code}.php";
     return file_exists($filePath) ? include $filePath : include __DIR__ . '/languages/en.php';
+}
+
+function load_specific_langauage($language_code){
+    $filePath = __DIR__ . "/languages/{$language_code}.php";
+
+    return file_exists($filePath) ? include $filePath : include __DIR__ . '/languages/en.php';
+
+}
+
+function load_language_code(){
+    if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
+        $_SESSION['lang'] = $_GET['lang'];
+    }
+     
+    if(!isset($_GET['lang'])){
+        $_SESSION['lang'] = "en";
+    }
+    $language_code = $_SESSION['lang'] ?? 'en';
+    $dir = 'ltr'; 
+    if ($language_code == 'ar'){
+        $dir = "rtl";
+    }
+    return ['language_code' => $language_code, 'dir' => $dir];
+
 }
 ?>
