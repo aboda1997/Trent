@@ -1,6 +1,7 @@
 <?php 
 require 'include/main_head.php';
 $faq_per = ['Create', 'Update', 'Read', 'Delete'];
+$lang_code = load_language_code()["language_code"];
 
 if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
     
@@ -68,7 +69,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
 											<th>
                       <?= $lang['Answer'] ?>
                       </th>
-												<th>Status
+												<th>
                         <?= $lang['Status'] ?>
                         </th>
 												<?php 
@@ -109,11 +110,11 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $faq_per)) {
                                                 </td>
 												
 												<td>
-                                                    <?php echo $question['en']; ?>
+                                                    <?php echo $question[$lang_code]; ?>
                                                 </td>
                                                 
                                                <td>
-                                                    <?php echo $answer['en']; ?>
+                                                    <?php echo $answer[$lang_code]; ?>
                                                 </td>
                                                 
                                                

@@ -219,17 +219,19 @@ if (isset($_POST["type"])) {
             $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Gallery Category Update Successfully!!", "message" => "Gallery Category section!", "action" => "list_gal_cat.php");
         }
     } else if ($_POST['type'] == 'add_faq') {
-        $question = mysqli_real_escape_string($rstate, $_POST['question']);
-        $answer = mysqli_real_escape_string($rstate, $_POST['answer']);
+        $question_en = mysqli_real_escape_string($rstate, $_POST['question_en']);
+        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);   
+        $question_ar = mysqli_real_escape_string($rstate, $_POST['question_ar']);
+        $answer_ar = mysqli_real_escape_string($rstate, $_POST['answer_ar']);
         $okey = $_POST['status'];
         $question_json = json_encode([
-            "en" => $question,
-            "ar" => $question
+            "en" => $question_en,
+            "ar" => $question_ar
         ], JSON_UNESCAPED_UNICODE);
         
         $answer_json = json_encode([
-            "en" => $answer,
-            "ar" => $answer
+            "en" => $answer_en,
+            "ar" => $answer_ar
         ], JSON_UNESCAPED_UNICODE);
 
         $table = "tbl_faq";
@@ -241,19 +243,22 @@ if (isset($_POST["type"])) {
             $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Faq Add Successfully!!", "message" => "Faq section!", "action" => "list_faq.php");
         }
     } else if ($_POST['type'] == 'edit_faq') {
-        $question = mysqli_real_escape_string($rstate, $_POST['question']);
-        $answer = mysqli_real_escape_string($rstate, $_POST['answer']);
+        $question_en = mysqli_real_escape_string($rstate, $_POST['question_en']);
+        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);   
+        $question_ar = mysqli_real_escape_string($rstate, $_POST['question_ar']);
+        $answer_ar = mysqli_real_escape_string($rstate, $_POST['answer_ar']);
         $okey = $_POST['status'];
         $id = $_POST['id'];
         $question_json = json_encode([
-            "en" => $question,
-            "ar" => $question
-        ],JSON_UNESCAPED_UNICODE);
+            "en" => $question_en,
+            "ar" => $question_ar
+        ], JSON_UNESCAPED_UNICODE);
         
         $answer_json = json_encode([
-            "en" => $answer,
-            "ar" => $answer
+            "en" => $answer_en,
+            "ar" => $answer_ar
         ], JSON_UNESCAPED_UNICODE);
+       
         $table = "tbl_faq";
         $field = array('question' => $question_json, 'status' => $okey, 'answer' => $answer_json);
         $where = "where id=" . $id . "";
