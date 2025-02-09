@@ -258,14 +258,14 @@ if (isset($_GET['id'])) {
                                             <label id="Package-Image" ><?= $lang_ar['Package_Image'] ?></label>
                                             <input type="file" class="form-control" name="cat_img">
                                             <br>
-                                            <img src="<?php echo $data['image'] ?>" width="100px" />
+                                            <img src="" width="100px" />
                                         </div>
                                         <div class="form-group mb-3">
                                             <label id="status-label" for="inputGroupSelect01"><?= $lang_en['Select_Status'] ?></label>
                                             <select class="form-control" name="status" id="inputGroupSelect01" required>
                                                 <option value=""><?= $lang_en['Choose'] ?>...</option>
-                                                <option value="1" <?php if ($data['status'] == 1) echo 'selected'; ?>><?= $lang_en['Publish'] ?></option>
-                                                <option value="0" <?php if ($data['status'] == 0) echo 'selected'; ?>><?= $lang_en['Unpublish'] ?></option>
+                                                <option value="1" ><?= $lang_en['Publish'] ?></option>
+                                                <option value="0" ><?= $lang_en['Unpublish'] ?></option>
                                             </select>
                                         </div>
 

@@ -20,7 +20,7 @@ return [
     'List_Category' => 'قائمة الفئات',
     'Back' => 'عودة',
     'Category' => 'فئة',
-     ### Package and Package List ###
+    ### Package and Package List ###
     'Package_List_Management' => 'إدارة قائمة الباقات',
     'Package_Title' => 'عنوان الباقة',
     'Package_Image' => 'صورة الباقة',
@@ -36,5 +36,18 @@ return [
     'Enter_Price' => 'أدخل السعر',
     'Package_Description' => 'وصف الباقة',
     'Add_Package' => 'إضافة باقة',
-      ##############   
+    ##############  
+
+
+    ### Page and Page List ###
+    'Page_List_Management' => 'إدارة قائمة الصفحات',
+    'Page_Name'            => 'اسم الصفحة',
+    'Page_Management'      => 'إدارة الصفحة',
+    'Enter_Page_Title'     => 'أدخل عنوان الصفحة',
+    'Page_Description'     => 'وصف الصفحة',
+    'Select_Page_Status'   => 'اختر حالة الصفحة',
+    'Edit_Page'            => 'تعديل الصفحة',
+    'Add_Page'             => 'إضافة صفحة',
+    ####
+
 ];
