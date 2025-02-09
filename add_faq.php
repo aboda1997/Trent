@@ -42,16 +42,16 @@ if (isset($_GET['id'])) {
 <!-- page-wrapper Start-->
 <div class="page-wrapper compact-wrapper" id="pageWrapper">
   <!-- Page Header Start-->
-  <?php 
-	  require 'include/inside_top.php';
-	  ?>
+  <?php
+  require 'include/inside_top.php';
+  ?>
   <!-- Page Header Ends                              -->
   <!-- Page Body Start-->
   <div class="page-body-wrapper">
     <!-- Page Sidebar Start-->
-    <?php 
-		require 'include/sidebar.php';
-		?>
+    <?php
+    require 'include/sidebar.php';
+    ?>
     <!-- Page Sidebar Ends-->
 
     <div class="page-body">
@@ -84,10 +84,10 @@ if (isset($_GET['id'])) {
                     <!-- Add any toolbar buttons or icons here -->
                     <ul class="nav nav-tabs nav-bold nav-tabs-line">
                       <li class="nav-item">
-                        <a class="nav-link " data-toggle="tab" href="#ar">العربية</a>
+                        <a class="nav-link active" data-toggle="tab" href="#ar"  onclick="changeLanguage('ar')">العربية</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#en">English</a>
+                        <a class="nav-link" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
                       </li>
                     </ul>
                   </div>
@@ -104,7 +104,7 @@ if (isset($_GET['id'])) {
 
 
                       <!-- English Tab -->
-                      <div class="tab-pane fade show active" id="en">
+                      <div class="tab-pane fade show " id="en">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_en['Enter_Question'] ?></label>
                           <input
@@ -129,7 +129,7 @@ if (isset($_GET['id'])) {
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
-                      <div class="tab-pane fade show " id="ar">
+                      <div class="tab-pane fade show active" id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
                           <input
@@ -155,31 +155,31 @@ if (isset($_GET['id'])) {
                         </div>
                       </div>
                     </div>
-                   
+
                     <div class="form-group mb-3">
-                      <label for="inputGroupSelect01"><?= $lang['Select_Status'] ?></label>
+                      <label id="status-label" for="inputGroupSelect01"><?= $lang_ar['Select_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
-                       
+
                         <option value="">
-                          <?= $lang['Choose'] ?>...</option>
+                          <?= $lang_ar['Choose'] ?>...</option>
                         <option value="1" <?php if ($data['status'] == 1) {
                                             echo 'selected';
                                           } ?>>
-                          <?= $lang['Publish'] ?>
+                          <?= $lang_ar['Publish'] ?>
                         </option>
                         <option value="0" <?php if ($data['status'] == 0) {
                                             echo 'selected';
                                           } ?>>
-                          <?= $lang['Unpublish'] ?>
+                          <?= $lang_ar['Unpublish'] ?>
 
                         </option>
                       </select>
                     </div>
-											<input type="hidden" name="type" value="edit_faq"/>
-                      <input type="hidden" name="id" value="<?php echo $_GET['id'];?>"/>
+                    <input type="hidden" name="type" value="edit_faq" />
+                    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
-                    <button type="submit" class="btn btn-primary">
-                      <?= $lang['Edit_FAQ'] ?>
+                    <button id = "edit-faq" type="submit" class="btn btn-primary">
+                      <?= $lang_ar['Edit_FAQ'] ?>
 
                     </button>
                   </form>
@@ -190,7 +190,7 @@ if (isset($_GET['id'])) {
                     <div class="tab-content">
                       <!-- Arabic Tab -->
                       <!-- English Tab -->
-                      <div class="tab-pane fade show active" id="en">
+                      <div class="tab-pane fade show " id="en">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_en['Enter_Question'] ?></label>
                           <input
@@ -213,7 +213,7 @@ if (isset($_GET['id'])) {
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
-                      <div class="tab-pane fade show " id="ar">
+                      <div class="tab-pane fade show active " id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
                           <input
@@ -239,15 +239,15 @@ if (isset($_GET['id'])) {
                     </div>
 
                     <div class="form-group mb-3">
-                      <label for="inputGroupSelect01"><?= $lang['Select_Status'] ?></label>
+                      <label   id="status-label" for="inputGroupSelect01"><?= $lang_ar['Select_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
-                        <option value=""><?= $lang['Choose'] ?>...</option>
-                        <option value="1"><?= $lang['Publish'] ?></option>
-                        <option value="0"><?= $lang['Unpublish'] ?></option>
+                        <option value=""><?= $lang_ar['Choose'] ?>...</option>
+                        <option value="1"><?= $lang_ar['Publish'] ?></option>
+                        <option value="0"><?= $lang_ar['Unpublish'] ?></option>
                       </select>
                     </div>
                     <input type="hidden" name="type" value="add_faq" />
-                    <button type="submit" class="btn btn-primary"><?= $lang['Add_FAQ'] ?></button>
+                    <button id="add-faq" type="submit" class="btn btn-primary"><?= $lang_ar['Add_FAQ'] ?></button>
                   </form>
                 <?php } ?>
               </div>
@@ -269,9 +269,29 @@ if (isset($_GET['id'])) {
 
   </div>
 </div>
-<style>
+<script>
 
-</style>
+  function changeLanguage(lang) {
+    var langData = (lang === "ar") ? langDataAR : langDataEN;
+
+    document.getElementById('status-label').textContent = langData.Select_Status ;
+    
+    if ( document.getElementById('add-faq')) {
+      document.querySelector('button[type="submit"]').textContent = langData.Add_FAQ;
+
+    }else {
+      document.querySelector('button[type="submit"]').textContent = langData.Edit_FAQ;
+
+    }
+
+    const statusSelect = document.getElementById('inputGroupSelect01');
+    statusSelect.querySelector('option[value=""]').textContent = langData.Choose ;
+    statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
+    statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
+
+  }
+</script>
+
 <!-- latest jquery-->
 <?php
 require 'include/footer.php';

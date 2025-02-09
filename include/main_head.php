@@ -90,6 +90,8 @@ $lang_code = load_language_code();
 
 <body>
     <script>
+  var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
+  var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
 
 
     </script>
