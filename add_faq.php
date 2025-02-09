@@ -109,7 +109,7 @@ if (isset($_GET['id'])) {
                             value="<?php echo $question['en']; ?>"
                             placeholder="<?= $lang_en['Enter_Question'] ?>"
                             name="question_en"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
 
@@ -121,7 +121,7 @@ if (isset($_GET['id'])) {
                             value="<?php echo $answer['ar']; ?>"
                             placeholder="<?= $lang_en['Enter_Answer'] ?>"
                             name="answer_en"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
@@ -135,7 +135,7 @@ if (isset($_GET['id'])) {
                             value="<?php echo $question['ar']; ?>"
                             placeholder="<?= $lang_ar['Enter_Question'] ?>"
                             name="question_ar"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
 
@@ -147,7 +147,7 @@ if (isset($_GET['id'])) {
                             value="<?php echo $answer['ar']; ?>"
                             placeholder="<?= $lang_ar['Enter_Answer'] ?>"
                             name="answer_ar"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
@@ -199,7 +199,7 @@ if (isset($_GET['id'])) {
                             class="form-control"
                             placeholder="<?= $lang_en['Enter_Question'] ?>"
                             name="question_en"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
 
@@ -210,7 +210,7 @@ if (isset($_GET['id'])) {
                             class="form-control"
                             placeholder="<?= $lang_en['Enter_Answer'] ?>"
                             name="answer_en"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
@@ -223,7 +223,7 @@ if (isset($_GET['id'])) {
                             class="form-control"
                             placeholder="<?= $lang_ar['Enter_Question'] ?>"
                             name="question_ar"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
 
@@ -234,7 +234,7 @@ if (isset($_GET['id'])) {
                             class="form-control"
                             placeholder="<?= $lang_ar['Enter_Answer'] ?>"
                             name="answer_ar"
-                            aria-label="Username"
+                            required=""
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>

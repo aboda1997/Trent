@@ -50,13 +50,25 @@ if (isset($_POST["type"])) {
             $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Country Code Update Successfully!!", "message" => "Country Code section!", "action" => "list_code.php");
         }
     } else if ($_POST['type'] == 'add_page') {
-        $ctitle = $rstate->real_escape_string($_POST['ctitle']);
-        $cstatus = $_POST['cstatus'];
-        $cdesc = $rstate->real_escape_string($_POST['cdesc']);
+        $cstatus = $_POST['status'];
         $table = "tbl_page";
 
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
+        $description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+        
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
         $field_values = array("description", "status", "title");
-        $data_values = array("$cdesc", "$cstatus", "$ctitle");
+        $data_values = array("$description_json", "$cstatus", "$title_json");
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -65,12 +77,24 @@ if (isset($_POST["type"])) {
         }
     } else if ($_POST['type'] == 'edit_page') {
         $id = $_POST['id'];
-        $ctitle = $rstate->real_escape_string($_POST['ctitle']);
-        $cstatus = $_POST['cstatus'];
-        $cdesc = $rstate->real_escape_string($_POST['cdesc']);
+        $cstatus = $_POST['status'];
 
         $table = "tbl_page";
-        $field = array('description' => $cdesc, 'status' => $cstatus, 'title' => $ctitle);
+        
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
+        $description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+        
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+        $field = array('description' => $description_json, 'status' => $cstatus, 'title' => $title_json);
         $where = "where id=" . $id . "";
         $h = new Estate();
         $check = $h->restateupdateData($field, $table, $where);
