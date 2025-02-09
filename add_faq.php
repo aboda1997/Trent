@@ -76,33 +76,29 @@ if (isset($_GET['id'])) {
         <div class="row">
           <div class="col-sm-12">
             <div class="card">
-
-              <div class="card-body">
-                <div class="card-header card-header-tabs-line d-flex justify-content-between align-items-center">
-                  <div></div>
-                  <div class="card-toolbar">
-                    <!-- Add any toolbar buttons or icons here -->
-                    <ul class="nav nav-tabs nav-bold nav-tabs-line">
-                      <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#ar"  onclick="changeLanguage('ar')">العربية</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
-                      </li>
-                    </ul>
-                  </div>
+              <div class="card-header card-header-tabs-line d-flex justify-content-between align-items-center">
+                <div></div>
+                <div class="card-toolbar">
+                  <!-- Add any toolbar buttons or icons here -->
+                  <ul class="nav nav-tabs nav-bold nav-tabs-line">
+                    <li class="nav-item">
+                      <a class="nav-link active" data-toggle="tab" href="#ar" onclick="changeLanguage('ar')">العربية</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
+                    </li>
+                  </ul>
                 </div>
-                <?php
-                if (isset($_GET['id'])) {
-                  $data = $rstate->query("select * from tbl_faq where id=" . $_GET['id'] . "")->fetch_assoc();
-                  $question = json_decode($data['question'], true);
-                  $answer = json_decode($data['answer'], true);
-                ?>
-                  <form method="POST" enctype="multipart/form-data">
+              </div>
+              <?php
+              if (isset($_GET['id'])) {
+                $data = $rstate->query("select * from tbl_faq where id=" . $_GET['id'] . "")->fetch_assoc();
+                $question = json_decode($data['question'], true);
+                $answer = json_decode($data['answer'], true);
+              ?>
+                <form method="POST" enctype="multipart/form-data">
+                  <div class="card-body">
                     <div class="tab-content">
-                      <!-- Arabic Tab -->
-
-
                       <!-- English Tab -->
                       <div class="tab-pane fade show " id="en">
                         <div class="form-group mb-3">
@@ -129,6 +125,7 @@ if (isset($_GET['id'])) {
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
+                      <!-- Arabic Tab -->
                       <div class="tab-pane fade show active" id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
@@ -177,18 +174,22 @@ if (isset($_GET['id'])) {
                     </div>
                     <input type="hidden" name="type" value="edit_faq" />
                     <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+                  </div>
+                  <div class="card-footer text-left">
 
-                    <button id = "edit-faq" type="submit" class="btn btn-primary">
+                    <button id="edit-faq" type="submit" class="btn btn-primary">
                       <?= $lang_ar['Edit_FAQ'] ?>
 
                     </button>
-                  </form>
-                <?php
-                } else {
-                ?>
-                  <form method="POST" enctype="multipart/form-data">
+                  </div>
+                </form>
+              <?php
+              } else {
+              ?>
+                <form method="POST" enctype="multipart/form-data">
+
+                  <div class="card-body">
                     <div class="tab-content">
-                      <!-- Arabic Tab -->
                       <!-- English Tab -->
                       <div class="tab-pane fade show " id="en">
                         <div class="form-group mb-3">
@@ -213,6 +214,7 @@ if (isset($_GET['id'])) {
                             aria-describedby="basic-addon1" />
                         </div>
                       </div>
+                      <!-- Arabic Tab -->
                       <div class="tab-pane fade show active " id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
@@ -239,7 +241,7 @@ if (isset($_GET['id'])) {
                     </div>
 
                     <div class="form-group mb-3">
-                      <label   id="status-label" for="inputGroupSelect01"><?= $lang_ar['Select_Status'] ?></label>
+                      <label id="status-label" for="inputGroupSelect01"><?= $lang_ar['Select_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
                         <option value=""><?= $lang_ar['Choose'] ?>...</option>
                         <option value="1"><?= $lang_ar['Publish'] ?></option>
@@ -247,10 +249,12 @@ if (isset($_GET['id'])) {
                       </select>
                     </div>
                     <input type="hidden" name="type" value="add_faq" />
+                  </div>
+                  <div class="card-footer text-left">
                     <button id="add-faq" type="submit" class="btn btn-primary"><?= $lang_ar['Add_FAQ'] ?></button>
-                  </form>
-                <?php } ?>
-              </div>
+                  </div>
+                </form>
+              <?php } ?>
 
             </div>
 
@@ -270,22 +274,21 @@ if (isset($_GET['id'])) {
   </div>
 </div>
 <script>
-
   function changeLanguage(lang) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
 
-    document.getElementById('status-label').textContent = langData.Select_Status ;
-    
-    if ( document.getElementById('add-faq')) {
+    document.getElementById('status-label').textContent = langData.Select_Status;
+
+    if (document.getElementById('add-faq')) {
       document.querySelector('button[type="submit"]').textContent = langData.Add_FAQ;
 
-    }else {
+    } else {
       document.querySelector('button[type="submit"]').textContent = langData.Edit_FAQ;
 
     }
 
     const statusSelect = document.getElementById('inputGroupSelect01');
-    statusSelect.querySelector('option[value=""]').textContent = langData.Choose ;
+    statusSelect.querySelector('option[value=""]').textContent = langData.Choose;
     statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
     statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
 

@@ -410,10 +410,24 @@ if (isset($_POST["type"])) {
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
 
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
+        $description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+        
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
         move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
         $table = "tbl_package";
         $field_values = ["image", "status", "title", "day", "description", "price"];
-        $data_values = ["$url", "$status", "$title", "$day", "$description", "$price"];
+        $data_values = ["$url", "$status", "$title_json", "$day", "$description_json", "$price"];
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -431,14 +445,26 @@ if (isset($_POST["type"])) {
         $day = $_POST['day'];
         $price = $_POST['price'];
         $id = $_POST['id'];
-        $title = $rstate->real_escape_string($_POST["title"]);
-        $description = $rstate->real_escape_string($_POST["description"]);
         $target_dir = dirname(dirname(__FILE__)) . "/images/package/";
         $url = "images/package/";
         $temp = explode(".", $_FILES["cat_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
+        
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
+        $description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+        
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
         if ($_FILES["cat_img"]["name"] != "") {
 
             move_uploaded_file(
@@ -446,7 +472,7 @@ if (isset($_POST["type"])) {
                 $target_file
             );
             $table = "tbl_package";
-            $field = ["status" => $status, "image" => $url, "title" => $title, "description" => $description, "day" => $day, "price" => $price];
+            $field = ["status" => $status, "image" => $url, "title" => $title_json, "description" => $description_json, "day" => $day, "price" => $price];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -462,7 +488,7 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_package";
-            $field = ["status" => $status, "title" => $title, "description" => $description, "day" => $day, "price" => $price];
+            $field = ["status" => $status, "title" => $title_json, "description" => $description_json, "day" => $day, "price" => $price];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);

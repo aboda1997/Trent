@@ -20,4 +20,21 @@ return [
     'List_Category' => 'قائمة الفئات',
     'Back' => 'عودة',
     'Category' => 'فئة',
+     ### Package and Package List ###
+    'Package_List_Management' => 'إدارة قائمة الباقات',
+    'Package_Title' => 'عنوان الباقة',
+    'Package_Image' => 'صورة الباقة',
+    'Package_Day' => 'يوم الباقة',
+    'Package_Price' => 'سعر الباقة',
+    'Package_Status' => 'حالة الباقة',
+    'Package_Management' => 'إدارة الباقات',
+    'Edit_Package' => 'تعديل الباقة',
+    'Package_Name' => 'اسم الباقة',
+    'Enter_Package' => 'أدخل الباقة',
+    'Package_Total_Day' => 'إجمالي أيام الباقة',
+    'Enter_Total_Day' => 'أدخل إجمالي الأيام',
+    'Enter_Price' => 'أدخل السعر',
+    'Package_Description' => 'وصف الباقة',
+    'Add_Package' => 'إضافة باقة',
+      ##############   
 ];
