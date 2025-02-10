@@ -63,4 +63,7 @@ return [
 'Choose_Property'         => 'اختر العقار',
 'Choose_Category'         => 'اختر فئة المعرض',
 
+
+"Extra_Image_List_Management"  => "Extra Image  List Management",
+
 ];

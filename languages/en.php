@@ -68,7 +68,9 @@ return [
     'Choose_Property' => 'Select Property',
     'Choose_Category' => 'Select Gallery Category',
      ####
-
+     
+     "Extra_Image_List_Management"  => "Extra Image  List Management",
+     
 
 
 
