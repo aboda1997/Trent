@@ -78,6 +78,31 @@ return [
      'Facility_Name' => 'Facility Name',
      'Facility_Management' => 'Facility Management',
      'Edit_Facility' => 'Edit Facility',
+     'Coupon_List_Management' => 'Coupon List Management',
+     'Title' => 'Title', 
+     'Subtitle' => 'Subtitle',
+     'Code' => 'Code',
+     'Image' => 'Image', 
+     'Expired_Date' => 'Expired Date',
+     'Min_Amount' => 'Min Amount',
+     'Discount' => 'Discount', 
+     'Status' => 'Status',
+     'Coupon_Management' => 'Coupon Management',
+     'Coupon_Image' => 'Coupon Image',
+     'Coupon_Expiry_Date' => 'Coupon Expiry Date', 
+     'Coupon_Code' => 'Coupon Code',
+     'Coupon_title' => 'Coupon title', 
+     'Coupon_subtitle' => 'Coupon subtitle', 
+     'Coupon_Status' => 'Coupon Status',
+     'Select_Coupon_Status' => 'Select Coupon Status',
+     'Coupon_Min_Order_Amount' => 'Coupon Min Order Amount',
+     'Coupon_Value' => 'Coupon Value',
+     'Coupon_Description' => 'Coupon Description',
+     'Edit_Coupon' => 'Edit Coupon',
+     'Add_Coupon' => 'Add Coupon',
+
+
+
 
 
 

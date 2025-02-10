@@ -142,12 +142,32 @@ if (isset($_POST["type"])) {
 
         $cdate = $_POST['expire_date'];
         $minamt = $_POST['min_amt'];
-        $ctitle = $rstate->real_escape_string($_POST['title']);
-        $subtitle = $rstate->real_escape_string($_POST['subtitle']);
         $cstatus = $_POST['status'];
         $cvalue = $_POST['coupon_val'];
-        $cdesc = $rstate->real_escape_string($_POST['description']);
+        $cdesc_ar = $rstate->real_escape_string($_POST['description_ar']);
+        $cdesc_en = $rstate->real_escape_string($_POST['description_en']);
 
+        $ctitle_ar = $rstate->real_escape_string($_POST['title_ar']);
+        $ctitle_en = $rstate->real_escape_string($_POST['title_en']);
+        $subtitle_ar = $rstate->real_escape_string($_POST['subtitle_ar']);
+        $subtitle_en = $rstate->real_escape_string($_POST['subtitle_en']);
+        
+        $ctitle_json = json_encode([
+            "en" => $ctitle_en,
+            "ar" => $ctitle_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        
+        $subtitle_json = json_encode([
+            "en" => $subtitle_en,
+            "ar" => $subtitle_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        
+        $cdesc_json = json_encode([
+            "en" => $cdesc_en,
+            "ar" => $cdesc_ar
+        ], JSON_UNESCAPED_UNICODE);
         $target_dir = dirname(dirname(__FILE__)) . "/images/offer/";
         $url = "images/offer/";
         $temp = explode(".", $_FILES["coupon_img"]["name"]);
@@ -157,9 +177,8 @@ if (isset($_POST["type"])) {
 
         move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
         $table = "tbl_coupon";
-        $store_id = $sdata['id'];
         $field_values = array("c_img", "c_desc", "c_value", "c_title", "status", "cdate", "ctitle", "min_amt", "subtitle");
-        $data_values = array("$url", "$cdesc", "$cvalue", "$ccode", "$cstatus", "$cdate", "$ctitle", "$minamt", "$subtitle");
+        $data_values = array("$url", "$cdesc_json", "$cvalue", "$ccode", "$cstatus", "$cdate", "$ctitle_json", "$minamt", "$subtitle_json");
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -171,12 +190,32 @@ if (isset($_POST["type"])) {
         $id = $_POST['id'];
         $cdate = $_POST['expire_date'];
         $minamt = $_POST['min_amt'];
-        $ctitle = $rstate->real_escape_string($_POST['title']);
-        $subtitle = $rstate->real_escape_string($_POST['subtitle']);
         $cstatus = $_POST['status'];
         $cvalue = $_POST['coupon_val'];
-        $cdesc = $rstate->real_escape_string($_POST['description']);
+        $cdesc_ar = $rstate->real_escape_string($_POST['description_ar']);
+        $cdesc_en = $rstate->real_escape_string($_POST['description_en']);
 
+        $ctitle_ar = $rstate->real_escape_string($_POST['title_ar']);
+        $ctitle_en = $rstate->real_escape_string($_POST['title_en']);
+        $subtitle_ar = $rstate->real_escape_string($_POST['subtitle_ar']);
+        $subtitle_en = $rstate->real_escape_string($_POST['subtitle_en']);
+        
+        $ctitle_json = json_encode([
+            "en" => $ctitle_en,
+            "ar" => $ctitle_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        
+        $subtitle_json = json_encode([
+            "en" => $subtitle_en,
+            "ar" => $subtitle_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        
+        $cdesc_json = json_encode([
+            "en" => $cdesc_en,
+            "ar" => $cdesc_ar
+        ], JSON_UNESCAPED_UNICODE);
         $target_dir = dirname(dirname(__FILE__)) . "/images/offer/";
         $url = "images/offer/";
         $temp = explode(".", $_FILES["coupon_img"]["name"]);
@@ -187,7 +226,7 @@ if (isset($_POST["type"])) {
 
             move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
             $table = "tbl_coupon";
-            $field = array('c_img' => $url, 'c_desc' => $cdesc, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle, 'min_amt' => $minamt, 'subtitle' => $subtitle);
+            $field = array('c_img' => $url, 'c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -197,7 +236,7 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_coupon";
-            $field = array('c_desc' => $cdesc, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle, 'min_amt' => $minamt, 'subtitle' => $subtitle);
+            $field = array('c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
