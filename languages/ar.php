@@ -64,6 +64,14 @@ return [
 'Choose_Category'         => 'اختر فئة المعرض',
 
 
-"Extra_Image_List_Management"  => "Extra Image  List Management",
+"Extra_Image_List_Management"  => "إدارة قائمة الصور الإضافية",
+'Facility_List_Management'     => 'إدارة قائمة المرافق',
+'Facility_Title'               => 'عنوان المرفق',
+'Facility_Image'               => 'صورة المرفق',
+'Facility_Status'              => 'حالة المرفق',
+'Add_Facility'                 => 'إضافة مرفق',
+'Facility_Name'                => 'اسم المرفق',
+'Facility_Management'          => 'إدارة المرافق',
+'Edit_Facility'                => 'تعديل المرفق',
 
 ];
