@@ -53,6 +53,24 @@ return [
     'Edit_Page' => 'Edit Page',
     'Add_Page' => 'Add Page',
     ####
+     
+    ##  Gallery list management ###
+    'Gallery_List_Management' => 'Gallery List Management',
+    'Property_Title' => 'Property Title',
+    'Category_Title' => 'Category Title',
+    'Gallery_Management' => 'Gallery Management',
+    'Select_Property' => 'Select Property',
+    'Select_Gallery_Category' => 'Select Gallery Category',
+    'Gallery_Image' => 'Gallery Image',
+    'Gallery_Status' => 'Gallery Status',
+    'Edit_Gallery_Category' => 'Edit Gallery Category',
+    'Add_Gallery' => 'Add Gallery',
+    'Choose_Property' => 'Select Property',
+    'Choose_Category' => 'Select Gallery Category',
+     ####
+
+
+
 
 
 ];

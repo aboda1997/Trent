@@ -49,5 +49,18 @@ return [
     'Edit_Page'            => 'تعديل الصفحة',
     'Add_Page'             => 'إضافة صفحة',
     ####
+    
+    'Gallery_List_Management' => 'إدارة قائمة المعرض',
+'Property_Title'          => 'عنوان العقار',
+'Category_Title'          => 'عنوان الفئة',
+'Gallery_Management'      => 'إدارة المعرض',
+'Select_Property'         => 'اختر العقار',
+'Select_Gallery_Category' => 'اختر فئة المعرض',
+'Gallery_Image'           => 'صورة المعرض',
+'Gallery_Status'          => 'حالة المعرض',
+'Edit_Gallery_Category'   => 'تعديل فئة المعرض',
+'Add_Gallery'             => 'إضافة معرض',
+'Choose_Property'         => 'اختر العقار',
+'Choose_Category'         => 'اختر فئة المعرض',
 
 ];
