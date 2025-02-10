@@ -790,18 +790,23 @@ if (isset($_POST["type"])) {
         }
     } elseif ($_POST["type"] == "add_facility") {
         $okey = $_POST["status"];
-        $title = $rstate->real_escape_string($_POST["title"]);
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
         $target_dir = dirname(dirname(__FILE__)) . "/images/facility/";
         $url = "images/facility/";
         $temp = explode(".", $_FILES["cat_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
 
         move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
         $table = "tbl_facility";
         $field_values = ["img", "status", "title"];
-        $data_values = ["$url", "$okey", "$title"];
+        $data_values = ["$url", "$okey", "$title_json"];
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -911,13 +916,19 @@ if (isset($_POST["type"])) {
     } elseif ($_POST["type"] == "edit_facility") {
         $okey = $_POST["status"];
         $id = $_POST["id"];
-        $title = $rstate->real_escape_string($_POST["title"]);
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
         $target_dir = dirname(dirname(__FILE__)) . "/images/facility/";
         $url = "images/facility/";
         $temp = explode(".", $_FILES["cat_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
         if ($_FILES["cat_img"]["name"] != "") {
 
             move_uploaded_file(
@@ -925,7 +936,7 @@ if (isset($_POST["type"])) {
                 $target_file
             );
             $table = "tbl_facility";
-            $field = ["status" => $okey, "img" => $url, "title" => $title];
+            $field = ["status" => $okey, "img" => $url, "title" => $title_json];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -941,7 +952,7 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_facility";
-            $field = ["status" => $okey, "title" => $title];
+            $field = ["status" => $okey, "title" => $title_json];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);

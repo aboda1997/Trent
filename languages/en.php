@@ -70,6 +70,18 @@ return [
      ####
      
      "Extra_Image_List_Management"  => "Extra Image  List Management",
+     'Facility_List_Management'  => 'Facility List Management',
+     'Facility_Title'  => 'Facility Title', 
+     'Facility_Image' => 'Facility Image',
+     'Facility_Status' => 'Facility Status',
+     'Add_Facility' => 'Add Facility',
+     'Facility_Name' => 'Facility Name',
+     'Facility_Management' => 'Facility Management',
+     'Edit_Facility' => 'Edit Facility',
+
+
+
+
      
 
 
