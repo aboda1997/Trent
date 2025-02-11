@@ -342,7 +342,7 @@ if (isset($_GET['id'])) {
 
 														</label>
 
-														<input type="hidden" name="type" value="edit_coupon" />
+														<input type="hidden" name="type" value="add_coupon" />
 
 														<input type="hidden" name="id" />
 														<input type="file" name="coupon_img" class="form-control" required>
@@ -479,7 +479,7 @@ if (isset($_GET['id'])) {
 																		<?= $lang_ar['Coupon_Description'] ?>
 
 																	</label>
-																	<textarea class="form-control" rows="5" name="description_ar" style="resize: none;">
+																	<textarea class="form-control" rows="5" name="description_ar" style="resize: none;"></textarea>
 
 																	</textarea>
 																</div>
