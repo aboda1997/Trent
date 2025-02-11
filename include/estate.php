@@ -28,7 +28,6 @@ class Estate {
     $data_values=implode("','",$data);
 
     $sql = "INSERT INTO $table($field_values)VALUES('$data_values')";
-    var_dump(($sql));
     $result=$GLOBALS['rstate']->query($sql);
   return $result;
   }
