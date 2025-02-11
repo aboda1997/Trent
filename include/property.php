@@ -838,7 +838,7 @@ if (isset($_POST["type"])) {
         $title_en = $rstate->real_escape_string($_POST["title_en"]);
         $target_dir = dirname(dirname(__FILE__)) . "/images/facility/";
         $url = "images/facility/";
-        $temp = explode(".", $_FILES["cat_img"]["name"]);
+        $temp = explode(".", $_FILES["facility_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
@@ -847,7 +847,7 @@ if (isset($_POST["type"])) {
             "ar" => $title_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
+        move_uploaded_file($_FILES["facility_img"]["tmp_name"], $target_file);
         $table = "tbl_facility";
         $field_values = ["img", "status", "title"];
         $data_values = ["$url", "$okey", "$title_json"];
@@ -969,7 +969,7 @@ if (isset($_POST["type"])) {
         $title_en = $rstate->real_escape_string($_POST["title_en"]);
         $target_dir = dirname(dirname(__FILE__)) . "/images/facility/";
         $url = "images/facility/";
-        $temp = explode(".", $_FILES["cat_img"]["name"]);
+        $temp = explode(".", $_FILES["facility_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
@@ -978,10 +978,10 @@ if (isset($_POST["type"])) {
             "ar" => $title_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        if ($_FILES["cat_img"]["name"] != "") {
+        if ($_FILES["facility_img"]["name"] != "") {
 
             move_uploaded_file(
-                $_FILES["cat_img"]["tmp_name"],
+                $_FILES["facility_img"]["tmp_name"],
                 $target_file
             );
             $table = "tbl_facility";
