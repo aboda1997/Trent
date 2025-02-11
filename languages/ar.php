@@ -95,5 +95,15 @@ return [
 'Coupon_Description'       => 'وصف القسيمة',
 'Edit_Coupon'              => 'تعديل القسيمة',
 'Add_Coupon'               => 'إضافة قسيمة',
+'Category_Management' => 'إدارة الفئة',
+'Category_List_Management' => 'Category List Management',
+'Category_Name'       => 'اسم الفئة',
+'Category_Image'      => 'صورة الفئة',
+'Category_Status'     => 'حالة الفئة',
+'Edit_Category'       => 'تعديل الفئة',
+'Add Category'        => 'إضافة فئة',
+'Category_Title'      => 'عنوان الفئة',
+'Category_Image'      => 'صورة الفئة',
+'Category_Status'     => 'حالة الفئة',
 
 ];

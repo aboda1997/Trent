@@ -100,6 +100,17 @@ return [
      'Coupon_Description' => 'Coupon Description',
      'Edit_Coupon' => 'Edit Coupon',
      'Add_Coupon' => 'Add Coupon',
+     'Category_Management' => 'Category Management',
+     'Category_List_Management' => 'Category List Management',
+     'Category_Name' => 'Category Name',
+     'Category_Image' => 'Category Image',
+     'Category_Status' => 'Category Status',
+     'Edit_Category'  => 'Edit  Category', 
+     'Add_Category' => 'Add Category',
+     'Category_Title' => 'Category Title',
+     'Category_Image' => 'Category Image',
+      'Category_Status' => 'Category Status',
+
 
 
 
