@@ -1011,7 +1011,7 @@ if (isset($_POST["type"])) {
                     "Result" => "true",
                     "title" => "Facility Update Successfully!!",
                     "message" => "Facility section!",
-                    "action" => "list_category.php",
+                    "action" => "list_facility.php",
                 ];
             }
         }

@@ -82,10 +82,10 @@ if (isset($_GET['id'])) {
                   <!-- Add any toolbar buttons or icons here -->
                   <ul class="nav nav-tabs nav-bold nav-tabs-line">
                     <li class="nav-item">
-                      <a class="nav-link active" data-toggle="tab" href="#ar" onclick="changeLanguage('ar')">العربية</a>
+                      <a class="nav-link " data-toggle="tab" href="#ar" onclick="changeLanguage('ar')">العربية</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
+                      <a class="nav-link active" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
                     </li>
                   </ul>
                 </div>
@@ -98,9 +98,12 @@ if (isset($_GET['id'])) {
               ?>
                 <form method="POST" enctype="multipart/form-data">
                   <div class="card-body">
+                  <div id="alert-container" class="mb-3" style="display: none;">
+                      <div class="alert alert-danger" id="alert-message"></div>
+                    </div>
                     <div class="tab-content">
                       <!-- English Tab -->
-                      <div class="tab-pane fade show " id="en">
+                      <div class="tab-pane fade show active" id="en">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_en['Enter_Question'] ?></label>
                           <input
@@ -111,6 +114,9 @@ if (isset($_GET['id'])) {
                             name="question_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="question_en_feedback" style="display: none;">
+                        <?= $lang_en['faq_question'] ?>
+                      </div>
                         </div>
 
                         <div class="form-group mb-3">
@@ -123,10 +129,13 @@ if (isset($_GET['id'])) {
                             name="answer_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="answer_en_feedback" style="display: none;">
+                        <?= $lang_en['faq_answer'] ?>
+                      </div>
                         </div>
                       </div>
                       <!-- Arabic Tab -->
-                      <div class="tab-pane fade show active" id="ar">
+                      <div class="tab-pane fade show " id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
                           <input
@@ -137,6 +146,9 @@ if (isset($_GET['id'])) {
                             name="question_ar"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="question_ar_feedback" style="display: none;">
+                        <?= $lang_en['faq_question'] ?>
+                      </div>
                         </div>
 
                         <div class="form-group mb-3">
@@ -149,6 +161,9 @@ if (isset($_GET['id'])) {
                             name="answer_ar"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="answer_ar_feedback" style="display: none;">
+                        <?= $lang_en['faq_answer'] ?>
+                      </div>
                         </div>
                       </div>
                     </div>
@@ -170,6 +185,9 @@ if (isset($_GET['id'])) {
                           <?= $lang_ar['Unpublish'] ?>
 
                         </option>
+                        <div class="invalid-feedback" id="status_feedback" style="display: none;">
+                        <?= $lang_en['faq_status'] ?>
+                      </div>
                       </select>
                     </div>
                     <input type="hidden" name="type" value="edit_faq" />
@@ -177,8 +195,8 @@ if (isset($_GET['id'])) {
                   </div>
                   <div class="card-footer text-left">
 
-                    <button id="edit-faq" type="submit" class="btn btn-primary">
-                      <?= $lang_ar['Edit_FAQ'] ?>
+                    <button onclick="return validateForm()" id="edit-faq" type="submit" class="btn btn-primary">
+                      <?= $lang_en['Edit_FAQ'] ?>
 
                     </button>
                   </div>
@@ -189,9 +207,12 @@ if (isset($_GET['id'])) {
                 <form method="POST" enctype="multipart/form-data">
 
                   <div class="card-body">
+                  <div id="alert-container" class="mb-3" style="display: none;">
+                      <div class="alert alert-danger" id="alert-message"></div>
+                    </div>
                     <div class="tab-content">
                       <!-- English Tab -->
-                      <div class="tab-pane fade show " id="en">
+                      <div class="tab-pane fade show active" id="en">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_en['Enter_Question'] ?></label>
                           <input
@@ -201,6 +222,10 @@ if (isset($_GET['id'])) {
                             name="question_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            
+                            <div class="invalid-feedback" id="question_en_feedback" style="display: none;">
+                        <?= $lang_en['faq_question'] ?>
+                      </div>
                         </div>
 
                         <div class="form-group mb-3">
@@ -212,10 +237,13 @@ if (isset($_GET['id'])) {
                             name="answer_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="answer_en_feedback" style="display: none;">
+                        <?= $lang_en['faq_answer'] ?>
+                      </div>
                         </div>
                       </div>
                       <!-- Arabic Tab -->
-                      <div class="tab-pane fade show active " id="ar">
+                      <div class="tab-pane fade show  " id="ar">
                         <div class="form-group mb-3">
                           <label id="basic-addon1"><?= $lang_ar['Enter_Question'] ?></label>
                           <input
@@ -225,6 +253,9 @@ if (isset($_GET['id'])) {
                             name="question_ar"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="question_ar_feedback" style="display: none;">
+                        <?= $lang_ar['faq_question'] ?>
+                      </div>
                         </div>
 
                         <div class="form-group mb-3">
@@ -236,22 +267,28 @@ if (isset($_GET['id'])) {
                             name="answer_ar"
                             required=""
                             aria-describedby="basic-addon1" />
-                        </div>
+                            <div class="invalid-feedback" id="answer_ar_feedback" style="display: none;">
+                        <?= $lang_ar['faq_answer'] ?>
+                      </div>
+                          </div>
                       </div>
                     </div>
 
                     <div class="form-group mb-3">
-                      <label id="status-label" for="inputGroupSelect01"><?= $lang_ar['Select_Status'] ?></label>
+                      <label id="status-label" for="inputGroupSelect01"><?= $lang_en['Select_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
-                        <option value=""><?= $lang_ar['Choose'] ?>...</option>
-                        <option value="1"><?= $lang_ar['Publish'] ?></option>
-                        <option value="0"><?= $lang_ar['Unpublish'] ?></option>
+                        <option value=""><?= $lang_en['Choose'] ?>...</option>
+                        <option value="1"><?= $lang_en['Publish'] ?></option>
+                        <option value="0"><?= $lang_en['Unpublish'] ?></option>
                       </select>
+                      <div class="invalid-feedback" id="status_feedback" style="display: none;">
+                        <?= $lang_en['faq_status'] ?>
+                      </div>
                     </div>
                     <input type="hidden" name="type" value="add_faq" />
                   </div>
                   <div class="card-footer text-left">
-                    <button id="add-faq" type="submit" class="btn btn-primary"><?= $lang_ar['Add_FAQ'] ?></button>
+                    <button onclick="return validateForm()" id="add-faq" type="submit" class="btn btn-primary"><?= $lang_en['Add_FAQ'] ?></button>
                   </div>
                 </form>
               <?php } ?>
@@ -274,9 +311,106 @@ if (isset($_GET['id'])) {
   </div>
 </div>
 <script>
+  function getCurrentLanguage() {
+    // Get the active tab
+    const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
+    return activeTab === 'en' ? 'en' : 'ar';
+  }
+
+  function validateForm() {
+    // Clear previous feedback
+    document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
+      feedback.style.display = 'none';
+    });
+
+    const questionEn = document.querySelector('input[name="question_en"]').value;
+    const questionAr = document.querySelector('input[name="question_ar"]').value;
+
+    
+    const answerEn = document.querySelector('input[name="answer_en"]').value;
+    const answerAr = document.querySelector('input[name="answer_ar"]').value;
+    const status = document.querySelector('select[name="status"]').value;
+
+    let isValid = true;
+    let isArabicValid = true;
+    let isEnglishValid = true;
+    let alertMessage = '';
+    let lang = getCurrentLanguage();
+
+    if (!questionEn) {
+      document.getElementById('question_en_feedback').style.display = 'block';
+      isEnglishValid = false;
+
+    }
+    if (!questionAr) {
+      document.getElementById('question_ar_feedback').style.display = 'block';
+      isArabicValid = false;
+
+    }
+    if (!answerEn) {
+      document.getElementById('answer_en_feedback').style.display = 'block';
+      isEnglishValid = false;
+
+    }
+    if (!answerAr) {
+      document.getElementById('answer_ar_feedback').style.display = 'block';
+      isArabicValid = false;
+
+    }
+
+    if (!status) {
+      document.getElementById('status_feedback').style.display = 'block';
+      isValid = false;
+    }
+
+
+
+    if (!isArabicValid && isEnglishValid) {
+      // Show alert if there are required fields missing
+      if (lang == "en") {
+        alertMessage = langDataEN.alert_en;
+
+      } else {
+        alertMessage = langDataAR.alert_en;
+
+      }
+      isValid = false;
+    }
+    if (!isEnglishValid && isArabicValid) {
+      // Show alert if there are required fields missing
+      if (lang == "ar") {
+        alertMessage = langDataAR.alert_ar;
+
+      } else {
+        alertMessage = langDataEN.alert_ar;
+
+      }
+      isValid = false;
+    }
+    if (isArabicValid && isEnglishValid) {
+      alertMessage = '';
+    }
+    if (alertMessage) {
+      document.getElementById('alert-message').innerHTML = alertMessage;
+      document.getElementById('alert-container').style.display = 'block';
+
+    } else {
+      document.getElementById('alert-container').style.display = 'none';
+
+    }
+    if (!isValid) {
+      return false;
+    }
+
+    return true; // Allow form submission
+  }
+
   function changeLanguage(lang) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
 
+    document.getElementById('question_en_feedback').textContent = langData.faq_question;
+    document.getElementById('answer_en_feedback').textContent = langData.faq_answer;
+    document.getElementById('status_feedback').textContent = langData.faq_status;
     document.getElementById('status-label').textContent = langData.Select_Status;
 
     if (document.getElementById('add-faq')) {
