@@ -54,14 +54,14 @@ if (isset($_POST["type"])) {
         $table = "tbl_page";
 
         $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
-        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);
         $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
         $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
         $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
@@ -80,16 +80,16 @@ if (isset($_POST["type"])) {
         $cstatus = $_POST['status'];
 
         $table = "tbl_page";
-        
+
         $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
-        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);
         $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
         $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
         $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
@@ -151,19 +151,19 @@ if (isset($_POST["type"])) {
         $ctitle_en = $rstate->real_escape_string($_POST['title_en']);
         $subtitle_ar = $rstate->real_escape_string($_POST['subtitle_ar']);
         $subtitle_en = $rstate->real_escape_string($_POST['subtitle_en']);
-        
+
         $ctitle_json = json_encode([
             "en" => $ctitle_en,
             "ar" => $ctitle_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        
+
         $subtitle_json = json_encode([
             "en" => $subtitle_en,
             "ar" => $subtitle_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        
+
         $cdesc_json = json_encode([
             "en" => $cdesc_en,
             "ar" => $cdesc_ar
@@ -199,19 +199,19 @@ if (isset($_POST["type"])) {
         $ctitle_en = $rstate->real_escape_string($_POST['title_en']);
         $subtitle_ar = $rstate->real_escape_string($_POST['subtitle_ar']);
         $subtitle_en = $rstate->real_escape_string($_POST['subtitle_en']);
-        
+
         $ctitle_json = json_encode([
             "en" => $ctitle_en,
             "ar" => $ctitle_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        
+
         $subtitle_json = json_encode([
             "en" => $subtitle_en,
             "ar" => $subtitle_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        
+
         $cdesc_json = json_encode([
             "en" => $cdesc_en,
             "ar" => $cdesc_ar
@@ -283,7 +283,7 @@ if (isset($_POST["type"])) {
         }
     } else if ($_POST['type'] == 'add_faq') {
         $question_en = mysqli_real_escape_string($rstate, $_POST['question_en']);
-        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);   
+        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);
         $question_ar = mysqli_real_escape_string($rstate, $_POST['question_ar']);
         $answer_ar = mysqli_real_escape_string($rstate, $_POST['answer_ar']);
         $okey = $_POST['status'];
@@ -291,7 +291,7 @@ if (isset($_POST["type"])) {
             "en" => $question_en,
             "ar" => $question_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $answer_json = json_encode([
             "en" => $answer_en,
             "ar" => $answer_ar
@@ -307,7 +307,7 @@ if (isset($_POST["type"])) {
         }
     } else if ($_POST['type'] == 'edit_faq') {
         $question_en = mysqli_real_escape_string($rstate, $_POST['question_en']);
-        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);   
+        $answer_en = mysqli_real_escape_string($rstate, $_POST['answer_en']);
         $question_ar = mysqli_real_escape_string($rstate, $_POST['question_ar']);
         $answer_ar = mysqli_real_escape_string($rstate, $_POST['answer_ar']);
         $okey = $_POST['status'];
@@ -316,12 +316,12 @@ if (isset($_POST["type"])) {
             "en" => $question_en,
             "ar" => $question_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $answer_json = json_encode([
             "en" => $answer_en,
             "ar" => $answer_ar
         ], JSON_UNESCAPED_UNICODE);
-       
+
         $table = "tbl_faq";
         $field = array('question' => $question_json, 'status' => $okey, 'answer' => $answer_json);
         $where = "where id=" . $id . "";
@@ -410,18 +410,23 @@ if (isset($_POST["type"])) {
         }
     } elseif ($_POST["type"] == "add_category") {
         $okey = $_POST["status"];
-        $title = $rstate->real_escape_string($_POST["title"]);
+
         $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
         $url = "images/category/";
         $temp = explode(".", $_FILES["cat_img"]["name"]);
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
-
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
         move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
         $table = "tbl_category";
         $field_values = ["img", "status", "title"];
-        $data_values = ["$url", "$okey", "$title"];
+        $data_values = ["$url", "$okey", "$title_json"];
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -474,14 +479,14 @@ if (isset($_POST["type"])) {
         $url = $url . basename($newfilename);
 
         $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
-        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);
         $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
         $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
         $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
@@ -514,16 +519,16 @@ if (isset($_POST["type"])) {
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
-        
+
         $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
-        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);   
+        $description_en = mysqli_real_escape_string($rstate, $_POST['description_en']);
         $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
         $description_ar = mysqli_real_escape_string($rstate, $_POST['description_ar']);
         $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-        
+
         $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
@@ -861,7 +866,12 @@ if (isset($_POST["type"])) {
     } elseif ($_POST["type"] == "edit_category") {
         $okey = $_POST["status"];
         $id = $_POST["id"];
-        $title = $rstate->real_escape_string($_POST["title"]);
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
         $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
         $url = "images/category/";
         $temp = explode(".", $_FILES["cat_img"]["name"]);
@@ -875,7 +885,7 @@ if (isset($_POST["type"])) {
                 $target_file
             );
             $table = "tbl_category";
-            $field = ["status" => $okey, "img" => $url, "title" => $title];
+            $field = ["status" => $okey, "img" => $url, "title" => $title_json];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -891,7 +901,7 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_category";
-            $field = ["status" => $okey, "title" => $title];
+            $field = ["status" => $okey, "title" => $title_json];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
