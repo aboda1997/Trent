@@ -97,6 +97,9 @@ if (isset($_GET['id'])) {
                 <form method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
+                  <div id="alert-container" class="mb-3" style="display: none;">
+                      <div class="alert alert-danger" id="alert-message"></div>
+                    </div>
                   <div class="tab-content">
                       <!-- English Tab -->
                       <div class="tab-pane fade show active " id="en">
@@ -110,6 +113,9 @@ if (isset($_GET['id'])) {
                             name="title_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
+                        <?= $lang_en['facility_name'] ?>
+                      </div>
                         </div>
 
                         
@@ -126,6 +132,9 @@ if (isset($_GET['id'])) {
                             name="title_ar"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
+                        <?= $lang_ar['facility_name'] ?>
+                      </div>
                         </div>
 
                         
@@ -138,7 +147,10 @@ if (isset($_GET['id'])) {
                         <?= $lang_en['Facility_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img">
+                      <input type="file" class="form-control" name="facility_img">
+                      <div class="invalid-feedback" id="facility_img_feedback" style="display: none;">
+                        <?= $lang_en['facility_img'] ?>
+                      </div>
                       <br>
                       <img src="<?php echo $data['img'] ?>" width="100px" />
                       <input type="hidden" name="type" value="edit_facility" />
@@ -166,12 +178,15 @@ if (isset($_GET['id'])) {
 
                         </option>
                       </select>
+                      <div class="invalid-feedback" id="status_feedback" style="display: none;">
+                        <?= $lang_en['cat_status'] ?>
+                      </div>
                     </div>
 
 
                   </div>
                   <div class="card-footer text-left">
-                    <button type="submit"  id="edit-facility" class="btn btn-primary">
+                    <button onclick="return validateForm()" type="submit"  id="edit-facility" class="btn btn-primary">
                       <?= $lang_en['Edit_Facility'] ?>
 
                     </button>
@@ -183,6 +198,9 @@ if (isset($_GET['id'])) {
                 <form method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
+                  <div id="alert-container" class="mb-3" style="display: none;">
+                      <div class="alert alert-danger" id="alert-message"></div>
+                    </div>
                   <div class="tab-content">
                       <!-- English Tab -->
                       <div class="tab-pane fade show active " id="en">
@@ -195,6 +213,9 @@ if (isset($_GET['id'])) {
                             name="title_en"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
+                        <?= $lang_en['facility_name'] ?>
+                      </div>
                         </div>
 
                         
@@ -210,6 +231,9 @@ if (isset($_GET['id'])) {
                             name="title_ar"
                             required=""
                             aria-describedby="basic-addon1" />
+                            <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
+                        <?= $lang_ar['facility_name'] ?>
+                      </div>
                         </div>
 
                         
@@ -222,12 +246,12 @@ if (isset($_GET['id'])) {
                         <?= $lang_en['Facility_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img" required="">
+                      <input type="file" class="form-control" name="facility_img" required="">
+                      <div class="invalid-feedback" id="facility_img_feedback" style="display: none;">
+                        <?= $lang_en['facility_img'] ?>
+                      </div>
                       <input type="hidden" name="type" value="add_facility" />
                     </div>
-
-
-
                     <div class="form-group mb-3">
                       <label id="status-label" for="inputGroupSelect01"><?= $lang_en['Facility_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
@@ -235,23 +259,19 @@ if (isset($_GET['id'])) {
                         <option value="1"><?= $lang_en['Publish'] ?></option>
                         <option value="0"><?= $lang_en['Unpublish'] ?></option>
                       </select>
+                      <div class="invalid-feedback" id="status_feedback" style="display: none;">
+                        <?= $lang_en['facility_status'] ?>
+                      </div>
                     </div>
 
                   </div>
                   <div class="card-footer text-left">
-                    <button id="add-facility" type="submit" class="btn btn-primary"><?= $lang_en['Add_Facility'] ?></button>
+                    <button onclick="return validateForm()" id="add-facility" type="submit" class="btn btn-primary"><?= $lang_en['Add_Facility'] ?></button>
                   </div>
                 </form>
               <?php } ?>
             </div>
-
-
           </div>
-
-
-
-
-
         </div>
       </div>
       <!-- Container-fluid Ends-->
@@ -262,9 +282,96 @@ if (isset($_GET['id'])) {
 </div>
 
 <script>
+  function getCurrentLanguage() {
+    // Get the active tab
+    const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
+    return activeTab === 'en' ? 'en' : 'ar';
+  }
+
+  function validateForm() {
+    // Clear previous feedback
+    document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
+      feedback.style.display = 'none';
+    });
+
+    const titleEn = document.querySelector('input[name="title_en"]').value;
+    const titleAr = document.querySelector('input[name="title_ar"]').value;
+    const facilityImage = document.querySelector('input[name="facility_img"]').value;
+    const status = document.querySelector('select[name="status"]').value;
+
+    let isValid = true;
+    let isArabicValid = true;
+    let isEnglishValid = true;
+    let alertMessage = '';
+    let lang = getCurrentLanguage();
+
+    if (!titleEn) {
+      document.getElementById('facility_name_en_feedback').style.display = 'block';
+      isEnglishValid = false;
+
+    }
+    if (!titleAr) {
+      document.getElementById('facility_name_ar_feedback').style.display = 'block';
+      isArabicValid = false;
+
+    }
+    if (!facilityImage) {
+      document.getElementById('facility_img_feedback').style.display = 'block';
+      isValid = false;
+    }
+    if (!status) {
+      document.getElementById('status_feedback').style.display = 'block';
+      isValid = false;
+    }
+
+
+
+    if (!isArabicValid && isEnglishValid) {
+      // Show alert if there are required fields missing
+      if (lang == "en") {
+        alertMessage = langDataEN.alert_en;
+
+      } else {
+        alertMessage = langDataAR.alert_en;
+
+      }
+      isValid = false;
+    }
+    if (!isEnglishValid && isArabicValid) {
+      // Show alert if there are required fields missing
+      if (lang == "ar") {
+        alertMessage = langDataAR.alert_ar;
+
+      } else {
+        alertMessage = langDataEN.alert_ar;
+
+      }
+      isValid = false;
+    }
+    if (isArabicValid && isEnglishValid) {
+      alertMessage = '';
+    }
+    if (alertMessage) {
+      document.getElementById('alert-message').innerHTML = alertMessage;
+      document.getElementById('alert-container').style.display = 'block';
+
+    }else{
+      document.getElementById('alert-container').style.display = 'none';
+
+    }
+    if (!isValid) {
+      return false;
+    }
+
+    return true; // Allow form submission
+  }
+
   function changeLanguage(lang) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
-
+    
+    document.getElementById('facility_name_ar_feedback').textContent = langData.facility_name;
+    document.getElementById('facility_img_feedback').textContent = langData.facility_img;
+    document.getElementById('status_feedback').textContent = langData.facility_status;
     document.getElementById('Facility-Image').textContent = langData.Facility_Image;
     document.getElementById('status-label').textContent = langData.Select_Status;
 
