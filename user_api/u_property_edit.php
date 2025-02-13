@@ -1,83 +1,154 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
+
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
-     
-	 $status = $data["status"];
-        $title = $rstate->real_escape_string($data["title"]);
-		$address = $rstate->real_escape_string($data["address"]);
-		$description = $rstate->real_escape_string($data["description"]);
-		$ccount = $rstate->real_escape_string($data["ccount"]);
-		$facility = $data['facility'];
-		$ptype = $data['ptype'];
-		$beds = $data['beds'];
-		$bathroom = $data['bathroom'];
-		$sqft = $data['sqft'];
-		$rate = $data['rate'];
-		$latitude = $data['latitude'];
-		$longtitude = $data['longtitude'];
-		$mobile = $data['mobile'];
-		$listing_date = date("Y-m-d H:i:s");
-		$price = $data['price'];
-		$user_id = $data['uid'];
-		$prop_id = $data['prop_id'];
-		$plimit = $data['plimit'];
-		$country_id = $data['country_id'];
-		$pbuysell = $data['pbuysell'];
-		
-if ($prop_id == '' or $pbuysell == '' or $country_id == '' or $plimit == '' or $user_id == '' or $status == '' or $title == '' or $address == '' or $description == '' or $ccount == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $rate == '' or $latitude == '' or $mobile == '' or $listing_date == '' or $price == '') {
-    $returnArr = array(
-        "ResponseCode" => "401",
-        "Result" => "false",
-        "ResponseMsg" => "Something Went Wrong!"
-    );
-} else {
-	
-$check_owner = $rstate->query("select * from tbl_property where id=" . $prop_id . " and add_user_id=".$user_id."")->num_rows;
-if($check_owner !=0)
-{
-	if($data['img'] == '0')
-	{
-		$table = "tbl_property";
-                $field = ["pbuysell"=>$pbuysell,"country_id"=>$country_id,"plimit"=>$plimit,"status" => $status, "title" => $title,"price"=>$price,"address"=>$address,"facility"=>$facility,"description"=>$description,"beds"=>$beds,"bathroom"=>$bathroom,"sqrft"=>$sqft,"rate"=>$rate,"ptype"=>$ptype,"latitude"=>$latitude,"longtitude"=>$longtitude,"mobile"=>$mobile,"city"=>$ccount,"listing_date"=>$listing_date];
-                $where = "where id=" . $prop_id . " and add_user_id=".$user_id."";
-                $h = new Estate();
-                $check = $h->restateupdateData_Api($field, $table, $where);
-	}
-	else 
-	{
-		$img = $data['img'];
- $img = str_replace('data:image/png;base64,', '', $img);
-$img = str_replace(' ', '+', $img);
-$data = base64_decode($img);
-$path = 'images/property/'.uniqid().'.png';
-$fname = dirname( dirname(__FILE__) ).'/'.$path;
 
-file_put_contents($fname, $data);
+$status = 0;
+$facility = $data['facility'];
+$ptype = $data['ptype'];
+$beds = $data['beds'];
+$bathroom = $data['bathroom'];
+$sqft = $data['sqft'];
 
-		 $table = "tbl_property";
-                $field = ["pbuysell"=>$pbuysell,"country_id"=>$country_id,"plimit"=>$plimit,"status" => $status, "image" => $path, "title" => $title,"price"=>$price,"address"=>$address,"facility"=>$facility,"description"=>$description,"beds"=>$beds,"bathroom"=>$bathroom,"sqrft"=>$sqft,"rate"=>$rate,"ptype"=>$ptype,"latitude"=>$latitude,"longtitude"=>$longtitude,"mobile"=>$mobile,"city"=>$ccount,"listing_date"=>$listing_date];
-                $where = "where id=" . $prop_id . " and add_user_id=".$user_id."";
-                $h = new Estate();
-                $check = $h->restateupdateData_Api($field, $table, $where);
-	}
-	
-	$returnArr    = array(
-                "ResponseCode" => "200",
-                "Result" => "true",
-                "ResponseMsg" => "Property Update Successfully"
-            );
-}
-else 
-{
+$listing_date = date("Y-m-d H:i:s");
+$price = $data['price'];
+$user_id = $data['uid'];
+$prop_id = $data['prop_id'];
+$plimit = $data['plimit'];
+$pbuysell = $data['pbuysell'];
+$government = $data['government'];
+$security_deposit = $data['security_deposit'];
+$max_days = $data['max_days'];
+$min_days = $data['min_days'];
+$google_maps_url = $data['google_maps_url'];
+$video = $data['video'];
+$title_en = $rstate->real_escape_string($data["title_en"]);
+$address_en = $rstate->real_escape_string($data["address_en"]);
+$description_en = $rstate->real_escape_string($data["description_en"]);
+$ccount_en = $rstate->real_escape_string($data["city_en"]);
+$compound_name_en = $rstate->real_escape_string($data["compound_name_en"]);
+$floor_en = $rstate->real_escape_string($data["floor_en"]);
+$guest_rules_en = $rstate->real_escape_string($data["guest_rules_en"]);
+
+$title_ar = $rstate->real_escape_string($data["title_ar"]);
+$address_ar = $rstate->real_escape_string($data["address_ar"]);
+$description_ar = $rstate->real_escape_string($data["description_ar"]);
+$ccount_ar = $rstate->real_escape_string($data["city_ar"]);
+
+$compound_name_ar = $rstate->real_escape_string($data["compound_name_ar"]);
+$floor_ar = $rstate->real_escape_string($data["floor_ar"]);
+$guest_rules_ar = $rstate->real_escape_string($data["guest_rules_ar"]);
+
+
+$compound_name_json = json_encode([
+	"en" => $compound_name_en,
+	"ar" => $compound_name_ar
+], JSON_UNESCAPED_UNICODE);
+
+
+$floor_json = json_encode([
+	"en" => $floor_en,
+	"ar" => $floor_ar
+], JSON_UNESCAPED_UNICODE);
+
+
+$guest_rules_json = json_encode([
+	"en" => $guest_rules_en,
+	"ar" => $guest_rules_ar
+], JSON_UNESCAPED_UNICODE);
+
+$ccount_json = json_encode([
+	"en" => $ccount_en,
+	"ar" => $ccount_ar
+], JSON_UNESCAPED_UNICODE);
+$description_json = json_encode([
+	"en" => $description_en,
+	"ar" => $description_ar
+], JSON_UNESCAPED_UNICODE);
+$address_json = json_encode([
+	"en" => $address_en,
+	"ar" => $address_ar
+], JSON_UNESCAPED_UNICODE);
+$title_json = json_encode([
+	"en" => $title_en,
+	"ar" => $title_ar
+], JSON_UNESCAPED_UNICODE);
+
+// Validate the string
+
+
+if ($user_id == '' or $government =='' or $video == '' or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_name_ar == '' or $compound_name_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 	$returnArr = array(
-        "ResponseCode" => "401",
-        "Result" => "false",
-        "ResponseMsg" => "Edit Your Own Property!"
-    );
-}
+		"ResponseCode" => "401",
+		"Result" => "false",
+		"ResponseMsg" => "Something Went Wrong!"
+	);
+}else if (validateFacilityIds($facility) === 0) {
+	$returnArr = array(
+		"ResponseCode" => "401",
+		"Result" => "false",
+		"ResponseMsg" => "Facilities Ids must be valid!"
+	);} else if (validateIdAndDatabaseExistance($ptype , 'tbl_category') === false){
+		$returnArr = array(
+			"ResponseCode" => "401",
+			"Result" => "false",
+			"ResponseMsg" => "ptype Id must be valid!"
+		);
+	}  else if (validateIdAndDatabaseExistance($government , 'tbl_government') === false){
+		$returnArr = array(
+			"ResponseCode" => "401",
+			"Result" => "false",
+			"ResponseMsg" => "government Id must be valid!"
+		);
+	}
+
+else {
+
+	$check_owner = $rstate->query("select * from tbl_property where id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
+	if ($check_owner != 0) {
+		if ($data['img'] == '0') {
+			$table = "tbl_property";
+			$field = ["pbuysell" => $pbuysell, 
+			"security_deposit"=>$security_deposit , "government"=>$government ,  "google_maps_url"=> $google_maps_url , "video" =>$video,"guest_rules" => $guest_rules_json , "compound_name" => $compound_name_json , "floor" => $floor_json,"max_days" =>"$max_days" ,"min_days" =>"$min_days",
+			"plimit" => $plimit, "status" => $status, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft,  "ptype" => $ptype,   "city" => $ccount_json, "listing_date" => $listing_date];
+			$where = "where id=" . $prop_id . " and add_user_id=" . $user_id . "";
+			$h = new Estate();
+			$check = $h->restateupdateData_Api($field, $table, $where);
+		} else {
+			$img = $data['img'];
+			$img = str_replace('data:image/png;base64,', '', $img);
+			$img = str_replace(' ', '+', $img);
+			$data = base64_decode($img);
+			$path = 'images/property/' . uniqid() . '.png';
+			$fname = dirname(dirname(__FILE__)) . '/' . $path;
+
+			file_put_contents($fname, $data);
+
+			$table = "tbl_property";
+			$field = ["pbuysell" => $pbuysell, 
+			"security_deposit"=>$security_deposit , "government"=>$government , "google_maps_url"=> $google_maps_url , "video" =>$video,"guest_rules" => $guest_rules_json , "compound_name" => $compound_name_json , "floor" => $floor_json, "max_days" =>"$max_days" ,"min_days" =>"$min_days",
+			"plimit" => $plimit, "status" => $status, "image" => $path, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft,  "ptype" => $ptype,   "city" => $ccount_json, "listing_date" => $listing_date];
+
+			$where = "where id=" . $prop_id . " and add_user_id=" . $user_id . "";
+			$h = new Estate();
+			$check = $h->restateupdateData($field, $table, $where);
+		}
+
+		$returnArr    = array(
+			"ResponseCode" => "200",
+			"Result" => "true",
+			"ResponseMsg" => "Property Update Successfully"
+		);
+	} else {
+		$returnArr = array(
+			"ResponseCode" => "401",
+			"Result" => "false",
+			"ResponseMsg" => "Edit Your Own Property!"
+		);
+	}
 }
 
 echo json_encode($returnArr);
-?>

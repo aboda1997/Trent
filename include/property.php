@@ -723,10 +723,6 @@ if (isset($_POST["type"])) {
         }
     } elseif ($_POST["type"] == "add_property") {
         $status = $_POST["status"];
-        $title = $rstate->real_escape_string($_POST["title"]);
-        $address = $rstate->real_escape_string($_POST["address"]);
-        $description = $rstate->real_escape_string($_POST["description"]);
-        $ccount = $rstate->real_escape_string($_POST["ccount"]);
         $plimit = $_POST['plimit'];
         $country_id = $_POST['country_id'];
         $pbuysell = $_POST['pbuysell'];
@@ -750,10 +746,36 @@ if (isset($_POST["type"])) {
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
 
+        $title_en = $rstate->real_escape_string($data["title_en"]);
+		$address_en = $rstate->real_escape_string($data["address_en"]);
+		$description_en = $rstate->real_escape_string($data["description_en"]);
+		$ccount_en = $rstate->real_escape_string($data["ccount_en"]);
+		
+        $title_ar = $rstate->real_escape_string($data["title_ar"]);
+		$address_ar = $rstate->real_escape_string($data["address_ar"]);
+		$description_ar = $rstate->real_escape_string($data["description_ar"]);
+		$ccount_ar = $rstate->real_escape_string($data["ccount_ar"]);
+		$ccount_json = json_encode([
+            "en" => $ccount_en,
+            "ar" => $ccount_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$address_json = json_encode([
+            "en" => $address_en,
+            "ar" => $address_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+		
         move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
         $table = "tbl_property";
         $field_values = ["image", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft", "rate", "ptype", "latitude", "longtitude", "mobile", "city", "listing_date", "add_user_id", "pbuysell", "country_id", "plimit"];
-        $data_values = ["$url", "$status", "$title", "$price", "$address", "$facility", "$description", "$beds", "$bathroom", "$sqft", "$rate", "$ptype", "$latitude", "$longtitude", "$mobile", "$ccount", "$listing_date", "$user_id", "$pbuysell", "$country_id", "$plimit"];
+        $data_values = ["$url", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft", "$rate", "$ptype", "$latitude", "$longtitude", "$mobile", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$country_id", "$plimit"];
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -772,11 +794,7 @@ if (isset($_POST["type"])) {
         $plimit = $_POST['plimit'];
         $country_id = $_POST['country_id'];
         $pbuysell = $_POST['pbuysell'];
-        $title = $rstate->real_escape_string($_POST["title"]);
-        $address = $rstate->real_escape_string($_POST["address"]);
-        $description = $rstate->real_escape_string($_POST["description"]);
-        $ccount = $rstate->real_escape_string($_POST["ccount"]);
-        $facility = implode(',', $_POST['facility']);
+       $facility = implode(',', $_POST['facility']);
         $ptype = $_POST['ptype'];
         $beds = $_POST['beds'];
         $bathroom = $_POST['bathroom'];
@@ -795,6 +813,32 @@ if (isset($_POST["type"])) {
         $newfilename = round(microtime(true)) . "." . end($temp);
         $target_file = $target_dir . basename($newfilename);
         $url = $url . basename($newfilename);
+        
+        $title_en = $rstate->real_escape_string($data["title_en"]);
+		$address_en = $rstate->real_escape_string($data["address_en"]);
+		$description_en = $rstate->real_escape_string($data["description_en"]);
+		$ccount_en = $rstate->real_escape_string($data["city_en"]);
+        $title_ar = $rstate->real_escape_string($data["title_ar"]);
+		$address_ar = $rstate->real_escape_string($data["address_ar"]);
+		$description_ar = $rstate->real_escape_string($data["description_ar"]);
+		$ccount_ar = $rstate->real_escape_string($data["city_ar"]);
+		$ccount_json = json_encode([
+            "en" => $ccount_en,
+            "ar" => $ccount_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$description_json = json_encode([
+            "en" => $description_en,
+            "ar" => $description_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$address_json = json_encode([
+            "en" => $address_en,
+            "ar" => $address_ar
+        ], JSON_UNESCAPED_UNICODE);
+		$title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+		
         if ($_FILES["cat_img"]["name"] != "") {
 
             move_uploaded_file(
@@ -802,7 +846,7 @@ if (isset($_POST["type"])) {
                 $target_file
             );
             $table = "tbl_property";
-            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "image" => $url, "title" => $title, "price" => $price, "address" => $address, "facility" => $facility, "description" => $description, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount, "listing_date" => $listing_date];
+            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "image" => $url, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount_json, "listing_date" => $listing_date];
             $where = "where id=" . $id . " and add_user_id=" . $user_id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -818,7 +862,7 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_property";
-            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "title" => $title, "price" => $price, "address" => $address, "facility" => $facility, "description" => $description, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount, "listing_date" => $listing_date];
+            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount_json, "listing_date" => $listing_date];
             $where = "where id=" . $id . " and add_user_id=" . $user_id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
