@@ -16,6 +16,19 @@ function validateIdAndDatabaseExistance($id, $table)
     return false;
 }
 
+function checkTableStatus($id, $table)
+{
+    // Check if it's a number and a positive integer
+    if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
+        
+    // Build and execute the query
+    $query = "SELECT status FROM ". $table ." WHERE id= ". $id ." ";
+    $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
+    return $result['status'] == 1 ;
+    }
+    return false;
+}
+
 function validateFacilityIds($idString)
 {
     // Convert comma-separated string to an array and sanitize

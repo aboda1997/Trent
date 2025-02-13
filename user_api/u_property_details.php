@@ -20,6 +20,13 @@ if ($pro_id == '' or $uid == '') {
 		"Result" => "false",
 		"ResponseMsg" => "this property not exist!"
 	);
+}
+else if (checkTableStatus($pro_id , 'tbl_property') === false){
+	$returnArr = array(
+		"ResponseCode" => "401",
+		"Result" => "false",
+		"ResponseMsg" => "Not allow to show this property"
+	);
 }else {
 	$fp = array();
 	$f = array();
