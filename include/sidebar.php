@@ -1,5 +1,7 @@
 <?php
+
 $lang = load_language();
+
 
 if (isset($_SESSION['restatename'])) {
 } else {

@@ -16,7 +16,7 @@ function load_language() {
 function load_specific_langauage($language_code){
     $filePath = dirname( dirname(__FILE__) ) . "/languages/{$language_code}.php";
 
-    return file_exists($filePath) ? include $filePath : dirname( dirname(__FILE__) ) . '/languages/en.php';
+    return file_exists($filePath) ? include $filePath : include dirname( dirname(__FILE__) ) . '/languages/en.php';
 
 }
 
