@@ -1,7 +1,7 @@
 <?php
 include 'include/reconfig.php';
 include 'include/estate.php';
-include 'load_language.php';
+include_once 'include/load_language.php';
 $lang_code = load_language_code();
 ?>
 <!DOCTYPE html>
