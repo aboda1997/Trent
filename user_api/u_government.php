@@ -10,12 +10,12 @@ $lang_code = $_GET['lang'];
  }
 $pol = array();
 $c = array();
-$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) as title , id from tbl_category where status=1");
+$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_government ");
 while($row = $sel->fetch_assoc())
 {
    
 		$pol['id'] = $row['id'];
-		$pol['title'] = $row['title'];
+		$pol['name'] = $row['name'];
 		
 		
 		
@@ -26,11 +26,11 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("typelist"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Property Type Not Founded!");
+	$returnArr = array("governmentlist"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"government Not Founded!");
 }
 else 
 {
-$returnArr = array("typelist"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Property Type List Founded!");
+$returnArr = array("governmentlist"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Government List Founded!");
 }
 echo json_encode($returnArr);
 ?>
