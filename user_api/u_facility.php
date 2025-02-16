@@ -3,9 +3,14 @@ require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
+$lang_code = 'en';
+ 
+ if($_GET['lang']){
+$lang_code = $_GET['lang'];
+ }
 $pol = array();
 $c = array();
-$sel = $rstate->query("select title,id,img from tbl_facility where status=1");
+$sel = $rstate->query("SELECT id, img, JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) AS title FROM tbl_facility WHERE status=1");
 while($row = $sel->fetch_assoc())
 {
    
