@@ -295,24 +295,7 @@ require 'include/main_head.php';
                 </div>
               </div>
               
-              <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card sale-chart">
-                  <div class="card-body">
-                    <div class="d-flex">    
-                      <div class="flex-shrink-0">                
-                        <div class="sale-detail">
-                          <div class="icon"><i data-feather="book"></i></div>
-                          <div class="sale-content">
-                            <h3>Total Page</h3>
-                            <p><?php echo $rstate->query("select * from tbl_page")->num_rows;?></p>
-                          </div>
-                        </div>
-                      </div>
-                    
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
               
               <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card sale-chart">
