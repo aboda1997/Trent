@@ -88,7 +88,6 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $ulist_per)) {
 											$stmt = $rstate->query("SELECT * FROM `tbl_user`");
 											$i = 0;
 											while ($row = $stmt->fetch_assoc()) {
-												$pname = $rstate->query("select title from tbl_package where id=" . $row['pack_id'] . "")->fetch_assoc();
 												$i = $i + 1;
 											?>
 												<tr>

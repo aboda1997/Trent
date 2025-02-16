@@ -183,20 +183,7 @@ if (isset($_SESSION['restatename'])) {
             </ul>
           </li>
 
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                  <g>
-                    <path d="M6.91699 14.854L9.90999 10.965L13.324 13.645L16.253 9.86499" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6671 2.3501C20.7291 2.3501 21.5891 3.2101 21.5891 4.2721C21.5891 5.3331 20.7291 6.1941 19.6671 6.1941C18.6051 6.1941 17.7451 5.3331 17.7451 4.2721C17.7451 3.2101 18.6051 2.3501 19.6671 2.3501Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M20.7555 9.26898C20.8885 10.164 20.9495 11.172 20.9495 12.303C20.9495 19.241 18.6375 21.553 11.6995 21.553C4.76246 21.553 2.44946 19.241 2.44946 12.303C2.44946 5.36598 4.76246 3.05298 11.6995 3.05298C12.8095 3.05298 13.8005 3.11198 14.6825 3.23998" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </g>
-                </g>
-              </svg><span>Package </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_package.php">Add Package</a></li>
-              <li><a href="list_package.php">List Package</a></li>
-            </ul>
-          </li>
+          
 
 
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -222,21 +209,7 @@ if (isset($_SESSION['restatename'])) {
 
             </ul>
           </li>
-          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                  <g>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1601 8.3L14.4901 2.9C13.7601 2.8 12.9401 2.75 12.0401 2.75C5.75015 2.75 3.65015 5.07 3.65015 12C3.65015 18.94 5.75015 21.25 12.0401 21.25C18.3401 21.25 20.4401 18.94 20.4401 12C20.4401 10.58 20.3501 9.35 20.1601 8.3Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M13.9341 2.83276V5.49376C13.9341 7.35176 15.4401 8.85676 17.2981 8.85676H20.2491" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M14.3125 12.9807H9.41248" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M11.8633 15.4308V10.5308" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </g>
-                </g>
-              </svg><span>Page</span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_page.php">Add Page</a></li>
-              <li><a href="list_page.php">List Page</a></li>
-            </ul>
-          </li>
+          
 
           <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
