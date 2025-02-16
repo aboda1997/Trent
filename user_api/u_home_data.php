@@ -4,7 +4,7 @@ require dirname(dirname(__FILE__)) . '/include/estate.php';
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
-if ($data['uid'] == '' or $data['country_id'] == '') {
+if ($data['uid'] == '') {
     $returnArr = array(
         "ResponseCode" => "401",
         "Result" => "false",
@@ -41,7 +41,6 @@ $h = new Estate();
 	  $check = $h->restateupdateData_single($field,$table,$where);
 	}
 	}
-	$country_id = $data['country_id'];
 	$f = array();
 	$fp = array();
 	$vop =array();
@@ -70,7 +69,7 @@ $h = new Estate();
 }
 else 
 {
-	$prop = $rstate->query("select * from tbl_property where country_id=".$country_id." and status=1 and is_sell=0 and add_user_id!=".$uid." order by id desc limit 5");
+	$prop = $rstate->query("select * from tbl_property where  status=1 and is_sell=0 and add_user_id!=".$uid." order by id desc limit 5");
 }
 	while($row = $prop->fetch_assoc())
 	{
@@ -103,11 +102,11 @@ else
 	
 	if($uid == 0)
 {
-	$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0  and country_id=".$country_id."");
+	$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0  ");
 }
 else 
 {
-		$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0  and country_id=".$country_id." and add_user_id!=".$uid."");
+		$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0   and add_user_id!=".$uid."");
 }
 	
 	while($rows = $props->fetch_assoc())

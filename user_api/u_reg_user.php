@@ -66,7 +66,8 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                     "ccode",
                     "refercode",
                     "wallet",
-                    "parentcode"
+                    "parentcode",
+                    "is_owner"
                 );
                 $data_values  = array(
                     "$name",
@@ -77,7 +78,8 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                     "$ccode",
                     "$prentcode",
                     "$fin",
-                    "$refercode"
+                    "$refercode",
+                    1
                 );
                 
                 $h     = new Estate();
@@ -128,7 +130,8 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                 "reg_date",
                 "password",
                 "ccode",
-                "refercode"
+                "refercode",
+                "is_owner"
             );
             $data_values  = array(
                 "$name",
@@ -137,7 +140,8 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                 "$timestamp",
                 "$password",
                 "$ccode",
-                "$prentcode"
+                "$prentcode",
+                1
             );
             $h            = new Estate();
             $check        = $h->restateinsertdata_Api_Id($field_values, $data_values, $table);
