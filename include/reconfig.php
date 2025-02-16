@@ -1,4 +1,5 @@
 <?php
+require_once  dirname( dirname(__FILE__) ).'/include/load_language.php';
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }

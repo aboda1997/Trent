@@ -130,6 +130,9 @@ return [
     'facility_status' => 'please enter Facility status',
     'facility_name' => 'please enter the Facility name ',
     'facility_img' => 'Please upload a Facility Image.',
+    'Property_Manager' => 'Property Manager', 
+    'owner' => 'owner'
+    
 
 
 

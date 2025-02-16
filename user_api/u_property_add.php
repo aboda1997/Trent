@@ -4,7 +4,6 @@ require dirname(dirname(__FILE__)) . '/include/estate.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
-
 $status = 0;
 $facility = $data['facility'];
 $ptype = $data['ptype'];
@@ -102,6 +101,7 @@ if ($user_id == '' or $government =='' or $video == '' or $security_deposit == '
 	}  
 
 else {
+	
 
 	$img = $data['img'];
 	$img = str_replace('data:image/png;base64,', '', $img);
@@ -118,6 +118,12 @@ else {
 
 	$h = new Estate();
 	$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+	$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
+
+	if($check_owner  >= 6){
+		$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
+
+	}
 	$returnArr    = array(
 		"ResponseCode" => "200",
 		"Result" => "true",

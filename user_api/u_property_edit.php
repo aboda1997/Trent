@@ -136,7 +136,12 @@ else {
 			$h = new Estate();
 			$check = $h->restateupdateData($field, $table, $where);
 		}
+		$check_owner_ = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
 
+		if($check_owner_  >= 6){
+			$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
+	
+		}
 		$returnArr    = array(
 			"ResponseCode" => "200",
 			"Result" => "true",

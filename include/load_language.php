@@ -9,14 +9,14 @@ function load_language() {
     }
     $language_code = $_SESSION['lang'] ?? 'en'; 
 
-    $filePath = __DIR__ . "/languages/{$language_code}.php";
-    return file_exists($filePath) ? include $filePath : include __DIR__ . '/languages/en.php';
+    $filePath = dirname( dirname(__FILE__) ). "/languages/{$language_code}.php";
+    return file_exists($filePath) ? include $filePath : include dirname( dirname(__FILE__) ) . '/languages/en.php';
 }
 
 function load_specific_langauage($language_code){
-    $filePath = __DIR__ . "/languages/{$language_code}.php";
+    $filePath = dirname( dirname(__FILE__) ) . "/languages/{$language_code}.php";
 
-    return file_exists($filePath) ? include $filePath : include __DIR__ . '/languages/en.php';
+    return file_exists($filePath) ? include $filePath : dirname( dirname(__FILE__) ) . '/languages/en.php';
 
 }
 

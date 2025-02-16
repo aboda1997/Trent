@@ -126,6 +126,9 @@ return [
     'facility_status'   => 'يرجى إدخال حالة المرفق',
     'facility_name' => 'يرجى إدخال سؤال المرفق',
     'facility_img'      => 'يرجى تحميل صورة المرفق.',
+   'Property_Manager' => 'مدير العقار',
+'owner' => 'المالك',
+
 
 
 ];
