@@ -87,18 +87,25 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
 		{
 												?>
 												<th>
-                        <?= $lang['Action'] ?></th>
-
+                          
                         </th>
 												<?php } ?>
                           </tr>
                         </thead>
                         <tbody>
                            <?php 
-										$city = $rstate->query("SELECT tbl_property.*,(SELECT GROUP_CONCAT(`title`) from `tbl_facility` WHERE find_in_set(tbl_facility.id,tbl_property.facility)) as facility_select FROM tbl_property");
-										$i=0;
+$city = $rstate->query("
+SELECT tbl_property.*,
+       (SELECT GROUP_CONCAT(JSON_UNQUOTE(JSON_EXTRACT(`title`, '$.$lang_code')))
+        FROM `tbl_facility`
+        WHERE FIND_IN_SET(tbl_facility.id, tbl_property.facility)
+       ) AS facility_select
+FROM tbl_property
+");										$i=0;
 										while($row = $city->fetch_assoc())
 										{
+                      $title = json_decode($row['title'], true);
+
 											$i = $i + 1;
 											?>
 											<tr>
@@ -107,11 +114,14 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
                                                 </td>
                                                 
 												<td class="align-middle">
-                                                   <?php echo $row['title'];?>
+                                                   <?php echo $title[$lang_code];?>
                                                 </td>
 												
 												<td class="align-middle">
-                                                   <?php $type = $rstate->query("select * from tbl_category where id=".$row['ptype']."")->fetch_assoc(); echo $type['title'];?>
+                                                   <?php $type = $rstate->query("select * from tbl_category where id=".$row['ptype']."")->fetch_assoc();
+                                                                         $type = json_decode($type['title'], true);
+
+                                                   echo $type[$lang_code];?>
                                                 </td>
 												
                                                 <td class="align-middle">
