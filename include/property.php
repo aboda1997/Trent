@@ -567,7 +567,7 @@ if (isset($_POST["type"])) {
     } elseif ($_POST["type"] == "add_property") {
         $status = $_POST["status"];
         $plimit = $_POST['plimit'];
-        $pbuysell = $_POST['pbuysell'];
+        $pbuysell = 1;
         $facility = implode(',', $_POST['facility']);
         $ptype = $_POST['ptype'];
         $beds = $_POST['beds'];
