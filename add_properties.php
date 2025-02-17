@@ -502,31 +502,6 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="prop_sell">
-															<?= $lang_en['Property_Sell_Or_Rent'] ?>
-
-															?</label>
-														<select name="pbuysell" id="pbuysell" class="form-control" required>
-															<option value="" selected disabled>
-																<?= $lang_en['Choose'] ?>
-															</option>
-															<option value="1">
-																<?= $lang_en['Rent'] ?>
-
-															</option>
-															<option value="2">
-																<?= $lang_en['Buy'] ?>
-
-															</option>
-														</select>
-														<div class="invalid-feedback" id="prop_sell_feedback" style="display: none;">
-															<?= $lang_en['prop_sell'] ?>
-
-														</div>
-													</div>
-												</div>
 
 												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
@@ -829,7 +804,6 @@ if (isset($_GET['id'])) {
 		const facility = document.querySelector('select[name="facility[]"]').value;
 		const ptype = document.querySelector('select[name="ptype"]').value;
 		const pgov = document.querySelector('select[name="pgov"]').value;
-		const pbuysell = document.querySelector('select[name="pbuysell"]').value;
 		const propSecurity = document.querySelector('input[name="prop_security"]').value;
 		const plimit = document.querySelector('input[name="plimit"]').value;
 		const mapurl = document.querySelector('input[name="mapurl"]').value;
@@ -931,10 +905,7 @@ if (isset($_GET['id'])) {
 			document.getElementById('government_feedback').style.display = 'block';
 			isValid = false;
 		}
-		if (!pbuysell) {
-			document.getElementById('prop_sell_feedback').style.display = 'block';
-			isValid = false;
-		}
+	
 		if (!propSecurity) {
 			document.getElementById('security_deposit_feedback').style.display = 'block';
 			isValid = false;
@@ -1020,13 +991,11 @@ if (isset($_GET['id'])) {
 		document.getElementById('bathroom_feedback').textContent = langData.prop_barhroom;
 		document.getElementById('beds_feedback').textContent = langData.prop_beds;
 		document.getElementById('prop_price_feedback').textContent = langData.prop_price;
-		document.getElementById('prop_sell_feedback').textContent = langData.prop_sell;
 		
 		document.getElementById('prop_image').textContent = langData.Property_Image;
 		document.getElementById('prop_video').textContent = langData.Property_video;
 		document.getElementById('property-status').textContent = langData.Property_Status;
 		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
-		document.getElementById('prop_sell').textContent = langData.Property_Sell_Or_Rent;
 		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
 		document.getElementById('prop_type').textContent = langData.Select_Property_Type;
 		document.getElementById('prop_security').textContent = langData.security_deposit;
@@ -1061,10 +1030,6 @@ if (isset($_GET['id'])) {
 		governmentSelect.querySelector('option[value=""]').textContent = langData.Select_Government;
 
 		
-		const prop_sell = document.getElementById('pbuysell');
-		prop_sell.querySelector('option[value=""]').textContent = langData.Choose;
-		prop_sell.querySelector('option[value="1"]').textContent = langData.Rent;
-		prop_sell.querySelector('option[value="2"]').textContent = langData.Buy;
 
 	}
 </script>
