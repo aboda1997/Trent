@@ -5,9 +5,12 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 header('Content-type: text/json');
 
-$input = file_get_contents('php://input');
-$input = str_replace("'", '"', $input);
-$data = json_decode($input, true);
+$rawInput = file_get_contents('php://input');
+
+$rawInput = preg_replace('/^\xEF\xBB\xBF/', '', $rawInput);
+$rawInput = trim($rawInput);
+$rawInput = preg_replace('/\x{00A0}/u', ' ', $rawInput);
+$data = json_decode($rawInput, true);
 
 
 
