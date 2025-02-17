@@ -1,495 +1,1076 @@
-<?php 
+<?php
 require 'include/main_head.php';
-if(isset($_GET['id']))
-{	
+
+$coupon_per = ['Create', 'Update', 'Read', 'Delete'];
+$lang_ar = load_specific_langauage('ar');
+$lang_code = load_language_code()["language_code"];
+
+$lang_en = load_specific_langauage('en');
+if (isset($_GET['id'])) {
 	if ($_SESSION['stype'] == 'Staff' && !in_array('Update', $property_per)) {
-    
 
-    
-    header('HTTP/1.1 401 Unauthorized');
-    ?>
-    <style>
-        .loader-wrapper {
-            display: none;
-        }
-    </style>
-    <?php
-    require 'auth.php';
-    exit();
-}
-}
-else 
-{
-if ($_SESSION['stype'] == 'Staff' && !in_array('Write', $property_per)) {
-    
 
-    
-    header('HTTP/1.1 401 Unauthorized');
-    ?>
-    <style>
-        .loader-wrapper {
-            display: none;
-        }
-    </style>
-    <?php
-    require 'auth.php';
-    exit();
-}	
+
+		header('HTTP/1.1 401 Unauthorized');
+?>
+		<style>
+			.loader-wrapper {
+				display: none;
+			}
+		</style>
+	<?php
+		require 'auth.php';
+		exit();
+	}
+} else {
+	if ($_SESSION['stype'] == 'Staff' && !in_array('Write', $property_per)) {
+
+
+
+		header('HTTP/1.1 401 Unauthorized');
+	?>
+		<style>
+			.loader-wrapper {
+				display: none;
+			}
+		</style>
+<?php
+		require 'auth.php';
+		exit();
+	}
 }
 ?>
-    <!-- Loader ends-->
-    <!-- page-wrapper Start-->
-    <div class="page-wrapper compact-wrapper" id="pageWrapper">
-      <!-- Page Header Start-->
-      <?php 
-	  require 'include/inside_top.php';
-	  ?>
-      <!-- Page Header Ends                              -->
-      <!-- Page Body Start-->
-      <div class="page-body-wrapper">
-        <!-- Page Sidebar Start-->
-        <?php 
+<!-- Loader ends-->
+<!-- page-wrapper Start-->
+<div class="page-wrapper compact-wrapper" id="pageWrapper">
+	<!-- Page Header Start-->
+	<?php
+	require 'include/inside_top.php';
+	?>
+	<!-- Page Header Ends                              -->
+	<!-- Page Body Start-->
+	<div class="page-body-wrapper">
+		<!-- Page Sidebar Start-->
+		<?php
 		require 'include/sidebar.php';
 		?>
-        <!-- Page Sidebar Ends-->
-        <div class="page-body">
-          <div class="container-fluid">
-            <div class="page-title">
-              <div class="row">
-                <div class="col-6">
-                  <h3>
-                     Property Management</h3>
-                </div>
-                <div class="col-6">
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Container-fluid starts-->
-          <div class="container-fluid">
-            <div class="row">      
-               <div class="col-sm-12">
-                <div class="card">
-                 <?php 
-				 if(isset($_GET['id']))
-				 {
-					 $data = $rstate->query("select * from tbl_property where id=".$_GET['id']."")->fetch_assoc();
-					 ?>
-					 <form method="post" enctype="multipart/form-data">
-                                    
-                                    <div class="card-body">
-                                        
-										<div class="row">
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Title</label>
-                                            <input type="text" class="form-control" placeholder="Enter Property Title" name="title" value="<?php echo $data['title'];?>" required="">
-                                        </div>
-										</div>
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-                                        <div class="form-group mb-3">
-                                            <label>Property Image</label>
-                                            <input type="file" class="form-control" name="cat_img" >
-											<input type="hidden" name="type" value="edit_property"/>
-											<input type="hidden" name="id" value="<?php echo $_GET['id'];?>"/>
-											<br>
-									<img src="<?php echo $data['image'];?>" width="100" height="100"/>
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Sell Or Rent ?</label>
-											 <select name="pbuysell" id="pbuysell" class="form-control" required>
-											<option value="" selected disabled>Select Option</option>
-                                           <option value="1" <?php if($data['pbuysell'] == 1){echo 'selected';}?>>Rent</option>
-									<option value="2"  <?php if($data['pbuysell'] == 2){echo 'selected';}?>>Buy</option>
-									</select>
-                                        </div>
-										</div>
-										
-										
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label id="plable"><?php if($data['pbuysell'] == 1){ echo 'Property Price Per Night';}else { echo 'Property Sell Price';}?></label>
-                                            <input type="text" class="form-control numberonly" id="price" placeholder="<?php if($data['pbuysell'] == 1){ echo 'Enter Price Per Night';}else { echo 'Enter Property Sell Price';}?>" name="price" value="<?php echo $data['price'];?>" required="">
-                                        </div>
-										</div>
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Country ?</label>
-											 <select name="country_id" class="form-control" required>
-											<option value="">Select Country</option>
-                                          <?php 
-$zones = $rstate->query("select * from tbl_country");
-while($rows = $zones->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $rows['id'];?>" <?php if($data['country_id'] == $rows['id']){echo 'selected';}?>><?php echo $rows['title'];?></option>
-	<?php 
-}
-?>
-									</select>
-                                        </div>
-										</div>
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										 <div class="form-group mb-3">
-                                            <label>Property Status</label>
-                                            <select name="status" class="form-control" required>
-											<option value="">Select Status</option>
-											<option value="1" <?php if($data['status'] == 1){echo 'selected';}?>>Publish</option>
-									<option value="0" <?php if($data['status'] == 0){echo 'selected';}?>>Unpublish</option>
-											</select>
-                                        </div>
-                                        </div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label id="limitlable">Property Total Person Allowed?</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Person Limit" id="plimit" name="plimit" value="<?php echo $data['plimit'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Full Address</label>
-                                            <input type="text" class="form-control" placeholder="Enter Full Address" name="address" value="<?php echo $data['address'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Select Property Facility</label>
-                                            <select name="facility[]" id="product" class="select2-multi-select form-control" multiple required>
-											<option value=""> Select Property Facility</option>
-									  <?php 
-$zone = $rstate->query("select * from tbl_facility");
-$people = explode(',',$data['facility']);
-while($row = $zone->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $row['id'];?>" <?php if(in_array($row['id'], $people)){echo 'selected';}?>><?php echo $row['title'];?></option>
-	<?php 
-}
-?>
-									   </select>
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-								<div class="form-group mb-3">
-									<label for="cname">Property Description </label>
-									<textarea class="form-control" rows="10" name="description"  style="resize: none;"><?php echo $data['description'];?></textarea>
+		<!-- Page Sidebar Ends-->
+		<div class="page-body">
+			<div class="container-fluid">
+				<div class="page-title">
+					<div class="row">
+						<div class="col-6">
+							<h3>
+								Property Management</h3>
+						</div>
+						<div class="col-6">
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Container-fluid starts-->
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="card">
+							<div class="card-header card-header-tabs-line d-flex justify-content-between align-items-center">
+								<div></div>
+								<div class="card-toolbar">
+									<!-- Add any toolbar buttons or icons here -->
+									<ul class="nav nav-tabs nav-bold nav-tabs-line">
+										<li class="nav-item">
+											<a class="nav-link " data-toggle="tab" href="#ar" onclick="changeLanguage('ar')">العربية</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link active" data-toggle="tab" href="#en" onclick="changeLanguage('en')">English</a>
+										</li>
+									</ul>
 								</div>
-							</div>	
-							<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
-							<div class="row">
-							<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Total Beds</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Beds Count" name="beds"  value="<?php echo $data['beds'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Total Bathroom</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Bathroom Count" name="bathroom"  value="<?php echo $data['bathroom'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property SQFT.</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Property SQFT." name="sqft"  value="<?php echo $data['sqrft'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Rating</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Property Rating" name="rate"  value="<?php echo $data['rate'];?>" required="">
-                                        </div>
-										</div>
-										
-										
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Select Property Type</label>
-                                            <select name="ptype" id="product" class=" form-control" required>
-											<option value=""> Select Property Type</option>
-									  <?php 
-$zone = $rstate->query("select * from tbl_category");
-while($row = $zone->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $row['id'];?>" <?php if($data['ptype'] == $row['id']){echo 'selected';}?>><?php echo $row['title'];?></option>
-	<?php 
-}
-?>
-									   </select>
-                                        </div>
-										</div>
-										
-										
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Latitude</label>
-                                            <input type="text" class="form-control" placeholder="Enter Latitude" name="latitude"  value="<?php echo $data['latitude'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Longtitude</label>
-                                            <input type="text" class="form-control" placeholder="Enter Longtitude" name="longtitude" value="<?php echo $data['longtitude'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Mobile Number</label>
-                                            <input type="text" class="form-control mobile" placeholder="Enter Mobile" name="mobile" value="<?php echo $data['mobile'];?>" required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>City,Country</label>
-                                            <input type="text" class="form-control" placeholder="Like New york,Us" name="ccount" value="<?php echo $data['city'];?>" required="">
-                                        </div>
-										</div>
-										
-										</div>
-										</div>
-										</div>
-                                    </div>
-                                    <div class="card-footer text-left">
-                                        <button  class="btn btn-primary">Edit  Property</button>
-                                    </div>
-                                </form>
-					 <?php 
-				 }
-				 else 
-				 {
-				 ?>
-                  <form method="post" enctype="multipart/form-data">
-                                    
-                                    <div class="card-body">
-                                        
+							</div>
+							<?php
+							if (isset($_GET['id'])) {
+								$data = $rstate->query("select * from tbl_property where id=" . $_GET['id'] . "")->fetch_assoc();
+							?>
+								<form method="post" enctype="multipart/form-data">
+
+									<div class="card-body">
+
 										<div class="row">
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Title</label>
-                                            <input type="text" class="form-control" placeholder="Enter Property Title" name="title"  required="">
-                                        </div>
+											<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label>Property Title</label>
+													<input type="text" class="form-control" placeholder="Enter Property Title" name="title" value="<?php echo $data['title']; ?>" required="">
+												</div>
+											</div>
+											<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label>Property Image</label>
+													<input type="file" class="form-control" name="cat_img">
+													<input type="hidden" name="type" value="edit_property" />
+													<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+													<br>
+													<img src="<?php echo $data['image']; ?>" width="100" height="100" />
+												</div>
+											</div>
+
+
+
+
+											<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label id="plable"><?php if ($data['pbuysell'] == 1) {
+																			echo 'Property Price Per Night';
+																		} else {
+																			echo 'Property Sell Price';
+																		} ?></label>
+													<input type="text" class="form-control numberonly" id="price" placeholder="<?php if ($data['pbuysell'] == 1) {
+																																	echo 'Enter Price Per Night';
+																																} else {
+																																	echo 'Enter Property Sell Price';
+																																} ?>" name="price" value="<?php echo $data['price']; ?>" required="">
+												</div>
+											</div>
+
+											<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label></label>
+													<select name="status" class="form-control" required>
+														<option value="">Select Status</option>
+														<option value="1" <?php if ($data['status'] == 1) {
+																				echo 'selected';
+																			} ?>>Publish</option>
+														<option value="0" <?php if ($data['status'] == 0) {
+																				echo 'selected';
+																			} ?>>Unpublish</option>
+													</select>
+												</div>
+											</div>
+
+											<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label id="limitlable">Property Total Person Allowed?</label>
+													<input type="text" class="form-control numberonly" placeholder="Enter Person Limit" id="plimit" name="plimit" value="<?php echo $data['plimit']; ?>" required="">
+												</div>
+											</div>
+
+											<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label>Full Address</label>
+													<input type="text" class="form-control" placeholder="Enter Full Address" name="address" value="<?php echo $data['address']; ?>" required="">
+												</div>
+											</div>
+
+											<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label>Select Property Facility</label>
+													<select name="facility[]" id="product" class="select2-multi-select form-control" multiple required>
+														<option value=""> Select Property Facility</option>
+														<?php
+														$zone = $rstate->query("select * from tbl_facility");
+														$people = explode(',', $data['facility']);
+														while ($row = $zone->fetch_assoc()) {
+														?>
+															<option value="<?php echo $row['id']; ?>" <?php if (in_array($row['id'], $people)) {
+																											echo 'selected';
+																										} ?>><?php echo $row['title']; ?></option>
+														<?php
+														}
+														?>
+													</select>
+												</div>
+											</div>
+
+											<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+												<div class="form-group mb-3">
+													<label for="cname">Property Description </label>
+													<textarea class="form-control" rows="10" name="description" style="resize: none;"><?php echo $data['description']; ?></textarea>
+												</div>
+											</div>
+											<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
+												<div class="row">
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>Total Beds</label>
+															<input type="text" class="form-control numberonly" placeholder="Enter Beds Count" name="beds" value="<?php echo $data['beds']; ?>" required="">
+														</div>
+													</div>
+
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>Total Bathroom</label>
+															<input type="text" class="form-control numberonly" placeholder="Enter Bathroom Count" name="bathroom" value="<?php echo $data['bathroom']; ?>" required="">
+														</div>
+													</div>
+
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>Property SQFT.</label>
+															<input type="text" class="form-control numberonly" placeholder="Enter Property SQFT." name="sqft" value="<?php echo $data['sqrft']; ?>" required="">
+														</div>
+													</div>
+
+
+
+
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>Select Property Type</label>
+															<select name="ptype" id="product" class=" form-control" required>
+																<option value=""> Select Property Type</option>
+																<?php
+																$zone = $rstate->query("select * from tbl_category");
+																while ($row = $zone->fetch_assoc()) {
+																?>
+																	<option value="<?php echo $row['id']; ?>" <?php if ($data['ptype'] == $row['id']) {
+																													echo 'selected';
+																												} ?>><?php echo $row['title']; ?></option>
+																<?php
+																}
+																?>
+															</select>
+														</div>
+													</div>
+
+
+
+
+
+
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>City</label>
+															<input type="text" class="form-control" placeholder="Like New york,Us" name="ccount" value="<?php echo $data['city']; ?>" required="">
+														</div>
+													</div>
+
+												</div>
+											</div>
 										</div>
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-                                        <div class="form-group mb-3">
-                                            <label>Property Image</label>
-                                            <input type="file" class="form-control" name="cat_img"  required="">
-											<input type="hidden" name="type" value="add_property"/>
-                                        </div>
+									</div>
+									<div class="card-footer text-left">
+										<button onclick="return validateForm()" type="submit" class="btn btn-primary">
+											<?= $lang_en['Edit_Property'] ?>
+
+										</button>
+									</div>
+								</form>
+							<?php
+							} else {
+							?>
+								<form method="post" enctype="multipart/form-data">
+
+									<div class="card-body">
+										<div id="alert-container" class="mb-3" style="display: none;">
+											<div class="alert alert-danger" id="alert-message"></div>
 										</div>
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Sell Or Rent ?</label>
-											 <select name="pbuysell" id="pbuysell" class="form-control" required>
-											<option value="" selected disabled>Select Option</option>
-                                           <option value="1">Rent</option>
-									<option value="2" >Buy</option>
-									</select>
-                                        </div>
+										<div class="tab-content">
+											<!-- English Tab -->
+											<div class="tab-pane fade show active" id="en">
+												<div class="row">
+
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>
+																<?= $lang_en['Property_Title'] ?>
+
+															</label>
+															<input type="text" class="form-control" name="title_en" required="">
+															<div class="invalid-feedback" id="title_en_feedback" style="display: none;">
+																<?= $lang_en['prop_title'] ?>
+
+															</div>
+														</div>
+													</div>
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>
+																<?= $lang_en['Full_Address'] ?>
+
+															</label>
+															<input type="text" class="form-control" name="address_en" required="">
+															<div class="invalid-feedback" id="address_en_feedback" style="display: none;">
+																<?= $lang_en['prop_address'] ?>
+
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label for="cname">
+																<?= $lang_en['Property_Description'] ?>
+
+															</label>
+															<textarea class="form-control" rows="10" name="description_en" style="resize: none;"></textarea>
+														</div>
+													</div>
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label for="cname">
+																<?= $lang_en['Guest_Rules'] ?>
+
+															</label>
+															<textarea class="form-control" rows="10" name="guest_rules_en" required="" style="resize: none;"></textarea>
+															<div class="invalid-feedback" id="prop_guest_rules_en_feedback" style="display: none;">
+																<?= $lang_en['prop_guest_rules'] ?>
+
+															</div>
+														</div>
+													</div>
+
+
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>
+																<?= $lang_en['Compound_Name'] ?>
+
+															</label>
+															<input type="text" class="form-control" name="compound_name_en" required="">
+															<div class="invalid-feedback" id="prop_compound_name_en_feedback" style="display: none;">
+																<?= $lang_en['prop_compound_name'] ?>
+
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>
+																<?= $lang_en['Floor'] ?>
+															</label>
+															<input type="text" class="form-control" name="floor_en" required="">
+															<div class="invalid-feedback" id="floor_en_feedback" style="display: none;">
+																<?= $lang_en['prop_floor'] ?>
+
+															</div>
+														</div>
+													</div>
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label>
+																<?= $lang_en['City'] ?>
+
+															</label>
+
+															<input type="text" class="form-control" name="city_en" required="">
+															<div class="invalid-feedback" id="city_en_feedback" style="display: none;">
+																<?= $lang_en['prop_city'] ?>
+
+															</div>
+														</div>
+													</div>
+
+												</div>
+											</div>
+											<div class="tab-pane fade show" id="ar">
+												<div class="row">
+
+													<div class="row">
+
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label>
+																	<?= $lang_ar['Property_Title'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="title_ar" required="">
+																<div class="invalid-feedback" id="title_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_title'] ?>
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label>
+																	<?= $lang_ar['Full_Address'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="address_ar" required="">
+																<div class="invalid-feedback" id="address_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_address'] ?>
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_ar['Property_Description'] ?>
+
+																</label>
+																<textarea class="form-control" rows="10" name="description_ar" style="resize: none;"></textarea>
+															</div>
+														</div>
+
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_ar['Guest_Rules'] ?>
+
+																</label>
+																<textarea class="form-control" rows="10" name="guest_rules_ar" required="" style="resize: none;"></textarea>
+																<div class="invalid-feedback" id="prop_guest_rules_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_guest_rules'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label>
+																	<?= $lang_ar['Compound_Name'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="compound_name_ar" required="">
+																<div class="invalid-feedback" id="prop_compound_name_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_compound_name'] ?>
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label>
+																	<?= $lang_ar['Floor'] ?>
+																</label>
+																<input type="text" class="form-control" name="floor_ar" required="">
+																<div class="invalid-feedback" id="floor_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_floor'] ?>
+
+																</div>
+															</div>
+														</div>
+
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label>
+																	<?= $lang_ar['City'] ?>
+
+																</label>
+
+																<input type="text" class="form-control" name="city_ar" required="">
+																<div class="invalid-feedback" id="city_ar_feedback" style="display: none;">
+																	<?= $lang_ar['prop_city'] ?>
+
+																</div>
+															</div>
+														</div>
+
+													</div>
+												</div>
+											</div>
+
+
+											<div class="row">
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_image">
+															<?= $lang_en['Property_Image'] ?>
+
+														</label>
+														<input type="file" class="form-control" name="prop_img" required="">
+														<input type="hidden" name="type" value="add_property" />
+														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
+															<?= $lang_en['prop_img'] ?>
+
+														</div>
+
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_video">
+															<?= $lang_en['Property_video'] ?>
+
+														</label>
+														<input type="file" class="form-control" name="prop_video">
+														<input type="hidden" name="type" value="add_property" />
+														<div class="invalid-feedback" id="prop_video_feedback" style="display: none;">
+															<?= $lang_en['prop_video'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_sell">
+															<?= $lang_en['Property_Sell_Or_Rent'] ?>
+
+															?</label>
+														<select name="pbuysell" id="pbuysell" class="form-control" required>
+															<option value="" selected disabled>
+																<?= $lang_en['Choose'] ?>
+															</option>
+															<option value="1">
+																<?= $lang_en['Rent'] ?>
+
+															</option>
+															<option value="2">
+																<?= $lang_en['Buy'] ?>
+
+															</option>
+														</select>
+														<div class="invalid-feedback" id="prop_sell_feedback" style="display: none;">
+															<?= $lang_en['prop_sell'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_price">
+															<?= $lang_en['Property_Price_Per_Night'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="price" name="prop_price" required="">
+														<div class="invalid-feedback" id="prop_price_feedback" style="display: none;">
+															<?= $lang_en['prop_price'] ?>
+
+														</div>
+													</div>
+												</div>
+
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_security">
+															<?= $lang_en['security_deposit'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="price" name="prop_security" required="">
+														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
+															<?= $lang_en['prop_security'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="plable">
+															<?= $lang_en['min_days'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="min_day" name="min_day">
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="plable">
+															<?= $lang_en['max_days'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="max_day" name="max_day">
+													</div>
+												</div>
+
+
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+
+													<div class="form-group mb-3">
+														<label id="property-status" for="inputGroupSelect01"><?= $lang_en['Property_Status'] ?></label>
+														<select class="form-control" name="status" id="inputGroupSelect01" required>
+															<option value=""><?= $lang_en['Select_property_Status'] ?>...</option>
+															<option value="1"><?= $lang_en['Publish'] ?></option>
+															<option value="0"><?= $lang_en['Unpublish'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="status_feedback" style="display: none;">
+															<?= $lang_en['property_status'] ?>
+
+														</div>
+													</div>
+												</div>
+
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="limitlable">
+															<?= $lang_en['total_allowed_persons'] ?>
+
+															?</label>
+														<input type="text" class="form-control numberonly" id="plimit" name="plimit" required="">
+														<div class="invalid-feedback" id="limit_feedback" style="display: none;">
+															<?= $lang_en['property_limit'] ?>
+
+														</div>
+													</div>
+												</div>
+
+
+
+												<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_facility">
+															<?= $lang_en['Select_Property_Facility'] ?>
+
+														</label>
+														<select name="facility[]" id="product" class="select2-multi-select form-control" multiple required>
+															<option value="">
+																<?= $lang_en['Select_Property_Facility'] ?>
+
+															</option>
+															<?php
+															$zone = $rstate->query("select * from tbl_facility");
+															while ($row = $zone->fetch_assoc()) {
+																$title = json_decode($row['title'], true);
+
+															?>
+																<option value="<?php echo $row['id']; ?>"><?php echo $title[$lang_code]; ?></option>
+															<?php
+															}
+															?>
+														</select>
+														<div class="invalid-feedback" id="facility_feedback" style="display: none;">
+															<?= $lang_en['prop_facility'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="propmap">
+															<?= $lang_en['google_map_url'] ?>
+
+														</label>
+														<input type="text" class="form-control" name="mapurl" required="">
+														<div class="invalid-feedback" id="mapurl_feedback" style="display: none;">
+															<?= $lang_en['prop_mapurl'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
+													<div class="row">
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_beds">
+																	<?= $lang_en['Total_Beds'] ?>
+
+																</label>
+																<input type="text" class="form-control numberonly" name="beds" required="">
+																<div class="invalid-feedback" id="beds_feedback" style="display: none;">
+																	<?= $lang_en['prop_beds'] ?>
+
+																</div>
+															</div>
+														</div>
+
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_bathroom">
+																	<?= $lang_en['Total_Bathroom'] ?>
+
+																</label>
+																<input type="text" class="form-control numberonly" name="bathroom" required="">
+																<div class="invalid-feedback" id="bathroom_feedback" style="display: none;">
+																	<?= $lang_en['prop_bathroom'] ?>
+
+																</div>
+															</div>
+														</div>
+
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_sqft">
+																	<?= $lang_en['Property_SQFT'] ?>
+
+																	.</label>
+																<input type="text" class="form-control numberonly" name="sqft" required="">
+																<div class="invalid-feedback" id="sqft_feedback" style="display: none;">
+																	<?= $lang_en['prop_sqft'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+
+
+
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_type">
+																	<?= $lang_en['Select_Property_Type'] ?>
+
+																</label>
+																<select name="ptype" id="propt_type" class=" form-control" required>
+																	<option value="">
+																		<?= $lang_en['Select_Property_Type'] ?>
+
+																	</option>
+																	<?php
+																	$zone = $rstate->query("select * from tbl_category");
+
+																	while ($row = $zone->fetch_assoc()) {
+																		$title = json_decode($row['title'], true);
+
+																	?>
+																		<option value="<?php echo $row['id']; ?>"><?php echo $title[$lang_code]; ?></option>
+																	<?php
+																	}
+																	?>
+																</select>
+																<div class="invalid-feedback" id="prop_type_feedback" style="display: none;">
+																	<?= $lang_en['prop_type'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_governemnt">
+																	<?= $lang_en['Select_Government'] ?>
+
+																</label>
+																<select name="pgov" id="government" class=" form-control" required>
+																	<option value="">
+
+																		<?= $lang_en['Select_Government'] ?>
+
+																	</option>
+																	<?php
+																	$zone = $rstate->query("select * from tbl_government");
+																	while ($row = $zone->fetch_assoc()) {
+																		$title = json_decode($row['name'], true);
+
+																	?>
+																		<option value="<?php echo $row['id']; ?>"><?php echo $title[$lang_code]; ?></option>
+																	<?php
+																	}
+																	?>
+																</select>
+																<div class="invalid-feedback" id="government_feedback" style="display: none;">
+																	<?= $lang_en['prop_governemnt'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+													</div>
+												</div>
+											</div>
 										</div>
-										
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label id="plable">Property Price Per Night</label>
-                                            <input type="text" class="form-control numberonly" id="price" placeholder="Enter Price Per Night" name="price"  required="">
-                                        </div>
+										<div class="card-footer text-left">
+											<button onclick="return validateForm()" type="submit" id="add-prop" class="btn btn-primary">
+												<?= $lang_en['Add_Property'] ?>
+											</button>
 										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Country ?</label>
-											 <select name="country_id" class="form-control" required>
-											<option value="">Select Country</option>
-                                          <?php 
-$zones = $rstate->query("select * from tbl_country");
-while($rows = $zones->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $rows['id'];?>"><?php echo $rows['title'];?></option>
-	<?php 
-}
-?>
-									</select>
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										 <div class="form-group mb-3">
-                                            <label>Property Status</label>
-                                            <select name="status" class="form-control" required>
-											<option value="">Select Status</option>
-											<option value="1">Publish</option>
-											<option value="0">UnPublish</option>
-											</select>
-                                        </div>
-                                        </div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label id="limitlable">Property Total Person Allowed?</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Person Limit" id="plimit" name="plimit"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Full Address</label>
-                                            <input type="text" class="form-control" placeholder="Enter Full Address" name="address"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Select Property Facility</label>
-                                            <select name="facility[]" id="product" class="select2-multi-select form-control" multiple required>
-											<option value=""> Select Property Facility</option>
-									  <?php 
-$zone = $rstate->query("select * from tbl_facility");
-while($row = $zone->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $row['id'];?>"><?php echo $row['title'];?></option>
-	<?php 
-}
-?>
-									   </select>
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-								<div class="form-group mb-3">
-									<label for="cname">Property Description </label>
-									<textarea class="form-control" rows="10" name="description"  style="resize: none;"></textarea>
-								</div>
-							</div>	
-							<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
-							<div class="row">
-							<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Total Beds</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Beds Count" name="beds"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Total Bathroom</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Bathroom Count" name="bathroom"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property SQFT.</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Property SQFT." name="sqft"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Property Rating</label>
-                                            <input type="text" class="form-control numberonly" placeholder="Enter Property Rating" name="rate"  required="">
-                                        </div>
-										</div>
-										
-										
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Select Property Type</label>
-                                            <select name="ptype" id="product" class=" form-control" required>
-											<option value=""> Select Property Type</option>
-									  <?php 
-$zone = $rstate->query("select * from tbl_category");
-while($row = $zone->fetch_assoc())
-{
-	?>
-	<option value="<?php echo $row['id'];?>"><?php echo $row['title'];?></option>
-	<?php 
-}
-?>
-									   </select>
-                                        </div>
-										</div>
-										
-										
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Latitude</label>
-                                            <input type="text" class="form-control" placeholder="Enter Latitude" name="latitude"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Longtitude</label>
-                                            <input type="text" class="form-control" placeholder="Enter Longtitude" name="longtitude"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>Mobile Number</label>
-                                            <input type="text" class="form-control mobile" placeholder="Enter Mobile" name="mobile"  required="">
-                                        </div>
-										</div>
-										
-										<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-										<div class="form-group mb-3">
-                                            <label>City,Country</label>
-                                            <input type="text" class="form-control" placeholder="Like New york,Us" name="ccount"  required="">
-                                        </div>
-										</div>
-										
-										</div>
-										</div>
-										</div>
-                                    </div>
-                                    <div class="card-footer text-left">
-                                        <button  class="btn btn-primary">Add Property</button>
-                                    </div>
-                                </form>
-				 <?php } ?>
-                </div>
-              
-                
-              </div>
-              
-             
-             
-          
-             
-            </div>
-          </div>
-          <!-- Container-fluid Ends-->
-        </div>
-        <!-- footer start-->
-        
-      </div>
-    </div>
-    <!-- latest jquery-->
-    <?php 
+								</form>
+							<?php } ?>
+						</div>
+
+
+					</div>
+
+
+				</div>
+			</div>
+			<!-- Container-fluid Ends-->
+		</div>
+		<!-- footer start-->
+
+	</div>
+</div>
+<!-- latest jquery-->
+
+<script>
+	function getCurrentLanguage() {
+		// Get the active tab
+		const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
+		return activeTab === 'en' ? 'en' : 'ar';
+	}
+
+	function validateForm() {
+		// Clear previous feedback
+		document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
+			feedback.style.display = 'none';
+		});
+
+		const titleEn = document.querySelector('input[name="title_en"]').value;
+		const titleAr = document.querySelector('input[name="title_ar"]').value;
+		const addressEn = document.querySelector('input[name="address_en"]').value;
+		const addressAr = document.querySelector('input[name="address_ar"]').value;
+
+		const guestEn = document.querySelector('textarea[name="guest_rules_en"]').value;
+		const guestAr = document.querySelector('textarea[name="guest_rules_ar"]').value;
+
+		const compoundEn = document.querySelector('input[name="compound_name_en"]').value;
+		const compoundAr = document.querySelector('input[name="compound_name_ar"]').value;
+
+		const floorEn = document.querySelector('input[name="floor_en"]').value;
+		const floorAr = document.querySelector('input[name="floor_ar"]').value;
+
+		const cityEn = document.querySelector('input[name="city_en"]').value;
+		const cityAr = document.querySelector('input[name="city_ar"]').value;
+
+		const propImage = document.querySelector('input[name="prop_img"]').value;
+		const propVideo = document.querySelector('input[name="prop_video"]').value;
+		const status = document.querySelector('select[name="status"]').value;
+		const facility = document.querySelector('select[name="facility[]"]').value;
+		const ptype = document.querySelector('select[name="ptype"]').value;
+		const pgov = document.querySelector('select[name="pgov"]').value;
+		const pbuysell = document.querySelector('select[name="pbuysell"]').value;
+		const propSecurity = document.querySelector('input[name="prop_security"]').value;
+		const plimit = document.querySelector('input[name="plimit"]').value;
+		const mapurl = document.querySelector('input[name="mapurl"]').value;
+		const sqft = document.querySelector('input[name="sqft"]').value;
+		const bathroom = document.querySelector('input[name="bathroom"]').value;
+		const beds = document.querySelector('input[name="beds"]').value;
+		const prop_price = document.querySelector('input[name="prop_price"]').value;
+
+
+		let isValid = true;
+		let isArabicValid = true;
+		let isEnglishValid = true;
+		let alertMessage = '';
+		let lang = getCurrentLanguage();
+
+		if (!titleEn) {
+			document.getElementById('title_en_feedback').style.display = 'block';
+
+			isEnglishValid = false;
+
+		}
+		if (!titleAr) {
+			document.getElementById('title_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+
+		if (!addressEn) {
+			document.getElementById('address_en_feedback').style.display = 'block';
+			isEnglishValid = false;
+
+		}
+		if (!addressAr) {
+			document.getElementById('address_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+		if (!guestEn) {
+			document.getElementById('prop_guest_rules_en_feedback').style.display = 'block';
+			isEnglishValid = false;
+
+		}
+		if (!guestAr) {
+			document.getElementById('prop_guest_rules_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+		if (!compoundEn) {
+			document.getElementById('prop_compound_name_en_feedback').style.display = 'block';
+			isEnglishValid = false;
+
+		}
+		if (!compoundAr) {
+			document.getElementById('prop_compound_name_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+		if (!floorEn) {
+			document.getElementById('floor_en_feedback').style.display = 'block';
+			isEnglishValid = false;
+
+		}
+		if (!floorAr) {
+			document.getElementById('floor_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+		if (!cityEn) {
+			document.getElementById('city_en_feedback').style.display = 'block';
+			isEnglishValid = false;
+
+		}
+		if (!cityAr) {
+			document.getElementById('city_ar_feedback').style.display = 'block';
+			isArabicValid = false;
+
+		}
+		if (!propImage) {
+			document.getElementById('prop_img_feedback').style.display = 'block';
+			isValid = false;
+		}
+		//		if (!propVideo) {
+		//			document.getElementById('prop_video_feedback').style.display = 'block';
+		//			isValid = false;
+		//}
+		if (!status) {
+			document.getElementById('status_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!facility) {
+			document.getElementById('facility_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!ptype) {
+			document.getElementById('prop_type_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!pgov) {
+			document.getElementById('government_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!pbuysell) {
+			document.getElementById('prop_sell_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!propSecurity) {
+			document.getElementById('security_deposit_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!plimit) {
+			document.getElementById('limit_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!mapurl) {
+			document.getElementById('mapurl_feedback').style.display = 'block';
+			isValid = false;
+		}
+
+		if (!sqft) {
+			document.getElementById('sqft_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!bathroom) {
+			document.getElementById('bathroom_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!beds) {
+			document.getElementById('beds_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!prop_price) {
+			document.getElementById('prop_price_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!isArabicValid && isEnglishValid) {
+			// Show alert if there are required fields missing
+			if (lang == "en") {
+				alertMessage = langDataEN.alert_en;
+
+			} else {
+				alertMessage = langDataAR.alert_en;
+
+			}
+			isValid = false;
+		}
+		if (!isEnglishValid && isArabicValid) {
+			// Show alert if there are required fields missing
+			if (lang == "ar") {
+				alertMessage = langDataAR.alert_ar;
+
+			} else {
+				alertMessage = langDataEN.alert_ar;
+
+			}
+			isValid = false;
+		}
+		if (isArabicValid && isEnglishValid) {
+			alertMessage = '';
+		}
+		if (alertMessage) {
+			document.getElementById('alert-message').innerHTML = alertMessage;
+			document.getElementById('alert-container').style.display = 'block';
+
+		} else {
+			document.getElementById('alert-container').style.display = 'none';
+
+		}
+		if (!isValid) {
+			return false;
+		}
+
+		return true; // Allow form submission
+	}
+
+	function changeLanguage(lang) {
+		var langData = (lang === "ar") ? langDataAR : langDataEN;
+
+		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
+		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
+		document.getElementById('status_feedback').textContent = langData.property_status;
+		document.getElementById('facility_feedback').textContent = langData.prop_facility;
+		document.getElementById('government_feedback').textContent = langData.prop_governemnt;
+		document.getElementById('prop_type_feedback').textContent = langData.prop_type;
+		document.getElementById('security_deposit_feedback').textContent = langData.prop_security;
+		document.getElementById('limit_feedback').textContent = langData.property_limit;
+		document.getElementById('mapurl_feedback').textContent = langData.prop_mapurl;
+		document.getElementById('sqft_feedback').textContent = langData.prop_sqft;
+		document.getElementById('bathroom_feedback').textContent = langData.prop_barhroom;
+		document.getElementById('beds_feedback').textContent = langData.prop_beds;
+		document.getElementById('prop_price_feedback').textContent = langData.prop_price;
+		document.getElementById('prop_sell_feedback').textContent = langData.prop_sell;
+		
+		document.getElementById('prop_image').textContent = langData.Property_Image;
+		document.getElementById('prop_video').textContent = langData.Property_video;
+		document.getElementById('property-status').textContent = langData.Property_Status;
+		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
+		document.getElementById('prop_sell').textContent = langData.Property_Sell_Or_Rent;
+		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
+		document.getElementById('prop_type').textContent = langData.Select_Property_Type;
+		document.getElementById('prop_security').textContent = langData.security_deposit;
+		document.getElementById('limitlable').textContent = langData.total_allowed_persons;
+		document.getElementById('propmap').textContent = langData.google_map_url;
+		document.getElementById('prop_sqft').textContent = langData.Property_SQFT;
+		document.getElementById('prop_bathroom').textContent = langData.Total_Bathroom;
+		document.getElementById('prop_beds').textContent = langData.Total_Beds;
+		document.getElementById('prop_price').textContent = langData.Property_Price_Per_Night;
+
+		if (document.getElementById('add-prop')) {
+			document.querySelector('button[type="submit"]').textContent = langData.Add_Property;
+
+		} else {
+			document.querySelector('button[type="submit"]').textContent = langData.Edit_Property;
+
+		}
+
+		const statusSelect = document.getElementById('inputGroupSelect01');
+		statusSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
+		statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
+		statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
+
+		$('#product option:first').text('New Text Here');
+
+		document.querySelector('#product option[value=""]').textContent = langData.Select_Property_Facility;
+		const ptypeSelect = document.getElementById('propt_type');
+		ptypeSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
+
+
+		const governmentSelect = document.getElementById('government');
+		governmentSelect.querySelector('option[value=""]').textContent = langData.Select_Government;
+
+		
+		const prop_sell = document.getElementById('pbuysell');
+		prop_sell.querySelector('option[value=""]').textContent = langData.Choose;
+		prop_sell.querySelector('option[value="1"]').textContent = langData.Rent;
+		prop_sell.querySelector('option[value="2"]').textContent = langData.Buy;
+
+	}
+</script>
+<?php
 require 'include/footer.php';
 ?>
-  </body>
+</body>
+
 </html>
