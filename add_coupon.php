@@ -711,7 +711,7 @@ if (isset($_GET['id'])) {
 		}
 
 		const statusSelect = document.getElementById('inputGroupSelect01');
-		statusSelect.querySelector('option[value=""]').textContent = langData.Choose;
+		statusSelect.querySelector('option[value=""]').textContent = langData.Select_Coupon_Status;
 		statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
 		statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
 
