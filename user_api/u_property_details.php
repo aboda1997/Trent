@@ -14,29 +14,32 @@ $pro_id  = $data['prop_id'];
 $uid  = $data['uid'];
 if ($pro_id == '' or $uid == '') {
 	$returnArr = array("ResponseCode" => "401", "Result" => "false", "ResponseMsg" => "Something Went Wrong!");
-}  else if (validateIdAndDatabaseExistance($pro_id , 'tbl_property') === false){
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
 	$returnArr = array(
 		"ResponseCode" => "401",
 		"Result" => "false",
 		"ResponseMsg" => "this property not exist!"
 	);
-}
-else if (checkTableStatus($pro_id , 'tbl_property') === false){
+} else if (checkTableStatus($pro_id, 'tbl_property') === false) {
 	$returnArr = array(
 		"ResponseCode" => "401",
 		"Result" => "false",
 		"ResponseMsg" => "Not allow to show this property"
 	);
-}else {
+} else {
 	$fp = array();
 	$f = array();
 	$v = array();
 	$vr = array();
 	$po = array();
 	$sel = $rstate->query("select * from tbl_property where id=" . $pro_id . "")->fetch_assoc();
-	
+	$imageArray = explode(',', $sel['image']);
 
-	$vr[] = array('image' => $sel['image'], 'is_panorama' => "0");
+	// Loop through each image URL and push to $vr array
+	foreach ($imageArray as $image) {
+		$vr[] = array('image' => trim($image), 'is_panorama' =>0);
+	}
+
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
 		array_push($vr, array('image' => $rk['img'], 'is_panorama' => $rk['pano']));
