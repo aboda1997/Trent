@@ -128,12 +128,12 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['max_days'] = $row['max_days'];
 	$pol['min_days'] = $row['min_days'];
 
-	$fp['floor'] = json_decode($row['floor'], true);
-	$fp['guest_rules'] = json_decode($row['guest_rules'], true);
-	$fp['compound_name'] = json_decode($row['compound_name'], true);
-	$fp['description'] = json_decode($row['description'], true);
-	$fp['address'] = json_decode($row['address'], true);
-	$fp['city'] = json_decode($row['city'], true);
+	$pol['floor'] = json_decode($row['floor'], true);
+	$pol['guest_rules'] = json_decode($row['guest_rules'], true);
+	$pol['compound_name'] = json_decode($row['compound_name'], true);
+	$pol['description'] = json_decode($row['description'], true);
+	$pol['address'] = json_decode($row['address'], true);
+	$pol['city'] = json_decode($row['city'], true);
 
 	$c[] = $pol;
 }
