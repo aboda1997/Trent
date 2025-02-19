@@ -108,7 +108,7 @@ if ($pro_id == '' or $uid == '') {
 		$government = [];
 	}
 
-	$fac = $rstate->query("select img, id 
+	$fac = $rstate->query("select img, id,
 	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
 
