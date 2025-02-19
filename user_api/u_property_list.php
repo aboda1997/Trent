@@ -24,7 +24,6 @@ $bathrooms = isset($data['bathrooms']) ? intval($data['bathrooms']) : null;
 // Start the base query
 $query = "SELECT * FROM tbl_property WHERE  status = 0";
 
-
 // Apply filters dynamically
 if ($uid !== null) {
     $query .= " AND add_user_id = " . $uid;
