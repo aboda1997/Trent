@@ -15,9 +15,9 @@ $pro_id  = $data['prop_id'];
 $uid  = $data['uid'];
 if ($pro_id == '' or $uid == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
-} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  "  is_deleted = 0") === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 401);
-} else if (checkTableStatus($pro_id, 'tbl_property') === false) {
+} else if (checkTableStatus($pro_id, 'tbl_property') == false) {
 	$returnArr = generateResponse('false', "Not allow to show this property", 401);
 } else {
 	$fp = array();
