@@ -2,16 +2,21 @@
 require 'reconfig.php';
 
 
-function validateIdAndDatabaseExistance($id, $table)
+function validateIdAndDatabaseExistance($id, $table ,  $additionalCondition = '')
 {
     // Check if it's a number and a positive integer
     if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
-        
-    // Build and execute the query
-    $query = "SELECT id FROM ". $table ." WHERE id= ". $id ." ";
-    $result = $GLOBALS['rstate']->query($query)->num_rows;
-   // var_dump($result);
-    return $result === 1 ;
+        $condition = "id= " . $id . " ";
+
+        // Append additional condition if provided
+        if (!empty($additionalCondition)) {
+            $condition .= " AND ($additionalCondition)";
+        }
+        // Build and execute the query
+        $query = "SELECT id FROM " . $table . " WHERE " . $condition ;
+        //var_dump($query);
+        $result = $GLOBALS['rstate']->query($query)->num_rows;
+        return $result === 1;
     }
     return false;
 }
@@ -20,11 +25,11 @@ function checkTableStatus($id, $table)
 {
     // Check if it's a number and a positive integer
     if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
-        
-    // Build and execute the query
-    $query = "SELECT status FROM ". $table ." WHERE id= ". $id ." ";
-    $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
-    return $result['status'] == 1 ;
+
+        // Build and execute the query
+        $query = "SELECT status FROM " . $table . " WHERE id= " . $id . " ";
+        $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
+        return $result['status'] == 1;
     }
     return false;
 }

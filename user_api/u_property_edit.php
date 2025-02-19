@@ -95,7 +95,7 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 
 } else {
 
-	$check_owner = $rstate->query("select * from tbl_property where id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
+	$check_owner = $rstate->query("select * from tbl_property where is_deleted =0 and id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
 	if ($check_owner != 0) {
 		$field = [
 			"pbuysell" => $pbuysell,
