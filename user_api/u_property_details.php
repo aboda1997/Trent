@@ -11,11 +11,11 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
 }
 $pol = array();
 $c = array();
-$pro_id  = $data['prop_id'];
-$uid  = $data['uid'];
+$pro_id  =  isset($data['prop_id']) ? $data['prop_id'] : '';
+$uid  = isset($data['uid']) ? $data['uid'] : ''; 
 if ($pro_id == '' or $uid == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
-} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  "  is_deleted = 0") === false) {
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  "   add_user_id = " . $uid . " ") === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 401);
 } else if (checkTableStatus($pro_id, 'tbl_property') == false) {
 	$returnArr = generateResponse('false', "Not allow to show this property", 401);
@@ -25,7 +25,7 @@ if ($pro_id == '' or $uid == '') {
 	$v = array();
 	$vr = array();
 	$po = array();
-	$sel = $rstate->query("select * from tbl_property where id=" . $pro_id . "")->fetch_assoc();
+	$sel = $rstate->query("select * from tbl_property where  add_user_id =" .$uid . " and  id=" . $pro_id . "")->fetch_assoc();
 	$imageArray = explode(',', $sel['image']);
 
 	// Loop through each image URL and push to $vr array

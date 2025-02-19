@@ -5,39 +5,38 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 header('Content-type: text/json');
 $status = 0;
-$facility = $_POST['facility'];
-$ptype = $_POST['ptype'];
-$beds = $_POST['beds'];
-$bathroom = $_POST['bathroom'];
-$sqft = $_POST['sqft'];
+
+$facility = isset($_POST['facility']) ? $_POST['facility'] : '';
+$ptype = isset($_POST['ptype']) ? $_POST['ptype'] : ''; 
+$beds = isset($_POST['beds']) ? $_POST['beds'] : '';  
+$bathroom = isset($_POST['bathroom']) ? $_POST['bathroom'] : '';  
+$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : ''; 
 $listing_date = date("Y-m-d H:i:s");
-$price = $_POST['price'];
-$plimit = $_POST['plimit'];
+$price = isset($_POST['price']) ? $_POST['price'] : ''; 
+$plimit = isset($_POST['plimit']) ? $_POST['plimit'] : '';  
 $pbuysell = 1;
-$user_id = $_POST['uid'];
-$government = $_POST['government'];
-$security_deposit = $_POST['security_deposit'];
-$max_days = $_POST['max_days'];
-$min_days = $_POST['min_days'];
-$google_maps_url = $_POST['google_maps_url'];
+$user_id = isset($_POST['uid']) ? $_POST['uid'] : '';  
+$government = isset($_POST['government']) ? $_POST['government'] : '';   
+$security_deposit =isset($_POST['security_deposit']) ? $_POST['security_deposit'] : '';  
+$max_days = isset($_POST['max_days']) ? $_POST['max_days'] : ''; 
+$min_days = isset($_POST['min_days']) ? $_POST['min_days'] : ''; 
+$google_maps_url =isset($_POST['google_maps_url']) ? $_POST['google_maps_url'] : ''; 
 
-$title_en = $rstate->real_escape_string($_POST["title_en"]);
-$address_en = $rstate->real_escape_string($_POST["address_en"]);
-$description_en = $rstate->real_escape_string($_POST["description_en"]);
-$ccount_en = $rstate->real_escape_string($_POST["city_en"]);
-$compound_name_en = $rstate->real_escape_string($_POST["compound_name_en"]);
-$floor_en = $rstate->real_escape_string($_POST["floor_en"]);
-$guest_rules_en = $rstate->real_escape_string($_POST["guest_rules_en"]);
+$title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
+$address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
+$description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? $_POST['description_en'] : '');
+$ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
+$compound_name_en = $rstate->real_escape_string(isset($_POST['compound_name_en']) ? $_POST['compound_name_en'] : '');
+$floor_en = $rstate->real_escape_string( isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
+$guest_rules_en = $rstate->real_escape_string( isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
 
-$title_ar = $rstate->real_escape_string($_POST["title_ar"]);
-$address_ar = $rstate->real_escape_string($_POST["address_ar"]);
-$description_ar = $rstate->real_escape_string($_POST["description_ar"]);
-$ccount_ar = $rstate->real_escape_string($_POST["city_ar"]);
-
-$compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
-$floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
-$guest_rules_ar = $rstate->real_escape_string($_POST["guest_rules_ar"]);
-
+$title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
+$address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
+$description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? $_POST['description_ar'] : '');
+$ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
+$compound_name_ar = $rstate->real_escape_string(isset($_POST['compound_name_ar']) ? $_POST['compound_name_ar'] : '');
+$floor_ar = $rstate->real_escape_string( isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
+$guest_rules_ar = $rstate->real_escape_string( isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 
 $compound_name_json = json_encode([
 	"en" => $compound_name_en,

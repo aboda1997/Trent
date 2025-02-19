@@ -22,7 +22,7 @@ $beds = isset($data['beds']) ? intval($data['beds']) : null;
 $bathrooms = isset($data['bathrooms']) ? intval($data['bathrooms']) : null;
 
 // Start the base query
-$query = "SELECT * FROM tbl_property WHERE is_deleted = 0  and status = 0";
+$query = "SELECT * FROM tbl_property WHERE  status = 0";
 
 // Apply filters dynamically
 if ($uid !== null) {
