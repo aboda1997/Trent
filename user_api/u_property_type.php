@@ -10,15 +10,13 @@ $lang_code = $_GET['lang'];
  }
 $pol = array();
 $c = array();
-$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) as title , id from tbl_category where status=1");
+$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) as title , id , img from tbl_category where status=1");
 while($row = $sel->fetch_assoc())
 {
    
 		$pol['id'] = $row['id'];
 		$pol['title'] = $row['title'];
-		
-		
-		
+		$pol['img'] = $row['img'];
 		
 		$c[] = $pol;
 	

@@ -1,6 +1,7 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
@@ -13,19 +14,11 @@ $c = array();
 $pro_id  = $data['prop_id'];
 $uid  = $data['uid'];
 if ($pro_id == '' or $uid == '') {
-	$returnArr = array("ResponseCode" => "401", "Result" => "false", "ResponseMsg" => "Something Went Wrong!");
+	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
-	$returnArr = array(
-		"ResponseCode" => "401",
-		"Result" => "false",
-		"ResponseMsg" => "this property not exist!"
-	);
+	$returnArr = generateResponse('false', "this property not exist!", 401);
 } else if (checkTableStatus($pro_id, 'tbl_property') === false) {
-	$returnArr = array(
-		"ResponseCode" => "401",
-		"Result" => "false",
-		"ResponseMsg" => "Not allow to show this property"
-	);
+	$returnArr = generateResponse('false', "Not allow to show this property", 401);
 } else {
 	$fp = array();
 	$f = array();
@@ -37,7 +30,7 @@ if ($pro_id == '' or $uid == '') {
 
 	// Loop through each image URL and push to $vr array
 	foreach ($imageArray as $image) {
-		$vr[] = array('image' => trim($image), 'is_panorama' =>0);
+		$vr[] = array('image' => trim($image), 'is_panorama' => 0);
 	}
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
@@ -47,13 +40,13 @@ if ($pro_id == '' or $uid == '') {
 	$fp['id'] = $sel['id'];
 	$fp['user_id'] = $sel['add_user_id'];
 	$titleData = json_decode($sel['title'], true);
-	$fp['title'] = isset($titleData[$lang]) ? $titleData[$lang] : '';
+	$fp['title'] = $titleData;
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 	if ($checkrate != 0) {
 		$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
 		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 2, '.', '');
 	} else {
-		$fp['rate'] = '';
+		$fp['rate'] = null;
 	}
 
 	$fp['image'] = $vr;
@@ -61,7 +54,7 @@ if ($pro_id == '' or $uid == '') {
 	$prop = $rstate->query("select title from tbl_category where id=" . $sel['ptype'] . "");
 	if ($prop->num_rows > 0) {
 		$propData = $prop->fetch_assoc();
-		$fp['property_title'] = json_decode($propData['title'], true)[$lang] ?? '';
+		$fp['property_title'] = json_decode($propData['title']);
 	} else {
 		$fp['property_title'] = null;
 	}
@@ -88,12 +81,12 @@ if ($pro_id == '' or $uid == '') {
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
 
-	$fp['floor'] = json_decode($sel['floor'], true)[$lang] ?? '';
-	$fp['guest_rules'] = json_decode($sel['guest_rules'], true)[$lang] ?? '';
-	$fp['compound_name'] = json_decode($sel['compound_name'], true)[$lang] ?? '';
-	$fp['description'] = json_decode($sel['description'], true)[$lang] ?? '';
-	$fp['address'] = json_decode($sel['address'], true)[$lang] ?? '';
-	$fp['city'] = json_decode($sel['city'], true)[$lang] ?? '';
+	$fp['floor'] = json_decode($sel['floor'], true);
+	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
+	$fp['compound_name'] = json_decode($sel['compound_name'], true);
+	$fp['description'] = json_decode($sel['description'], true);
+	$fp['address'] = json_decode($sel['address'], true);
+	$fp['city'] = json_decode($sel['city'], true);
 
 	$fp['plimit'] = $sel['plimit'];
 
@@ -101,12 +94,13 @@ if ($pro_id == '' or $uid == '') {
 
 
 	$gov = $rstate->query("
-		SELECT id, JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang')) as name 
+		SELECT id, JSON_UNQUOTE(name) as name 
 		FROM tbl_government 
 		WHERE id=" . $sel['government'] . "
 	");
 	if ($gov->num_rows > 0) {
 		while ($row = $gov->fetch_assoc()) {
+			$row['name'] = json_decode($row['name'], true);
 
 			$government[] = $row;
 		}
@@ -115,11 +109,11 @@ if ($pro_id == '' or $uid == '') {
 	}
 
 	$fac = $rstate->query("select img,
-	 JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang')) as title 
+	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
 
 	while ($row = $fac->fetch_assoc()) {
-
+		$row['title'] = json_decode($row['title'], true);
 		$f[] = $row;
 	}
 
@@ -141,6 +135,6 @@ if ($pro_id == '' or $uid == '') {
 		$bov['user_desc'] = $k['rate_text'];
 		$kol[] = $bov;
 	}
-	$returnArr = array("propetydetails" => $fp, "government" => $government,  "facility" => $f, "gallery" => $v, "reviewlist" => $kol, "total_review" => $count_review, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!");
+	$returnArr = json_encode(array("propetydetails" => $fp, "government" => $government,  "facility" => $f, "gallery" => $v, "reviewlist" => $kol, "total_review" => $count_review, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
 }
-echo json_encode($returnArr);
+echo $returnArr;

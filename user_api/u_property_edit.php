@@ -138,7 +138,7 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 		// Handle image upload
 		if (isset($_FILES['images'])) {
 			// Check if it's multiple images or a single image
-			if (is_array($_FILES['images']['name'])) {
+			if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3) {
 				// Multiple images
 				foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 					if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
@@ -163,27 +163,8 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 					}
 				}
 			} else {
-				// Single image
-				if ($_FILES['images']['error'] === UPLOAD_ERR_OK) {
-					$imageName = time() . '_' . $_FILES['images']['name'];
-					$destination = $uploadDirImages . $imageName;
+				$returnArr=  generateResponse("false", "Please upload more than two images.", 400);
 
-					// Validate image type
-					if (in_array($_FILES['images']['type'], $allowedImageTypes)) {
-						if (move_uploaded_file($_FILES['images']['tmp_name'], $destination)) {
-							$imageUrls[] = 'images/property/' . $imageName;
-						} else {
-							// Handle error if file couldn't be moved
-							$returnArr =  generateResponse("false", "Failed to upload image: " . $_FILES['images']['name'], 500);
-						}
-					} else {
-						// Handle invalid image type
-						$returnArr =  generateResponse("false", "Invalid image type: " . $_FILES['images']['name'], 400);
-					}
-				} else {
-					// Handle error during file upload
-					$returnArr =  generateResponse("false", "Error uploading image: " . $_FILES['images']['name'], 400);
-				}
 			}
 		}
 
