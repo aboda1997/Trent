@@ -33,24 +33,7 @@ require 'include/main_head.php';
           <!-- Container-fluid starts-->
           <div class="container-fluid ecommerce-page">
             <div class="row">      
-              <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card sale-chart">
-                  <div class="card-body"> 
-                    <div class="d-flex">    
-                      <div class="flex-shrink-0">          
-                        <div class="sale-detail">
-                          <div class="icon"><i data-feather="map-pin"></i></div>
-                          <div class="sale-content">
-                            <h3>Total Country</h3>
-                            <p><?php echo $rstate->query("select * from tbl_country")->num_rows;?> </p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
               <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card sale-chart">
                   <div class="card-body">
@@ -86,26 +69,7 @@ require 'include/main_head.php';
                   </div>
                 </div>
               </div>
-              <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card sale-chart">
-                  <div class="card-body">
-                    <div class="d-flex">    
-                      <div class="flex-shrink-0">                
-                        <div class="sale-detail">
-                          <div class="icon"><i data-feather="dollar-sign"></i></div>
-                          <div class="sale-content">
-                            <h3>Total Payment Method</h3>
-                            <p><?php echo $rstate->query("select * from tbl_payment_list")->num_rows;?></p>
-                          </div>
-                        </div>
-                      </div>
-                    
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card sale-chart">
                   <div class="card-body">
                     <div class="d-flex">    
@@ -297,24 +261,6 @@ require 'include/main_head.php';
               
               
               
-              <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="card sale-chart">
-                  <div class="card-body">
-                    <div class="d-flex">    
-                      <div class="flex-shrink-0">                
-                        <div class="sale-detail">
-                          <div class="icon"><i data-feather="help-circle"></i></div>
-                          <div class="sale-content">
-                            <h3>Total FAQ</h3>
-                            <p><?php echo $rstate->query("select * from tbl_faq")->num_rows;?></p>
-                          </div>
-                        </div>
-                      </div>
-                    
-                    </div>
-                  </div>
-                </div>
-              </div>
               
               <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card sale-chart">

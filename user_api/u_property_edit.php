@@ -7,40 +7,39 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 header('Content-type: text/json');
 
 $status = 0;
-$facility = $_POST['facility'];
-$ptype = $_POST['ptype'];
-$beds = $_POST['beds'];
-$bathroom = $_POST['bathroom'];
-$sqft = $_POST['sqft'];
+$prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
+$facility = isset($_POST['facility']) ? $_POST['facility'] : '';
+$ptype = isset($_POST['ptype']) ? $_POST['ptype'] : '';
+$beds = isset($_POST['beds']) ? $_POST['beds'] : '';
+$bathroom = isset($_POST['bathroom']) ? $_POST['bathroom'] : '';
+$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
 $listing_date = date("Y-m-d H:i:s");
-$price = $_POST['price'];
-$user_id = $_POST['uid'];
-$prop_id = $_POST['prop_id'];
-$plimit = $_POST['plimit'];
+$price = isset($_POST['price']) ? $_POST['price'] : '';
+$plimit = isset($_POST['plimit']) ? $_POST['plimit'] : '';
 $pbuysell = 1;
-$government = $_POST['government'];
-$security_deposit = $_POST['security_deposit'];
-$max_days = $_POST['max_days'];
-$min_days = $_POST['min_days'];
+$user_id = isset($_POST['uid']) ? $_POST['uid'] : '';
+$government = isset($_POST['government']) ? $_POST['government'] : '';
+$security_deposit = isset($_POST['security_deposit']) ? $_POST['security_deposit'] : '';
+$max_days = isset($_POST['max_days']) ? $_POST['max_days'] : '';
+$min_days = isset($_POST['min_days']) ? $_POST['min_days'] : '';
+$google_maps_url = isset($_POST['google_maps_url']) ? $_POST['google_maps_url'] : '';
 
-$google_maps_url = $_POST['google_maps_url'];
-$title_en = $rstate->real_escape_string($_POST["title_en"]);
-$address_en = $rstate->real_escape_string($_POST["address_en"]);
-$description_en = $rstate->real_escape_string($_POST["description_en"]);
-$ccount_en = $rstate->real_escape_string($_POST["city_en"]);
-$compound_name_en = $rstate->real_escape_string($_POST["compound_name_en"]);
-$floor_en = $rstate->real_escape_string($_POST["floor_en"]);
-$guest_rules_en = $rstate->real_escape_string($_POST["guest_rules_en"]);
+$title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
+$address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
+$description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? $_POST['description_en'] : '');
+$ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
+$compound_name_en = $rstate->real_escape_string(isset($_POST['compound_name_en']) ? $_POST['compound_name_en'] : '');
+$floor_en = $rstate->real_escape_string(isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
+$guest_rules_en = $rstate->real_escape_string(isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
 
-$title_ar = $rstate->real_escape_string($_POST["title_ar"]);
-$address_ar = $rstate->real_escape_string($_POST["address_ar"]);
-$description_ar = $rstate->real_escape_string($_POST["description_ar"]);
-$ccount_ar = $rstate->real_escape_string($_POST["city_ar"]);
-
-$compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
-$floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
-$guest_rules_ar = $rstate->real_escape_string($_POST["guest_rules_ar"]);
+$title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
+$address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
+$description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? $_POST['description_ar'] : '');
+$ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
+$compound_name_ar = $rstate->real_escape_string(isset($_POST['compound_name_ar']) ? $_POST['compound_name_ar'] : '');
+$floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
+$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 
 
 $compound_name_json = json_encode([
@@ -81,21 +80,17 @@ $title_json = json_encode([
 
 
 if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_name_ar == '' or $compound_name_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
-	
-	$returnArr    = generateResponse('false', "Something Went Wrong!", 401);
 
+	$returnArr    = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateFacilityIds($facility) === 0) {
 	$returnArr    = generateResponse('false', "Facilities Ids must be valid!", 401);
-
 } else if (validateIdAndDatabaseExistance($ptype, 'tbl_category') === false) {
 	$returnArr    = generateResponse('false', "ptype Id must be valid!", 401);
-
 } else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 	$returnArr    = generateResponse('false', "government Id must be valid!", 401);
-
 } else {
 
-	$check_owner = $rstate->query("select * from tbl_property where is_deleted =0 and id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
+	$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
 	if ($check_owner != 0) {
 		$field = [
 			"pbuysell" => $pbuysell,
@@ -163,8 +158,7 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 					}
 				}
 			} else {
-				$returnArr=  generateResponse("false", "Please upload more than two images.", 400);
-
+				$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
 			}
 		}
 
@@ -182,7 +176,6 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 					// Move the uploaded video to the destination folder
 					if (move_uploaded_file($video['tmp_name'], $destination)) {
 						$videoUrls[] = 'videos/property/' . $videoName;
-						
 					} else {
 						// Handle error if video couldn't be moved
 						$returnArr =  generateResponse("false", "Failed to upload video.", 500);
@@ -196,18 +189,17 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 				$returnArr =  generateResponse("false", "Error uploading video.", 400);
 			}
 		}
-        
-		if(!empty($imageUrls)){
-		$imageUrlsString = implode(',', $imageUrls);
-		$field["image"] =  $imageUrlsString;
 
+		if (!empty($imageUrls)) {
+			$imageUrlsString = implode(',', $imageUrls);
+			$field["image"] =  $imageUrlsString;
 		}
 
 
-		if(!empty($videoUrls)){
+		if (!empty($videoUrls)) {
 			$videoUrlsString = implode(',', $videoUrls);
 			$field["video"] =  $videoUrlsString;
-	    }
+		}
 
 		$check_owner_ = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
 
@@ -217,7 +209,7 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 
 
 		$table = "tbl_property";
-		
+
 		$where = "where id=" . $prop_id . " and add_user_id=" . $user_id . "";
 		$h = new Estate();
 		$check = $h->restateupdateData($field, $table, $where);
