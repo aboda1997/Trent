@@ -101,7 +101,7 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['sqrft'] = $row['sqrft'];
 	$pol['is_sell'] = $row['is_sell'];
 
-	$fac = $rstate->query("select img,
+	$fac = $rstate->query("select img, id
 	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $row['facility'] . ")");
 
