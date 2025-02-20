@@ -85,9 +85,9 @@ if ($user_id == '' or $government == '' or $security_deposit == ''  or $google_m
 
 
 	// Allowed file types for images and videos
-	$allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-	$allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov'];
-
+	$allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+	$allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/mkv'];
+	
 	// Initialize arrays for image and video URLs
 	$imageUrls = [];
 	$videoUrls = [];

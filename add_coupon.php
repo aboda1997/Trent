@@ -114,7 +114,7 @@ if (isset($_GET['id'])) {
 														<input type="hidden" name="type" value="edit_coupon" />
 
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
-														<input type="file" name="coupon_img" class="form-control" required>
+														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" >
 														<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
 															<?= $lang_en['coupon_img'] ?>
 
@@ -317,7 +317,7 @@ if (isset($_GET['id'])) {
 
 										</div>
 										<div class="card-footer text-left">
-											<button onclick="return validateForm()" type="submit" class="btn btn-primary">
+											<button onclick="return validateForm(true)" type="submit" class="btn btn-primary">
 												<?= $lang_en['Edit_Coupon'] ?>
 
 											</button>
@@ -345,7 +345,7 @@ if (isset($_GET['id'])) {
 														<input type="hidden" name="type" value="add_coupon" />
 
 														<input type="hidden" name="id" />
-														<input type="file" name="coupon_img" class="form-control" required>
+														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif"  required>
 														<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
 															<?= $lang_en['coupon_img'] ?>
 
@@ -573,7 +573,7 @@ if (isset($_GET['id'])) {
 		return activeTab === 'en' ? 'en' : 'ar';
 	}
 
-	function validateForm() {
+	function validateForm(edit = false) {
 		// Clear previous feedback
 		document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
 			feedback.style.display = 'none';
@@ -619,8 +619,14 @@ if (isset($_GET['id'])) {
 
 		}
 		if (!couponImage) {
+			if(edit  ){
+				isValid =true;
+
+			}else{
+				
 			document.getElementById('coupon_img_feedback').style.display = 'block';
 			isValid = false;
+			}
 		}
 		if (!status) {
 			document.getElementById('status_feedback').style.display = 'block';

@@ -147,7 +147,7 @@ if (isset($_GET['id'])) {
                         <?= $lang_en['Facility_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="facility_img">
+                      <input type="file" class="form-control"  accept=".jpg, .jpeg, .png, .gif" name="facility_img">
                       <div class="invalid-feedback" id="facility_img_feedback" style="display: none;">
                         <?= $lang_en['facility_img'] ?>
                       </div>
@@ -186,7 +186,7 @@ if (isset($_GET['id'])) {
 
                   </div>
                   <div class="card-footer text-left">
-                    <button onclick="return validateForm()" type="submit"  id="edit-facility" class="btn btn-primary">
+                    <button onclick="return validateForm(true)" type="submit"  id="edit-facility" class="btn btn-primary">
                       <?= $lang_en['Edit_Facility'] ?>
 
                     </button>
@@ -246,7 +246,7 @@ if (isset($_GET['id'])) {
                         <?= $lang_en['Facility_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="facility_img" required="">
+                      <input type="file" class="form-control" name="facility_img" accept=".jpg, .jpeg, .png, .gif" required="">
                       <div class="invalid-feedback" id="facility_img_feedback" style="display: none;">
                         <?= $lang_en['facility_img'] ?>
                       </div>
@@ -288,7 +288,7 @@ if (isset($_GET['id'])) {
     return activeTab === 'en' ? 'en' : 'ar';
   }
 
-  function validateForm() {
+  function validateForm(edit = false) {
     // Clear previous feedback
     document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
       feedback.style.display = 'none';
@@ -316,8 +316,14 @@ if (isset($_GET['id'])) {
 
     }
     if (!facilityImage) {
-      document.getElementById('facility_img_feedback').style.display = 'block';
+      
+      if(edit){
+				isValid =true;
+
+			}else{
+        document.getElementById('facility_img_feedback').style.display = 'block';
       isValid = false;
+      }
     }
     if (!status) {
       document.getElementById('status_feedback').style.display = 'block';

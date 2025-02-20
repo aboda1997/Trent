@@ -134,8 +134,25 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $ulist_per)) {
 													<?php } ?>
 
 
-													<td>IsOwner</td>
-												<td>Property Count</td>
+													<td>
+
+
+														<?php if ($row['is_owner'] == 1) { ?>
+															Owner
+
+														<?php } else { ?>
+															Property
+
+														<?php } ?>
+
+													</td>
+													<td>
+														<?php
+														$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $row['id'] . "")->num_rows;
+
+														?>
+														<?php echo $check_owner ?>
+													</td>
 
 												</tr>
 											<?php } ?>
