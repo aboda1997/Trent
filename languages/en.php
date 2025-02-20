@@ -154,6 +154,7 @@ return [
     'google_map_url'             => 'Google Map URL',
     'Select_Property_Type'       => 'Select Property Type',
     'Select_Government'          => 'Select Government',
+    'Select_Owner'          => 'Select Owner',
     'Add_Property'               => 'Add Property',
     'Edit_Property'              => 'Edit Property',
     'Property_Status'            => 'Property Status',
@@ -162,7 +163,7 @@ return [
     'Rent'                       => 'Rent',
     'Buy'                        => 'Buy', 
 
-    'total_allowed_persons'      => 'total allowed persons',
+    'total_allowed_persons'      => 'Property Total Person Allowed?',
 
     'prop_title' => 'please enter Property title',
     'prop_address' => 'please enter Property address',
@@ -170,7 +171,7 @@ return [
     'prop_compound_name' => 'please enter Property Compound name',
     'prop_floor' => 'please enter Property Floor',
     'prop_city' => 'please enter Property City',
-    'prop_img' => 'please enter Property image',
+    'prop_img' => 'please enter more than two images',
     'prop_video' => 'please enter Property video',
     'prop_price' => 'please enter Property Price Per Night',
     'property_limit' => 'please enter Property total allowed persons',
@@ -180,6 +181,7 @@ return [
     'prop_facility' => 'please enter Property facilities',
     'prop_mapurl' => 'please enter Property Map Url ',
     'prop_governemnt' => 'please enter Property government',
+    'prop_owner' => 'please enter Property owner',
     'prop_type' => 'please enter Property type',
     'prop_sqft' => 'please enter Property  sqft',
     'prop_bathroom' => 'please enter Property total bathrooms',

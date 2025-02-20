@@ -1,6 +1,7 @@
 <?php
 require "reconfig.php";
 require "estate.php";
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 if (isset($_POST["type"])) {
 
@@ -573,56 +574,50 @@ if (isset($_POST["type"])) {
         $beds = $_POST['beds'];
         $bathroom = $_POST['bathroom'];
         $sqft = $_POST['sqft'];
-        $target_dir = dirname(dirname(__FILE__)) . "/images/property/";
-        $url = "images/property/";
         $user_id = '0';
 
         $listing_date = date("Y-m-d H:i:s");
         $price = $_POST['prop_price'];
-        $temp = explode(".", $_FILES["prop_img"]["name"]);
-        $newfilename = round(microtime(true)) . "." . end($temp);
-        $target_file = $target_dir . basename($newfilename);
-        $url = $url . basename($newfilename);
         $government = $_POST['pgov'];
         $security_deposit = $_POST['prop_security'];
         $max_days = $_POST['max_day'];
         $min_days = $_POST['min_day'];
         $google_maps_url = $_POST['mapurl'];
-        $video = '';
-        
+        $propowner = $_POST['propowner'];
+
         $title_en = $rstate->real_escape_string($_POST["title_en"]);
-		$address_en = $rstate->real_escape_string($_POST["address_en"]);
-		$description_en = $rstate->real_escape_string($_POST["description_en"]);
-		$guest_rules_en  = $rstate->real_escape_string($_POST["guest_rules_en"]);
-		$compound_name_en = $rstate->real_escape_string($_POST["compound_name_en"]);
-		$floor_en = $rstate->real_escape_string($_POST["floor_en"]);
-		$city_en = $rstate->real_escape_string($_POST["city_en"]);
+        $address_en = $rstate->real_escape_string($_POST["address_en"]);
+        $description_en = $rstate->real_escape_string($_POST["description_en"]);
+        $guest_rules_en  = $rstate->real_escape_string($_POST["guest_rules_en"]);
+        $compound_name_en = $rstate->real_escape_string($_POST["compound_name_en"]);
+        $floor_en = $rstate->real_escape_string($_POST["floor_en"]);
+        $city_en = $rstate->real_escape_string($_POST["city_en"]);
 
 
         $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
-		$address_ar = $rstate->real_escape_string($_POST["address_ar"]);
-		$description_ar = $rstate->real_escape_string($_POST["description_ar"]);
-		$guest_rules_ar = $rstate->real_escape_string($_POST["guest_rules_ar"]);
-		$compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
-		$floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
-		$city_ar = $rstate->real_escape_string($_POST["city_ar"]);
+        $address_ar = $rstate->real_escape_string($_POST["address_ar"]);
+        $description_ar = $rstate->real_escape_string($_POST["description_ar"]);
+        $guest_rules_ar = $rstate->real_escape_string($_POST["guest_rules_ar"]);
+        $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
+        $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
+        $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
 
-        
-		$guest_rules_json = json_encode([
+
+        $guest_rules_json = json_encode([
             "en" => $guest_rules_en,
             "ar" => $guest_rules_ar
         ], JSON_UNESCAPED_UNICODE);
 
 
-        
-		$compound_name_json = json_encode([
+
+        $compound_name_json = json_encode([
             "en" => $compound_name_en,
             "ar" => $compound_name_ar
         ], JSON_UNESCAPED_UNICODE);
 
-        
 
-		$floor_json = json_encode([
+
+        $floor_json = json_encode([
             "en" => $floor_en,
             "ar" => $floor_ar
         ], JSON_UNESCAPED_UNICODE);
@@ -632,23 +627,103 @@ if (isset($_POST["type"])) {
             "en" => $city_en,
             "ar" => $city_ar
         ], JSON_UNESCAPED_UNICODE);
-		$description_json = json_encode([
+        $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-		$address_json = json_encode([
+        $address_json = json_encode([
             "en" => $address_en,
             "ar" => $address_ar
         ], JSON_UNESCAPED_UNICODE);
-		$title_json = json_encode([
+        $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
         ], JSON_UNESCAPED_UNICODE);
-		
-        move_uploaded_file($_FILES["prop_img"]["tmp_name"], $target_file);
+
+
+        // Allowed file types for images and videos
+        $allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        $allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/mkv'];
+
+        // Initialize arrays for image and video URLs
+        $imageUrls = [];
+        $videoUrls = [];
+
+        // Directories for storing images and videos
+        $uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
+        $uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
+
+
+        // Handle image upload
+        if (isset($_FILES['prop_img'])) {
+            // Check if it's multiple images or a single image
+            if (is_array($_FILES['prop_img']['name']) && count($_FILES['prop_img']['name']) >= 3) {
+                // Multiple images
+                foreach ($_FILES['prop_img']['tmp_name'] as $key => $tmpName) {
+                    if ($_FILES['prop_img']['error'][$key] === UPLOAD_ERR_OK) {
+                        $imageName = time() . '_' . $_FILES['prop_img']['name'][$key];
+                        $destination = $uploadDirImages . $imageName;
+
+                        // Validate image type
+                        if (in_array($_FILES['prop_img']['type'][$key], $allowedImageTypes)) {
+                            if (move_uploaded_file($tmpName, $destination)) {
+                                $imageUrls[] = 'images/property/' . $imageName;
+                            } else {
+                                // Handle error if file couldn't be moved
+                                $returnArr =  generateResponse("false", "Failed to upload image: " . $_FILES['images']['name'][$key], 500);
+                            }
+                        } else {
+                            // Handle invalid image type
+                            $returnArr =  generateResponse("false", "Invalid image type: " . $_FILES['images']['name'][$key], 400);
+                        }
+                    } else {
+                        // Handle error during file upload
+                        $returnArr =  generateResponse("false", "Error uploading image: " . $_FILES['images']['name'][$key], 400);
+                    }
+                }
+            } else {
+                $returnArr =  generateResponse("false", "Please upload more than two images.", 400);
+            }
+        } else {
+            // No images uploaded
+            $returnArr =  generateResponse("false", "No images uploaded.", 400);
+        }
+
+        // Handle video upload
+        if (isset($_FILES['prop_video'])) {
+            $video = $_FILES['prop_video'];
+            // Check for upload errors
+            if ($video['error'] === UPLOAD_ERR_OK) {
+                // Validate video type
+                if (in_array($video['type'], $allowedVideoTypes)) {
+                    // Generate a unique file name for the uploaded video
+                    $videoName = time() . '_' . $video['name'];
+                    $destination = $uploadDirVideos . $videoName;
+
+                    // Move the uploaded video to the destination folder
+                    if (move_uploaded_file($video['tmp_name'], $destination)) {
+                        $videoUrls[] = 'videos/property/' . $videoName;
+                    } else {
+                        // Handle error if video couldn't be moved
+                        $returnArr =  generateResponse("false", "Failed to upload video.", 500);
+                    }
+                } else {
+                    // Handle invalid video type
+                    $returnArr =  generateResponse("false", "Invalid video type.", 400);
+                }
+            } else {
+                // Handle error during video upload
+                $returnArr =  generateResponse("false", "Error uploading video.", 400);
+            }
+        }
+
+        // Convert arrays to comma-separated strings
+        $imageUrlsString = implode(',', $imageUrls);
+        $videoUrlsString = implode(',', $videoUrls);
+
         $table = "tbl_property";
-        $field_values = ["image", "security_deposit" , "government"  , "google_maps_url", "video" ,"guest_rules", "compound_name" , "floor" , "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days" , "min_days"];
-        $data_values = ["$url", "$security_deposit","$government" , "$google_maps_url", "$video", "$guest_rules_json" , "$compound_name_json", "$floor_json" , "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$user_id", "$pbuysell", "$plimit" , "$max_days" , "$min_days"];
+        $field_values = ["image", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+        $data_values = ["$imageUrlsString", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -663,92 +738,187 @@ if (isset($_POST["type"])) {
             ];
         }
     } elseif ($_POST["type"] == "edit_property") {
+
+        $id = $_POST['id'];
         $status = $_POST["status"];
         $plimit = $_POST['plimit'];
-        $country_id = $_POST['country_id'];
-        $pbuysell = $_POST['pbuysell'];
-       $facility = implode(',', $_POST['facility']);
+        $pbuysell = 1;
+        $facility = implode(',', $_POST['facility']);
         $ptype = $_POST['ptype'];
         $beds = $_POST['beds'];
         $bathroom = $_POST['bathroom'];
         $sqft = $_POST['sqft'];
-        $rate = $_POST['rate'];
-        $latitude = $_POST['latitude'];
-        $longtitude = $_POST['longtitude'];
-        $mobile = $_POST['mobile'];
-        $target_dir = dirname(dirname(__FILE__)) . "/images/property/";
-        $url = "images/property/";
         $user_id = '0';
-        $id = $_POST['id'];
+
         $listing_date = date("Y-m-d H:i:s");
-        $price = $_POST['price'];
-        $temp = explode(".", $_FILES["cat_img"]["name"]);
-        $newfilename = round(microtime(true)) . "." . end($temp);
-        $target_file = $target_dir . basename($newfilename);
-        $url = $url . basename($newfilename);
-        
-        $title_en = $rstate->real_escape_string($data["title_en"]);
-		$address_en = $rstate->real_escape_string($data["address_en"]);
-		$description_en = $rstate->real_escape_string($data["description_en"]);
-		$ccount_en = $rstate->real_escape_string($data["city_en"]);
-        $title_ar = $rstate->real_escape_string($data["title_ar"]);
-		$address_ar = $rstate->real_escape_string($data["address_ar"]);
-		$description_ar = $rstate->real_escape_string($data["description_ar"]);
-		$ccount_ar = $rstate->real_escape_string($data["city_ar"]);
-		$ccount_json = json_encode([
-            "en" => $ccount_en,
-            "ar" => $ccount_ar
+        $price = $_POST['prop_price'];
+        $government = $_POST['pgov'];
+        $security_deposit = $_POST['prop_security'];
+        $max_days = $_POST['max_day'];
+        $min_days = $_POST['min_day'];
+        $google_maps_url = $_POST['mapurl'];
+        $propowner = $_POST['propowner'];
+
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
+        $address_en = $rstate->real_escape_string($_POST["address_en"]);
+        $description_en = $rstate->real_escape_string(trim($_POST["description_en"]));
+        $guest_rules_en  = $rstate->real_escape_string(trim($_POST["guest_rules_en"]));
+        $compound_name_en = $rstate->real_escape_string($_POST["compound_name_en"]);
+        $floor_en = $rstate->real_escape_string($_POST["floor_en"]);
+        $city_en = $rstate->real_escape_string($_POST["city_en"]);
+
+
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $address_ar = $rstate->real_escape_string($_POST["address_ar"]);
+        $description_ar = $rstate->real_escape_string(trim($_POST["description_ar"]));
+        $guest_rules_ar = $rstate->real_escape_string(trim($_POST["guest_rules_ar"]));
+        $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
+        $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
+        $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
+
+
+        $guest_rules_json = json_encode([
+            "en" => $guest_rules_en,
+            "ar" => $guest_rules_ar
         ], JSON_UNESCAPED_UNICODE);
-		$description_json = json_encode([
+
+
+
+        $compound_name_json = json_encode([
+            "en" => $compound_name_en,
+            "ar" => $compound_name_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+
+
+        $floor_json = json_encode([
+            "en" => $floor_en,
+            "ar" => $floor_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+
+        $city_json = json_encode([
+            "en" => $city_en,
+            "ar" => $city_ar
+        ], JSON_UNESCAPED_UNICODE);
+        $description_json = json_encode([
             "en" => $description_en,
             "ar" => $description_ar
         ], JSON_UNESCAPED_UNICODE);
-		$address_json = json_encode([
+        $address_json = json_encode([
             "en" => $address_en,
             "ar" => $address_ar
         ], JSON_UNESCAPED_UNICODE);
-		$title_json = json_encode([
+        $title_json = json_encode([
             "en" => $title_en,
             "ar" => $title_ar
         ], JSON_UNESCAPED_UNICODE);
-		
-        if ($_FILES["cat_img"]["name"] != "") {
 
-            move_uploaded_file(
-                $_FILES["cat_img"]["tmp_name"],
-                $target_file
-            );
-            $table = "tbl_property";
-            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "image" => $url, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount_json, "listing_date" => $listing_date];
-            $where = "where id=" . $id . " and add_user_id=" . $user_id . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
 
-            if ($check == 1) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Property Update Successfully!!",
-                    "message" => "Property section!",
-                    "action" => "list_properties.php",
-                ];
-            }
-        } else {
-            $table = "tbl_property";
-            $field = ["plimit" => $plimit, "country_id" => $country_id, "pbuysell" => $pbuysell, "status" => $status, "title" => $title_json, "price" => $price, "address" => $address_json, "facility" => $facility, "description" => $description_json, "beds" => $beds, "bathroom" => $bathroom, "sqrft" => $sqft, "rate" => $rate, "ptype" => $ptype, "latitude" => $latitude, "longtitude" => $longtitude, "mobile" => $mobile, "city" => $ccount_json, "listing_date" => $listing_date];
-            $where = "where id=" . $id . " and add_user_id=" . $user_id . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
-            if ($check == 1) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Property Update Successfully!!",
-                    "message" => "Property section!",
-                    "action" => "list_properties.php",
-                ];
+        // Allowed file types for images and videos
+        $allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        $allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/mkv'];
+
+        // Initialize arrays for image and video URLs
+        $imageUrls = [];
+        $videoUrls = [];
+
+        // Directories for storing images and videos
+        $uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
+        $uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
+
+        // Handle image upload
+        if (isset($_FILES['prop_img'])) {
+            // Check if it's multiple images or a single image
+            if (is_array($_FILES['prop_img']['name']) && count($_FILES['prop_img']['name']) >= 3) {
+                // Multiple images
+                foreach ($_FILES['prop_img']['tmp_name'] as $key => $tmpName) {
+                    if ($_FILES['prop_img']['error'][$key] === UPLOAD_ERR_OK) {
+                        $imageName = time() . '_' . $_FILES['prop_img']['name'][$key];
+                        $destination = $uploadDirImages . $imageName;
+
+                        // Validate image type
+                        if (in_array($_FILES['prop_img']['type'][$key], $allowedImageTypes)) {
+                            if (move_uploaded_file($tmpName, $destination)) {
+                                $imageUrls[] = 'images/property/' . $imageName;
+                            } else {
+                                // Handle error if file couldn't be moved
+                                $returnArr =  generateResponse("false", "Failed to upload image: " . $_FILES['images']['name'][$key], 500);
+                            }
+                        } else {
+                            // Handle invalid image type
+                            $returnArr =  generateResponse("false", "Invalid image type: " . $_FILES['images']['name'][$key], 400);
+                        }
+                    } else {
+                        // Handle error during file upload
+                        $returnArr =  generateResponse("false", "Error uploading image: " . $_FILES['images']['name'][$key], 400);
+                    }
+                }
+            } else {
+                $returnArr =  generateResponse("false", "Please upload more than two images.", 400);
             }
         }
+
+        // Handle video upload
+        if (isset($_FILES['prop_video'])) {
+            $video = $_FILES['prop_video'];
+            // Check for upload errors
+            if ($video['error'] === UPLOAD_ERR_OK) {
+                // Validate video type
+                if (in_array($video['type'], $allowedVideoTypes)) {
+                    // Generate a unique file name for the uploaded video
+                    $videoName = time() . '_' . $video['name'];
+                    $destination = $uploadDirVideos . $videoName;
+
+                    // Move the uploaded video to the destination folder
+                    if (move_uploaded_file($video['tmp_name'], $destination)) {
+                        $videoUrls[] = 'videos/property/' . $videoName;
+                    } else {
+                        // Handle error if video couldn't be moved
+                        $returnArr =  generateResponse("false", "Failed to upload video.", 500);
+                    }
+                } else {
+                    // Handle invalid video type
+                    $returnArr =  generateResponse("false", "Invalid video type.", 400);
+                }
+            } else {
+                // Handle error during video upload
+                $returnArr =  generateResponse("false", "Error uploading video.", 400);
+            }
+        }
+
+        // Convert arrays to comma-separated strings
+        $imageUrlsString = implode(',', $imageUrls);
+        $videoUrlsString = implode(',', $videoUrls);
+        $table = "tbl_property";
+
+        
+        $field_values = [ "security_deposit", "government", "google_maps_url",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+        $data_values = [ "$security_deposit", "$government", "$google_maps_url",  "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+
+        $combinedArray = array_combine($field_values, $data_values);
+        if (!empty($imageUrls)) {
+			$combinedArray["image"] =  $imageUrlsString;
+		}
+
+        if (!empty($videoUrls)) {
+			$combinedArray["video"] =  $videoUrlsString;
+		}
+        $where = "where id=" . $id . " and add_user_id=" . $propowner . "";
+        $h = new Estate();
+        $check = $h->restateupdateData($combinedArray, $table, $where);
+        
+        if ($check == 1) {
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Property Update Successfully!!",
+                http_response_code(200),
+                "message" => "Property section!",
+                "action" => "list_properties.php",
+            ];
+        }
+       
     } elseif ($_POST["type"] == "add_facility") {
         $okey = $_POST["status"];
         $title_ar = $rstate->real_escape_string($_POST["title_ar"]);

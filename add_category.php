@@ -141,7 +141,7 @@ if (isset($_GET['id'])) {
                         <?= $lang['Category_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img">
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="cat_img">
                       <div class="invalid-feedback" id="cat_img_feedback" style="display: none;">
                         <?= $lang_en['cat_cat_img'] ?>
                       </div>
@@ -180,7 +180,7 @@ if (isset($_GET['id'])) {
 
                   </div>
                   <div class="card-footer text-left">
-                    <button onclick="return validateForm()" type="submit" class="btn btn-primary">
+                    <button onclick="return validateForm(true)" type="submit" class="btn btn-primary">
                       <?= $lang_en['Edit_Category'] ?>
 
                     </button>
@@ -236,7 +236,7 @@ if (isset($_GET['id'])) {
                         <?= $lang['Category_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img">
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif"  name="cat_img">
                       <div class="invalid-feedback" id="cat_img_feedback" style="display: none;">
                         <?= $lang_en['cat_cat_img'] ?>
                       </div>
@@ -300,7 +300,7 @@ if (isset($_GET['id'])) {
     return activeTab === 'en' ? 'en' : 'ar';
   }
 
-  function validateForm() {
+  function validateForm(edit = false ) {
     // Clear previous feedback
     document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
       feedback.style.display = 'none';
@@ -328,8 +328,14 @@ if (isset($_GET['id'])) {
 
     }
     if (!categoryImage) {
-      document.getElementById('cat_img_feedback').style.display = 'block';
+      
+      if(edit  ){
+				isValid =true;
+
+			}else{
+        document.getElementById('cat_img_feedback').style.display = 'block';
       isValid = false;
+      }
     }
     if (!status) {
       document.getElementById('status_feedback').style.display = 'block';
