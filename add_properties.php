@@ -2,10 +2,8 @@
 require 'include/main_head.php';
 
 $coupon_per = ['Create', 'Update', 'Read', 'Delete'];
-$lang_ar = load_specific_langauage('ar');
 $lang_code = load_language_code()["language_code"];
 
-$lang_en = load_specific_langauage('en');
 if (isset($_GET['id'])) {
 	if ($_SESSION['stype'] == 'Staff' && !in_array('Update', $property_per)) {
 
@@ -513,8 +511,7 @@ if (isset($_GET['id'])) {
 
 															?>
 																<option value="<?php echo $row['id']; ?>"
-																<?php echo $isSelected; ?>
-																><?php echo $title[$lang_code]; ?></option>
+																	<?php echo $isSelected; ?>><?php echo $title[$lang_code]; ?></option>
 															<?php
 															}
 															?>
@@ -620,9 +617,7 @@ if (isset($_GET['id'])) {
 
 																	?>
 																		<option value="<?php echo $row['id']; ?>"
-																		<?php echo $isSelected; ?>
-
-																		><?php echo $title[$lang_code]; ?></option>
+																			<?php echo $isSelected; ?>><?php echo $title[$lang_code]; ?></option>
 																	<?php
 																	}
 																	?>
@@ -656,9 +651,7 @@ if (isset($_GET['id'])) {
 
 																	?>
 																		<option value="<?php echo $row['id']; ?>"
-																		<?php echo $isSelected; ?>
-
-																		><?php echo $title[$lang_code]; ?></option>
+																			<?php echo $isSelected; ?>><?php echo $title[$lang_code]; ?></option>
 																	<?php
 																	}
 																	?>
@@ -689,9 +682,7 @@ if (isset($_GET['id'])) {
 
 																	?>
 																		<option value="<?php echo $row['id']; ?>"
-																		<?php echo $isSelected; ?>
-
-																		><?php echo $title ?></option>
+																			<?php echo $isSelected; ?>><?php echo $title ?></option>
 																	<?php
 																	}
 																	?>
@@ -1291,6 +1282,16 @@ if (isset($_GET['id'])) {
 		const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
 		return activeTab === 'en' ? 'en' : 'ar';
 	}
+	const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+
+	document.querySelector('input[name="prop_img[]"]').addEventListener('change', function() {
+		for (const file of this.files) {
+			if (!allowedTypes.includes(file.type)) {
+				this.value = ''; // Clear invalid files
+				break; // Stop further checks
+			}
+		}
+	});
 
 	function validateForm(edit = false) {
 		// Clear previous feedback
@@ -1314,7 +1315,7 @@ if (isset($_GET['id'])) {
 
 		const cityEn = document.querySelector('input[name="city_en"]').value;
 		const cityAr = document.querySelector('input[name="city_ar"]').value;
-        
+
 
 		const propImage = document.querySelector('input[name="prop_img[]"]');
 		const files = propImage.files;
@@ -1403,12 +1404,12 @@ if (isset($_GET['id'])) {
 		if (!propImage || files.length < 3) {
 
 
-			if(edit && files.length ==0 ){
-				isValid =true;
+			if (edit && files.length == 0) {
+				isValid = true;
 
-			}else{
+			} else {
 				document.getElementById('prop_img_feedback').style.display = 'block';
-			isValid = false;
+				isValid = false;
 
 			}
 		}

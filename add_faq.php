@@ -1,8 +1,6 @@
 <?php
 require 'include/main_head.php';
 $faq_per = ['Create', 'Update', 'Read', 'Delete'];
-$lang_ar = load_specific_langauage('ar');
-$lang_en = load_specific_langauage('en');
 
 if (isset($_GET['id'])) {
   if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $faq_per)) {
