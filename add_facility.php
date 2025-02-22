@@ -1,8 +1,6 @@
 <?php
 require 'include/main_head.php';
 $facility_per = ['Create', 'Update', 'Read', 'Delete'];
-$lang_ar = load_specific_langauage('ar');
-$lang_en = load_specific_langauage('en');
 
 if (isset($_GET['id'])) {
   if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $facility_per)) {
@@ -97,10 +95,10 @@ if (isset($_GET['id'])) {
                 <form method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
-                  <div id="alert-container" class="mb-3" style="display: none;">
+                    <div id="alert-container" class="mb-3" style="display: none;">
                       <div class="alert alert-danger" id="alert-message"></div>
                     </div>
-                  <div class="tab-content">
+                    <div class="tab-content">
                       <!-- English Tab -->
                       <div class="tab-pane fade show active " id="en">
                         <div class="form-group mb-3">
@@ -113,12 +111,12 @@ if (isset($_GET['id'])) {
                             name="title_en"
                             required=""
                             aria-describedby="basic-addon1" />
-                            <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
-                        <?= $lang_en['facility_name'] ?>
-                      </div>
+                          <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
+                            <?= $lang_en['facility_name'] ?>
+                          </div>
                         </div>
 
-                        
+
                       </div>
                       <!-- Arabic Tab -->
                       <div class="tab-pane fade show " id="ar">
@@ -132,22 +130,22 @@ if (isset($_GET['id'])) {
                             name="title_ar"
                             required=""
                             aria-describedby="basic-addon1" />
-                            <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
-                        <?= $lang_ar['facility_name'] ?>
-                      </div>
+                          <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
+                            <?= $lang_ar['facility_name'] ?>
+                          </div>
                         </div>
 
-                        
+
                       </div>
                     </div>
-                    
+
 
                     <div class="form-group mb-3">
                       <label id='Facility-Image'>
                         <?= $lang_en['Facility_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control"  accept=".jpg, .jpeg, .png, .gif" name="facility_img">
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="facility_img">
                       <div class="invalid-feedback" id="facility_img_feedback" style="display: none;">
                         <?= $lang_en['facility_img'] ?>
                       </div>
@@ -186,7 +184,7 @@ if (isset($_GET['id'])) {
 
                   </div>
                   <div class="card-footer text-left">
-                    <button onclick="return validateForm(true)" type="submit"  id="edit-facility" class="btn btn-primary">
+                    <button onclick="return validateForm(true)" type="submit" id="edit-facility" class="btn btn-primary">
                       <?= $lang_en['Edit_Facility'] ?>
 
                     </button>
@@ -198,10 +196,10 @@ if (isset($_GET['id'])) {
                 <form method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
-                  <div id="alert-container" class="mb-3" style="display: none;">
+                    <div id="alert-container" class="mb-3" style="display: none;">
                       <div class="alert alert-danger" id="alert-message"></div>
                     </div>
-                  <div class="tab-content">
+                    <div class="tab-content">
                       <!-- English Tab -->
                       <div class="tab-pane fade show active " id="en">
                         <div class="form-group mb-3">
@@ -213,12 +211,12 @@ if (isset($_GET['id'])) {
                             name="title_en"
                             required=""
                             aria-describedby="basic-addon1" />
-                            <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
-                        <?= $lang_en['facility_name'] ?>
-                      </div>
+                          <div class="invalid-feedback" id="facility_name_en_feedback" style="display: none;">
+                            <?= $lang_en['facility_name'] ?>
+                          </div>
                         </div>
 
-                        
+
                       </div>
                       <!-- Arabic Tab -->
                       <div class="tab-pane fade show " id="ar">
@@ -231,12 +229,12 @@ if (isset($_GET['id'])) {
                             name="title_ar"
                             required=""
                             aria-describedby="basic-addon1" />
-                            <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
-                        <?= $lang_ar['facility_name'] ?>
-                      </div>
+                          <div class="invalid-feedback" id="facility_name_ar_feedback" style="display: none;">
+                            <?= $lang_ar['facility_name'] ?>
+                          </div>
                         </div>
 
-                        
+
                       </div>
                     </div>
 
@@ -293,6 +291,18 @@ if (isset($_GET['id'])) {
     document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
       feedback.style.display = 'none';
     });
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+
+    document.querySelector('input[name="facility_img"]').addEventListener('change', function() {
+      const file = this.files[0];
+
+      if (file) {
+        // Check if the file type is valid
+        if (!allowedTypes.includes(file.type)) {
+          this.value = ''; // Clear invalid file
+        }
+      }
+    });
 
     const titleEn = document.querySelector('input[name="title_en"]').value;
     const titleAr = document.querySelector('input[name="title_ar"]').value;
@@ -316,13 +326,13 @@ if (isset($_GET['id'])) {
 
     }
     if (!facilityImage) {
-      
-      if(edit){
-				isValid =true;
 
-			}else{
+      if (edit) {
+        isValid = true;
+
+      } else {
         document.getElementById('facility_img_feedback').style.display = 'block';
-      isValid = false;
+        isValid = false;
       }
     }
     if (!status) {
@@ -361,7 +371,7 @@ if (isset($_GET['id'])) {
       document.getElementById('alert-message').innerHTML = alertMessage;
       document.getElementById('alert-container').style.display = 'block';
 
-    }else{
+    } else {
       document.getElementById('alert-container').style.display = 'none';
 
     }
@@ -374,7 +384,7 @@ if (isset($_GET['id'])) {
 
   function changeLanguage(lang) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
-    
+
     document.getElementById('facility_name_ar_feedback').textContent = langData.facility_name;
     document.getElementById('facility_img_feedback').textContent = langData.facility_img;
     document.getElementById('status_feedback').textContent = langData.facility_status;

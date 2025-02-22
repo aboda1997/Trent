@@ -1,8 +1,6 @@
 <?php
 require 'include/main_head.php';
 $category_per = ['Create', 'Update', 'Read', 'Delete'];
-$lang_ar = load_specific_langauage('ar');
-$lang_en = load_specific_langauage('en');
 
 if (isset($_GET['id'])) {
   if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $category_per)) {
@@ -94,7 +92,7 @@ if (isset($_GET['id'])) {
                 $title = json_decode($data['title'], true);
 
               ?>
-                <form method="post" enctype="multipart/form-data" >
+                <form method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
                     <div id="alert-container" class="mb-3" style="display: none;">
@@ -236,7 +234,7 @@ if (isset($_GET['id'])) {
                         <?= $lang['Category_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif"  name="cat_img">
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="cat_img">
                       <div class="invalid-feedback" id="cat_img_feedback" style="display: none;">
                         <?= $lang_en['cat_cat_img'] ?>
                       </div>
@@ -299,8 +297,20 @@ if (isset($_GET['id'])) {
     const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
     return activeTab === 'en' ? 'en' : 'ar';
   }
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
 
-  function validateForm(edit = false ) {
+  document.querySelector('input[name="cat_img"]').addEventListener('change', function() {
+    const file = this.files[0];
+
+    if (file) {
+      // Check if the file type is valid
+      if (!allowedTypes.includes(file.type)) {
+        this.value = ''; // Clear invalid file
+      }
+    }
+  });
+
+  function validateForm(edit = false) {
     // Clear previous feedback
     document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
       feedback.style.display = 'none';
@@ -328,14 +338,16 @@ if (isset($_GET['id'])) {
 
     }
     if (!categoryImage) {
-      if(edit){
-				isValid =true;
+      if (edit) {
+        isValid = true;
 
-			}else{
+      } else {
         document.getElementById('cat_img_feedback').style.display = 'block';
-      isValid = false;
+        isValid = false;
       }
     }
+
+
     if (!status) {
       document.getElementById('status_feedback').style.display = 'block';
       isValid = false;
@@ -372,7 +384,7 @@ if (isset($_GET['id'])) {
       document.getElementById('alert-message').innerHTML = alertMessage;
       document.getElementById('alert-container').style.display = 'block';
 
-    }else{
+    } else {
       document.getElementById('alert-container').style.display = 'none';
 
     }

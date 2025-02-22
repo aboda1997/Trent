@@ -133,7 +133,7 @@ if (isset($_GET['id'])) {
                         <?= $lang['Gallery_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img">
+                      <input type="file" name="cat_img" class="form-control" accept=".jpg, .jpeg, .png, .gif"  >
                       <br>
                       <img src="<?php echo $data['img'] ?>" width="100px" />
                       <input type="hidden" name="type" value="edit_gal" />
@@ -225,7 +225,8 @@ if (isset($_GET['id'])) {
                         <?= $lang['Gallery_Image'] ?>
 
                       </label>
-                      <input type="file" class="form-control" name="cat_img" required="">
+                      <input type="file" name="cat_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" required="" >
+
                       <input type="hidden" name="type" value="add_gal" />
                     </div>
 
@@ -279,6 +280,22 @@ if (isset($_GET['id'])) {
   </div>
 </div>
 <!-- latest jquery-->
+ 
+
+<script>
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+
+  document.querySelector('input[name="cat_img"]').addEventListener('change', function() {
+    const file = this.files[0];
+
+    if (file) {
+      // Check if the file type is valid
+      if (!allowedTypes.includes(file.type)) {
+        this.value = ''; // Clear invalid file
+      }
+    }
+  });
+</script>
 <?php
 require 'include/footer.php';
 ?>

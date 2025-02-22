@@ -3,6 +3,9 @@ include 'include/reconfig.php';
 include 'include/estate.php';
 include_once 'include/load_language.php';
 $lang_code = load_language_code();
+$lang_ar = load_specific_langauage('ar');
+$lang_en = load_specific_langauage('en');
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang_code["language_code"] ?>" dir="<?= $lang_code["dir"] ?>">

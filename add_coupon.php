@@ -2,8 +2,7 @@
 require 'include/main_head.php';
 
 $coupon_per = ['Create', 'Update', 'Read', 'Delete'];
-$lang_ar = load_specific_langauage('ar');
-$lang_en = load_specific_langauage('en');
+
 if (isset($_GET['id'])) {
 	if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $coupon_per)) {
 
@@ -114,7 +113,7 @@ if (isset($_GET['id'])) {
 														<input type="hidden" name="type" value="edit_coupon" />
 
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
-														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" >
+														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif">
 														<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
 															<?= $lang_en['coupon_img'] ?>
 
@@ -326,7 +325,7 @@ if (isset($_GET['id'])) {
 								<?php
 								} else {
 								?>
-									<form method="post" enctype="multipart/form-data" >
+									<form method="post" enctype="multipart/form-data">
 
 										<div class="card-body">
 											<div id="alert-container" class="mb-3" style="display: none;">
@@ -345,7 +344,7 @@ if (isset($_GET['id'])) {
 														<input type="hidden" name="type" value="add_coupon" />
 
 														<input type="hidden" name="id" />
-														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif"  required>
+														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" required>
 														<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
 															<?= $lang_en['coupon_img'] ?>
 
@@ -572,13 +571,25 @@ if (isset($_GET['id'])) {
 		const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
 		return activeTab === 'en' ? 'en' : 'ar';
 	}
+	const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+
+	document.querySelector('input[name="coupon_img"]').addEventListener('change', function() {
+		const file = this.files[0];
+
+		if (file) {
+			// Check if the file type is valid
+			if (!allowedTypes.includes(file.type)) {
+				this.value = ''; // Clear invalid file
+			}
+		}
+	});
 
 	function validateForm(edit = false) {
 		// Clear previous feedback
 		document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
 			feedback.style.display = 'none';
 		});
-		
+
 		const titleEn = document.querySelector('input[name="title_en"]').value;
 		const titleAr = document.querySelector('input[name="title_ar"]').value;
 		const subtitleEn = document.querySelector('input[name="subtitle_en"]').value;
@@ -619,13 +630,13 @@ if (isset($_GET['id'])) {
 
 		}
 		if (!couponImage) {
-			if(edit  ){
-				isValid =true;
+			if (edit) {
+				isValid = true;
 
-			}else{
-				
-			document.getElementById('coupon_img_feedback').style.display = 'block';
-			isValid = false;
+			} else {
+
+				document.getElementById('coupon_img_feedback').style.display = 'block';
+				isValid = false;
 			}
 		}
 		if (!status) {
