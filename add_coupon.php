@@ -73,7 +73,6 @@ if (isset($_GET['id'])) {
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="card">
-							<div class="card-body">
 								<div class="card-header card-header-tabs-line d-flex justify-content-between align-items-center">
 									<div></div>
 									<div class="card-toolbar">
@@ -331,211 +330,212 @@ if (isset($_GET['id'])) {
 											<div id="alert-container" class="mb-3" style="display: none;">
 												<div class="alert alert-danger" id="alert-message"></div>
 											</div>
+											<div class="tab-content">
 
-											<div class="row">
-												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+												<div class="row">
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
-													<div class="form-group mb-3">
-														<label id="Coupon-Image">
-															<?= $lang_en['Coupon_Image'] ?>
+														<div class="form-group mb-3">
+															<label id="Coupon-Image">
+																<?= $lang_en['Coupon_Image'] ?>
 
-														</label>
+															</label>
 
-														<input type="hidden" name="type" value="add_coupon" />
+															<input type="hidden" name="type" value="add_coupon" />
 
-														<input type="hidden" name="id" />
-														<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" required>
-														<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
-															<?= $lang_en['coupon_img'] ?>
+															<input type="hidden" name="id" />
+															<input type="file" name="coupon_img" class="form-control" accept=".jpg, .jpeg, .png, .gif" required>
+															<div class="invalid-feedback" id="coupon_img_feedback" style="display: none;">
+																<?= $lang_en['coupon_img'] ?>
 
-														</div>
-
-													</div>
-												</div>
-
-												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-
-													<div class="form-group mb-3">
-														<label id='Coupon-Expiry-Date'>
-															<?= $lang_en['Coupon_Expiry_Date'] ?>
-
-														</label>
-														<input type="date" name="expire_date" class="form-control" required>
-														<div class="invalid-feedback" id="expire_date_feedback" style="display: none;">
-															<?= $lang_en['expire_date'] ?>
-
-														</div>
-													</div>
-												</div>
-
-
-												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-
-														<label id='Coupon-Code' for="cname">
-															<?= $lang_en['Coupon_Code'] ?>
-
-														</label>
-														<div class="row">
-															<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
-																<input type="text" id="ccode" class="form-control" onkeypress="return isNumberKey(event)"
-																	maxlength="8" name="coupon_code" required oninput="this.value = this.value.toUpperCase()">
-																<div class="invalid-feedback" id="coupon_code_feedback" style="display: none;">
-																	<?= $lang_en['coupon_code'] ?>
-
-																</div>
 															</div>
 
-															<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-																<button id="gen_code" class="btn btn-success"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+														</div>
+													</div>
+
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+
+														<div class="form-group mb-3">
+															<label id='Coupon-Expiry-Date'>
+																<?= $lang_en['Coupon_Expiry_Date'] ?>
+
+															</label>
+															<input type="date" name="expire_date" class="form-control" required>
+															<div class="invalid-feedback" id="expire_date_feedback" style="display: none;">
+																<?= $lang_en['expire_date'] ?>
+
 															</div>
 														</div>
 													</div>
-												</div>
 
-												<div class="tab-content">
-													<!-- English Tab -->
-													<div class="tab-pane fade show active" id="en">
-														<div class="row">
 
-															<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_en['Coupon_title'] ?>
+													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
 
-																	</label>
-																	<input type="text" class="form-control" name="title_en" required>
-																	<div class="invalid-feedback" id="title_en_feedback" style="display: none;">
-																		<?= $lang_en['coupon_title'] ?>
+															<label id='Coupon-Code' for="cname">
+																<?= $lang_en['Coupon_Code'] ?>
+
+															</label>
+															<div class="row">
+																<div class="col-md-8 col-lg-8 col-xs-12 col-sm-12">
+																	<input type="text" id="ccode" class="form-control" onkeypress="return isNumberKey(event)"
+																		maxlength="8" name="coupon_code" required oninput="this.value = this.value.toUpperCase()">
+																	<div class="invalid-feedback" id="coupon_code_feedback" style="display: none;">
+																		<?= $lang_en['coupon_code'] ?>
 
 																	</div>
 																</div>
-															</div>
 
-															<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_en['Coupon_subtitle'] ?>
-
-																	</label>
-																	<input type="text" class="form-control" name="subtitle_en" required>
-																	<div class="invalid-feedback" id="subtitle_en_feedback" style="display: none;">
-																		<?= $lang_en['coupon_subtitle'] ?>
-
-																	</div>
-																</div>
-															</div>
-
-
-															<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_en['Coupon_Description'] ?>
-
-																	</label>
-																	<textarea class="form-control" rows="5" name="description_en" style="resize: none;"></textarea>
-
-																</div>
-															</div>
-														</div>
-													</div>
-													<!-- Arabic Tab -->
-													<div class="tab-pane fade show" id="ar">
-														<div class="row">
-
-															<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_ar['Coupon_title'] ?>
-
-																	</label>
-																	<input type="text" class="form-control" name="title_ar" required>
-																	<div class="invalid-feedback" id="title_ar_feedback" style="display: none;">
-																		<?= $lang_ar['coupon_title'] ?>
-
-																	</div>
-																</div>
-															</div>
-
-															<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_ar['Coupon_subtitle'] ?>
-
-																	</label>
-																	<input type="text" class="form-control" name="subtitle_ar" required>
-																	<div class="invalid-feedback" id="subtitle_ar_feedback" style="display: none;">
-																		<?= $lang_ar['coupon_subtitle'] ?>
-
-																	</div>
-																</div>
-															</div>
-
-
-															<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-																<div class="form-group mb-3">
-																	<label for="cname">
-																		<?= $lang_ar['Coupon_Description'] ?>
-
-																	</label>
-																	<textarea class="form-control" rows="5" name="description_ar" style="resize: none;"></textarea>
-
-																	</textarea>
+																<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+																	<button id="gen_code" class="btn btn-success"><i class="fa fa-refresh" aria-hidden="true"></i></button>
 																</div>
 															</div>
 														</div>
 													</div>
 												</div>
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 
-													<div class="form-group mb-3">
-														<label id="Coupon-Status" for="inputGroupSelect01"><?= $lang_en['Coupon_Status'] ?></label>
-														<select class="form-control" name="status" id="inputGroupSelect01" required>
-															<option value=""><?= $lang_en['Select_Coupon_Status'] ?>...</option>
-															<option value="1"><?= $lang_en['Publish'] ?></option>
-															<option value="0"><?= $lang_en['Unpublish'] ?></option>
-														</select>
-														<div class="invalid-feedback" id="status_feedback" style="display: none;">
-															<?= $lang_en['coupon_status'] ?>
+												<!-- English Tab -->
+												<div class="tab-pane fade show active" id="en">
+													<div class="row">
 
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_en['Coupon_title'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="title_en" required>
+																<div class="invalid-feedback" id="title_en_feedback" style="display: none;">
+																	<?= $lang_en['coupon_title'] ?>
+
+																</div>
+															</div>
+														</div>
+
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_en['Coupon_subtitle'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="subtitle_en" required>
+																<div class="invalid-feedback" id="subtitle_en_feedback" style="display: none;">
+																	<?= $lang_en['coupon_subtitle'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_en['Coupon_Description'] ?>
+
+																</label>
+																<textarea class="form-control" rows="5" name="description_en" style="resize: none;"></textarea>
+
+															</div>
 														</div>
 													</div>
 												</div>
+												<!-- Arabic Tab -->
+												<div class="tab-pane fade show" id="ar">
+													<div class="row">
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_ar['Coupon_title'] ?>
 
-													<div class="form-group mb-3">
-														<label id='Coupon-Min-Order-Amount'>
-															<?= $lang_en['Coupon_Min_Order_Amount'] ?>
+																</label>
+																<input type="text" class="form-control" name="title_ar" required>
+																<div class="invalid-feedback" id="title_ar_feedback" style="display: none;">
+																	<?= $lang_ar['coupon_title'] ?>
 
-														</label>
-														<input type="text" id="cname" class="form-control numberonly" name="min_amt" required>
-														<div class="invalid-feedback" id="min_amt_feedback" style="display: none;">
-															<?= $lang_en['min_amt'] ?>
+																</div>
+															</div>
+														</div>
 
+														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_ar['Coupon_subtitle'] ?>
+
+																</label>
+																<input type="text" class="form-control" name="subtitle_ar" required>
+																<div class="invalid-feedback" id="subtitle_ar_feedback" style="display: none;">
+																	<?= $lang_ar['coupon_subtitle'] ?>
+
+																</div>
+															</div>
+														</div>
+
+
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label for="cname">
+																	<?= $lang_ar['Coupon_Description'] ?>
+
+																</label>
+																<textarea class="form-control" rows="5" name="description_ar" style="resize: none;"></textarea>
+
+																</textarea>
+															</div>
 														</div>
 													</div>
 												</div>
+												<div class="row">
 
-												<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id='Coupon-Value' for="cname">
-															<?= $lang_en['Coupon_Value'] ?>
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 
-														</label>
-														<input type="text" id="cname" class="form-control numberonly" name="coupon_val" required>
-														<div class="invalid-feedback" id="coupon_val_feedback" style="display: none;">
-															<?= $lang_en['coupon_val'] ?>
+														<div class="form-group mb-3">
+															<label id="Coupon-Status" for="inputGroupSelect01"><?= $lang_en['Coupon_Status'] ?></label>
+															<select class="form-control" name="status" id="inputGroupSelect01" required>
+																<option value=""><?= $lang_en['Select_Coupon_Status'] ?>...</option>
+																<option value="1"><?= $lang_en['Publish'] ?></option>
+																<option value="0"><?= $lang_en['Unpublish'] ?></option>
+															</select>
+															<div class="invalid-feedback" id="status_feedback" style="display: none;">
+																<?= $lang_en['coupon_status'] ?>
 
+															</div>
 														</div>
 													</div>
-												</div>
 
+													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+
+														<div class="form-group mb-3">
+															<label id='Coupon-Min-Order-Amount'>
+																<?= $lang_en['Coupon_Min_Order_Amount'] ?>
+
+															</label>
+															<input type="text" id="cname" class="form-control numberonly" name="min_amt" required>
+															<div class="invalid-feedback" id="min_amt_feedback" style="display: none;">
+																<?= $lang_en['min_amt'] ?>
+
+															</div>
+														</div>
+													</div>
+
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+														<div class="form-group mb-3">
+															<label id='Coupon-Value' for="cname">
+																<?= $lang_en['Coupon_Value'] ?>
+
+															</label>
+															<input type="text" id="cname" class="form-control numberonly" name="coupon_val" required>
+															<div class="invalid-feedback" id="coupon_val_feedback" style="display: none;">
+																<?= $lang_en['coupon_val'] ?>
+
+															</div>
+														</div>
+													</div>
+
+												</div>
 
 
 											</div>
-
-
 										</div>
 										<div class="card-footer text-left">
 											<button onclick="return validateForm()" type="submit" id='add-coupon' name="icat" class="btn btn-primary">
@@ -544,7 +544,6 @@ if (isset($_GET['id'])) {
 										</div>
 									</form>
 								<?php } ?>
-							</div>
 
 						</div>
 

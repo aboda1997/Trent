@@ -51,6 +51,11 @@ $lang_en = load_specific_langauage('en');
             display: none;
         }
 
+        .page-wrapper .page-header {
+            z-index: 0;
+   
+        }
+
         /* Media query for screen widths between 1200px and 1400px */
         @media (max-width: 1400px) and (min-width: 1200px) {
 
@@ -93,10 +98,8 @@ $lang_en = load_specific_langauage('en');
 
 <body>
     <script>
-  var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
-  var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
-
-
+        var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
+        var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
     </script>
     <!-- tap on top starts-->
     <div class="tap-top"><i data-feather="chevrons-up"></i></div>
