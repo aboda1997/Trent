@@ -5,7 +5,7 @@ $coupon_per = ['Create', 'Update', 'Read', 'Delete'];
 $lang_code = load_language_code()["language_code"];
 
 if (isset($_GET['id'])) {
-	if ($_SESSION['stype'] == 'Staff' && !in_array('Update', $property_per)) {
+	if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $property_per)) {
 
 
 
@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
 		exit();
 	}
 } else {
-	if ($_SESSION['stype'] == 'Staff' && !in_array('Write', $property_per)) {
+	if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $property_per)) {
 
 
 
