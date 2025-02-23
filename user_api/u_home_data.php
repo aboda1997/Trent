@@ -3,44 +3,18 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
-
-if ($data['uid'] == '') {
+$uid = isset($data['uid']) ? intval($data['uid']) : null;
+if ($uid == null) {
     $returnArr = array(
         "ResponseCode" => "401",
         "Result" => "false",
         "ResponseMsg" => "Something Went Wrong!"
     );
+	http_response_code(401);
+
 } else {
 	
-	$uid = $data['uid'];
-	if($uid == 0)
-	{
-	    
-	}
-	else 
-	{
-	$udata = $rstate->query("select * from tbl_user where id=".$uid."")->fetch_assoc();
-	$timestamp = date("Y-m-d");
-	if($udata['end_date'] < $timestamp)
-	{
-	$table = "tbl_user";
-                $field = ["start_date" => NULL, "end_date" => NULL,"pack_id"=>"0","is_subscribe"=>"0"];
-  $where = "where id=".$uid."";
-$h = new Estate();
-	 $check = $h->restateupdateDatanull_Api($field,$table,$where);
-	 
-	 $table = "plan_purchase_history";
-        $where = "where uid=" . $uid . "";
-        $h = new Estate();
-        $check = $h->restateDeleteData_Api($where, $table);
-		
-		$table="tbl_property";
-   $field = "status=0";
-  $where = "where add_user_id=".$uid."";
-$h = new Estate();
-	  $check = $h->restateupdateData_single($field,$table,$where);
-	}
-	}
+	
 	$f = array();
 	$fp = array();
 	$vop =array();
@@ -57,7 +31,7 @@ $h = new Estate();
 	while($rp = $sql->fetch_assoc())
 	{
 		$vop['id'] = $rp['id'];
-		$vop['title'] = $rp['title'];
+		$vop['title'] = json_decode($rp['title'], true);
 		$vop['img'] = $rp['img'];
 		$vop['status'] = $rp['status'];
 		$cat[] = $vop;
@@ -65,19 +39,29 @@ $h = new Estate();
 	array_unshift($cat , $wo);
 	if($uid == 0)
 {
-	$prop = $rstate->query("select * from tbl_property where country_id=".$country_id." and status=1 and is_sell=0  order by id desc limit 5");
+	$prop = $rstate->query("select * from tbl_property where  status=1 and is_sell=0  order by id desc limit 5 ");
 }
 else 
 {
-	$prop = $rstate->query("select * from tbl_property where  status=1 and is_sell=0 and add_user_id!=".$uid." order by id desc limit 5");
+	$prop = $rstate->query("select * from tbl_property where  status=1 and is_sell=0 and add_user_id =".$uid." order by id desc ");
 }
 	while($row = $prop->fetch_assoc())
 	{
+
+		$vr = array();
+		$imageArray = explode(',', $row['image']);
+	
+		// Loop through each image URL and push to $vr array
+		foreach ($imageArray as $image) {
+			$vr[] = array('image' => trim($image), 'is_panorama' => 0);
+		}
+	
+		$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
+		while ($rk = $get_extra->fetch_assoc()) {
+			array_push($vr, array('image' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
+		}
 		$fp['id'] = $row['id'];
-		$fp['title'] = $row['title'];
-		$fp['buyorrent'] = $row['pbuysell'];
-		$fp['latitude'] = $row['latitude'];
-		$fp['longtitude'] = $row['longtitude'];
+		$fp['title'] =  json_decode($row['title'], true);
 		$fp['plimit'] = $row['plimit'];
 		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=".$row['id']." and book_status='Completed' and total_rate !=0")->num_rows;
 		if($checkrate !=0)
@@ -87,55 +71,28 @@ else
 		}
 		else 
 		{
-		$fp['rate'] = $row['rate'];
+		$fp['rate'] = null;
 		}
-		$fp['city'] = $row['city'];
+		$fp['security_deposit'] = $row['security_deposit'];
+		$fp['google_maps_url'] = $row['google_maps_url'];
+		$fp['video'] = $row['video'];
+		$fp['max_days'] = $row['max_days'];
+		$fp['min_days'] = $row['min_days'];
+	
+		$fp['floor'] = json_decode($row['floor'], true);
+		$fp['guest_rules'] = json_decode($row['guest_rules'], true);
+		$fp['compound_name'] = json_decode($row['compound_name'], true);
+		$fp['description'] = json_decode($row['description'], true);
+		$fp['address'] = json_decode($row['address'], true);
+		$fp['city'] = json_decode($row['city'], true);
 		$fp['property_type'] = $row['ptype'];
 		$fp['beds'] = $row['beds'];
 		$fp['bathroom'] = $row['bathroom'];
 		$fp['sqrft'] = $row['sqrft'];
-		$fp['image'] = $row['image'];
+		$fp['image'] = $vr;
 		$fp['price'] = $row['price'];
 		$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid=".$uid." and property_id=".$row['id']."")->num_rows;
 		$f[] = $fp;
-	}
-	
-	if($uid == 0)
-{
-	$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0  ");
-}
-else 
-{
-		$props = $rstate->query("select * from tbl_property where status=1 and is_sell=0   and add_user_id!=".$uid."");
-}
-	
-	while($rows = $props->fetch_assoc())
-	{
-		$fps['id'] = $rows['id'];
-		$fps['title'] = $rows['title'];
-		$fps['buyorrent'] = $rows['pbuysell'];
-		$fp['latitude'] = $row['latitude'];
-		$fp['longtitude'] = $row['longtitude'];
-		$fps['plimit'] = $rows['plimit'];
-		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=".$rows['id']." and book_status='Completed' and total_rate !=0")->num_rows;
-		if($checkrate !=0)
-		{
-			$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=".$rows['id']." and book_status='Completed' and total_rate !=0")->fetch_assoc();
-			$fps['rate'] = number_format((float)$rdata_rest['rate_rest'], 0, '.', '');
-		}
-		else 
-		{
-		$fps['rate'] = $rows['rate'];
-		}
-		$fps['city'] = $rows['city'];
-		$fps['beds'] = $rows['beds'];
-		$fps['bathroom'] = $rows['bathroom'];
-		$fps['sqrft'] = $rows['sqrft'];
-		$fps['property_type'] = $rows['ptype'];
-		$fps['image'] = $rows['image'];
-		$fps['price'] = $rows['price'];
-		$fps['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid=".$uid." and property_id=".$rows['id']."")->num_rows;
-		$fpv[] = $fps;
 	}
 	
 	$tbwallet = $rstate->query("select wallet from tbl_user where id=".$uid."")->fetch_assoc();

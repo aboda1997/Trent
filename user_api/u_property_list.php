@@ -76,7 +76,7 @@ while ($row = $sel->fetch_assoc()) {
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
-		array_push($vr, array('image' => $rk['img'], 'is_panorama' => $rk['pano']));
+		array_push($vr, array('image' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
 	}
 	$pol['id'] = $row['id'];
 

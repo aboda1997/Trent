@@ -12,10 +12,9 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
 $pol = array();
 $c = array();
 $pro_id  =  isset($data['prop_id']) ? $data['prop_id'] : '';
-$uid  = isset($data['uid']) ? $data['uid'] : ''; 
-if ($pro_id == '' or $uid == '') {
+if ($pro_id == '' ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
-} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  "   add_user_id = " . $uid . " ") === false) {
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ) === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 401);
 } else if (checkTableStatus($pro_id, 'tbl_property') == false) {
 	$returnArr = generateResponse('false', "Not allow to show this property", 401);
@@ -25,7 +24,7 @@ if ($pro_id == '' or $uid == '') {
 	$v = array();
 	$vr = array();
 	$po = array();
-	$sel = $rstate->query("select * from tbl_property where  add_user_id =" .$uid . " and  id=" . $pro_id . "")->fetch_assoc();
+	$sel = $rstate->query("select * from tbl_property where    id=" . $pro_id . "")->fetch_assoc();
 	$imageArray = explode(',', $sel['image']);
 
 	// Loop through each image URL and push to $vr array
@@ -35,7 +34,7 @@ if ($pro_id == '' or $uid == '') {
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
-		array_push($vr, array('image' => $rk['img'], 'is_panorama' => $rk['pano']));
+		array_push($vr, array('image' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
 	}
 	$fp['id'] = $sel['id'];
 	$fp['user_id'] = $sel['add_user_id'];
@@ -60,7 +59,7 @@ if ($pro_id == '' or $uid == '') {
 	}
 	$fp['price'] = $sel['price'];
 	$fp['buyorrent'] = $sel['pbuysell'];
-	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] . " and uid=" . $uid . "")->num_rows;
+	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
 
 	$fp['beds'] = $sel['beds'];
 	if ($sel['add_user_id'] == 0) {
@@ -90,7 +89,7 @@ if ($pro_id == '' or $uid == '') {
 
 	$fp['plimit'] = $sel['plimit'];
 
-	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid=" . $uid . " and property_id=" . $sel['id'] . "")->num_rows;
+	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $sel['id'] . "")->num_rows;
 
 
 	$gov = $rstate->query("
