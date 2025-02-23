@@ -14,11 +14,11 @@ if (isset($_SESSION['restatename'])) {
 ?>
 <div class="sidebar-wrapper">
   <div>
-    <div class="logo-wrapper"><a href="dashboard.php"><img class="img-fluid for-light" src="<?php echo $set['weblogo']; ?>" alt=""><img class="img-fluid for-dark" src="assets/images/logo/logo-dark.png" alt=""></a>
+    <div class="logo-wrapper"><a href="dashboard.php"><img style="width: 35px;height: 35px;object-fit: cover;display: block;" class="img-fluid for-light" src="<?php echo $set['weblogo']; ?>" alt=""><img class="img-fluid for-dark" src="assets/images/logo/logo-dark.png" alt=""></a>
       <div class="back-btn"><i class="fa fa-angle-left"></i></div>
       <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="align-left"> </i></div>
     </div>
-    <div class="logo-icon-wrapper"><a href="dashboard.php"><img class="img-fluid for-light" src="<?php echo $set['weblogo']; ?>" alt=""><img class="img-fluid for-dark" src="assets/images/logo/logo-icon-dark.png" alt=""></a></div>
+    <div class="logo-icon-wrapper"><a href="dashboard.php"><img style="width: 35px;height: 35px;object-fit: cover;display: block;" class="img-fluid for-light" src="<?php echo $set['weblogo']; ?>" alt=""><img class="img-fluid for-dark" src="assets/images/logo/logo-icon-dark.png" alt=""></a></div>
     <nav class="sidebar-main">
       <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
       <div id="sidebar-menu">
