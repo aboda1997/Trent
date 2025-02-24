@@ -161,7 +161,7 @@ return [
     'Select_property_Status'     => 'Select Property Status',
     'Property_Sell_Or_Rent'      => 'Property Sell Or Rent',
     'Rent'                       => 'Rent',
-    'Buy'                        => 'Buy', 
+    'Buy'                        => 'Buy',
 
     'total_allowed_persons'      => 'Property Total Person Allowed?',
 
@@ -188,6 +188,31 @@ return [
     'prop_beds' => 'please enter Property total beds',
     'property_status' => 'please enter Property status',
     'prop_sell' => 'please choose  Property Rent or Buy',
+    'Gallery_Category_Management' => 'Gallery Category Management',
+    'Edit_Gallery_Category' => 'Edit Gallery Category',
+    'Gallery_Category_Status' => 'Gallery Category Status',
+    'Gal_cat_status' => 'Please select a Gallery Category Status.',
+    'Edit_Gallery_Category' => 'Edit Gallery Category',
+    'Add_Gallery_Category' => 'Add Gallery Category',
+    'Select_Property'  => 'Select Property',
+    'Gallery_Category_Name' => 'Gallery Category Name',
+    'gal_cat_title_en' => 'Please enter the  Gallery Category Name.',
+    'Gal_prop' => 'Please enter the  Gallery Property',
+    'Slider_List_Management'  => 'Slider List Management',
+    'Slider_Title'  => 'Slider Title',
+    'Slider_Image' => 'Slider Image',
+    'Slider_Status' => 'Slider Status',
+    'Add_Slider' => 'Add Slider',
+    'Slider_Name' => 'Slider Name',
+    'Slider_Management' => 'Slider Management',
+    'Edit_Slider' => 'Edit Slider',
+
+    'slider_status' => 'please enter Slider status',
+    'slider_name' => 'please enter the Slider name ',
+    'slider_img' => 'Please upload a Slider Image.',
+
+
+
 
 
 

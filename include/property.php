@@ -195,16 +195,20 @@ if (isset($_POST["type"])) {
         }
     } else if ($_POST['type'] == 'add_gal_category') {
         $property = mysqli_real_escape_string($rstate, $_POST['property']);
-        $title = mysqli_real_escape_string($rstate, $_POST['title']);
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
         $status = $_POST['status'];
 
 
-
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
 
 
         $table = "tbl_gal_cat";
         $field_values = array("pid", "title", "status");
-        $data_values = array("$property", "$title", "$status");
+        $data_values = array("$property", "$title_json", "$status");
 
         $h = new Estate();
         $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -213,17 +217,21 @@ if (isset($_POST["type"])) {
         }
     } else if ($_POST['type'] == 'edit_gal_category') {
         $property = mysqli_real_escape_string($rstate, $_POST['property']);
-        $title = mysqli_real_escape_string($rstate, $_POST['title']);
+        $title_ar = mysqli_real_escape_string($rstate, $_POST['title_ar']);
+        $title_en = mysqli_real_escape_string($rstate, $_POST['title_en']);
         $status = $_POST['status'];
+
+
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
         $id = $_POST['id'];
 
-
-
-
-        $id = $_POST['id'];
 
         $table = "tbl_gal_cat";
-        $field = array('pid' => $property, 'status' => $status, 'title' => $title);
+        $field = array('pid' => $property, 'status' => $status, 'title' => $title_json);
         $where = "where id=" . $id . "";
         $h = new Estate();
         $check = $h->restateupdateData($field, $table, $where);
@@ -950,7 +958,40 @@ if (isset($_POST["type"])) {
                 "action" => "list_facility.php",
             ];
         }
-    } elseif ($_POST["type"] == "edit_category") {
+    } 
+    elseif ($_POST["type"] == "add_slider") {
+        $okey = $_POST["status"];
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
+        $target_dir = dirname(dirname(__FILE__)) . "/images/slider/";
+        $url = "images/slider/";
+        $temp = explode(".", $_FILES["slider_img"]["name"]);
+        $newfilename = round(microtime(true)) . "." . end($temp);
+        $target_file = $target_dir . basename($newfilename);
+        $url = $url . basename($newfilename);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
+        $table = "tbl_slider";
+        $field_values = ["img", "status", "title"];
+        $data_values = ["$url", "$okey", "$title_json"];
+
+        $h = new Estate();
+        $check = $h->restateinsertdata($field_values, $data_values, $table);
+        if ($check == 1) {
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Slider Add Successfully!!",
+                "message" => "Slider section!",
+                "action" => "list_slider.php",
+            ];
+        }
+    } 
+    elseif ($_POST["type"] == "edit_category") {
         $okey = $_POST["status"];
         $id = $_POST["id"];
         $title_en = $rstate->real_escape_string($_POST["title_en"]);
@@ -1102,7 +1143,62 @@ if (isset($_POST["type"])) {
                 ];
             }
         }
-    } elseif ($_POST["type"] == "coupon_delete") {
+    }
+    elseif ($_POST["type"] == "edit_slider") {
+        $okey = $_POST["status"];
+        $id = $_POST["id"];
+        $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
+        $title_en = $rstate->real_escape_string($_POST["title_en"]);
+        $target_dir = dirname(dirname(__FILE__)) . "/images/slider/";
+        $url = "images/slider/";
+        $temp = explode(".", $_FILES["slider_img"]["name"]);
+        $newfilename = round(microtime(true)) . "." . end($temp);
+        $target_file = $target_dir . basename($newfilename);
+        $url = $url . basename($newfilename);
+        $title_json = json_encode([
+            "en" => $title_en,
+            "ar" => $title_ar
+        ], JSON_UNESCAPED_UNICODE);
+
+        if ($_FILES["slider_img"]["name"] != "") {
+
+            move_uploaded_file(
+                $_FILES["slider_img"]["tmp_name"],
+                $target_file
+            );
+            $table = "tbl_slider";
+            $field = ["status" => $okey, "img" => $url, "title" => $title_json];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Slider Update Successfully!!",
+                    "message" => "Slider section!",
+                    "action" => "list_slider.php",
+                ];
+            }
+        } else {
+            $table = "tbl_slider";
+            $field = ["status" => $okey, "title" => $title_json];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Slider Update Successfully!!",
+                    "message" => "Slider section!",
+                    "action" => "list_slider.php",
+                ];
+            }
+        }
+    }
+    elseif ($_POST["type"] == "coupon_delete") {
         $id = $_POST["id"];
         $table = "tbl_coupon";
         $where = "where id=" . $id . "";

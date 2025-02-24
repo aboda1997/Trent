@@ -8,12 +8,24 @@ header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
 $pro_id  = isset($data['prop_id']) ? $data['prop_id'] : '';
 $uid  = isset($data['uid']) ? $data['uid'] : '';
+$sel = $rstate->query("select id from tbl_fav where  uid =" .$uid . " and  property_id=" . $pro_id . "");
 
 if ($pro_id == '' or $uid == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property',  "  add_user_id = " . $uid . " ") === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 401);
-} else {
+}else if ($sel->num_rows > 0){
+	$row = $sel->fetch_assoc();
+
+	$table = "tbl_fav";
+	$where = " where  id = ". $row['id'] . "" ;
+
+	$h = new Estate();
+	$h->restateDeleteData_Api($where, $table);
+	$returnArr = generateResponse('true', "The property was removed from favorites successfully!", 200);
+
+
+}else {
 	$sel = $rstate->query("select * from tbl_property where  add_user_id =" .$uid . " and  id=" . $pro_id . "")->fetch_assoc();
     $property_type = $sel['ptype'];
 	$table = "tbl_fav";

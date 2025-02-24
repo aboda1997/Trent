@@ -182,7 +182,29 @@ return [
     'prop_beds' => 'يرجى إدخال إجمالي عدد الأسرة في العقار',
     'property_status' => 'يرجى إدخال حالة العقار',
 
-'prop_sell' => 'يرجى اختيار إيجار أو شراء العقار',
+    'prop_sell' => 'يرجى اختيار إيجار أو شراء العقار',
+    'Gallery_Category_Management' => 'إدارة فئة المعرض',
+    'Edit_Gallery_Category' => 'تعديل فئة المعرض',
+    'Gallery_Category_Status' => 'حالة فئة المعرض',
+    'Gal_cat_status' => 'الرجاء تحديد حالة فئة المعرض.',
+    'Edit_Gallery_Category' => 'تعديل فئة المعرض',
+    'Add_Gallery_Category' => 'إضافة فئة المعرض',
+    'Select_Property' => 'اختر العقار',
+    'Gallery_Category_Name' => 'اسم فئة المعرض',
+    'gal_cat_title_ar' => 'الرجاء إدخال اسم فئة المعرض .',
+    'Gal_prop' => 'الرجاء إدخال اسم عقار المعرض  .',
 
+    'Slider_List_Management'  => 'إدارة قائمة السلايدر',
+    'Slider_Title'  => 'عنوان السلايدر',
+    'Slider_Image' => 'صورة السلايدر',
+    'Slider_Status' => 'حالة السلايدر',
+    'Add_Slider' => 'إضافة سلايدر',
+    'Slider_Name' => 'اسم السلايدر',
+    'Slider_Management' => 'إدارة السلايدر',
+    'Edit_Slider' => 'تعديل السلايدر',
+
+    'slider_status' => 'الرجاء إدخال حالة السلايدر',
+    'slider_name' => 'الرجاء إدخال اسم السلايدر',
+    'slider_img' => 'الرجاء تحميل صورة السلايدر.',
 
 ];
