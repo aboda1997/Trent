@@ -335,7 +335,10 @@ if (isset($_POST["type"])) {
 
         $scredit = $_POST['scredit'];
         $rcredit = $_POST['rcredit'];
-
+        $nemail = $_POST['nemail'];
+        $ofees = $_POST['ofees'];
+        $pfees = $_POST['pfees'];
+        $gmode = $_POST['gmode'] ;
 
         $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
         $url = "images/website/";
@@ -347,7 +350,12 @@ if (isset($_POST["type"])) {
 
             move_uploaded_file($_FILES["weblogo"]["tmp_name"], $target_file);
             $table = "tbl_setting";
-            $field = array('timezone' => $timezone, 'weblogo' => $url, 'webname' => $webname, 'currency' => $currency, 'one_key' => $one_key, 'one_hash' => $one_hash, 'scredit' => $scredit, 'rcredit' => $rcredit, 'wlimit' => $wlimit);
+            $field = array(
+                'notification_email' => $nemail,
+                'owner_fees' => $ofees,
+                'property_manager_fees' => $pfees,
+                'gallery_mode' => $gmode,
+                'timezone' => $timezone, 'weblogo' => $url, 'webname' => $webname, 'currency' => $currency, 'one_key' => $one_key, 'one_hash' => $one_hash, 'scredit' => $scredit, 'rcredit' => $rcredit, 'wlimit' => $wlimit);
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
@@ -357,7 +365,12 @@ if (isset($_POST["type"])) {
             }
         } else {
             $table = "tbl_setting";
-            $field = array('timezone' => $timezone, 'webname' => $webname, 'currency' => $currency, 'one_key' => $one_key, 'one_hash' => $one_hash, 'scredit' => $scredit, 'rcredit' => $rcredit, 'wlimit' => $wlimit);
+            $field = array(
+                'notification_email' => $nemail,
+                'owner_fees' => $ofees,
+                'property_manager_fees' => $pfees,
+                'gallery_mode' => $gmode,
+                'timezone' => $timezone, 'webname' => $webname, 'currency' => $currency, 'one_key' => $one_key, 'one_hash' => $one_hash, 'scredit' => $scredit, 'rcredit' => $rcredit, 'wlimit' => $wlimit);
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
