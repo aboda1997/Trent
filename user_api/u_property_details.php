@@ -82,7 +82,8 @@ if ($pro_id == '' ) {
 
 	$fp['floor'] = json_decode($sel['floor'], true);
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
-	$fp['compound_name'] = json_decode($sel['compound_name'], true);
+	$title  =  $rstate->query("SELECT name  FROM tbl_compound where id="   . $sel['compound_id'] . "")->fetch_assoc();
+	$pol['compound_name'] = json_decode($title["name"], true);
 	$fp['description'] = json_decode($sel['description'], true);
 	$fp['address'] = json_decode($sel['address'], true);
 	$fp['city'] = json_decode($sel['city'], true);

@@ -35,9 +35,16 @@ function checkTableStatus($id, $table)
 }
 
 function validateFacilityIds($idString)
-{
+{ 
+    // Check if input is a JSON array and decode it
+    $decodedIds = json_decode($idString, true);
+
+    // If JSON decoding fails, assume it's a comma-separated string
+    if (!is_array($decodedIds)) {
+        $decodedIds = explode(',', $idString);
+    }
     // Convert comma-separated string to an array and sanitize
-    $ids = array_filter(array_map('trim', explode(',', $idString)));
+    $ids = array_filter(array_map('trim', $decodedIds));
 
     // Ensure all values are positive integers
     foreach ($ids as $id) {
@@ -46,7 +53,9 @@ function validateFacilityIds($idString)
         }
     }
     // Build and execute the query
-    $query = "SELECT id FROM tbl_facility WHERE id IN ($idString)";
+    $idList = implode(',', $ids);
+
+    $query = "SELECT id FROM tbl_facility WHERE id IN ($idList)";
     $result = $GLOBALS['rstate']->query($query);
     // Fetch valid IDs
     $validIds = [];
