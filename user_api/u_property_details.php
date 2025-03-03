@@ -79,11 +79,23 @@ if ($pro_id == '' ) {
 	$fp['video'] = $sel['video'];
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
+	$fp['period'] = $sel['period'];
 
 	$fp['floor'] = json_decode($sel['floor'], true);
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
-	$title  =  $rstate->query("SELECT name  FROM tbl_compound where id="   . $sel['compound_id'] . "")->fetch_assoc();
-	$pol['compound_name'] = json_decode($title["name"], true);
+	if (is_null($sel['compound_id'])) {
+		$fp['compound_name'] = ""; 
+	} else {
+		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $sel['compound_id']);
+
+    if ($title->num_rows>0) {
+        $tit = $title->fetch_assoc();
+        $fp['compound_name'] = json_decode($tit['name'], true);
+    } else {
+        // Handle case when the query fails
+        $fp['compound_name'] = "";
+    }
+	}
 	$fp['description'] = json_decode($sel['description'], true);
 	$fp['address'] = json_decode($sel['address'], true);
 	$fp['city'] = json_decode($sel['city'], true);

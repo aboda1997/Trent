@@ -122,6 +122,7 @@ if (isset($rate) && $rate > 0) {
 	$query .= "  and book_status='Completed' and total_rate !=0 ";
 	$query .= " GROUP BY p.id HAVING rate_count > 1 AND total_avg_rate >= " . intval($rate);
 }
+
 // Execute the query
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
@@ -162,8 +163,19 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['sqrft'] = $row['sqrft'];
 	//$pol['is_sell'] = $row['is_sell'];
 	$pol['period'] = $row['period'];
-	$title  =  $rstate->query("SELECT name  FROM tbl_compound where id="   . $row['compound_id'] . "")->fetch_assoc();
-	$pol['compound_name'] = json_decode($title["name"], true);
+	if (is_null($row['compound_id'])) {
+		$pol['compound_name'] = ""; 
+	} else {
+		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $row['compound_id']);
+
+    if ($title->num_rows>0) {
+        $tit = $title->fetch_assoc();
+        $pol['compound_name'] = json_decode($tit['name'], true);
+    } else {
+        // Handle case when the query fails
+        $pol['compound_name'] = "";
+    }
+	}
 	//$fac = $rstate->query("select img, id,
 	// JSON_UNQUOTE(title) as title 
 	// from tbl_facility where id IN(" . $row['facility'] . ")");
