@@ -3,11 +3,9 @@ require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
-$lang_code = 'en';
  
- if($_GET['lang']){
-$lang_code = $_GET['lang'];
- }
+$lang_code = isset($data['lang']) ? intval($data['lang']) : 'en';
+
 $pol = array();
 $c = array();
 $sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_government ");

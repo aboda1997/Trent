@@ -9,8 +9,8 @@ header('Content-type: text/json');
 $status = 0;
 $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
-$facility = isset($_POST['facility']) ? $_POST['facility'] : '';
-$ptype = isset($_POST['ptype']) ? $_POST['ptype'] : '';
+$facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
+$ptype = isset($_POST['category_id']) ? $_POST['category_id'] : '';
 $beds = isset($_POST['beds']) ? $_POST['beds'] : '';
 $bathroom = isset($_POST['bathroom']) ? $_POST['bathroom'] : '';
 $sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
@@ -19,17 +19,19 @@ $price = isset($_POST['price']) ? $_POST['price'] : '';
 $plimit = isset($_POST['plimit']) ? $_POST['plimit'] : '';
 $pbuysell = 1;
 $user_id = isset($_POST['uid']) ? $_POST['uid'] : '';
-$government = isset($_POST['government']) ? $_POST['government'] : '';
+$government = isset($_POST['government_id']) ? $_POST['government_id'] : '';
 $security_deposit = isset($_POST['security_deposit']) ? $_POST['security_deposit'] : '';
 $max_days = isset($_POST['max_days']) ? $_POST['max_days'] : '';
 $min_days = isset($_POST['min_days']) ? $_POST['min_days'] : '';
 $google_maps_url = isset($_POST['google_maps_url']) ? $_POST['google_maps_url'] : '';
+$compound_id =isset($_POST['compound_id']) ? $_POST['compound_id'] : '';
+$period =isset($_POST['period']) ? $_POST['period'] : 'd';
+$is_featured =isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 
 $title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
 $address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
 $description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? $_POST['description_en'] : '');
 $ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
-$compound_name_en = $rstate->real_escape_string(isset($_POST['compound_name_en']) ? $_POST['compound_name_en'] : '');
 $floor_en = $rstate->real_escape_string(isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
 $guest_rules_en = $rstate->real_escape_string(isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
 
@@ -37,15 +39,13 @@ $title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['titl
 $address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
 $description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? $_POST['description_ar'] : '');
 $ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
-$compound_name_ar = $rstate->real_escape_string(isset($_POST['compound_name_ar']) ? $_POST['compound_name_ar'] : '');
 $floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
 $guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 
+$decodedIds = json_decode($facility, true);
+$ids = array_filter(array_map('trim', $decodedIds));
+$idList = implode(',', $ids);
 
-$compound_name_json = json_encode([
-	"en" => $compound_name_en,
-	"ar" => $compound_name_ar
-], JSON_UNESCAPED_UNICODE);
 
 
 $floor_json = json_encode([
@@ -79,7 +79,7 @@ $title_json = json_encode([
 // Validate the string
 
 
-if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_name_ar == '' or $compound_name_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+if ($user_id == ''or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_id == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
 	$returnArr    = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateFacilityIds($facility) === 0) {
@@ -88,6 +88,8 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 	$returnArr    = generateResponse('false', "ptype Id must be valid!", 401);
 } else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 	$returnArr    = generateResponse('false', "government Id must be valid!", 401);
+} else if (validateIdAndDatabaseExistance($compound_id, 'tbl_compound') === false) {
+	$returnArr    = generateResponse('false', "compound  Id must be valid!", 401);
 } else {
 
 	$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
@@ -95,10 +97,12 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 		$field = [
 			"pbuysell" => $pbuysell,
 			"security_deposit" => $security_deposit,
+			"period" => $period,
+			"is_featured" => $is_featured,
 			"government" => $government,
 			"google_maps_url" => $google_maps_url,
 			"guest_rules" => $guest_rules_json,
-			"compound_name" => $compound_name_json,
+			"compound_id" => $compound_id,
 			"floor" => $floor_json,
 			"max_days" => "$max_days",
 			"min_days" => "$min_days",
@@ -107,7 +111,7 @@ if ($user_id == '' or $government == ''  or $security_deposit == ''  or $google_
 			"title" => $title_json,
 			"price" => $price,
 			"address" => $address_json,
-			"facility" => $facility,
+			"facility" => $idList,
 			"description" => $description_json,
 			"beds" => $beds,
 			"bathroom" => $bathroom,
