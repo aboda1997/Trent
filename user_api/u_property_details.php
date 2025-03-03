@@ -135,6 +135,6 @@ if ($pro_id == '' ) {
 		$bov['user_desc'] = $k['rate_text'];
 		$kol[] = $bov;
 	}
-	$returnArr = json_encode(array("propetydetails" => $fp, "government" => $government,  "facility" => $f, "gallery" => $v, "reviewlist" => $kol, "total_review" => $count_review, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
+	$returnArr = json_encode(array("propetydetails" => $fp, "government" => $government,  "facilities" => $f, "gallery" => $v, "reviewlist" => $kol, "total_review" => $count_review, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
 }
 echo $returnArr;
