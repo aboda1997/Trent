@@ -22,7 +22,7 @@ if ($pro_id == '' or $uid == '') {
 
 	$h = new Estate();
 	$h->restateDeleteData_Api($where, $table);
-	$data = [["id" => $row['id']], ['status'=> 'false'] ]; 
+	$data = [["id" => $row['id'] , 'status'=> 'false'] ]; 
 	$returnArr = generateResponse('true', "The property was removed from favorites successfully!",200,$data);
 
 
@@ -34,7 +34,7 @@ if ($pro_id == '' or $uid == '') {
 	$data_values = array("$uid", "$pro_id", "$property_type");
 	$h = new Estate();
 	$h->restateinsertdata_Api($field_values, $data_values, $table);
-	$data = [["id" => $pro_id], ['status'=> 'true'] ]; 
+	$data = [["id" => $pro_id , 'status'=> 'true' ]  ]; 
 	$returnArr = generateResponse('true', "The property was toggled as favorite successfully!", 201, $data);
 
 }
