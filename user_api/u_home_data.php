@@ -130,17 +130,19 @@ while ($row = $sel->fetch_assoc()) {
 
 	// Loop through each image URL and push to $vr array
 	foreach ($imageArray as $image) {
-		$vr[] = array('image' => trim($image), 'is_panorama' => 0);
+		// 'is_panorama' => 0
+		$vr[] = array('image' => trim($image));
 	}
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
-		array_push($vr, array('image' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
+		//'is_panorama' => intval($rk['pano'])
+		array_push($vr, array('image' => $rk['img'], ));
 	}
 	$pol['id'] = $row['id'];
 
 	//$pol['user_id'] = $row['add_user_id'];
-	$titleData = json_decode($row['title'], true);
+	$titleData = json_decode($row['title'], true)[$lang];
 	$pol['title'] = $titleData;
 
 	$pol['property_type'] = $row['ptype'];
@@ -153,14 +155,19 @@ while ($row = $sel->fetch_assoc()) {
 	//}
 	//$pol['security_deposit'] = $row['security_deposit'];
 
-	$pol['image'] = $vr;
+	$pol['images'] = $vr;
 	$pol['price'] = $row['price'];
 	$pol['beds'] = $row['beds'];
 	$pol['guest_count'] = $row['plimit'];
 	$pol['bathroom'] = $row['bathroom'];
 	$pol['sqrft'] = $row['sqrft'];
 	//$pol['is_sell'] = $row['is_sell'];
-	$pol['period'] = $row['period'];
+	$periods = [
+		 "d" => ["ar" => "يومي", "en" => "daily"] ,
+		  "m" => ["ar" => "شهري", "en" => "monthly"] 
+	 ];
+	$pol['period'] = $periods[$row['period']][$lang];
+
 	if (is_null($row['compound_id'])) {
 		$pol['compound_name'] = null;
 	} else {
@@ -168,7 +175,7 @@ while ($row = $sel->fetch_assoc()) {
 
     if ($title->num_rows>0) {
         $tit = $title->fetch_assoc();
-        $pol['compound_name'] = json_decode($tit['name'], true);
+        $pol['compound_name'] = json_decode($tit['name'], true)[$lang];
     } else {
         // Handle case when the query fails
         $pol['compound_name'] = null;
@@ -196,7 +203,7 @@ while ($row = $sel->fetch_assoc()) {
 	}
 
 	//$pol['security_deposit'] = $row['security_deposit'];
-	$pol['google_maps_url'] = $row['google_maps_url'];
+	$pol['maps_url'] = $row['google_maps_url'];
 	//$pol['video'] = $row['video'];
 	//$pol['max_days'] = $row['max_days'];
 	//$pol['min_days'] = $row['min_days'];
@@ -205,9 +212,8 @@ while ($row = $sel->fetch_assoc()) {
 	//$pol['guest_rules'] = json_decode($row['guest_rules'], true);
 	//$pol['description'] = json_decode($row['description'], true);
 	//$pol['address'] = json_decode($row['address'], true);
-	$pol['city'] = json_decode($row['city'], true);
-	$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $row['id'] . "")->num_rows;
-
+	$pol['city'] = json_decode($row['city'], true)[$lang];
+	$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $row['id'] . "")->num_rows;  
 	$c[] = $pol;
 }
 if (empty($c)) {
