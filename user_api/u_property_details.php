@@ -11,7 +11,7 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
 }
 $pol = array();
 $c = array();
-$pro_id  =  isset($data['prop_id']) ? $data['prop_id'] : '';
+$pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
 if ($pro_id == '' ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ) === false) {
@@ -100,7 +100,7 @@ if ($pro_id == '' ) {
 	$fp['address'] = json_decode($sel['address'], true);
 	$fp['city'] = json_decode($sel['city'], true);
 
-	$fp['plimit'] = $sel['plimit'];
+	$fp['guest_count'] = $sel['plimit'];
 
 	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $sel['id'] . "")->num_rows;
 
@@ -147,6 +147,6 @@ if ($pro_id == '' ) {
 		$bov['user_desc'] = $k['rate_text'];
 		$kol[] = $bov;
 	}
-	$returnArr = json_encode(array("propetydetails" => $fp, "government" => $government,  "facilities" => $f, "gallery" => $v, "reviewlist" => $kol, "total_review" => $count_review, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
+	$returnArr = json_encode(array("property_details" => $fp, "government" => $government,  "facilities" => $f, "gallery" => $v,  "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
 }
 echo $returnArr;
