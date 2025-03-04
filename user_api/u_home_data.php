@@ -3,24 +3,24 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
-$data = json_decode(file_get_contents('php://input'), true);
 $pol = array();
 $c = array();
 
-$lang = isset($data['lang']) ? $data['lang'] : 'en';
-$category_id = isset($data['category_id']) ? intval($data['category_id']) : null;
-$uid = isset($data['uid']) ? intval($data['uid']) : null;
-$only_featured = isset($data['only_featured']) ? intval($data['only_featured']) : 0;
-$only_favorites = isset($data['only_favorites']) ? intval($data['only_favorites']) : 0;
-$period = isset($data['period']) ? $data['period'] : null;
-$min_price = isset($data['min_price']) ? floatval($data['min_price']) : null;
-$max_price = isset($data['max_price']) ? floatval($data['max_price']) : null;
-$government_id = isset($data['government_id']) ? intval($data['government_id']) : null;
-$facilities = isset($data['facilities']) ? $data['facilities'] : null;
-$beds_count = isset($data['beds_count']) ? intval($data['beds_count']) : null;
-$bathrooms_count = isset($data['bathrooms_count']) ? intval($data['bathrooms_count']) : null;
-$rate = isset($data['rate']) ? intval($data['rate']) : null;
-$guest_count = isset($data['guest_count']) ? intval($data['guest_count']) : null;
+$lang = isset($_GET['lang']) ? $_GET['lang'] : 'en';
+$category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : null;
+$uid = isset($_GET['uid']) ? intval($_GET['uid']) : null;
+$only_featured = isset($_GET['only_featured']) && strtolower($_GET['only_featured']) === 'true' ? true : false;
+$only_favorites = isset($_GET['only_favorites']) && strtolower($_GET['only_favorites']) === 'true' ? true : false;
+$period = isset($_GET['period']) ? $_GET['period'] : null;
+$min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
+$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
+$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
+$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : null;
+$beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
+$bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
+$rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
+$guest_count = isset($_GET['guest_count']) ? intval($_GET['guest_count']) : null;
+$facilitiesArray = json_decode($facilities, true);
 
 // Start the base query
 $query = "
@@ -36,7 +36,7 @@ if (isset($rate) && $rate > 0) {
     IFNULL(SUM(b.total_rate) / COUNT(b.id), 0) AS total_avg_rate, 
     b.book_status, 
     b.total_rate, 
-    COUNT(b.id) AS rate_count,
+    COUNT(b.id) AS rate_count
     FROM tbl_property p
 ";
 }
@@ -80,9 +80,8 @@ if ($uid !== null) {
 if ($government_id !== null) {
 	$query .= " AND p.government = " . $government_id;
 }
-
-if ($facilities !== null) {
-	foreach ($facilities as $facility) {
+if ($facilities!== null) {
+	foreach ($facilitiesArray as $facility) {
 		$facilityConditions[] = "FIND_IN_SET(" . intval($facility) . ", p.facility)";
 	}
 	$query .= " AND (" . implode(' OR ', $facilityConditions) . ")";
@@ -108,21 +107,20 @@ if ($bathrooms_count !== null) {
 	$query .= " AND p.bathroom = " . $bathrooms_count;
 }
 if ($period !== null) {
-	$query .= " AND p.period = " . $period;
+	$query .= ' AND p.period = "' . $period . '"';
 }
 
 if ($guest_count !== null) {
 	$query .= " AND p.plimit >= " . intval($guest_count);
 }
 if ($only_featured) {
-	$query .= " AND p.is_featured = " . intval($only_featured);
+	$query .= " AND p.is_featured = 1 " ;
 }
 // Add minimum rate condition
 if (isset($rate) && $rate > 0) {
 	$query .= "  and book_status='Completed' and total_rate !=0 ";
 	$query .= " GROUP BY p.id HAVING rate_count > 1 AND total_avg_rate >= " . intval($rate);
 }
-
 // Execute the query
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
@@ -158,7 +156,7 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['image'] = $vr;
 	$pol['price'] = $row['price'];
 	$pol['beds'] = $row['beds'];
-	$pol['plimit'] = $row['plimit'];
+	$pol['guest_count'] = $row['plimit'];
 	$pol['bathroom'] = $row['bathroom'];
 	$pol['sqrft'] = $row['sqrft'];
 	//$pol['is_sell'] = $row['is_sell'];

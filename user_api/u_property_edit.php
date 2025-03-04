@@ -11,12 +11,12 @@ $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
 $facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
 $ptype = isset($_POST['category_id']) ? $_POST['category_id'] : '';
-$beds = isset($_POST['beds']) ? $_POST['beds'] : '';
-$bathroom = isset($_POST['bathroom']) ? $_POST['bathroom'] : '';
+$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
+$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
 $sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
 $listing_date = date("Y-m-d H:i:s");
 $price = isset($_POST['price']) ? $_POST['price'] : '';
-$plimit = isset($_POST['plimit']) ? $_POST['plimit'] : '';
+$plimit = isset($_POST['guest_count']) ? $_POST['guest_count'] : '';
 $pbuysell = 1;
 $user_id = isset($_POST['uid']) ? $_POST['uid'] : '';
 $government = isset($_POST['government_id']) ? $_POST['government_id'] : '';
@@ -90,7 +90,10 @@ if ($user_id == ''or $period == '' or $government == ''  or $security_deposit ==
 	$returnArr    = generateResponse('false', "government Id must be valid!", 401);
 } else if (validateIdAndDatabaseExistance($compound_id, 'tbl_compound') === false) {
 	$returnArr    = generateResponse('false', "compound  Id must be valid!", 401);
-} else {
+}else if (!in_array($period, ['d', 'm'])) {
+	$returnArr    = generateResponse('false', "Period not valid!", 401);
+}
+else {
 
 	$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
 	if ($check_owner != 0) {

@@ -44,11 +44,11 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("sliderlist"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"slider list Not Founded!");
+	$returnArr = array("slider_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"slider list Not Founded!");
 }
 else 
 {
-$returnArr = array("sliderlist"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"slider List Founded!");
+$returnArr = array("slider_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"slider List Founded!");
 }
 echo json_encode($returnArr);
 ?>

@@ -3,8 +3,11 @@ require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
-$lang_code = isset($data['lang']) ? $data['lang'] : 'en';
-
+$lang_code = 'en';
+ 
+ if($_GET['lang']){
+$lang_code = $_GET['lang'];
+ }
 $pol = array();
 $c = array();
 $cc = array();
