@@ -162,7 +162,7 @@ while ($row = $sel->fetch_assoc()) {
 	//$pol['is_sell'] = $row['is_sell'];
 	$pol['period'] = $row['period'];
 	if (is_null($row['compound_id'])) {
-		$pol['compound_name'] = ""; 
+		$pol['compound_name'] = null;
 	} else {
 		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $row['compound_id']);
 
@@ -171,7 +171,7 @@ while ($row = $sel->fetch_assoc()) {
         $pol['compound_name'] = json_decode($tit['name'], true);
     } else {
         // Handle case when the query fails
-        $pol['compound_name'] = "";
+        $pol['compound_name'] = null;
     }
 	}
 	//$fac = $rstate->query("select img, id,

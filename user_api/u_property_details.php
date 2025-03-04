@@ -84,7 +84,7 @@ if ($pro_id == '' ) {
 	$fp['floor'] = json_decode($sel['floor'], true);
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
 	if (is_null($sel['compound_id'])) {
-		$fp['compound_name'] = ""; 
+		$fp['compound_name'] = null;
 	} else {
 		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $sel['compound_id']);
 
@@ -93,7 +93,7 @@ if ($pro_id == '' ) {
         $fp['compound_name'] = json_decode($tit['name'], true);
     } else {
         // Handle case when the query fails
-        $fp['compound_name'] = "";
+        $fp['compound_name'] = null;
     }
 	}
 	$fp['description'] = json_decode($sel['description'], true);
