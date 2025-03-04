@@ -38,7 +38,7 @@ if ($pro_id == '' ) {
 	}
 	$fp['id'] = $sel['id'];
 	$fp['user_id'] = $sel['add_user_id'];
-	$titleData = json_decode($sel['title'], true);
+	$titleData = json_decode($sel['title'], true)[$lang];
 	$fp['title'] = $titleData;
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 	if ($checkrate != 0) {
@@ -49,7 +49,7 @@ if ($pro_id == '' ) {
 	}
 
 	$fp['image'] = $vr;
-	$fp['property_type'] = $sel['ptype'];
+	$fp['category_id'] = $sel['ptype'];
 	$prop = $rstate->query("select title from tbl_category where id=" . $sel['ptype'] . "");
 	if ($prop->num_rows > 0) {
 		$propData = $prop->fetch_assoc();
@@ -79,10 +79,15 @@ if ($pro_id == '' ) {
 	$fp['video'] = $sel['video'];
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
-	$fp['period'] = $sel['period'];
+	
+	$periods = [
+		"d" => ["ar" => "يومي", "en" => "daily"] ,
+		 "m" => ["ar" => "شهري", "en" => "monthly"] 
+	];
+   $pol['period'] = $periods[$sel['period']][$lang];
 
-	$fp['floor'] = json_decode($sel['floor'], true);
-	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
+	$fp['floor'] = json_decode($sel['floor'], true)[$lang];
+	$fp['guest_rules'] = json_decode($sel['guest_rules'], true)[$lang];
 	if (is_null($sel['compound_id'])) {
 		$fp['compound_name'] = null;
 	} else {
@@ -90,15 +95,15 @@ if ($pro_id == '' ) {
 
     if ($title->num_rows>0) {
         $tit = $title->fetch_assoc();
-        $fp['compound_name'] = json_decode($tit['name'], true);
+        $fp['compound_name'] = json_decode($tit['name'], true)[$lang];
     } else {
         // Handle case when the query fails
         $fp['compound_name'] = null;
     }
 	}
-	$fp['description'] = json_decode($sel['description'], true);
-	$fp['address'] = json_decode($sel['address'], true);
-	$fp['city'] = json_decode($sel['city'], true);
+	$fp['description'] = json_decode($sel['description'], true)[$lang];
+	$fp['address'] = json_decode($sel['address'], true)[$lang];
+	$fp['city'] = json_decode($sel['city'], true)[$lang];
 
 	$fp['guest_count'] = $sel['plimit'];
 
@@ -112,7 +117,7 @@ if ($pro_id == '' ) {
 	");
 	if ($gov->num_rows > 0) {
 		while ($row = $gov->fetch_assoc()) {
-			$row['name'] = json_decode($row['name'], true);
+			$row['name'] = json_decode($row['name'], true)[$lang];
 
 			$government[] = $row;
 		}
@@ -125,7 +130,7 @@ if ($pro_id == '' ) {
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
 
 	while ($row = $fac->fetch_assoc()) {
-		$row['title'] = json_decode($row['title'], true);
+		$row['title'] = json_decode($row['title'], true)[$lang];
 		$f[] = $row;
 	}
 
