@@ -12,9 +12,9 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
 $pol = array();
 $c = array();
 $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
-if ($pro_id == '' ) {
+if ($pro_id == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
-} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ) === false) {
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 401);
 } else {
 	$fp = array();
@@ -47,8 +47,25 @@ if ($pro_id == '' ) {
 	}
 
 	$fp['images'] = $vr;
-	
-	$fp['category_id'] = $sel['ptype'];
+	if (is_null($sel['ptype'])) {
+		$fp['category'] = null;
+	} else {
+		$title = $rstate->query("SELECT id, title FROM tbl_category WHERE id=" . $sel['ptype']);
+
+		if ($title->num_rows > 0) {
+			while ($tit = $title->fetch_assoc()) {
+				// Combine the id and name into a single associative array
+				$fp['category'] = [
+					'id' => $tit['id'],
+					'type' => json_decode($tit['title'], true)
+				];
+			}
+		} else {
+			// Handle case when the query fails
+			$fp['category'] = null;
+		}
+	}
+
 
 	$fp['price'] = $sel['price'];
 	$fp['buyorrent'] = $sel['pbuysell'];
@@ -56,12 +73,16 @@ if ($pro_id == '' ) {
 
 	$fp['beds'] = $sel['beds'];
 	if ($sel['add_user_id'] == 0) {
-		$fp['owner_image'] = 'images/property/owner.jpg';
-		$fp['owner_name'] = 'Host';
+		$fp['owner'] = [
+			'img' => 'images/property/owner.jpg',
+			'name' => 'Host'
+		];
 	} else {
 		$udata = $rstate->query("select pro_pic,name from tbl_user where id=" . $sel['add_user_id'] . "")->fetch_assoc();
-		$fp['owner_image'] = (empty($udata['pro_pic'])) ? 'images/property/owner.jpg' : $udata['pro_pic'];
-		$fp['owner_name'] = $udata['name'];
+		$fp['owner'] = [
+			'img' => (empty($udata['pro_pic'])) ? 'images/property/owner.jpg' : $udata['pro_pic'],
+			'name' =>  $udata['name']
+		];
 	}
 
 	$fp['bathroom'] = $sel['bathroom'];
@@ -72,13 +93,11 @@ if ($pro_id == '' ) {
 	$fp['video'] = $sel['video'];
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
-	
-    $fp['period_id'] = $sel['period'];
+
 
 	$fp['floor'] = json_decode($sel['floor'], true);
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
-	
-	$fp['compound_id'] = $sel['compound_id'];
+
 
 	$fp['description'] = json_decode($sel['description'], true);
 	$fp['address'] = json_decode($sel['address'], true);
@@ -88,8 +107,59 @@ if ($pro_id == '' ) {
 
 	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $sel['id'] . "")->num_rows;
 
-	$fp['government_id'] = $sel['government'];
-	
+	$periods = [
+		"d" => ["ar" => "يومي", "en" => "daily"],
+		"m" => ["ar" => "شهري", "en" => "monthly"]
+	];
+
+	$fp['period'] = [
+		'id' => $sel['period'],
+		'name' => $periods[$sel['period']]
+	];
+
+	if (is_null($sel['compound_id'])) {
+		$fp['compound'] = null;
+	} else {
+		$title = $rstate->query("SELECT id, name FROM tbl_compound WHERE id=" . $sel['compound_id']);
+
+		if ($title->num_rows > 0) {
+			while ($tit = $title->fetch_assoc()) {
+				// Combine the id and name into a single associative array
+				$fp['compound'] = [
+					'id' => $tit['id'],
+					'name' => json_decode($tit['name'], true)
+				];
+			}
+		} else {
+			// Handle case when the query fails
+			$fp['compound'] = null;
+		}
+	}
+
+	if (is_null($sel['government'])) {
+		$fp['government'] = null;
+	} else {
+		$gov = $rstate->query("
+        SELECT id, name 
+        FROM tbl_government 
+        WHERE id=" . intval($sel['government']) . "
+    ");
+
+		if ($gov->num_rows > 0) {
+			$fp['government'] = [];
+
+			while ($tit = $gov->fetch_assoc()) {
+				// Combine the id and name into a single associative array
+				$fp['government'] = [
+					'id' => $tit['id'],
+					'name' => json_decode($tit['name'], true)
+				];
+			}
+		} else {
+			// Handle case when the query fails
+			$fp['government'] = null;
+		}
+	}
 	$fac = $rstate->query("select img, id,
 	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
