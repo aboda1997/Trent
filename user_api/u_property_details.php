@@ -47,13 +47,9 @@ if ($pro_id == '' ) {
 	}
 
 	$fp['images'] = $vr;
-	$prop = $rstate->query("select title from tbl_category where id=" . $sel['ptype'] . "");
-	if ($prop->num_rows > 0) {
-		$propData = $prop->fetch_assoc();
-		$fp['property_type'] = json_decode($propData['title']);
-	} else {
-		$fp['property_type'] = null;
-	}
+	
+	$fp['category_id'] = $sel['ptype'];
+
 	$fp['price'] = $sel['price'];
 	$fp['buyorrent'] = $sel['pbuysell'];
 	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
@@ -77,27 +73,13 @@ if ($pro_id == '' ) {
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
 	
-	$periods = [
-		"d" => ["ar" => "يومي", "en" => "daily"] ,
-		 "m" => ["ar" => "شهري", "en" => "monthly"] 
-	];
-   $pol['period'] = $periods[$sel['period']][$lang];
+    $fp['period_id'] = $sel['period'];
 
 	$fp['floor'] = json_decode($sel['floor'], true);
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
-	if (is_null($sel['compound_id'])) {
-		$fp['compound_name'] = null;
-	} else {
-		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $sel['compound_id']);
+	
+	$fp['compound_id'] = $sel['compound_id'];
 
-    if ($title->num_rows>0) {
-        $tit = $title->fetch_assoc();
-        $fp['compound_name'] = json_decode($tit['name'], true);
-    } else {
-        // Handle case when the query fails
-        $fp['compound_name'] = null;
-    }
-	}
 	$fp['description'] = json_decode($sel['description'], true);
 	$fp['address'] = json_decode($sel['address'], true);
 	$fp['city'] = json_decode($sel['city'], true);
@@ -106,25 +88,8 @@ if ($pro_id == '' ) {
 
 	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $sel['id'] . "")->num_rows;
 
-
-	if (is_null($sel['government'])) {
-		$fp['government_name'] = null;
-		
-	} else {
-		$gov = $rstate->query("
-		SELECT name 
-		FROM tbl_government 
-		WHERE id=" . $sel['government'] . "
-	");
-
-    if ($gov->num_rows>0) {
-        $tit = $gov->fetch_assoc();
-        $fp['government_name'] = json_decode($tit['name'], true);
-    } else {
-        // Handle case when the query fails
-        $fp['government_name'] = null;
-    }
-	}
+	$fp['government_id'] = $sel['government'];
+	
 	$fac = $rstate->query("select img, id,
 	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
