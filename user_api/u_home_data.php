@@ -196,7 +196,7 @@ while ($row = $sel->fetch_assoc()) {
     }
 	}
 	
-	if (is_null($row['government_name'])) {
+	if (is_null($row['government'])) {
 		$pol['government_name'] = null;
 		
 	} else {
