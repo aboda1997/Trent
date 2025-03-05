@@ -14,10 +14,10 @@ $sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(why_choose_us_descriptio
 while($row = $sel->fetch_assoc())
 {
    
-		$pol['why_choose_us_description'] = $row['why_choose_us_description'];
-		$pol['why_choose_us_title'] = $row['why_choose_us_title'];
-		$pol['why_choose_us_img'] = $row['why_choose_us_img'];
-		$pol['why_choose_us_bg'] = $row['why_choose_us_bg'];
+		$pol['description'] = $row['why_choose_us_description'];
+		$pol['title'] = $row['why_choose_us_title'];
+		$pol['img'] = $row['why_choose_us_img'];
+		$pol['bg'] = $row['why_choose_us_bg'];
 		
 		
 		
@@ -28,11 +28,11 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("why_choose_us_data"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"why choose us data Not Founded!");
+	$returnArr = array("why_choose_us"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"why choose us data Not Founded!");
 }
 else 
 {
-$returnArr = array("why_choose_us_data"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"why choose us data Founded!");
+$returnArr = array("why_choose_us"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"why choose us data Founded!");
 }
 echo json_encode($returnArr);
 ?>

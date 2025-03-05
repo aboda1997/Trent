@@ -2,7 +2,6 @@
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 
 header('Content-type: text/json');
-$data = json_decode(file_get_contents('php://input'), true);
 $lang_code = 'en';
  
  if($_GET['lang']){
@@ -24,11 +23,11 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("type_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Property Type Not Founded!");
+	$returnArr = array("category_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Category List Not Founded!");
 }
 else 
 {
-$returnArr = array("type_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Property Type List Founded!");
+$returnArr = array("category_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Category List Founded!");
 }
 echo json_encode($returnArr);
 ?>

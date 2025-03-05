@@ -148,13 +148,13 @@ while ($row = $sel->fetch_assoc()) {
 	// Loop through each image URL and push to $vr array
 	foreach ($imageArray as $image) {
 		// 'is_panorama' => 0
-		$vr[] = array('image' => trim($image));
+		$vr[] = array('img' => trim($image));
 	}
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
 		//'is_panorama' => intval($rk['pano'])
-		array_push($vr, array('image' => $rk['img'], ));
+		array_push($vr, array('img' => $rk['img'], ));
 	}
 	$pol['id'] = $row['id'];
 
@@ -170,11 +170,11 @@ while ($row = $sel->fetch_assoc()) {
 		$pol['category_type'] = null;
 	}
 
-	$pol['images'] = $vr;
+	$pol['image_list'] = $vr;
 	$pol['price'] = $row['price'];
-	$pol['beds'] = $row['beds'];
+	$pol['beds_count'] = $row['beds'];
 	$pol['guest_count'] = $row['plimit'];
-	$pol['bathroom'] = $row['bathroom'];
+	$pol['bathrooms_count'] = $row['bathroom'];
 	$pol['sqrft'] = $row['sqrft'];
 	$periods = [
 		 "d" => ["ar" => "يومي", "en" => "daily"] ,

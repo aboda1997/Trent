@@ -27,11 +27,11 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("facilitylist"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Facility List Not Founded!");
+	$returnArr = array("facility_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Facility List Not Founded!");
 }
 else 
 {
-$returnArr = array("facilitylist"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Facility List Founded!");
+$returnArr = array("facility_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Facility List Founded!");
 }
 echo json_encode($returnArr);
 ?>
