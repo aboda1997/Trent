@@ -15,12 +15,20 @@ $period = isset($_GET['period']) ? $_GET['period'] : null;
 $min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
 $max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 $government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
+$compound_id = isset($_GET['compound_id']) ? intval($_GET['compound_id']) : null;
 $facilities = isset($_GET['facilities']) ? $_GET['facilities'] : null;
 $beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
 $bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
 $rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
 $guest_count = isset($_GET['guest_count']) ? intval($_GET['guest_count']) : null;
 $facilitiesArray = json_decode($facilities, true);
+
+// Get pagination parameters
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+$itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
+
+// Calculate offset
+$offset = ($page - 1) * $itemsPerPage;
 
 // Start the base query
 $query = "
@@ -69,16 +77,21 @@ if (isset($rate) && $rate > 0) {
 }
 
 // Filter active properties
-$query .= " WHERE p.status = 0 ";
+$query .= " WHERE p.status = 1 ";
 
 
 // Apply filters dynamically
 if ($uid !== null) {
 	$query .= " AND p.add_user_id = " . $uid;
+	
+	$query .= " And p.status = 1 or  p.status = 0 ";
 }
 
 if ($government_id !== null) {
 	$query .= " AND p.government = " . $government_id;
+}
+if ($compound_id !== null) {
+	$query .= " AND p.compound_id = " . $compound_id;
 }
 if ($facilities!== null) {
 	foreach ($facilitiesArray as $facility) {
@@ -120,7 +133,11 @@ if ($only_featured) {
 if (isset($rate) && $rate > 0) {
 	$query .= "  and book_status='Completed' and total_rate !=0 ";
 	$query .= " GROUP BY p.id HAVING rate_count > 1 AND total_avg_rate >= " . intval($rate);
+}else{
+	$query .= " GROUP BY p.id";
 }
+$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
+
 // Execute the query
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
@@ -145,15 +162,13 @@ while ($row = $sel->fetch_assoc()) {
 	$titleData = json_decode($row['title'], true)[$lang];
 	$pol['title'] = $titleData;
 
-	$pol['property_type'] = $row['ptype'];
-	//$prop = $rstate->query("select title from tbl_category where id=" . $row['ptype'] . "");
-	//if ($prop->num_rows > 0) {
-	//	$propData = $prop->fetch_assoc();
-	//	$pol['property_title'] = json_decode($propData['title'], true);
-	//} else {
-	//	$pol['property_title'] = null;
-	//}
-	//$pol['security_deposit'] = $row['security_deposit'];
+	$prop = $rstate->query("select title from tbl_category where id=" . $row['ptype'] . "");
+	if ($prop->num_rows > 0) {
+		$propData = $prop->fetch_assoc();
+		$pol['property_type'] = json_decode($propData['title'], true)[$lang];
+	} else {
+		$pol['property_type'] = null;
+	}
 
 	$pol['images'] = $vr;
 	$pol['price'] = $row['price'];
@@ -161,7 +176,6 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['guest_count'] = $row['plimit'];
 	$pol['bathroom'] = $row['bathroom'];
 	$pol['sqrft'] = $row['sqrft'];
-	//$pol['is_sell'] = $row['is_sell'];
 	$periods = [
 		 "d" => ["ar" => "يومي", "en" => "daily"] ,
 		  "m" => ["ar" => "شهري", "en" => "monthly"] 
@@ -181,19 +195,25 @@ while ($row = $sel->fetch_assoc()) {
         $pol['compound_name'] = null;
     }
 	}
-	//$fac = $rstate->query("select img, id,
-	// JSON_UNQUOTE(title) as title 
-	// from tbl_facility where id IN(" . $row['facility'] . ")");
+	
+	if (is_null($row['government'])) {
+		$pol['government'] = null;
+		
+	} else {
+		$gov = $rstate->query("
+		SELECT name 
+		FROM tbl_government 
+		WHERE id=" . $row['government'] . "
+	");
 
-	//while ($ro = $fac->fetch_assoc()) {
-	//$ro['title'] = json_decode($ro['title'], true);
-	//
-	//$f[] = $ro;
-	//}
-	//$pol['facility_select'] = $f;
-
-	//$pol['status'] = $row['status'];
-	//$pol['buyorrent'] = $row['pbuysell'];
+    if ($gov->num_rows>0) {
+        $tit = $gov->fetch_assoc();
+        $pol['government'] = json_decode($tit['name'], true)[$lang];
+    } else {
+        // Handle case when the query fails
+        $pol['government'] = null;
+    }
+	}
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 	if ($checkrate != 0) {
 		$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
@@ -202,24 +222,17 @@ while ($row = $sel->fetch_assoc()) {
 		$pol['rate'] = null;
 	}
 
-	//$pol['security_deposit'] = $row['security_deposit'];
 	$pol['maps_url'] = $row['google_maps_url'];
-	//$pol['video'] = $row['video'];
-	//$pol['max_days'] = $row['max_days'];
-	//$pol['min_days'] = $row['min_days'];
-
-	//$pol['floor'] = json_decode($row['floor'], true);
-	//$pol['guest_rules'] = json_decode($row['guest_rules'], true);
-	//$pol['description'] = json_decode($row['description'], true);
 	//$pol['address'] = json_decode($row['address'], true);
 	$pol['city'] = json_decode($row['city'], true)[$lang];
+
 	$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $row['id'] . "")->num_rows;  
 	$c[] = $pol;
 }
 if (empty($c)) {
-	$returnArr = json_encode(array("Properties" => $c, "ResponseCode" => "200", "Result" => "false", "ResponseMsg" => "Home Data Not Founded"));
+	$returnArr = json_encode(array("Properties" => $c,"length" => 0, "ResponseCode" => "200", "Result" => "false", "ResponseMsg" => "Home Data Not Founded"));
 } else {
-	$returnArr = json_encode(array("Properties" => $c, "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Home Data Get Successfully!"));
+	$returnArr = json_encode(array("Properties" => $c, "length" => count($c) ,"ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Home Data Get Successfully!"));
 }
 
 echo $returnArr;
