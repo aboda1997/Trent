@@ -27,12 +27,12 @@ if ($pro_id == '') {
 
 	// Loop through each image URL and push to $vr array
 	foreach ($imageArray as $image) {
-		$vr[] = array('image' => trim($image), 'is_panorama' => 0);
+		$vr[] = array('img' => trim($image), 'is_panorama' => 0);
 	}
 
 	$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
 	while ($rk = $get_extra->fetch_assoc()) {
-		array_push($vr, array('image' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
+		array_push($vr, array('img' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
 	}
 	$fp['id'] = $sel['id'];
 	$fp['user_id'] = $sel['add_user_id'];
@@ -46,7 +46,7 @@ if ($pro_id == '') {
 		$fp['rate'] = null;
 	}
 
-	$fp['images'] = $vr;
+	$fp['image_list'] = $vr;
 	if (is_null($sel['ptype'])) {
 		$fp['category'] = null;
 	} else {
@@ -71,7 +71,7 @@ if ($pro_id == '') {
 	$fp['buyorrent'] = $sel['pbuysell'];
 	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
 
-	$fp['beds'] = $sel['beds'];
+	$fp['beds_count'] = $sel['beds'];
 	if ($sel['add_user_id'] == 0) {
 		$fp['owner'] = [
 			'img' => 'images/property/owner.jpg',
@@ -85,7 +85,7 @@ if ($pro_id == '') {
 		];
 	}
 
-	$fp['bathroom'] = $sel['bathroom'];
+	$fp['bathrooms_count'] = $sel['bathroom'];
 	$fp['sqrft'] = $sel['sqrft'];
 
 	$fp['security_deposit'] = $sel['security_deposit'];

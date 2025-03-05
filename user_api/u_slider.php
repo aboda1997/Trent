@@ -2,8 +2,6 @@
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 
 header('Content-type: text/json');
-$data = json_decode(file_get_contents('php://input'), true);
-
 
 $lang_code = 'en';
  
@@ -18,8 +16,8 @@ $query = "SELECT cat_id , id, img, JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_cod
           WHERE status=1
         ";
 
-if (isset($data['cat_id'])) {
-    $cat_id = $data['cat_id']; 
+if (isset($_GET['category_id'])) {
+    $cat_id = $_GET['category_id']; 
     $query .= " AND cat_id = " . $cat_id;
 
 }
@@ -32,7 +30,7 @@ while($row = $sel->fetch_assoc())
 		$pol['id'] = $row['id'];
 		$pol['title'] = $row['title'];
 		$pol['img'] = $row['img'];
-        $pol['cat_id'] = $row['cat_id'];
+        $pol['category_id'] = $row['cat_id'];
         
 		
 		
