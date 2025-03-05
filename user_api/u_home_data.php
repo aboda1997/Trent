@@ -196,8 +196,8 @@ while ($row = $sel->fetch_assoc()) {
     }
 	}
 	
-	if (is_null($row['government'])) {
-		$pol['government'] = null;
+	if (is_null($row['government_name'])) {
+		$pol['government_name'] = null;
 		
 	} else {
 		$gov = $rstate->query("
@@ -208,10 +208,10 @@ while ($row = $sel->fetch_assoc()) {
 
     if ($gov->num_rows>0) {
         $tit = $gov->fetch_assoc();
-        $pol['government'] = json_decode($tit['name'], true)[$lang];
+        $pol['government_name'] = json_decode($tit['name'], true)[$lang];
     } else {
         // Handle case when the query fails
-        $pol['government'] = null;
+        $pol['government_name'] = null;
     }
 	}
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
