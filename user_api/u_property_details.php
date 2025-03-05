@@ -108,7 +108,7 @@ if ($pro_id == '' ) {
 
 
 	if (is_null($sel['government'])) {
-		$fp['government'] = null;
+		$fp['government_name'] = null;
 		
 	} else {
 		$gov = $rstate->query("
@@ -119,10 +119,10 @@ if ($pro_id == '' ) {
 
     if ($gov->num_rows>0) {
         $tit = $gov->fetch_assoc();
-        $fp['government'] = json_decode($tit['name'], true);
+        $fp['government_name'] = json_decode($tit['name'], true);
     } else {
         // Handle case when the query fails
-        $fp['government'] = null;
+        $fp['government_name'] = null;
     }
 	}
 	$fac = $rstate->query("select img, id,
