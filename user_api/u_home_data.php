@@ -180,7 +180,7 @@ while ($row = $sel->fetch_assoc()) {
 		 "d" => ["ar" => "يومي", "en" => "daily"] ,
 		  "m" => ["ar" => "شهري", "en" => "monthly"] 
 	 ];
-	$pol['period'] = $periods[$row['period']][$lang];
+	$pol['period_name'] = $periods[$row['period']][$lang];
 
 	if (is_null($row['compound_id'])) {
 		$pol['compound_name'] = null;

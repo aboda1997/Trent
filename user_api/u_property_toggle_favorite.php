@@ -22,16 +22,15 @@ if ($pro_id == '' or $uid == '') {
 
 	$h = new Estate();
 	$h->restateDeleteData_Api($where, $table);
-	$data = [["id" => $row['id'] , 'status'=> 'false'] ]; 
+	$data = [["id" => $pro_id , 'status'=> 'false'] ]; 
 	$returnArr = generateResponse('true', "The property was removed from favorites successfully!",200,$data);
 
 
 }else {
 	$sel = $rstate->query("select * from tbl_property where  add_user_id =" .$uid . " and  id=" . $pro_id . "")->fetch_assoc();
-    $property_type = $sel['ptype'];
 	$table = "tbl_fav";
-	$field_values = array("uid", "property_id", "property_type");
-	$data_values = array("$uid", "$pro_id", "$property_type");
+	$field_values = array("uid", "property_id", );
+	$data_values = array("$uid", "$pro_id");
 	$h = new Estate();
 	$h->restateinsertdata_Api($field_values, $data_values, $table);
 	$data = [["id" => $pro_id , 'status'=> 'true' ]  ]; 
