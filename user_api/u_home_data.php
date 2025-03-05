@@ -165,9 +165,9 @@ while ($row = $sel->fetch_assoc()) {
 	$prop = $rstate->query("select title from tbl_category where id=" . $row['ptype'] . "");
 	if ($prop->num_rows > 0) {
 		$propData = $prop->fetch_assoc();
-		$pol['property_type'] = json_decode($propData['title'], true)[$lang];
+		$pol['category_type'] = json_decode($propData['title'], true)[$lang];
 	} else {
-		$pol['property_type'] = null;
+		$pol['category_type'] = null;
 	}
 
 	$pol['images'] = $vr;
