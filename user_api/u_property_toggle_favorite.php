@@ -13,7 +13,7 @@ $sel = $rstate->query("select id from tbl_fav where  uid =" .$uid . " and  prope
 if ($pro_id == '' or $uid == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property',  "  add_user_id = " . $uid . " ") === false) {
-	$returnArr = generateResponse('false', "this property not exist!", 401);
+	$returnArr = generateResponse('false', "this property not exist!", 404);
 }else if ($sel->num_rows > 0){
 	$row = $sel->fetch_assoc();
 

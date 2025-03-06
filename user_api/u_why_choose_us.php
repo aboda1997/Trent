@@ -1,5 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
@@ -28,11 +29,15 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("why_choose_us"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"why choose us data Not Founded!");
+	$returnArr    = generateResponse('false', "Why Choose Us Data Not Founded!", 404, array(
+		"why_choose_us"=>$c
+	));
 }
 else 
 {
-$returnArr = array("why_choose_us"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"why choose us data Founded!");
+	$returnArr    = generateResponse('true', "Why Choose Us Data Founded!", 200, array(
+		"why_choose_us"=>$c
+	));
 }
-echo json_encode($returnArr);
+echo $returnArr;
 ?>

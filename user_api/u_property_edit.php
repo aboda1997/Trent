@@ -1,12 +1,14 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
-require dirname(dirname(__FILE__)) . '/include/estate.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
+require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 
 header('Content-type: text/json');
 
-$status = 0;
+$status = 1;
+$is_approved = 0;
+
 $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
 $facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
@@ -81,17 +83,17 @@ $title_json = json_encode([
 
 if ($user_id == ''or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_id == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
-	$returnArr    = generateResponse('false', "Something Went Wrong!", 401);
+	$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateFacilityIds($facility) === 0) {
-	$returnArr    = generateResponse('false', "Facilities Ids must be valid!", 401);
+	$returnArr    = generateResponse('false', "Facilities Ids must be valid!", 400);
 } else if (validateIdAndDatabaseExistance($ptype, 'tbl_category') === false) {
-	$returnArr    = generateResponse('false', "ptype Id must be valid!", 401);
+	$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
 } else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
-	$returnArr    = generateResponse('false', "government Id must be valid!", 401);
+	$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
 } else if (validateIdAndDatabaseExistance($compound_id, 'tbl_compound') === false) {
-	$returnArr    = generateResponse('false', "compound  Id must be valid!", 401);
+	$returnArr    = generateResponse('false', "Compound  Id must be valid!", 400);
 }else if (!in_array($period, ['d', 'm'])) {
-	$returnArr    = generateResponse('false', "Period not valid!", 401);
+	$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 }
 else {
 
@@ -111,6 +113,7 @@ else {
 			"min_days" => "$min_days",
 			"plimit" => $plimit,
 			"status" => $status,
+			"is_approved"=> $is_approved,
 			"title" => $title_json,
 			"price" => $price,
 			"address" => $address_json,
@@ -217,16 +220,25 @@ else {
 
 		$table = "tbl_property";
 
-		$where = "where id=" . $prop_id . " and add_user_id=" . $user_id . "";
+		$where = "where id=" . '?' . " and add_user_id=" . '?'. "";
 		$h = new Estate();
-		$check = $h->restateupdateData($field, $table, $where);
+		$where_conditions = [$prop_id , $user_id];
+		$check = $h->restateupdateData_Api($field, $table, $where , $where_conditions );
 	} else {
 		$returnArr    = generateResponse('false', "Edit Your Own Property!", 401);
 	}
 }
+
 if (isset($returnArr)) {
 	echo $returnArr;
-} else {
-	$returnArr    = generateResponse('true', "Property Update Successfully", 200);
+}else{
+	if($check){
+		$returnArr    = generateResponse('true', "Property Updated Successfully", 200, array("id"=> $prop_id, "title" =>json_decode($title_json, true) ));
+	
+	}else{
+		$returnArr    = generateResponse('false', "Database error", 500);
+
+	}
 	echo $returnArr;
+
 }

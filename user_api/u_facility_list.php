@@ -1,5 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 $data = json_decode(file_get_contents('php://input'), true);
@@ -27,11 +28,16 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("facility_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Facility List Not Founded!");
+
+	$returnArr    = generateResponse('true', "Facility List Not Founded!", 404, array(
+		"facility_list"=>$c
+	));
 }
 else 
 {
-$returnArr = array("facility_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Facility List Founded!");
+$returnArr    = generateResponse('true', "Facility List Founded!", 200, array(
+	"facility_list"=>$c
+));
 }
-echo json_encode($returnArr);
+echo $returnArr;
 ?>

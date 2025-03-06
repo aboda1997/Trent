@@ -1,5 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 
@@ -42,11 +43,16 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("slider_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"slider list Not Founded!");
+    $returnArr    = generateResponse('false', "Slider List Not Founded!", 404, array(
+        "slider_list"=>$c
+    ));
 }
 else 
 {
-$returnArr = array("slider_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"slider List Founded!");
+    
+    $returnArr    = generateResponse('true', "Slider List Founded!", 200, array(
+        "slider_list"=>$c
+    ));
 }
-echo json_encode($returnArr);
+echo $returnArr;
 ?>

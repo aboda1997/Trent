@@ -13,9 +13,9 @@ $pol = array();
 $c = array();
 $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
 if ($pro_id == '') {
-	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
+	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
-	$returnArr = generateResponse('false', "this property not exist!", 401);
+	$returnArr = generateResponse('false', "this property not exist!", 400);
 } else {
 	$fp = array();
 	$f = array();
@@ -68,7 +68,7 @@ if ($pro_id == '') {
 
 
 	$fp['price'] = $sel['price'];
-	$fp['buyorrent'] = $sel['pbuysell'];
+	$fp['buy_or_rent'] = $sel['pbuysell'];
 	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
 
 	$fp['beds_count'] = $sel['beds'];
@@ -187,6 +187,7 @@ if ($pro_id == '') {
 		$bov['user_desc'] = $k['rate_text'];
 		$kol[] = $bov;
 	}
-	$returnArr = json_encode(array("property_details" => $fp,   "facility_list" => $f, "gallery" => $v,  "ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Property Details Founded!"));
+	$returnArr    = generateResponse('true', "Property Details Founded!", 200, array("property_details" => $fp,   "facility_list" => $f, "gallery" => $v  ));
+
 }
 echo $returnArr;
