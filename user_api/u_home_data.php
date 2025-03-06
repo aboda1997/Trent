@@ -233,7 +233,7 @@ if (empty($c)) {
 	$returnArr    = generateResponse('false', "Home Data Not Founded", 404 ,array("property_list" => $c,"length" => 0,  ));
 
 } else {
-	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => 0,  ));
+	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => count($c),  ));
 
 }
 
