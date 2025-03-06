@@ -29,14 +29,16 @@ while($row = $sel->fetch_assoc())
 if(empty($c))
 {
 
-	$returnArr    = generateResponse('true', "Facility List Not Founded!", 404, array(
+	$returnArr    = generateResponse('false', "Facility List Not Founded!", 200, array(
 		"facility_list"=>$c
+		,"length" => count($c),
 	));
 }
 else 
 {
 $returnArr    = generateResponse('true', "Facility List Founded!", 200, array(
 	"facility_list"=>$c
+	,"length" => count($c),
 ));
 }
 echo $returnArr;

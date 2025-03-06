@@ -29,7 +29,7 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr    = generateResponse('false', "Why Choose Us Data Not Founded!", 404, array(
+	$returnArr    = generateResponse('false', "Why Choose Us Data Not Founded!", 200, array(
 		"why_choose_us"=>$c
 	));
 }

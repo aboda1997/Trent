@@ -11,7 +11,9 @@ if ($_GET['lang']) {
 }
 $pol = array();
 $c = array();
-$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_government ");
+$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_government
+          WHERE status=1
+");
 while ($row = $sel->fetch_assoc()) {
 
 	$pol['id'] = $row['id'];
@@ -25,13 +27,15 @@ while ($row = $sel->fetch_assoc()) {
 if (empty($c)) {
 
 
-	$returnArr    = generateResponse('false', "Government List Not Founded!", 404, array(
+	$returnArr    = generateResponse('false', "Government List Not Founded!", 200, array(
 		"government_list" => $c
+		,"length" => count($c),
 	));
 } else {
 
 	$returnArr    = generateResponse('true', "Government List Founded!", 200, array(
 		"government_list" => $c
+		,"length" => count($c),
 	));
 }
 
