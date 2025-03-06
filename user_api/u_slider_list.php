@@ -43,8 +43,9 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-    $returnArr    = generateResponse('false', "Slider List Not Founded!", 404, array(
+    $returnArr    = generateResponse('false', "Slider List Not Founded!", 200, array(
         "slider_list"=>$c
+        ,"length" => count($c),
     ));
 }
 else 
@@ -52,6 +53,7 @@ else
     
     $returnArr    = generateResponse('true', "Slider List Founded!", 200, array(
         "slider_list"=>$c
+        ,"length" => count($c),
     ));
 }
 echo $returnArr;

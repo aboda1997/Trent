@@ -24,15 +24,17 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr    = generateResponse('false', "Category List Not Founded!", 404, array(
+	$returnArr    = generateResponse('false', "Category List Not Founded!", 200, array(
 		"category_list"=>$c
+		,"length" => count($c),
 	));
 }
 else 
 {
 
-$returnArr    = generateResponse('false', "Category List  Founded!", 200, array(
+$returnArr    = generateResponse('true', "Category List  Founded!", 200, array(
 	"category_list"=>$c
+	,"length" => count($c),
 ));
 }
 echo $returnArr;
