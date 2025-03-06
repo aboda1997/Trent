@@ -77,14 +77,14 @@ if (isset($rate) && $rate > 0) {
 }
 
 // Filter active properties
-$query .= " WHERE p.status = 1 ";
+$query .= " WHERE p.status = 1 and p.is_approved  = 1";
 
 
 // Apply filters dynamically
 if ($uid !== null) {
 	$query .= " AND p.add_user_id = " . $uid;
 	
-	$query .= " And p.status = 1 or  p.status = 0 ";
+	$query .= " And p.is_approved  = 1 or  p.is_approved  = 0 ";
 }
 
 if ($government_id !== null) {
@@ -230,9 +230,11 @@ while ($row = $sel->fetch_assoc()) {
 	$c[] = $pol;
 }
 if (empty($c)) {
-	$returnArr = json_encode(array("Properties" => $c,"length" => 0, "ResponseCode" => "200", "Result" => "false", "ResponseMsg" => "Home Data Not Founded"));
+	$returnArr    = generateResponse('false', "Home Data Not Founded", 404 ,array("property_list" => $c,"length" => 0,  ));
+
 } else {
-	$returnArr = json_encode(array("Properties" => $c, "length" => count($c) ,"ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Home Data Get Successfully!"));
+	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => 0,  ));
+
 }
 
 echo $returnArr;

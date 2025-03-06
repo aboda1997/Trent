@@ -1,5 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 $lang_code = 'en';
@@ -23,11 +24,16 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-	$returnArr = array("category_list"=>$c,"ResponseCode"=>"200","Result"=>"false","ResponseMsg"=>"Category List Not Founded!");
+	$returnArr    = generateResponse('false', "Category List Not Founded!", 404, array(
+		"category_list"=>$c
+	));
 }
 else 
 {
-$returnArr = array("category_list"=>$c,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Category List Founded!");
+
+$returnArr    = generateResponse('false', "Category List  Founded!", 200, array(
+	"category_list"=>$c
+));
 }
-echo json_encode($returnArr);
+echo $returnArr;
 ?>

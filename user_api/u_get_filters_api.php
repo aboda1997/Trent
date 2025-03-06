@@ -1,5 +1,6 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
 $lang_code = 'en';
@@ -35,18 +36,13 @@ while ($row = $sel->fetch_assoc()) {
 
     $cc[] = $pol;
 }
-
-$returnArr = array(
-
+$returnArr    = generateResponse('true', "Api Filiters Founded!", 201 , array(
+    
     "price_range" => $c,
     "compound_list" => $cc,
-    "period_list" => $ccc,
+    "period_list" => $ccc
+ ));
 
 
-    "ResponseCode" => "200",
-    "Result" => "true",
-    "ResponseMsg" => "Api Filiters Founded!"
-);
-
-
-echo json_encode($returnArr);
+echo $returnArr;
+?>
