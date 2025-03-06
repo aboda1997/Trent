@@ -36,7 +36,7 @@ while ($row = $sel->fetch_assoc()) {
 
     $cc[] = $pol;
 }
-$returnArr    = generateResponse('true', "Api Filiters Founded!", 201 , array(
+$returnArr    = generateResponse('true', "Api Filiters Founded!", 200 , array(
     
     "price_range" => $c,
     "compound_list" => $cc,
