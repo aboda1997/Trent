@@ -3,11 +3,11 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
-$lang_code = 'en';
+try{
+$lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 
-if ($_GET['lang']) {
-    $lang_code = $_GET['lang'];
-}
+$search_term = isset($_GET['compound_name']) ? $rstate->real_escape_string($_GET['compound_name']) : null;
+
 $pol = array();
 $c = array();
 $cc = array();
@@ -28,10 +28,19 @@ while ($loop >= 0) {
     $loop -= 1;
     $ccc[] = $period;
 }
-$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_compound ");
+// Build query dynamically
+$query = "SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.$lang_code')) AS name, id FROM tbl_property";
+
+// If a search term is provided, add a LIKE condition for partial matching
+if ($search_term) {
+    $query .= " WHERE 
+        (JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.en')) LIKE '%$search_term%' 
+        OR JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) LIKE '%$search_term%')";
+}
+$sel = $rstate->query($query);
+
 while ($row = $sel->fetch_assoc()) {
 
-    $pol['id'] = $row['id'];
     $pol['name'] = $row['name'];
 
     $cc[] = $pol;
@@ -39,10 +48,18 @@ while ($row = $sel->fetch_assoc()) {
 $returnArr    = generateResponse('true', "Api Filiters Founded!", 200 , array(
     
     "price_range" => $c,
-    "compound_list" => $cc,
+    "compound_list" =>$cc,
     "period_list" => $ccc
  ));
 
 
 echo $returnArr;
+
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
 ?>

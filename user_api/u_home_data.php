@@ -3,10 +3,10 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
+try{
 $pol = array();
 $c = array();
-
-$lang = isset($_GET['lang']) ? $_GET['lang'] : 'en';
+$lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : null;
 $uid = isset($_GET['uid']) ? intval($_GET['uid']) : null;
 $only_featured = isset($_GET['only_featured']) && strtolower($_GET['only_featured']) === 'true' ? true : false;
@@ -15,7 +15,7 @@ $period = isset($_GET['period']) ? $_GET['period'] : null;
 $min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
 $max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 $government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
-$compound_id = isset($_GET['compound_id']) ? intval($_GET['compound_id']) : null;
+$compound_name = isset($_GET['compound_name']) ? $_GET['compound_name'] : null;
 $facilities = isset($_GET['facilities']) ? $_GET['facilities'] : null;
 $beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
 $bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
@@ -90,8 +90,12 @@ if ($uid !== null) {
 if ($government_id !== null) {
 	$query .= " AND p.government = " . $government_id;
 }
-if ($compound_id !== null) {
-	$query .= " AND p.compound_id = " . $compound_id;
+if ($compound_name !== null) {
+    $compound_name = $rstate->real_escape_string($compound_name);
+    $query .= " AND (
+        JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en'))   LIKE '%$compound_name%' 
+        OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar'))    LIKE '%$compound_name%'
+    )";
 }
 if ($facilities!== null) {
 	foreach ($facilitiesArray as $facility) {
@@ -137,7 +141,6 @@ if (isset($rate) && $rate > 0) {
 	$query .= " GROUP BY p.id";
 }
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
-
 // Execute the query
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
@@ -182,19 +185,8 @@ while ($row = $sel->fetch_assoc()) {
 	 ];
 	$pol['period_name'] = $periods[$row['period']][$lang];
 
-	if (is_null($row['compound_id'])) {
-		$pol['compound_name'] = null;
-	} else {
-		$title = $rstate->query("SELECT name FROM tbl_compound WHERE id=" . $row['compound_id']);
+	$pol['compound_name'] = json_decode($row['compound_name'], true)[$lang];
 
-    if ($title->num_rows>0) {
-        $tit = $title->fetch_assoc();
-        $pol['compound_name'] = json_decode($tit['name'], true)[$lang];
-    } else {
-        // Handle case when the query fails
-        $pol['compound_name'] = null;
-    }
-	}
 	
 	if (is_null($row['government'])) {
 		$pol['government_name'] = null;
@@ -224,13 +216,13 @@ while ($row = $sel->fetch_assoc()) {
 
 	$pol['maps_url'] = $row['google_maps_url'];
 	//$pol['address'] = json_decode($row['address'], true);
-	$pol['city'] = json_decode($row['city'], true)[$lang];
+	$pol['city_name'] = json_decode($row['city'], true)[$lang];
 
 	$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $row['id'] . "")->num_rows;  
 	$c[] = $pol;
 }
 if (empty($c)) {
-	$returnArr    = generateResponse('false', "Home Data Not Founded", 200 ,array("property_list" => $c,"length" => 0,  ));
+	$returnArr    = generateResponse('true', "Home Data Not Founded", 200 ,array("property_list" => $c,"length" => 0,  ));
 
 } else {
 	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => count($c),  ));
@@ -238,3 +230,12 @@ if (empty($c)) {
 }
 
 echo $returnArr;
+
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
+?>

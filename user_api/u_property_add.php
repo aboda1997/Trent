@@ -5,6 +5,7 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 
 header('Content-type: text/json');
+try{
 $status = 1;
 $is_approved = 0;
 $facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
@@ -22,7 +23,6 @@ $security_deposit =isset($_POST['security_deposit']) ? $_POST['security_deposit'
 $max_days = isset($_POST['max_days']) ? $_POST['max_days'] : ''; 
 $min_days = isset($_POST['min_days']) ? $_POST['min_days'] : ''; 
 $google_maps_url =isset($_POST['maps_url']) ? $_POST['maps_url'] : ''; 
-$compound_id =isset($_POST['compound_id']) ? $_POST['compound_id'] : '';
 $period =isset($_POST['period']) ? $_POST['period'] : 'd';
 $is_featured =isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 
@@ -36,6 +36,7 @@ $description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? 
 $ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
 $floor_en = $rstate->real_escape_string( isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
 $guest_rules_en = $rstate->real_escape_string( isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
+$compound_en = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_en'] : '');
 
 $title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
 $address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
@@ -43,6 +44,7 @@ $description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? 
 $ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
 $floor_ar = $rstate->real_escape_string( isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
 $guest_rules_ar = $rstate->real_escape_string( isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
+$compound_ar = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
 
 
 
@@ -51,6 +53,10 @@ $floor_json = json_encode([
 	"ar" => $floor_ar
 ], JSON_UNESCAPED_UNICODE);
 
+$compound_json = json_encode([
+	"en" => $compound_en,
+	"ar" => $compound_ar
+], JSON_UNESCAPED_UNICODE);
 
 $guest_rules_json = json_encode([
 	"en" => $guest_rules_en,
@@ -75,7 +81,7 @@ $title_json = json_encode([
 ], JSON_UNESCAPED_UNICODE);
 
 
-if ($user_id == '' or $period == '' or $government == '' or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or  $compound_id == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+if ($user_id == '' or $period == '' or $government == '' or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 	$returnArr = generateResponse('false', "Something Went Wrong!",400);
 } else if (validateFacilityIds($facility) === false) {
 	$returnArr = generateResponse('false', "Facilities Ids must be valid!", 400);
@@ -87,9 +93,6 @@ if ($user_id == '' or $period == '' or $government == '' or $security_deposit ==
 else if (!in_array($period, ['d', 'm'])) {
 	$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 }
-else if (validateIdAndDatabaseExistance($compound_id, 'tbl_compound') === false) {
-	$returnArr    = generateResponse('false', "Compound Id must be valid!", 400);
-} 
 else {
 
 
@@ -178,8 +181,8 @@ else {
 
 	$table = "tbl_property"; 
 
-	$field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_id", "floor", "status", "is_approved","title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-	$data_values = ["$imageUrlsString", "$period", "$is_featured", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_id", "$floor_json", "$status", "$is_approved" , "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+	$field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "is_approved","title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+	$data_values = ["$imageUrlsString", "$period", "$is_featured", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved" , "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
 	$h = new Estate();
 	$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -205,3 +208,11 @@ if (isset($returnArr)) {
 	echo $returnArr;
 
 }
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
+?>
