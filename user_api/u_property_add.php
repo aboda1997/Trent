@@ -23,7 +23,7 @@ $security_deposit =isset($_POST['security_deposit']) ? $_POST['security_deposit'
 $max_days = isset($_POST['max_days']) ? $_POST['max_days'] : ''; 
 $min_days = isset($_POST['min_days']) ? $_POST['min_days'] : ''; 
 $google_maps_url =isset($_POST['maps_url']) ? $_POST['maps_url'] : ''; 
-$period =isset($_POST['period_id']) ? $_POST['period_id'] : 'd';
+$period =isset($_POST['period']) ? $_POST['period'] : 'd';
 $is_featured =isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 
 $decodedIds = json_decode($facility, true);

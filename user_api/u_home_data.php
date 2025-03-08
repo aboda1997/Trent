@@ -11,7 +11,7 @@ $category_id = isset($_GET['category_id']) ? intval($_GET['category_id']) : null
 $uid = isset($_GET['uid']) ? intval($_GET['uid']) : null;
 $only_featured = isset($_GET['only_featured']) && strtolower($_GET['only_featured']) === 'true' ? true : false;
 $only_favorites = isset($_GET['only_favorites']) && strtolower($_GET['only_favorites']) === 'true' ? true : false;
-$period = isset($_GET['period_id']) ? $_GET['period_id'] : null;
+$period = isset($_GET['period']) ? $_GET['period'] : null;
 $min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
 $max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 $government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
