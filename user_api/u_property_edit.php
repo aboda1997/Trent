@@ -5,7 +5,7 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 
 header('Content-type: text/json');
-
+try{
 $status = 1;
 $is_approved = 0;
 
@@ -26,8 +26,7 @@ $security_deposit = isset($_POST['security_deposit']) ? $_POST['security_deposit
 $max_days = isset($_POST['max_days']) ? $_POST['max_days'] : '';
 $min_days = isset($_POST['min_days']) ? $_POST['min_days'] : '';
 $google_maps_url = isset($_POST['maps_url']) ? $_POST['maps_url'] : '';
-$compound_id =isset($_POST['compound_id']) ? $_POST['compound_id'] : '';
-$period =isset($_POST['period']) ? $_POST['period'] : 'd';
+$period =isset($_POST['period_id']) ? $_POST['period_id'] : 'd';
 $is_featured =isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 
 $title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
@@ -36,6 +35,7 @@ $description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? 
 $ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
 $floor_en = $rstate->real_escape_string(isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
 $guest_rules_en = $rstate->real_escape_string(isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
+$compound_en = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_en'] : '');
 
 $title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
 $address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
@@ -43,6 +43,7 @@ $description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? 
 $ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
 $floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
 $guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
+$compound_ar = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
 
 $decodedIds = json_decode($facility, true);
 $ids = array_filter(array_map('trim', $decodedIds));
@@ -55,6 +56,10 @@ $floor_json = json_encode([
 	"ar" => $floor_ar
 ], JSON_UNESCAPED_UNICODE);
 
+$compound_json = json_encode([
+	"en" => $compound_en,
+	"ar" => $compound_ar
+], JSON_UNESCAPED_UNICODE);
 
 $guest_rules_json = json_encode([
 	"en" => $guest_rules_en,
@@ -81,7 +86,7 @@ $title_json = json_encode([
 // Validate the string
 
 
-if ($user_id == ''or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_id == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+if ($user_id == ''or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
 	$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateFacilityIds($facility) === 0) {
@@ -90,8 +95,6 @@ if ($user_id == ''or $period == '' or $government == ''  or $security_deposit ==
 	$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
 } else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 	$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
-} else if (validateIdAndDatabaseExistance($compound_id, 'tbl_compound') === false) {
-	$returnArr    = generateResponse('false', "Compound  Id must be valid!", 400);
 }else if (!in_array($period, ['d', 'm'])) {
 	$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 }
@@ -107,7 +110,7 @@ else {
 			"government" => $government,
 			"google_maps_url" => $google_maps_url,
 			"guest_rules" => $guest_rules_json,
-			"compound_id" => $compound_id,
+			"compound_name" => $compound_json,
 			"floor" => $floor_json,
 			"max_days" => "$max_days",
 			"min_days" => "$min_days",
@@ -242,3 +245,11 @@ if (isset($returnArr)) {
 	echo $returnArr;
 
 }
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
+?>

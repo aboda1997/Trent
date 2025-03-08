@@ -3,17 +3,14 @@ require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
+try{
+    $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 
-$lang_code = 'en';
- 
- if($_GET['lang']){
-$lang_code = $_GET['lang'];
- }
 $pol = array();
 $c = array();
 
 $query = "SELECT cat_id , id, img, JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) AS title 
-          FROM tbl_slider 
+          FROM tbl_slider
           WHERE status=1
         ";
 
@@ -43,7 +40,7 @@ while($row = $sel->fetch_assoc())
 }
 if(empty($c))
 {
-    $returnArr    = generateResponse('false', "Slider List Not Founded!", 200, array(
+    $returnArr    = generateResponse('true', "Slider List Not Founded!", 200, array(
         "slider_list"=>$c
         ,"length" => count($c),
     ));
@@ -57,4 +54,11 @@ else
     ));
 }
 echo $returnArr;
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
 ?>

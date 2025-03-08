@@ -4,11 +4,9 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
 header('Content-type: text/json');
+try{
 $data = json_decode(file_get_contents('php://input'), true);
-$lang  = "en";
-if (isset($_GET['lang']) && in_array($_GET['lang'], ['ar', 'en'])) {
-	$lang = $_GET['lang'];
-}
+
 $pol = array();
 $c = array();
 $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
@@ -22,7 +20,7 @@ if ($pro_id == '') {
 	$v = array();
 	$vr = array();
 	$po = array();
-	$sel = $rstate->query("select * from tbl_property where    id=" . $pro_id . "")->fetch_assoc();
+	$sel = $rstate->query("select * from tbl_property where    id=" . $pro_id .  "")->fetch_assoc();
 	$imageArray = explode(',', $sel['image']);
 
 	// Loop through each image URL and push to $vr array
@@ -117,24 +115,8 @@ if ($pro_id == '') {
 		'name' => $periods[$sel['period']]
 	];
 
-	if (is_null($sel['compound_id'])) {
-		$fp['compound'] = null;
-	} else {
-		$title = $rstate->query("SELECT id, name FROM tbl_compound WHERE id=" . $sel['compound_id']);
+	$fp['compound'] = json_decode($sel['compound_name'], true);
 
-		if ($title->num_rows > 0) {
-			while ($tit = $title->fetch_assoc()) {
-				// Combine the id and name into a single associative array
-				$fp['compound'] = [
-					'id' => $tit['id'],
-					'name' => json_decode($tit['name'], true)
-				];
-			}
-		} else {
-			// Handle case when the query fails
-			$fp['compound'] = null;
-		}
-	}
 
 	if (is_null($sel['government'])) {
 		$fp['government'] = null;
@@ -191,3 +173,11 @@ if ($pro_id == '') {
 
 }
 echo $returnArr;
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
+?>

@@ -5,6 +5,7 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
 
 header('Content-type: text/json');
+try{
 $data = json_decode(file_get_contents('php://input'), true);
 $pro_id  = isset($data['prop_id']) ? $data['prop_id'] : '';
 $uid  = isset($data['uid']) ? $data['uid'] : '';
@@ -26,3 +27,11 @@ if ($pro_id == '' or $uid == '') {
 
 }
 echo $returnArr;
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ));
+    echo $returnArr;
+}
+?>
