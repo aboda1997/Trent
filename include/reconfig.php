@@ -13,7 +13,6 @@ try {
 }
     
 	$set = $rstate->query("SELECT * FROM `tbl_setting`")->fetch_assoc();
-	date_default_timezone_set($set['timezone']);
 	
 	$main = $rstate->query("SELECT * FROM `tbl_prop`")->fetch_assoc();
 	

@@ -405,6 +405,27 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+
+													<div class="form-group mb-3">
+														<label id="property-period" for="inputGroupSelect02"><?= $lang_en['Property_Period'] ?></label>
+														<select class="form-control" name="status" id="inputGroupSelect02" required>
+															<option value=""><?= $lang_en['Select_property_Period'] ?>...</option>
+															<option value="1"
+																<?php if ($data['period'] == 'd') {
+																	echo 'selected';
+																} ?>><?= $lang_en['Daily'] ?></option>
+															<option value="0"
+																<?php if ($data['period'] == 'm') {
+																	echo 'selected';
+																} ?>><?= $lang_en['Monthly'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="period_feedback" style="display: none;">
+															<?= $lang_en['property_period'] ?>
+
+														</div>
+													</div>
+												</div>
 
 
 												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
@@ -474,7 +495,7 @@ if (isset($_GET['id'])) {
 												</div>
 
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="limitlable">
 															<?= $lang_en['total_allowed_persons'] ?>
@@ -493,7 +514,7 @@ if (isset($_GET['id'])) {
 
 
 
-												<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_facility">
 															<?= $lang_en['Select_Property_Facility'] ?>
@@ -720,7 +741,7 @@ if (isset($_GET['id'])) {
 											<div class="tab-pane fade show active" id="en">
 												<div class="row">
 
-													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label>
 																<?= $lang_en['Property_Title'] ?>
@@ -746,7 +767,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label for="cname">
 																<?= $lang_en['Property_Description'] ?>
@@ -756,7 +777,7 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 
-													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label for="cname">
 																<?= $lang_en['Guest_Rules'] ?>
@@ -820,7 +841,7 @@ if (isset($_GET['id'])) {
 
 													<div class="row">
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label>
 																	<?= $lang_ar['Property_Title'] ?>
@@ -846,7 +867,7 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label for="cname">
 																	<?= $lang_ar['Property_Description'] ?>
@@ -856,7 +877,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label for="cname">
 																	<?= $lang_ar['Guest_Rules'] ?>
@@ -969,7 +990,21 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 
+													<div class="form-group mb-3">
+														<label id="property-period" for="inputGroupSelect02"><?= $lang_en['Property_Period'] ?></label>
+														<select class="form-control" name="period" id="inputGroupSelect02" required>
+															<option value=""><?= $lang_en['Select_property_Period'] ?>...</option>
+															<option value="d"><?= $lang_en['Daily'] ?></option>
+															<option value="m"><?= $lang_en['Monthly'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="period_feedback" style="display: none;">
+															<?= $lang_en['property_period'] ?>
+
+														</div>
+													</div>
+												</div>
 
 												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
@@ -1040,7 +1075,7 @@ if (isset($_GET['id'])) {
 
 
 
-												<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_facility">
 															<?= $lang_en['Select_Property_Facility'] ?>
@@ -1067,8 +1102,23 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 
-												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="property-featured" for="inputGroupSelect03"><?= $lang_en['Property_Featured'] ?></label>
+														<select class="form-control" name="featured" id="inputGroupSelect03" required>
+															<option value=""><?= $lang_en['Select_property_Featured'] ?>...</option>
+															<option value="1"><?= $lang_en['Yes'] ?></option>
+															<option value="0"><?= $lang_en['No'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="featured_feedback" style="display: none;">
+															<?= $lang_en['property_featured'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="propmap">
 															<?= $lang_en['google_map_url'] ?>
@@ -1084,7 +1134,7 @@ if (isset($_GET['id'])) {
 
 												<div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
 													<div class="row">
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_beds">
 																	<?= $lang_en['Total_Beds'] ?>
@@ -1098,7 +1148,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_bathroom">
 																	<?= $lang_en['Total_Bathroom'] ?>
@@ -1112,7 +1162,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_sqft">
 																	<?= $lang_en['Property_SQFT'] ?>
@@ -1321,6 +1371,8 @@ if (isset($_GET['id'])) {
 		const files = propImage.files;
 		const propVideo = document.querySelector('input[name="prop_video"]').value;
 		const status = document.querySelector('select[name="status"]').value;
+		const period = document.querySelector('select[name="period"]').value;
+		const featured = document.querySelector('select[name="featured"]').value;
 		const facility = document.querySelector('select[name="facility[]"]').value;
 		const ptype = document.querySelector('select[name="ptype"]').value;
 		const pgov = document.querySelector('select[name="pgov"]').value;
@@ -1421,6 +1473,14 @@ if (isset($_GET['id'])) {
 			document.getElementById('status_feedback').style.display = 'block';
 			isValid = false;
 		}
+		if (!period) {
+			document.getElementById('period_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if (!featured) {
+			document.getElementById('featured_feedback').style.display = 'block';
+			isValid = false;
+		}
 		if (!facility) {
 			document.getElementById('facility_feedback').style.display = 'block';
 			isValid = false;
@@ -1513,6 +1573,8 @@ if (isset($_GET['id'])) {
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
 		document.getElementById('status_feedback').textContent = langData.property_status;
+		document.getElementById('period_feedback').textContent = langData.property_period;
+		document.getElementById('featured_feedback').textContent = langData.property_featured;
 		document.getElementById('facility_feedback').textContent = langData.prop_facility;
 		document.getElementById('government_feedback').textContent = langData.prop_governemnt;
 		document.getElementById('owner_feedback').textContent = langData.prop_owner;
@@ -1552,6 +1614,16 @@ if (isset($_GET['id'])) {
 		statusSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
 		statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
 		statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
+
+		const periodSelect = document.getElementById('inputGroupSelect02');
+		periodSelect.querySelector('option[value=""]').textContent = langData.Select_property_Period;
+		periodSelect.querySelector('option[value="d"]').textContent = langData.Daily;
+		periodSelect.querySelector('option[value="m"]').textContent = langData.Monthly;
+
+		const featuredSelect = document.getElementById('inputGroupSelect03');
+		featuredSelect.querySelector('option[value=""]').textContent = langData.Select_property_Featured;
+		featuredSelect.querySelector('option[value="1"]').textContent = langData.Yes;
+		featuredSelect.querySelector('option[value="0"]').textContent = langData.No;
 
 
 		$('#propt_type').select2('destroy');

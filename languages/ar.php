@@ -206,5 +206,23 @@ return [
     'slider_status' => 'الرجاء إدخال حالة السلايدر',
     'slider_name' => 'الرجاء إدخال اسم السلايدر',
     'slider_img' => 'الرجاء تحميل صورة السلايدر.',
+    'why_choose_us' => 'لماذا تختارنا',
+    'why_choose_us_image' => 'صورة لماذا تختارنا',
+    'choose_image' => 'اختر صورة',
+    'background_color' => 'لون الخلفية',
+    'why_choose_us_title' => 'عنوان لماذا تختارنا',
+    'why_choose_us_description' => 'وصف لماذا تختارنا',
+
+    'Property_Period' => 'مدة العقار',
+    'Select_property_Period' => 'اختر مدة العقار',
+    'Monthly' => 'شهري',
+    'Daily' => 'يومي',
+    'property_period' => 'يرجى اختيار مدة العقار',
+
+    'Property_Featured' => 'هل العقار مميز',
+    'Select_property_Featured' => 'اختر هل العقار مميز',
+    'Yes' => 'نعم',
+    'No' => 'لا',
+    'property_featured' => 'يرجى اختيار هل العقار مميز',
 
 ];
