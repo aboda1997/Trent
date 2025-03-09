@@ -34,7 +34,6 @@ if (!isset($data['mobile']) || !isset($data['password']) || !isset($data['ccode'
             
             $returnArr = array(
                 "UserLogin" => $c,
-                "currency" => $set['currency'],
                 "ResponseCode" => "200",
                 "Result" => "true",
                 "ResponseMsg" => "Login successfully!"
