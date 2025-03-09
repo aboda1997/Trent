@@ -325,20 +325,16 @@ try {
             }
         } else if ($_POST['type'] == 'edit_setting') {
             $webname = mysqli_real_escape_string($rstate, $_POST['webname']);
-            $timezone = $_POST['timezone'];
-            $currency = $_POST['currency'];
             $id = $_POST['id'];
-
-            $wlimit = $_POST['wlimit'];
-            $one_key = $_POST['one_key'];
-            $one_hash = $_POST['one_hash'];
-
-            $scredit = $_POST['scredit'];
-            $rcredit = $_POST['rcredit'];
+            
             $nemail = $_POST['nemail'];
             $ofees = $_POST['ofees'];
             $pfees = $_POST['pfees'];
             $gmode = $_POST['gmode'];
+            $show_property = $_POST['show_property'];
+
+            $mfees = $_POST['mfees'];
+            $perfees = $_POST['perfees'];
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -355,15 +351,11 @@ try {
                     'owner_fees' => $ofees,
                     'property_manager_fees' => $pfees,
                     'gallery_mode' => $gmode,
-                    'timezone' => $timezone,
                     'weblogo' => $url,
                     'webname' => $webname,
-                    'currency' => $currency,
-                    'one_key' => $one_key,
-                    'one_hash' => $one_hash,
-                    'scredit' => $scredit,
-                    'rcredit' => $rcredit,
-                    'wlimit' => $wlimit
+                    'show_property' => $show_property,
+                    'gateway_percent_fees' => $perfees,
+                    'gateway_money_fees' => $mfees,
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -379,14 +371,12 @@ try {
                     'owner_fees' => $ofees,
                     'property_manager_fees' => $pfees,
                     'gallery_mode' => $gmode,
-                    'timezone' => $timezone,
                     'webname' => $webname,
-                    'currency' => $currency,
-                    'one_key' => $one_key,
-                    'one_hash' => $one_hash,
-                    'scredit' => $scredit,
-                    'rcredit' => $rcredit,
-                    'wlimit' => $wlimit
+                    'show_property' => $show_property,
+                    'gateway_percent_fees' => $perfees,
+                    'gateway_money_fees' => $mfees,
+
+                    
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();

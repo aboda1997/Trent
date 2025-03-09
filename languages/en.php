@@ -211,6 +211,32 @@ return [
     'slider_name' => 'please enter the Slider name ',
     'slider_img' => 'Please upload a Slider Image.',
 
+    'why_choose_us' => 'Why Choose Us',
+    'why_choose_us_image'  => 'Why Choose Us Image', 
+    'choose_image' => 'Choose Image',
+    'background_color' => "Background Color",
+    'why_choose_us_title' => " Why Choose Us Title",
+    
+    'why_choose_us_description' => " Why Choose Us Description",
+
+    'Property_Period'  => 'Property Period',
+    'Select_property_Period'     => 'Select Property Period',
+    'Monthly'     => 'Monthly',
+    'Daily'     => 'Daily',
+    'property_period' => 'Please  Select Property period',
+
+    'Property_Featured'  => 'Is Property Featured',
+    'Select_property_Featured'     => 'Select Is Property Featured',
+    'Yes'     => 'Yes',
+    'No'     => 'No',
+    'property_featured' => 'Please Select Is Property Featured',
+
+
+
+
+
+
+
 
 
 
