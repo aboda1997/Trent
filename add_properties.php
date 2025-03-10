@@ -110,7 +110,7 @@ if (isset($_GET['id'])) {
 											<div class="tab-pane fade show active" id="en">
 												<div class="row">
 
-													<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label>
 																<?= $lang_en['Property_Title'] ?>
@@ -141,7 +141,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label for="cname">
 																<?= $lang_en['Property_Description'] ?>
@@ -153,7 +153,7 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 
-													<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 														<div class="form-group mb-3">
 															<label for="cname">
 																<?= $lang_en['Guest_Rules'] ?>
@@ -229,7 +229,7 @@ if (isset($_GET['id'])) {
 
 													<div class="row">
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label>
 																	<?= $lang_ar['Property_Title'] ?>
@@ -261,7 +261,7 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label for="cname">
 																	<?= $lang_ar['Property_Description'] ?>
@@ -275,7 +275,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+														<div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label for="cname">
 																	<?= $lang_ar['Guest_Rules'] ?>
@@ -351,7 +351,7 @@ if (isset($_GET['id'])) {
 
 											<div class="row">
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_image">
 															<?= $lang_en['Property_Image'] ?>
@@ -364,7 +364,16 @@ if (isset($_GET['id'])) {
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
 														<br>
-														<img src="<?php echo $data['image']; ?>" width="100" height="100" />
+														<?php
+														if (empty($data['image'])) {
+															$firstImage = null;
+														} else {
+															// Split the string by commas
+															$imagesArray = explode(',',  $data['image']);
+
+															$firstImage = trim($imagesArray[0]);
+														}														?>
+														<img src="<?php echo $firstImage; ?>" width="100" height="100" />
 														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
 															<?= $lang_en['prop_img'] ?>
 
@@ -373,7 +382,7 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_video">
 															<?= $lang_en['Property_video'] ?>
@@ -390,7 +399,7 @@ if (isset($_GET['id'])) {
 												</div>
 
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_price">
 															<?= $lang_en['Property_Price_Per_Night'] ?>
@@ -405,17 +414,17 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
 													<div class="form-group mb-3">
 														<label id="property-period" for="inputGroupSelect02"><?= $lang_en['Property_Period'] ?></label>
-														<select class="form-control" name="status" id="inputGroupSelect02" required>
+														<select class="form-control" name="period" id="inputGroupSelect02" required>
 															<option value=""><?= $lang_en['Select_property_Period'] ?>...</option>
-															<option value="1"
+															<option value="d"
 																<?php if ($data['period'] == 'd') {
 																	echo 'selected';
 																} ?>><?= $lang_en['Daily'] ?></option>
-															<option value="0"
+															<option value="m"
 																<?php if ($data['period'] == 'm') {
 																	echo 'selected';
 																} ?>><?= $lang_en['Monthly'] ?></option>
@@ -427,52 +436,7 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="prop_security">
-															<?= $lang_en['security_deposit'] ?>
-
-														</label>
-														<input
-															value="<?php echo $data['security_deposit']; ?>"
-															type="text" class="form-control numberonly" id="price" name="prop_security" required="">
-														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
-															<?= $lang_en['prop_security'] ?>
-
-														</div>
-													</div>
-												</div>
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="plable">
-															<?= $lang_en['min_days'] ?>
-
-														</label>
-														<input
-															value="<?php echo $data['min_days']; ?>"
-
-															type="text" class="form-control numberonly" id="min_day" name="min_day">
-													</div>
-												</div>
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="plable">
-															<?= $lang_en['max_days'] ?>
-
-														</label>
-														<input
-															value="<?php echo $data['max_days']; ?>"
-
-															type="text" class="form-control numberonly" id="max_day" name="max_day">
-													</div>
-												</div>
-
-
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
 													<div class="form-group mb-3">
 														<label id="property-status" for="inputGroupSelect01"><?= $lang_en['Property_Status'] ?></label>
@@ -493,6 +457,74 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
+
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+
+													<div class="form-group mb-3">
+														<label id="property-featured" for="inputGroupSelect03"><?= $lang_en['Property_Featured'] ?></label>
+														<select class="form-control" name="featured" id="inputGroupSelect03" required>
+															<option value=""><?= $lang_en['Select_property_Featured'] ?>...</option>
+															<option value="1"
+																<?php if ($data['is_featured'] == 1) {
+																	echo 'selected';
+																} ?>><?= $lang_en['Yes'] ?></option>
+															<option value="0"
+																<?php if ($data['is_featured'] == 0) {
+																	echo 'selected';
+																} ?>><?= $lang_en['No'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="featured_feedback" style="display: none;">
+															<?= $lang_en['property_featured'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_security">
+															<?= $lang_en['security_deposit'] ?>
+
+														</label>
+														<input
+															value="<?php echo $data['security_deposit']; ?>"
+															type="text" class="form-control numberonly" id="price" name="prop_security" required="">
+														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
+															<?= $lang_en['prop_security'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="min-day">
+															<?= $lang_en['min_days'] ?>
+
+														</label>
+														<input
+															value="<?php echo $data['min_days']; ?>"
+
+															type="text" class="form-control numberonly" id="min_day" name="min_day">
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="max-day">
+															<?= $lang_en['max_days'] ?>
+
+														</label>
+														<input
+															value="<?php echo $data['max_days']; ?>"
+
+															type="text" class="form-control numberonly" id="max_day" name="max_day">
+													</div>
+												</div>
+
+
+
 
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
@@ -563,7 +595,7 @@ if (isset($_GET['id'])) {
 
 												<div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
 													<div class="row">
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_beds">
 																	<?= $lang_en['Total_Beds'] ?>
@@ -580,7 +612,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_bathroom">
 																	<?= $lang_en['Total_Bathroom'] ?>
@@ -597,7 +629,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
-														<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="prop_sqft">
 																	<?= $lang_en['Property_SQFT'] ?>
@@ -941,7 +973,7 @@ if (isset($_GET['id'])) {
 
 											<div class="row">
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_image">
 															<?= $lang_en['Property_Image'] ?>
@@ -959,7 +991,7 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_video">
 															<?= $lang_en['Property_video'] ?>
@@ -977,7 +1009,7 @@ if (isset($_GET['id'])) {
 												</div>
 
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_price">
 															<?= $lang_en['Property_Price_Per_Night'] ?>
@@ -990,7 +1022,7 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
 													<div class="form-group mb-3">
 														<label id="property-period" for="inputGroupSelect02"><?= $lang_en['Property_Period'] ?></label>
@@ -1006,43 +1038,8 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="prop_security">
-															<?= $lang_en['security_deposit'] ?>
 
-														</label>
-														<input type="text" class="form-control numberonly" id="price" name="prop_security" required="">
-														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
-															<?= $lang_en['prop_security'] ?>
-
-														</div>
-													</div>
-												</div>
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="plable">
-															<?= $lang_en['min_days'] ?>
-
-														</label>
-														<input type="text" class="form-control numberonly" id="min_day" name="min_day">
-													</div>
-												</div>
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="plable">
-															<?= $lang_en['max_days'] ?>
-
-														</label>
-														<input type="text" class="form-control numberonly" id="max_day" name="max_day">
-													</div>
-												</div>
-
-
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
 													<div class="form-group mb-3">
 														<label id="property-status" for="inputGroupSelect01"><?= $lang_en['Property_Status'] ?></label>
@@ -1058,8 +1055,62 @@ if (isset($_GET['id'])) {
 													</div>
 												</div>
 
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="property-featured" for="inputGroupSelect03"><?= $lang_en['Property_Featured'] ?></label>
+														<select class="form-control" name="featured" id="inputGroupSelect03" required>
+															<option value=""><?= $lang_en['Select_property_Featured'] ?>...</option>
+															<option value="1"><?= $lang_en['Yes'] ?></option>
+															<option value="0"><?= $lang_en['No'] ?></option>
+														</select>
+														<div class="invalid-feedback" id="featured_feedback" style="display: none;">
+															<?= $lang_en['property_featured'] ?>
+
+														</div>
+													</div>
+												</div>
+
+
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="prop_security">
+															<?= $lang_en['security_deposit'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="price" name="prop_security" required="">
+														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
+															<?= $lang_en['prop_security'] ?>
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="min-day">
+															<?= $lang_en['min_days'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="min_day" name="min_day">
+													</div>
+												</div>
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+													<div class="form-group mb-3">
+														<label id="max-day">
+															<?= $lang_en['max_days'] ?>
+
+														</label>
+														<input type="text" class="form-control numberonly" id="max_day" name="max_day">
+													</div>
+												</div>
+
+
+
+
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="limitlable">
 															<?= $lang_en['total_allowed_persons'] ?>
@@ -1075,7 +1126,7 @@ if (isset($_GET['id'])) {
 
 
 
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_facility">
 															<?= $lang_en['Select_Property_Facility'] ?>
@@ -1102,23 +1153,8 @@ if (isset($_GET['id'])) {
 														</div>
 													</div>
 												</div>
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
 
-													<div class="form-group mb-3">
-														<label id="property-featured" for="inputGroupSelect03"><?= $lang_en['Property_Featured'] ?></label>
-														<select class="form-control" name="featured" id="inputGroupSelect03" required>
-															<option value=""><?= $lang_en['Select_property_Featured'] ?>...</option>
-															<option value="1"><?= $lang_en['Yes'] ?></option>
-															<option value="0"><?= $lang_en['No'] ?></option>
-														</select>
-														<div class="invalid-feedback" id="featured_feedback" style="display: none;">
-															<?= $lang_en['property_featured'] ?>
-
-														</div>
-													</div>
-												</div>
-
-												<div class="col-md-3 col-lg-3 col-xs-12 col-sm-12">
+												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="propmap">
 															<?= $lang_en['google_map_url'] ?>
@@ -1589,7 +1625,11 @@ if (isset($_GET['id'])) {
 
 		document.getElementById('prop_image').textContent = langData.Property_Image;
 		document.getElementById('prop_video').textContent = langData.Property_video;
+		document.getElementById('min-day').textContent = langData.min_days;
+		document.getElementById('max-day').textContent = langData.max_days;
 		document.getElementById('property-status').textContent = langData.Property_Status;
+		document.getElementById('property-period').textContent = langData.Property_Period;
+		document.getElementById('property-featured').textContent = langData.Property_Featured;
 		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
 		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
 		document.getElementById('prop_owner').textContent = langData.Select_Owner;

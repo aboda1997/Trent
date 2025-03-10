@@ -220,6 +220,7 @@ else {
 			$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
 		}
 
+		if (!isset($returnArr)) {
 
 		$table = "tbl_property";
 
@@ -227,6 +228,7 @@ else {
 		$h = new Estate();
 		$where_conditions = [$prop_id , $user_id];
 		$check = $h->restateupdateData_Api($field, $table, $where , $where_conditions );
+		}
 	} else {
 		$returnArr    = generateResponse('false', "Edit Your Own Property!", 401);
 	}

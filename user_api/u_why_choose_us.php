@@ -8,14 +8,14 @@ $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) :
 
 $pol = array();
 $c = array();
-$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(why_choose_us_description, '$.$lang_code')) as why_choose_us_description , JSON_UNQUOTE(JSON_EXTRACT(why_choose_us_title, '$.$lang_code')) as why_choose_us_title ,why_choose_us_img , why_choose_us_bg from tbl_setting ");
+$sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(description, '$.$lang_code')) as description , JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) as title ,img , background_color from tbl_why_choose_us ");
 while($row = $sel->fetch_assoc())
 {
    
-		$pol['description'] = $row['why_choose_us_description'];
-		$pol['title'] = $row['why_choose_us_title'];
-		$pol['img'] = $row['why_choose_us_img'];
-		$pol['bg'] = $row['why_choose_us_bg'];
+		$pol['description'] = $row['description'];
+		$pol['title'] = $row['title'];
+		$pol['img'] = $row['img'];
+		$pol['background_color'] = $row['background_color'];
 		
 		
 		
@@ -27,13 +27,13 @@ while($row = $sel->fetch_assoc())
 if(empty($c))
 {
 	$returnArr    = generateResponse('true', "Why Choose Us Data Not Founded!", 200, array(
-		"why_choose_us"=>$c
+		"why_choose_us_list"=>$c
 	));
 }
 else 
 {
 	$returnArr    = generateResponse('true', "Why Choose Us Data Founded!", 200, array(
-		"why_choose_us"=>$c
+		"why_choose_us_list"=>$c
 	));
 }
 echo $returnArr;

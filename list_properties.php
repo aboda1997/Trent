@@ -134,7 +134,7 @@ FROM tbl_property
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $row['price'] . $set['currency']; ?>
+                            <?php echo $row['price'] ." EGP" ?>
                           </td>
 
                           <td class="align-middle">
