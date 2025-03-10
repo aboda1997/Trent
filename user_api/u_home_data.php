@@ -69,10 +69,10 @@ if (isset($rate) && $rate > 0 && $only_favorites) {
 }
 // Add favorites condition
 if ($only_favorites) {
-	$query .= " inner JOIN tbl_fav f ON p.id = f.property_id ";
+	$query .= " inner JOIN tbl_fav f ON p.add_user_id = f.uid ";
 }
 if (isset($rate) && $rate > 0) {
-	$query .= " inner JOIN tbl_book b ON p.id = b.prop_id
+	$query .= " inner JOIN tbl_book b ON p.add_user_id = b.uid
 	";
 }
 
@@ -144,6 +144,7 @@ if (isset($rate) && $rate > 0) {
 	$query .= " GROUP BY p.id";
 }
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
+var_dump($query);
 // Execute the query
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
