@@ -69,10 +69,10 @@ if (isset($rate) && $rate > 0 && $only_favorites) {
 }
 // Add favorites condition
 if ($only_favorites) {
-	$query .= " inner JOIN tbl_fav f ON p.add_user_id = f.uid ";
+	$query .= " inner JOIN tbl_fav f ON p.id = f.property_id ";
 }
 if (isset($rate) && $rate > 0) {
-	$query .= " inner JOIN tbl_book b ON p.add_user_id = b.uid
+	$query .= " inner JOIN tbl_book b ON p.id = b.prop_id
 	";
 }
 
@@ -82,9 +82,17 @@ $query .= " WHERE p.status = 1 and p.is_approved  = 1";
 
 // Apply filters dynamically
 if ($uid !== null) {
-	$query .= " AND p.add_user_id = " . $uid;
+	if ($only_favorites) {
+		$query .= " AND f.uid = " . $uid;
+	}
+	if (isset($rate) && $rate > 0) {
+		$query .= " AND b.uid = " . $uid;
 	
-	$query .= " And p.is_approved  = 1 or  p.is_approved  = 0 ";
+	}
+	if(!$only_favorites && !isset($rate)  ){
+		$query .= " AND p.add_user_id = " . $uid;
+	} 
+	$query .= "  or  p.is_approved  = 0 ";
 }
 
 if ($government_id !== null) {
