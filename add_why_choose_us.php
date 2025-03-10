@@ -75,26 +75,28 @@ if ($_SESSION['stype'] == 'Staff') {
                                         </div>
 
                                         <div class="form-group mb-3 col-6" style="margin-bottom: 48px;">
-                                            <label><span class="text-danger">*</span>
+                                            <label id="why_choose_us_image"><span class="text-danger">*</span>
                                                 <?= $lang_en['why_choose_us_image'] ?>
 
                                             </label>
                                             <div class="custom-file">
                                                 <input type="file" accept=".jpg, .jpeg, .png, .gif" name="why_choose_us_img" class="custom-file-input form-control">
-                                                <label class="custom-file-label">
-                                                    <?= $lang_en['choose_image'] ?>
-
-                                                </label>
+                                                <div class="invalid-feedback" id="why_choose_us_img_feedback" style="display: none;">
+                                                    <?= $lang_en['why_choose_us_img'] ?>
+                                                </div>
                                                 <br>
                                                 <img src="<?php echo $set['why_choose_us_img']; ?>" width="60" height="60" />
                                             </div>
                                         </div>
                                         <div class="form-group mb-3 col-6">
-                                            <label><span class="text-danger">*</span>
+                                            <label id="background_color"><span class="text-danger">*</span>
                                                 <?= $lang_en['background_color'] ?>
 
                                             </label>
-                                            <input type="text" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $set['why_choose_us_bg']; ?>" name="why_choose_us_bg" required="">
+                                            <input type="text" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $set['why_choose_us_bg']; ?>" name="why_choose_us_bg" required="">
+                                            <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
+                                                <?= $lang_en['why_choose_us_bg_color'] ?>
+                                            </div>
                                             <input type="hidden" name="type" value="edit_why_choose_us" />
                                             <input type="hidden" name="id" value="1" />
                                         </div>
@@ -119,22 +121,21 @@ if ($_SESSION['stype'] == 'Staff') {
                                                             required=""
                                                             aria-describedby="basic-addon1" />
                                                         <div class="invalid-feedback" id="why_choose_us_title_en_feedback" style="display: none;">
-                                                            <?= $lang_en['faq_question'] ?>
+                                                            <?= $lang_en['why_choose_us_title_'] ?>
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group mb-3 col-6">
                                                         <label id="basic-addon1"><?= $lang_en['why_choose_us_description'] ?></label>
-                                                        <input
-                                                            type="text"
+                                                        <textarea
                                                             class="form-control"
-                                                            value="<?php echo $descrption['ar']; ?>"
                                                             placeholder="<?= $lang_en['why_choose_us_description'] ?>"
-                                                            name="why_choose_us_description_en"
                                                             required=""
-                                                            aria-describedby="basic-addon1" />
+                                                            aria-describedby="basic-addon1"
+                                                            name="why_choose_us_description_en"  rows="3"><?php echo ltrim(htmlspecialchars( preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $descrption['en']), ENT_QUOTES, 'UTF-8')); ?></textarea>
+
                                                         <div class="invalid-feedback" id="why_choose_us_description_en_feedback" style="display: none;">
-                                                            <?= $lang_en['faq_answer'] ?>
+                                                            <?= $lang_en['why_choose_us_description_'] ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -153,22 +154,22 @@ if ($_SESSION['stype'] == 'Staff') {
                                                             required=""
                                                             aria-describedby="basic-addon1" />
                                                         <div class="invalid-feedback" id="why_choose_us_title_ar_feedback" style="display: none;">
-                                                            <?= $lang_en['faq_question'] ?>
+                                                            <?= $lang_ar['why_choose_us_title_'] ?>
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group mb-3 col-6">
+                                                        
                                                         <label id="basic-addon1"><?= $lang_ar['why_choose_us_description'] ?></label>
-                                                        <input
-                                                            type="text"
+
+                                                        <textarea
                                                             class="form-control"
-                                                            value="<?php echo $descrption['ar']; ?>"
                                                             placeholder="<?= $lang_ar['why_choose_us_description'] ?>"
-                                                            name="why_choose_us_description_ar"
                                                             required=""
-                                                            aria-describedby="basic-addon1" />
+                                                            aria-describedby="basic-addon1"
+                                                            name="why_choose_us_description_ar"  rows="3"><?php echo rtrim(htmlspecialchars( preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $descrption['ar']), ENT_QUOTES, 'UTF-8')); ?></textarea>
                                                         <div class="invalid-feedback" id="why_choose_us_description_ar_feedback" style="display: none;">
-                                                            <?= $lang_en['faq_answer'] ?>
+                                                            <?= $lang_ar['why_choose_us_description_'] ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -181,7 +182,10 @@ if ($_SESSION['stype'] == 'Staff') {
 
 
                                         <div class="col-12">
-                                            <button type="submit" name="edit_setting" class="btn btn-primary mb-2">Edit Why Choose US </button>
+                                            <button onclick="return validateForm()" id="edit_why_choose_us" type="submit" class="btn btn-primary mb-2"> 
+                                            <?= $lang_en['edit_why_choose_us'] ?>
+    
+                                          </button>
                                         </div>
                                     </div>
                                 </form>
@@ -219,6 +223,120 @@ if ($_SESSION['stype'] == 'Staff') {
     });
 </script>
 
+<script>
+    function getCurrentLanguage() {
+        // Get the active tab
+        const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
+        return activeTab === 'en' ? 'en' : 'ar';
+    }
+
+    function validateForm() {
+        // Clear previous feedback
+        document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
+            feedback.style.display = 'none';
+        });
+
+        const why_choose_us_description_en = document.querySelector('textarea[name="why_choose_us_description_en"]').value;
+        const why_choose_us_description_ar = document.querySelector('textarea[name="why_choose_us_description_ar"]').value;
+        debugger;
+
+        const why_choose_us_title_en = document.querySelector('input[name="why_choose_us_title_en"]').value;
+        const why_choose_us_title_ar = document.querySelector('input[name="why_choose_us_title_ar"]').value;
+        const why_choose_us_img = document.querySelector('input[name="why_choose_us_img"]').value;
+		const why_choose_us_bg = document.querySelector('input[name="why_choose_us_bg"]').value;
+
+        let isValid = true;
+        let isArabicValid = true;
+        let isEnglishValid = true;
+        let alertMessage = '';
+        let lang = getCurrentLanguage();
+
+        if (!why_choose_us_description_en) {
+            document.getElementById('why_choose_us_description_en_feedback').style.display = 'block';
+            isEnglishValid = false;
+
+        }
+        if (!why_choose_us_description_ar) {
+            document.getElementById('why_choose_us_description_ar_feedback').style.display = 'block';
+            isArabicValid = false;
+
+        }
+        if (!why_choose_us_title_en) {
+            document.getElementById('why_choose_us_title_en_feedback').style.display = 'block';
+            isEnglishValid = false;
+
+        }
+        if (!why_choose_us_title_ar) {
+            document.getElementById('why_choose_us_title_ar_feedback').style.display = 'block';
+            isArabicValid = false;
+
+        }
+        if (!why_choose_us_bg) {
+			document.getElementById('why_choose_us_bg_color_feedback').style.display = 'block';
+			isValid = false;
+		}
+
+
+        
+
+
+
+        if (!isArabicValid && isEnglishValid) {
+            // Show alert if there are required fields missing
+            if (lang == "en") {
+                alertMessage = langDataEN.alert_en;
+
+            } else {
+                alertMessage = langDataAR.alert_en;
+
+            }
+            isValid = false;
+        }
+        if (!isEnglishValid && isArabicValid) {
+            // Show alert if there are required fields missing
+            if (lang == "ar") {
+                alertMessage = langDataAR.alert_ar;
+
+            } else {
+                alertMessage = langDataEN.alert_ar;
+
+            }
+            isValid = false;
+        }
+        if (isArabicValid && isEnglishValid) {
+            alertMessage = '';
+        }
+        if (alertMessage) {
+            document.getElementById('alert-message').innerHTML = alertMessage;
+            document.getElementById('alert-container').style.display = 'block';
+
+        } else {
+            document.getElementById('alert-container').style.display = 'none';
+
+        }
+        if (!isValid) {
+            return false;
+        }
+
+        return true; // Allow form submission
+    }
+
+    function changeLanguage(lang) {
+        var langData = (lang === "ar") ? langDataAR : langDataEN;
+
+		document.getElementById('background_color').textContent = langData.background_color;
+		document.getElementById('why_choose_us_image').textContent = langData.why_choose_us_image;
+		document.getElementById('why_choose_us_bg_color_feedback').textContent = langData.why_choose_us_bg_color;
+
+		document.getElementById('bg_color').placeholder  = langData.background_color;
+        if (document.getElementById('edit_why_choose_us')) {
+            document.querySelector('button[type="submit"]').textContent = langData.edit_why_choose_us;
+
+        }
+
+    }
+
+</script>
 
 <?php
 require 'include/footer.php';

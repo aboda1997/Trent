@@ -240,6 +240,18 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="list_faq.php">List FAQ</a></li>
             </ul>
           </li>
+
+          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 12l2 2 4-4" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5"></circle>
+              </svg>  
+          <span>Why Choose Us</span></a>
+            <ul class="sidebar-submenu">
+              <li><a href="add_why_choose_us.php">Add Why Choose Us</a></li>
+              <li><a href="list_why_choose_us.php">List Why Choose Us</a></li>
+            </ul>
+          </li>
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="userlist.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
@@ -268,12 +280,7 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </g>
               </svg><span>Setting</span></a></li>
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="why_choose_us.php">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 12l2 2 4-4" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5"></circle>
-              </svg>
-              <span>Why Choose Us</span></a></li>
+          
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="logout.php"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logout" style="transform: rotate(90deg);">
                 <g>
                   <g>

@@ -29,11 +29,14 @@ while ($loop >= 0) {
     $ccc[] = $period;
 }
 // Build query dynamically
-$query = "SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.$lang_code')) AS name, id FROM tbl_property";
-
+$query = "
+    SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.$lang_code')) AS name
+    FROM tbl_property
+    WHERE JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.$lang_code')) IS NOT NULL
+";
 // If a search term is provided, add a LIKE condition for partial matching
 if ($search_term) {
-    $query .= " WHERE 
+    $query .= " and 
         (JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.en')) LIKE '%$search_term%' 
         OR JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) LIKE '%$search_term%')";
 }

@@ -385,7 +385,69 @@ try {
                     $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Setting Update Successfully!!", "message" => "Offer section!", "action" => "setting.php");
                 }
             }
-        } elseif ($_POST["type"] == "add_category") {
+        } 
+        else if ($_POST['type'] == 'edit_why_choose_us') {
+            $id = $_POST['id'];
+            
+            $why_choose_us_bg = $_POST['why_choose_us_bg'];
+            $why_choose_us_title_en = $_POST['why_choose_us_title_en'];
+            $why_choose_us_title_ar = $_POST['why_choose_us_title_ar'];
+            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']));
+            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']));
+
+            $why_choose_us_description_json = json_encode([
+                "en" => $why_choose_us_description_en,
+                "ar" => $why_choose_us_description_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $why_choose_us_title_json = json_encode([
+                "en" => $why_choose_us_title_en,
+                "ar" => $why_choose_us_title_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
+            $url = "images/website/";
+            $temp = explode(".", $_FILES["why_choose_us_img"]["name"]);
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $target_file = $target_dir . basename($newfilename);
+            $url = $url . basename($newfilename);
+            if ($_FILES["why_choose_us_img"]["name"] != '') {
+
+                move_uploaded_file($_FILES["why_choose_us_img"]["tmp_name"], $target_file);
+                $table = "tbl_setting";
+                $field = array(
+                    'why_choose_us_title' => $why_choose_us_title_json,
+                    'why_choose_us_description' => $why_choose_us_description_json,
+                    'why_choose_us_img' => $url,
+                    'why_choose_us_bg' => $why_choose_us_bg,
+                    
+                );
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($field, $table, $where);
+
+                if ($check == 1) {
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us  section!", "action" => "why_choose_us.php");
+                }
+            } else {
+                $table = "tbl_setting";
+                $field = array(
+
+                    'why_choose_us_title' => $why_choose_us_title_json,
+                    'why_choose_us_description' => $why_choose_us_description_json,
+                    'why_choose_us_bg' => $why_choose_us_bg,
+                    
+                );
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($field, $table, $where);
+                if ($check == 1) {
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us Data section!", "action" => "why_choose_us.php");
+                }
+            }
+        }
+        
+        elseif ($_POST["type"] == "add_category") {
             $okey = $_POST["status"];
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
@@ -612,6 +674,8 @@ try {
             $min_days = $_POST['min_day'];
             $google_maps_url = $_POST['mapurl'];
             $propowner = $_POST['propowner'];
+            $period = $_POST['period'];
+            $featured = $_POST['featured'];
 
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $address_en = $rstate->real_escape_string($_POST["address_en"]);
@@ -739,22 +803,23 @@ try {
                         // Handle invalid video type
                         $returnArr = generateDashboardResponse(400, "false", "Invalid video type.", "", "list_properties.php");
                     }
-                } else {
-                    // Handle error during video 
-                    $returnArr = generateDashboardResponse(400, "false", "Error uploading video.", "", "list_properties.php");
-                }
+                } 
             }
 
             // Convert arrays to comma-separated strings
             $imageUrlsString = implode(',', $imageUrls);
             $videoUrlsString = implode(',', $videoUrls);
+            if (!isset($returnArr)) {
 
             $table = "tbl_property";
-            $field_values = ["image", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$imageUrlsString", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+            $field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+            $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
+            }else{
+                $check = 0 ; 
+            }
 
             if ($check == 1) {
                 $returnArr = [
@@ -786,6 +851,8 @@ try {
             $min_days = $_POST['min_day'];
             $google_maps_url = $_POST['mapurl'];
             $propowner = $_POST['propowner'];
+            $period = $_POST['period'];
+            $featured = $_POST['featured'];
 
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $address_en = $rstate->real_escape_string($_POST["address_en"]);
@@ -882,12 +949,7 @@ try {
                             $returnArr = generateDashboardResponse(400, "false", "Error uploading image: " . $_FILES['images']['name'][$key], "", "list_properties.php");
                         }
                     }
-                } else {
-                    $returnArr = generateDashboardResponse(400, "false", "Please upload more than two images.", "", "list_properties.php");
                 }
-            } else {
-                // No images uploaded
-                $returnArr = generateDashboardResponse(400, "false", "No images uploaded.", "", "list_properties.php");
             }
             
 
@@ -913,9 +975,6 @@ try {
                         // Handle invalid video type
                         $returnArr = generateDashboardResponse(400, "false", "Invalid video type.", "", "list_properties.php");
                     }
-                } else {
-                    // Handle error during video 
-                    $returnArr = generateDashboardResponse(400, "false", "Error uploading video.", "", "list_properties.php");
                 }
             }
 
@@ -925,8 +984,8 @@ try {
             $table = "tbl_property";
 
 
-            $field_values = ["security_deposit", "government", "google_maps_url",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$security_deposit", "$government", "$google_maps_url",  "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+            $field_values = ["security_deposit",  "period", "is_featured","government", "google_maps_url",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+            $data_values = ["$security_deposit", "$period", "$featured", "$government", "$google_maps_url",  "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
             $combinedArray = array_combine($field_values, $data_values);
             if (!empty($imageUrls)) {
@@ -936,10 +995,14 @@ try {
             if (!empty($videoUrls)) {
                 $combinedArray["video"] =  $videoUrlsString;
             }
+            if (!isset($returnArr)) {
+
             $where = "where id=" . $id . " and add_user_id=" . $propowner . "";
             $h = new Estate();
             $check = $h->restateupdateData($combinedArray, $table, $where);
-
+            }else{
+                $check = 0 ; 
+            }
             if ($check == 1) {
                 $returnArr = [
                     "ResponseCode" => "200",

@@ -179,6 +179,8 @@ else {
 
 
 
+	if (!isset($returnArr)) {
+	
 	$table = "tbl_property"; 
 
 	$field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "is_approved","title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
@@ -186,6 +188,7 @@ else {
 
 	$h = new Estate();
 	$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+	}
 	$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
 
 	if ($check_owner  >= 6) {

@@ -93,7 +93,6 @@ $lang_en = load_specific_langauage('en');
             text-align: left;
         }
     </style>
-    <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 
 </head>
 

@@ -146,7 +146,7 @@ return [
     'min_days'                   => 'Minimum Days',
     'max_days'                   => 'Maximum Days',
     'Select_Property_Facility'   => 'Select Property Facility',
-    'Property_Price_Per_Night'   => 'Property Price Per Night',
+    'Property_Price_Per_Night'   => 'Property Price',
     'Select_Property_Type'       => 'Select Property Type',
     'Property_SQFT'              => 'Property Area (SQFT)',
     'Total_Bathroom'             => 'Total Bathrooms',
@@ -173,9 +173,8 @@ return [
     'prop_city' => 'please enter Property City',
     'prop_img' => 'please enter more than two images',
     'prop_video' => 'please enter Property video',
-    'prop_price' => 'please enter Property Price Per Night',
+    'prop_price' => 'please enter Property Price ',
     'property_limit' => 'please enter Property total allowed persons',
-    'prop_price' => 'please enter Property Price Per Night',
     'prop_security' => 'please enter Property Security Deposit',
 
     'prop_facility' => 'please enter Property facilities',
@@ -218,7 +217,11 @@ return [
     'why_choose_us_title' => " Why Choose Us Title",
     
     'why_choose_us_description' => " Why Choose Us Description",
-
+    'why_choose_us_description_' => "Please enter Why Choose Us Description",
+    'why_choose_us_title_' => "Please enter Why Choose Us Title",
+    'why_choose_us_img' => 'Please upload a  Why Choose Us Image.',
+    'why_choose_us_bg_color' => 'Please enter  a  Why Choose Us background color.',
+    'edit_why_choose_us' => 'Edit Why Choose US',
     'Property_Period'  => 'Property Period',
     'Select_property_Period'     => 'Select Property Period',
     'Monthly'     => 'Monthly',
