@@ -1655,6 +1655,6 @@ try {
     echo json_encode($returnArr);
 } catch (Exception $e) {
     // Handle exceptions and return an error response
-    $returnArr = generateDashboardResponse(500, "false", "An error occurred!", "", "dashboard.php");
+    $returnArr = generateDashboardResponse(500, "false", "An error occurred!", "$e", "dashboard.php");
     echo $returnArr;
 }
