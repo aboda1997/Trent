@@ -222,6 +222,14 @@ return [
     'why_choose_us_img' => 'Please upload a  Why Choose Us Image.',
     'why_choose_us_bg_color' => 'Please enter  a  Why Choose Us background color.',
     'edit_why_choose_us' => 'Edit Why Choose US',
+
+    'add_why_choose_us' => 'Add Why Choose US',
+    'Why_Choose_List_Management'  => 'Why Choose Us  List Management',
+    'Why_Chooser_Title'  => '  Title',
+    'Why_Choose_Image' => ' Image',
+    'Why_Choose_bg' => 'Background Color',
+    "Delete_Confirmation" => 'Are you sure you want to delete this item',
+    
     'Property_Period'  => 'Property Period',
     'Select_property_Period'     => 'Select Property Period',
     'Monthly'     => 'Monthly',

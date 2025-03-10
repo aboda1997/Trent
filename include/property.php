@@ -326,7 +326,7 @@ try {
         } else if ($_POST['type'] == 'edit_setting') {
             $webname = mysqli_real_escape_string($rstate, $_POST['webname']);
             $id = $_POST['id'];
-            
+
             $nemail = $_POST['nemail'];
             $ofees = $_POST['ofees'];
             $pfees = $_POST['pfees'];
@@ -376,7 +376,7 @@ try {
                     'gateway_percent_fees' => $perfees,
                     'gateway_money_fees' => $mfees,
 
-                    
+
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -385,10 +385,53 @@ try {
                     $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Setting Update Successfully!!", "message" => "Offer section!", "action" => "setting.php");
                 }
             }
-        } 
-        else if ($_POST['type'] == 'edit_why_choose_us') {
-            $id = $_POST['id'];
+        } else if ($_POST['type'] == 'add_why_choose_us') {
+
+            $why_choose_us_bg = $_POST['why_choose_us_bg'];
+            $why_choose_us_title_en = $_POST['why_choose_us_title_en'];
+            $why_choose_us_title_ar = $_POST['why_choose_us_title_ar'];
+            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']));
+            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']));
+
+            $why_choose_us_description_json = json_encode([
+                "en" => $why_choose_us_description_en,
+                "ar" => $why_choose_us_description_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $why_choose_us_title_json = json_encode([
+                "en" => $why_choose_us_title_en,
+                "ar" => $why_choose_us_title_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
+            $url = "images/website/";
+            $temp = explode(".", $_FILES["why_choose_us_img"]["name"]);
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $target_file = $target_dir . basename($newfilename);
+            $url = $url . basename($newfilename);
+
+            move_uploaded_file($_FILES["why_choose_us_img"]["tmp_name"], $target_file);
+            $table = "tbl_why_choose_us";
+            $field = array(
+                'title', 
+                'description',
+                'img',
+                'background_color'
+
+            );
             
+            $table = "tbl_why_choose_us";
+            $data_values = array("$why_choose_us_title_json", "$why_choose_us_description_json", "$url" , "$why_choose_us_bg");
+
+            $h = new Estate();
+            $check = $h->restateinsertdata($field,$data_values ,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Added Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
+            }
+        } else if ($_POST['type'] == 'edit_why_choose_us') {
+            $id = $_POST['id'];
+
             $why_choose_us_bg = $_POST['why_choose_us_bg'];
             $why_choose_us_title_en = $_POST['why_choose_us_title_en'];
             $why_choose_us_title_ar = $_POST['why_choose_us_title_ar'];
@@ -414,36 +457,50 @@ try {
             if ($_FILES["why_choose_us_img"]["name"] != '') {
 
                 move_uploaded_file($_FILES["why_choose_us_img"]["tmp_name"], $target_file);
-                $table = "tbl_setting";
+                $table = "tbl_why_choose_us";
                 $field = array(
-                    'why_choose_us_title' => $why_choose_us_title_json,
-                    'why_choose_us_description' => $why_choose_us_description_json,
-                    'why_choose_us_img' => $url,
-                    'why_choose_us_bg' => $why_choose_us_bg,
-                    
+                    'title' => $why_choose_us_title_json,
+                    'description' => $why_choose_us_description_json,
+                    'img' => $url,
+                    'background_color' => $why_choose_us_bg,
+
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
 
                 if ($check == 1) {
-                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us  section!", "action" => "why_choose_us.php");
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
                 }
             } else {
-                $table = "tbl_setting";
+                $table = "tbl_why_choose_us";
                 $field = array(
 
-                    'why_choose_us_title' => $why_choose_us_title_json,
-                    'why_choose_us_description' => $why_choose_us_description_json,
-                    'why_choose_us_bg' => $why_choose_us_bg,
-                    
+                    'title' => $why_choose_us_title_json,
+                    'description' => $why_choose_us_description_json,
+                    'background_color' => $why_choose_us_bg,
+
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
                 if ($check == 1) {
-                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us Data section!", "action" => "why_choose_us.php");
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us Data section!", "action" => "list_why_choose_us.php");
                 }
+            }
+        }
+        else if ($_POST['type'] == 'delete_why_choose_us') {
+            $id = $_POST['id'];
+
+            
+            $table = "tbl_why_choose_us";
+            $where = "where id=" . $id . "";
+
+            $h = new Estate();
+            $check = $h->restaterestateDeleteData($where,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Deleted Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
             }
         }
         
@@ -803,7 +860,7 @@ try {
                         // Handle invalid video type
                         $returnArr = generateDashboardResponse(400, "false", "Invalid video type.", "", "list_properties.php");
                     }
-                } 
+                }
             }
 
             // Convert arrays to comma-separated strings
@@ -811,14 +868,14 @@ try {
             $videoUrlsString = implode(',', $videoUrls);
             if (!isset($returnArr)) {
 
-            $table = "tbl_property";
-            $field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $table = "tbl_property";
+                $field_values = ["image", "period", "is_featured", "security_deposit", "government", "google_maps_url", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
-            $h = new Estate();
-            $check = $h->restateinsertdata($field_values, $data_values, $table);
-            }else{
-                $check = 0 ; 
+                $h = new Estate();
+                $check = $h->restateinsertdata($field_values, $data_values, $table);
+            } else {
+                $check = 0;
             }
 
             if ($check == 1) {
@@ -951,7 +1008,7 @@ try {
                     }
                 }
             }
-            
+
 
             // Handle video upload
             if (isset($_FILES['prop_video'])) {
@@ -984,7 +1041,7 @@ try {
             $table = "tbl_property";
 
 
-            $field_values = ["security_deposit",  "period", "is_featured","government", "google_maps_url",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+            $field_values = ["security_deposit",  "period", "is_featured", "government", "google_maps_url",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
             $data_values = ["$security_deposit", "$period", "$featured", "$government", "$google_maps_url",  "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
             $combinedArray = array_combine($field_values, $data_values);
@@ -997,11 +1054,11 @@ try {
             }
             if (!isset($returnArr)) {
 
-            $where = "where id=" . $id . " and add_user_id=" . $propowner . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($combinedArray, $table, $where);
-            }else{
-                $check = 0 ; 
+                $where = "where id=" . $id . " and add_user_id=" . $propowner . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($combinedArray, $table, $where);
+            } else {
+                $check = 0;
             }
             if ($check == 1) {
                 $returnArr = [
@@ -1598,7 +1655,6 @@ try {
     echo json_encode($returnArr);
 } catch (Exception $e) {
     // Handle exceptions and return an error response
-    $returnArr = generateDashboardResponse(500, "false", "An error occurred!" , "", "dashboard.php");
+    $returnArr = generateDashboardResponse(500, "false", "An error occurred!", "", "dashboard.php");
     echo $returnArr;
 }
-?>
