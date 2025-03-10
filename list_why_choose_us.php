@@ -1,9 +1,9 @@
 <?php
 require 'include/main_head.php';
-$slider_per = ['Create', 'Update', 'Read', 'Delete'];
+$why_us_per = ['Create', 'Update', 'Read', 'Delete'];
 $lang_code = load_language_code()["language_code"];
 
-if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
+if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
 
 
 
@@ -40,7 +40,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
                     <div class="row">
                         <div class="col-6">
                             <h3>
-                                <?= $lang['Slider_List_Management'] ?>
+                                <?= $lang['Why_Choose_List_Management'] ?>
 
                             </h3>
                         </div>
@@ -66,20 +66,20 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
 
                                                     .</th>
                                                 <th>
-                                                    <?= $lang['Slider_Title'] ?>
+                                                    <?= $lang['Why_Chooser_Title'] ?>
 
                                                 </th>
                                                 <th>
-                                                    <?= $lang['Slider_Image'] ?>
+                                                    <?= $lang['Why_Choose_Image'] ?>
 
                                                 </th>
                                                 <th>
-                                                    <?= $lang['Slider_Status'] ?>
+                                                    <?= $lang['Why_Choose_bg'] ?>
 
                                                 </th>
                                                 <?php
                                                 if ($_SESSION['restatename'] == 'Staff') {
-                                                    if (in_array('Update', $slider_per)) {
+                                                    if (in_array('Update', $why_us_per)) {
                                                 ?>
                                                         <th>
                                                             <?= $lang['Action'] ?>
@@ -90,18 +90,19 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
                                                 } else {
                                                     ?>
                                                     <th>
-                                                        <?= $lang['Action'] ?>
-
+                                                    <?= $lang['Action'] ?>
+                                                    
                                                     </th>
                                                 <?php } ?>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $city = $rstate->query("select * from tbl_slider");
+                                            $city = $rstate->query("select * from tbl_why_choose_us");
                                             $i = 0;
                                             while ($row = $city->fetch_assoc()) {
                                                 $title = json_decode($row['title'], true);
+                                                $description = json_decode($row['description'], true);
 
                                                 $i = $i + 1;
                                             ?>
@@ -117,38 +118,44 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
                                                     <td class="align-middle">
                                                         <img src="<?php echo $row['img']; ?>" width="70" height="80" />
                                                     </td>
+                                                    <td class="align-middle">
+                                                        <?php echo $row['background_color']; ?>
+                                                    </td>
 
 
-                                                    <?php if ($row['status'] == 1) { ?>
 
-                                                        <td><span class="badge badge-success">
-                                                                <?= $lang['Publish'] ?>
-
-                                                            </span></td>
-                                                    <?php } else { ?>
-
-                                                        <td>
-                                                            <span class="badge badge-danger">
-                                                                <?= $lang['Unpublish'] ?>
-
-                                                            </span>
-                                                        </td>
-                                                    <?php } ?>
                                                     <?php
                                                     if ($_SESSION['restatename'] == 'Staff') {
-                                                        if (in_array('Update', $slider_per)) {
+                                                        if (in_array('Update', $why_us_per)) {
                                                     ?>
 
                                                             <td style="white-space: nowrap; width: 15%;">
                                                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                                                     <div class="btn-group btn-group-sm" style="float: none;">
-                                                                        <a href="add_slider.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
+
+                                                                        <!-- Update Button -->
+                                                                        <a href="add_why_choose_us.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
                                                                             <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                                 <rect width="30" height="30" rx="15" fill="#79F9B4" />
                                                                                 <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
-                                                                            </svg></a>
-                                                                    </div>
+                                                                            </svg>
+                                                                        </a>
 
+                                                                        <!-- Delete Button -->
+                                                                        <form action="include/property.php" method="POST" style="display: inline; margin: 5px;">
+                                                                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                                            <input type="hidden" name="type" value="delete_why_choose_us">
+                                                                            <button type="submit" class="tabledit-delete-button" 
+                                                                            onclick="return confirm('<?= $lang['Delete_Confirmation'] ?>?');"
+                                                                            style="background: none; border: none; padding: 0; cursor: pointer;">
+                                                                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                                                                    <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                                                                </svg>
+                                                                            </button>
+                                                                        </form>
+
+                                                                    </div>
                                                                 </div>
                                                             </td>
                                                         <?php
@@ -158,13 +165,30 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $slider_per)) {
                                                         <td style="white-space: nowrap; width: 15%;">
                                                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                                                 <div class="btn-group btn-group-sm" style="float: none;">
-                                                                    <a href="add_slider.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
+
+                                                                    <!-- Update Button -->
+                                                                    <a href="add_why_choose_us.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
                                                                         <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                             <rect width="30" height="30" rx="15" fill="#79F9B4" />
                                                                             <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
-                                                                        </svg></a>
-                                                                </div>
+                                                                        </svg>
+                                                                    </a>
 
+                                                                    <!-- Delete Button -->
+                                                                    <form action="include/property.php" method="POST" style="display: inline; margin: 5px;">
+                                                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                                        <input type="hidden" name="type" value="delete_why_choose_us">
+                                                                        <button type="submit" class="tabledit-delete-button" 
+                                                                        onclick="return confirm('<?= $lang['Delete_Confirmation'] ?>?');"
+                                                                        style="background: none; border: none; padding: 0; cursor: pointer;">
+                                                                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                                                                <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                                                            </svg>
+                                                                        </button>
+                                                                    </form>
+
+                                                                </div>
                                                             </div>
                                                         </td>
                                                     <?php } ?>

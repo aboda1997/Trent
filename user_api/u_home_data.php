@@ -95,6 +95,9 @@ if ($compound_name !== null) {
     $query .= " AND (
         JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en'))   LIKE '%$compound_name%' 
         OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar'))    LIKE '%$compound_name%'
+		and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.en')) IS NOT NULL
+		and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) IS NOT NULL
+
     )";
 }
 if ($facilities!== null) {

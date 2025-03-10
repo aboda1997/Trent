@@ -217,6 +217,11 @@ return [
     'why_choose_us_img' => 'يرجى رفع صورة لماذا تختارنا.',
     'why_choose_us_bg_color' => 'يرجى إدخال لون خلفية لماذا تختارنا.',
     'edit_why_choose_us' => 'تعديل لماذا تختارنا',
+    'add_why_choose_us' => 'أضف لماذا تختارنا',
+    'Why_Choose_List_Management' => 'إدارة قائمة لماذا تختارنا',
+    'Why_Chooser_Title' => 'العنوان',
+    'Why_Choose_Image' => 'الصورة',
+    'Why_Choose_bg' => 'لون الخلفية',
     'Property_Period' => 'مدة العقار',
     'Select_property_Period' => 'اختر مدة العقار',
     'Monthly' => 'شهري',
@@ -228,5 +233,12 @@ return [
     'Yes' => 'نعم',
     'No' => 'لا',
     'property_featured' => 'يرجى اختيار هل العقار مميز',
+    "Delete_Confirmation" => 'هل أنت متأكد أنك تريد حذف هذا العنصر',
+
+
+
+
+
+
 
 ];
