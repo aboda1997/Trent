@@ -82,20 +82,25 @@ $query .= " WHERE p.status = 1 and (p.is_approved  = 1";
 
 // Apply filters dynamically
 if ($uid !== null) {
-	$query .= "  or  p.is_approved  = 0) ";
 
+	if(!$only_favorites && !isset($rate) && !$only_featured && !$category_id && !$period   && !$min_price && !$max_price 
+	&& !$government_id && !$compound_name 	&& !$facilities && !$beds_count && !$bathrooms_count && !$guest_count 
+	){
+		$query .= "  or  p.is_approved  = 0) ";
+
+		$query .= " AND p.add_user_id = " . $uid;
+	}else{
+		$query .= " ) ";
+
+	}
 	if ($only_favorites) {
 		$query .= " AND f.uid = " . $uid;
 	}
 	if (isset($rate) && $rate > 0) {
-		$query .= " AND b.uid = " . $uid;
+		$query .= "  AND b.uid = " . $uid;
 	
 	}
-	if(!$only_favorites && !isset($rate) && !$only_featured && !$category_id && !$period   && !$min_price && !$max_price 
-	&& !$government_id && !$compound_name 	&& !$facilities && !$beds_count && !$bathrooms_count && !$guest_count 
-	){
-		$query .= " AND p.add_user_id = " . $uid;
-	} 
+	 
 }else{
 	$query .= " ) ";
 
@@ -157,9 +162,12 @@ if (isset($rate) && $rate > 0) {
 }else{
 	$query .= " GROUP BY p.id";
 }
+var_dump($query);
+
 $sel_length  = $rstate->query($query)->num_rows;
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 // Execute the query
+
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
 	$vr = array();
