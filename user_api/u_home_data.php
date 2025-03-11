@@ -151,6 +151,8 @@ if (isset($rate) && $rate > 0) {
 }else{
 	$query .= " GROUP BY p.id";
 }
+$sel_length  = $rstate->query($query)->num_rows;
+
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 // Execute the query
 $sel = $rstate->query($query);
@@ -236,7 +238,7 @@ if (empty($c)) {
 	$returnArr    = generateResponse('true', "Home Data Not Founded", 200 ,array("property_list" => $c,"length" => 0,  ));
 
 } else {
-	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => count($c),  ));
+	$returnArr    = generateResponse('true', "Home Data Get Successfully!", 200,array("property_list" => $c,"length" => $sel_length,  ));
 
 }
 
