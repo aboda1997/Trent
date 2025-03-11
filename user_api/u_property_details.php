@@ -10,7 +10,8 @@ $data = json_decode(file_get_contents('php://input'), true);
 $pol = array();
 $c = array();
 $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
-if ($pro_id == '') {
+$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
+if ($pro_id == '' || $uid == '' ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 400);
@@ -87,7 +88,10 @@ if ($pro_id == '') {
 	$fp['sqrft'] = $sel['sqrft'];
 
 	$fp['security_deposit'] = $sel['security_deposit'];
-	$fp['maps_url'] = $sel['google_maps_url'];
+	$fp['maps_url'] = $sel['map_url'];
+	
+	$fp['latitude'] = $sel['latitude'];
+	$fp['longitude'] = $sel['longitude'];
 	$fp['video'] = $sel['video'];
 	$fp['max_days'] = $sel['max_days'];
 	$fp['min_days'] = $sel['min_days'];
@@ -103,7 +107,7 @@ if ($pro_id == '') {
 
 	$fp['guest_count'] = $sel['plimit'];
 
-	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $sel['id'] . "")->num_rows;
+	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where where uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
 
 	$periods = [
 		"d" => ["ar" => "يومي", "en" => "daily"],

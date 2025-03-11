@@ -239,7 +239,8 @@ while ($row = $sel->fetch_assoc()) {
 		$pol['rate'] = null;
 	}
 
-	$pol['maps_url'] = $row['google_maps_url'];
+	$pol['latitude'] = $row['latitude'];
+	$pol['longitude'] = $row['longitude'];
 	//$pol['address'] = json_decode($row['address'], true);
 	$pol['city_name'] = json_decode($row['city'], true)[$lang];
     if ($uid){

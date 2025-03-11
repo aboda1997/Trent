@@ -583,7 +583,7 @@ if (isset($_GET['id'])) {
 
 														</label>
 														<input
-															value="<?php echo $data['google_maps_url']; ?>"
+															value="<?php echo $data['map_url']; ?>"
 
 															type="text" class="form-control" name="mapurl" required="">
 														<div class="invalid-feedback" id="mapurl_feedback" style="display: none;">
