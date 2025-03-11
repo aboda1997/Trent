@@ -4,13 +4,12 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
 
-header("Access-Control-Allow-Origin: *");
-
-// Allow specific methods
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-
-// Allow specific headers
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header('Content-type: text/json');
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 try{
 $data = json_decode(file_get_contents('php://input'), true);
 $pro_id  = isset($data['prop_id']) ? $data['prop_id'] : '';
