@@ -162,7 +162,6 @@ if (isset($rate) && $rate > 0) {
 }else{
 	$query .= " GROUP BY p.id";
 }
-var_dump($query);
 
 $sel_length  = $rstate->query($query)->num_rows;
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
