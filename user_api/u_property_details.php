@@ -107,7 +107,7 @@ if ($pro_id == '' || $uid == '' ) {
 
 	$fp['guest_count'] = $sel['plimit'];
 
-	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where where uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
+	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
 
 	$periods = [
 		"d" => ["ar" => "يومي", "en" => "daily"],
