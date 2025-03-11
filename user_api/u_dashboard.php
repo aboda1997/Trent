@@ -12,7 +12,7 @@ if ($uid == '') {
     );
 } else {
 
-	$total_property = $rstate->query("select * from tbl_property where status = 1 add_user_id=".$uid."")->num_rows;
+	$total_property = $rstate->query("select * from tbl_property where status = 1 and add_user_id=".$uid."")->num_rows;
 	$total_extra_image = $rstate->query("select * from tbl_extra where add_user_id=".$uid."")->num_rows;
 	$total_gallery_image = $rstate->query("select * from tbl_gallery where add_user_id=".$uid."")->num_rows;
 	$total_gallery_category = $rstate->query("select * from tbl_gal_cat where add_user_id=".$uid."")->num_rows;
@@ -56,7 +56,7 @@ $h = new Estate();
 	$getstatus = $rstate->query("select * from tbl_user where id=".$uid." and is_subscribe=1")->num_rows;
 	$papi = array(array("title"=>"My Property","report_data"=>$total_property,"url"=>'images/dashboard/property.png'),array("title"=>"My Extra Images","report_data"=>$total_extra_image,"url"=>'images/dashboard/extra_images.png'),array("title"=>"My Gallery Category","report_data"=>$total_gallery_category,"url"=>'images/dashboard/category.png'),array("title"=>"My Gallery Images","report_data"=>$total_gallery_image,"url"=>'images/dashboard/gallery_image.png'),array("title"=>"My Booking","report_data"=>intval($total_Booking),"url"=>'images/dashboard/my-booking.png'),array("title"=>"My Earning","report_data"=>$finalearn,"url"=>'images/dashboard/my-earning.png'),array("title"=>"My Enquiry","report_data"=>intval($total_enquiry),"url"=>'images/dashboard/my-inquiry.png'),array("title"=>"Total Review","report_data"=>$total_review,"url"=>'images/dashboard/review.png'),array("title"=>"My Payout","report_data"=>floatval($payout),"url"=>'images/dashboard/my-payout.png'));
 	$member = array(array("title"=>"Current Membership","report_data"=>$current_membership),array("title"=>"Memerbship Expired Date","report_data"=>$valid_till));
-	$returnArr = array("ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Report List Get Successfully!!!","report_data"=>$papi,"is_subscribe"=>$getstatus,"member_data"=>$member,"withdraw_limit"=>$set['wlimit']);
+	$returnArr = array("ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Report List Get Successfully!!!","report_data"=>$papi,"is_subscribe"=>$getstatus,"member_data"=>$member);
 	
 }
 echo json_encode($returnArr);
