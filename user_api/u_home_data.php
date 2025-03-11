@@ -77,11 +77,13 @@ if (isset($rate) && $rate > 0) {
 }
 
 // Filter active properties
-$query .= " WHERE p.status = 1 and p.is_approved  = 1";
+$query .= " WHERE p.status = 1 and (p.is_approved  = 1";
 
 
 // Apply filters dynamically
 if ($uid !== null) {
+	$query .= "  or  p.is_approved  = 0) ";
+
 	if ($only_favorites) {
 		$query .= " AND f.uid = " . $uid;
 	}
@@ -92,7 +94,9 @@ if ($uid !== null) {
 	if(!$only_favorites && !isset($rate)  ){
 		$query .= " AND p.add_user_id = " . $uid;
 	} 
-	$query .= "  or  p.is_approved  = 0 ";
+}else{
+	$query .= " ) ";
+
 }
 
 if ($government_id !== null) {
@@ -152,7 +156,7 @@ if (isset($rate) && $rate > 0) {
 	$query .= " GROUP BY p.id";
 }
 $sel_length  = $rstate->query($query)->num_rows;
-
+var_dump($query);
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 // Execute the query
 $sel = $rstate->query($query);
