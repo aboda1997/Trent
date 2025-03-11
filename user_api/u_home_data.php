@@ -91,7 +91,11 @@ if ($uid !== null) {
 		$query .= " AND b.uid = " . $uid;
 	
 	}
- 
+	if(!$only_favorites && !isset($rate) && !$only_featured && !$category_id && !$period   && !$min_price && !$max_price 
+	&& !$government_id && !$compound_name 	&& !$facilities && !$beds_count && !$bathrooms_count && !$guest_count 
+	){
+		$query .= " AND p.add_user_id = " . $uid;
+	} 
 }else{
 	$query .= " ) ";
 
