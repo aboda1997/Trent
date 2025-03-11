@@ -5,253 +5,271 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 
 header('Content-type: text/json');
-try{
-$status = 1;
-$is_approved = 0;
+try {
+	$status = 1;
+	$is_approved = 0;
 
-$prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
+	$prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
-$facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
-$ptype = isset($_POST['category_id']) ? $_POST['category_id'] : '';
-$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
-$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
-$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
-$listing_date = date("Y-m-d H:i:s");
-$price = isset($_POST['price']) ? $_POST['price'] : '';
-$plimit = isset($_POST['guest_count']) ? $_POST['guest_count'] : '';
-$pbuysell = 1;
-$user_id = isset($_POST['uid']) ? $_POST['uid'] : '';
-$government = isset($_POST['government_id']) ? $_POST['government_id'] : '';
-$security_deposit = isset($_POST['security_deposit']) ? $_POST['security_deposit'] : '';
-$max_days = isset($_POST['max_days']) ? $_POST['max_days'] : '';
-$min_days = isset($_POST['min_days']) ? $_POST['min_days'] : '';
-$google_maps_url = isset($_POST['maps_url']) ? $_POST['maps_url'] : '';
-$period =isset($_POST['period']) ? $_POST['period'] : 'd';
-$is_featured =isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
+	$facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
+	$ptype = isset($_POST['category_id']) ? $_POST['category_id'] : '';
+	$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
+	$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
+	$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
+	$listing_date = date("Y-m-d H:i:s");
+	$price = isset($_POST['price']) ? $_POST['price'] : '';
+	$plimit = isset($_POST['guest_count']) ? $_POST['guest_count'] : '';
+	$pbuysell = 1;
+	$user_id = isset($_POST['uid']) ? $_POST['uid'] : '';
+	$government = isset($_POST['government_id']) ? $_POST['government_id'] : '';
+	$security_deposit = isset($_POST['security_deposit']) ? $_POST['security_deposit'] : '';
+	$max_days = isset($_POST['max_days']) ? $_POST['max_days'] : '';
+	$min_days = isset($_POST['min_days']) ? $_POST['min_days'] : '';
+	$google_maps_url = isset($_POST['maps_url']) ? $_POST['maps_url'] : '';
+	$period = isset($_POST['period']) ? $_POST['period'] : 'd';
+	$is_featured = isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 
-$title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
-$address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
-$description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? $_POST['description_en'] : '');
-$ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
-$floor_en = $rstate->real_escape_string(isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
-$guest_rules_en = $rstate->real_escape_string(isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
-$compound_en = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_en'] : '');
+	$title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
+	$address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
+	$description_en = $rstate->real_escape_string(isset($_POST['description_en']) ? $_POST['description_en'] : '');
+	$ccount_en = $rstate->real_escape_string(isset($_POST['city_en']) ? $_POST['city_en'] : '');
+	$floor_en = $rstate->real_escape_string(isset($_POST['floor_en']) ? $_POST['floor_en'] : '');
+	$guest_rules_en = $rstate->real_escape_string(isset($_POST['guest_rules_en']) ? $_POST['guest_rules_en'] : '');
+	$compound_en = $rstate->real_escape_string(isset($_POST['compound_en']) ? $_POST['compound_en'] : '');
 
-$title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
-$address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
-$description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? $_POST['description_ar'] : '');
-$ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
-$floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
-$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
-$compound_ar = $rstate->real_escape_string( isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
+	$title_ar = $rstate->real_escape_string(isset($_POST['title_ar']) ? $_POST['title_ar'] : '');
+	$address_ar = $rstate->real_escape_string(isset($_POST['address_ar']) ? $_POST['address_ar'] : '');
+	$description_ar = $rstate->real_escape_string(isset($_POST['description_ar']) ? $_POST['description_ar'] : '');
+	$ccount_ar = $rstate->real_escape_string(isset($_POST['city_ar']) ? $_POST['city_ar'] : '');
+	$floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
+	$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
+	$compound_ar = $rstate->real_escape_string(isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
 
-$decodedIds = json_decode($facility, true);
-$ids = array_filter(array_map('trim', $decodedIds));
-$idList = implode(',', $ids);
-
-
-
-$floor_json = json_encode([
-	"en" => $floor_en,
-	"ar" => $floor_ar
-], JSON_UNESCAPED_UNICODE);
-
-$compound_json = json_encode([
-	"en" => $compound_en,
-	"ar" => $compound_ar
-], JSON_UNESCAPED_UNICODE);
-
-$guest_rules_json = json_encode([
-	"en" => $guest_rules_en,
-	"ar" => $guest_rules_ar
-], JSON_UNESCAPED_UNICODE);
-
-$ccount_json = json_encode([
-	"en" => $ccount_en,
-	"ar" => $ccount_ar
-], JSON_UNESCAPED_UNICODE);
-$description_json = json_encode([
-	"en" => $description_en,
-	"ar" => $description_ar
-], JSON_UNESCAPED_UNICODE);
-$address_json = json_encode([
-	"en" => $address_en,
-	"ar" => $address_ar
-], JSON_UNESCAPED_UNICODE);
-$title_json = json_encode([
-	"en" => $title_en,
-	"ar" => $title_ar
-], JSON_UNESCAPED_UNICODE);
-
-// Validate the string
+	$decodedIds = json_decode($facility, true);
+	$ids = array_filter(array_map('trim', $decodedIds));
+	$idList = implode(',', $ids);
 
 
-if ($user_id == ''or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
-	$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
-} else if (validateFacilityIds($facility) === 0) {
-	$returnArr    = generateResponse('false', "Facilities Ids must be valid!", 400);
-} else if (validateIdAndDatabaseExistance($ptype, 'tbl_category') === false) {
-	$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
-} else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
-	$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
-}else if (!in_array($period, ['d', 'm'])) {
-	$returnArr    = generateResponse('false', "Period Id not valid!", 400);
-}
-else {
+	$floor_json = json_encode([
+		"en" => $floor_en,
+		"ar" => $floor_ar
+	], JSON_UNESCAPED_UNICODE);
 
-	$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
-	if ($check_owner != 0) {
-		$field = [
-			"pbuysell" => $pbuysell,
-			"security_deposit" => $security_deposit,
-			"period" => $period,
-			"is_featured" => $is_featured,
-			"government" => $government,
-			"google_maps_url" => $google_maps_url,
-			"guest_rules" => $guest_rules_json,
-			"compound_name" => $compound_json,
-			"floor" => $floor_json,
-			"max_days" => "$max_days",
-			"min_days" => "$min_days",
-			"plimit" => $plimit,
-			"status" => $status,
-			"is_approved"=> $is_approved,
-			"title" => $title_json,
-			"price" => $price,
-			"address" => $address_json,
-			"facility" => $idList,
-			"description" => $description_json,
-			"beds" => $beds,
-			"bathroom" => $bathroom,
-			"sqrft" => $sqft,
-			"ptype" => $ptype,
-			"city" => $ccount_json,
-			"listing_date" => $listing_date
-		];
+	$compound_json = json_encode([
+		"en" => $compound_en,
+		"ar" => $compound_ar
+	], JSON_UNESCAPED_UNICODE);
 
-		// Allowed file types for images and videos
-		$allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-		$allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/mkv'];
-		
-		// Initialize arrays for image and video URLs
-		$imageUrls = [];
-		$videoUrls = [];
+	$guest_rules_json = json_encode([
+		"en" => $guest_rules_en,
+		"ar" => $guest_rules_ar
+	], JSON_UNESCAPED_UNICODE);
 
-		// Directories for storing images and videos
-		$uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
-		$uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
+	$ccount_json = json_encode([
+		"en" => $ccount_en,
+		"ar" => $ccount_ar
+	], JSON_UNESCAPED_UNICODE);
+	$description_json = json_encode([
+		"en" => $description_en,
+		"ar" => $description_ar
+	], JSON_UNESCAPED_UNICODE);
+	$address_json = json_encode([
+		"en" => $address_en,
+		"ar" => $address_ar
+	], JSON_UNESCAPED_UNICODE);
+	$title_json = json_encode([
+		"en" => $title_en,
+		"ar" => $title_ar
+	], JSON_UNESCAPED_UNICODE);
+
+	// Validate the string
 
 
-		// Handle image upload
-		if (isset($_FILES['images'])) {
-			// Check if it's multiple images or a single image
-			if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3) {
-				// Multiple images
-				foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
-					if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
-						$imageName = time() . '_' . $_FILES['images']['name'][$key];
-						$destination = $uploadDirImages . $imageName;
+	if ($user_id == '' or $period == '' or $government == ''  or $security_deposit == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
-						// Validate image type
-						if (in_array($_FILES['images']['type'][$key], $allowedImageTypes)) {
-							if (move_uploaded_file($tmpName, $destination)) {
-								$imageUrls[] = 'images/property/' . $imageName;
+		$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
+	} else if (validateFacilityIds($facility) === 0) {
+		$returnArr    = generateResponse('false', "Facilities Ids must be valid!", 400);
+	} else if (validateIdAndDatabaseExistance($ptype, 'tbl_category') === false) {
+		$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
+	} else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
+		$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
+	} else if (!in_array($period, ['d', 'm'])) {
+		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
+	} else {
+
+		$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
+		if ($check_owner != 0) {
+
+			$latitude = null;
+			$longitude = null;
+			$res = expandShortUrl($google_maps_url);
+
+			if ($res['status']) {
+				$cordinates = validateAndExtractCoordinates($res['response']);
+				if ($cordinates['status']) {
+					// Location Cordinations
+					$latitude = $cordinates['latitude'];
+					$longitude = $cordinates['longitude'];
+				} else {
+					$returnArr = generateResponse('false', $cordinates['response'],  400);
+				}
+			} else {
+				$returnArr = generateResponse('false', $res['response'], 400);
+			}
+
+
+			$field = [
+				"pbuysell" => $pbuysell,
+				"security_deposit" => $security_deposit,
+				"period" => $period,
+				"is_featured" => $is_featured,
+				"government" => $government,
+				"map_url" => $google_maps_url,
+				"guest_rules" => $guest_rules_json,
+				"compound_name" => $compound_json,
+				"floor" => $floor_json,
+				"max_days" => "$max_days",
+				"min_days" => "$min_days",
+				"plimit" => $plimit,
+				"status" => $status,
+				"is_approved" => $is_approved,
+				"title" => $title_json,
+				"price" => $price,
+				"address" => $address_json,
+				"facility" => $idList,
+				"description" => $description_json,
+				"beds" => $beds,
+				"bathroom" => $bathroom,
+				"sqrft" => $sqft,
+				"ptype" => $ptype,
+				"city" => $ccount_json,
+				"listing_date" => $listing_date,
+
+				"latitude" => $latitude,
+				"longitude" => $longitude
+			];
+
+			// Allowed file types for images and videos
+			$allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+			$allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/mkv'];
+
+			// Initialize arrays for image and video URLs
+			$imageUrls = [];
+			$videoUrls = [];
+
+			// Directories for storing images and videos
+			$uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
+			$uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
+
+
+
+			// Handle image upload
+			if (isset($_FILES['images'])) {
+				// Check if it's multiple images or a single image
+				if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3) {
+					// Multiple images
+					foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
+						if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
+							$imageName = time() . '_' . $_FILES['images']['name'][$key];
+							$destination = $uploadDirImages . $imageName;
+
+							// Validate image type
+							if (in_array($_FILES['images']['type'][$key], $allowedImageTypes)) {
+								if (move_uploaded_file($tmpName, $destination)) {
+									$imageUrls[] = 'images/property/' . $imageName;
+								} else {
+									// Handle error if file couldn't be moved
+									$returnArr =  generateResponse("false", "Failed to upload image: " . $_FILES['images']['name'][$key], 500);
+								}
 							} else {
-								// Handle error if file couldn't be moved
-								$returnArr =  generateResponse("false", "Failed to upload image: " . $_FILES['images']['name'][$key], 500);
+								// Handle invalid image type
+								$returnArr =  generateResponse("false", "Invalid image type: " . $_FILES['images']['name'][$key], 400);
 							}
 						} else {
-							// Handle invalid image type
-							$returnArr =  generateResponse("false", "Invalid image type: " . $_FILES['images']['name'][$key], 400);
+							// Handle error during file upload
+							$returnArr =  generateResponse("false", "Error uploading image: " . $_FILES['images']['name'][$key], 400);
 						}
-					} else {
-						// Handle error during file upload
-						$returnArr =  generateResponse("false", "Error uploading image: " . $_FILES['images']['name'][$key], 400);
-					}
-				}
-			} else {
-				$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
-			}
-		}
-
-		// Handle video upload
-		if (isset($_FILES['video'])) {
-			$video = $_FILES['video'];
-			// Check for upload errors
-			if ($video['error'] === UPLOAD_ERR_OK) {
-				// Validate video type
-				if (in_array($video['type'], $allowedVideoTypes)) {
-					// Generate a unique file name for the uploaded video
-					$videoName = time() . '_' . $video['name'];
-					$destination = $uploadDirVideos . $videoName;
-
-					// Move the uploaded video to the destination folder
-					if (move_uploaded_file($video['tmp_name'], $destination)) {
-						$videoUrls[] = 'videos/property/' . $videoName;
-					} else {
-						// Handle error if video couldn't be moved
-						$returnArr =  generateResponse("false", "Failed to upload video.", 500);
 					}
 				} else {
-					// Handle invalid video type
-					$returnArr =  generateResponse("false", "Invalid video type.", 400);
+					$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
 				}
-			} else {
-				// Handle error during video upload
-				$returnArr =  generateResponse("false", "Error uploading video.", 400);
 			}
+
+			// Handle video upload
+			if (isset($_FILES['video'])) {
+				$video = $_FILES['video'];
+				// Check for upload errors
+				if ($video['error'] === UPLOAD_ERR_OK) {
+					// Validate video type
+					if (in_array($video['type'], $allowedVideoTypes)) {
+						// Generate a unique file name for the uploaded video
+						$videoName = time() . '_' . $video['name'];
+						$destination = $uploadDirVideos . $videoName;
+
+						// Move the uploaded video to the destination folder
+						if (move_uploaded_file($video['tmp_name'], $destination)) {
+							$videoUrls[] = 'videos/property/' . $videoName;
+						} else {
+							// Handle error if video couldn't be moved
+							$returnArr =  generateResponse("false", "Failed to upload video.", 500);
+						}
+					} else {
+						// Handle invalid video type
+						$returnArr =  generateResponse("false", "Invalid video type.", 400);
+					}
+				} else {
+					// Handle error during video upload
+					$returnArr =  generateResponse("false", "Error uploading video.", 400);
+				}
+			}
+
+			if (!empty($imageUrls)) {
+				$imageUrlsString = implode(',', $imageUrls);
+				$field["image"] =  $imageUrlsString;
+			}
+
+
+			if (!empty($videoUrls)) {
+				$videoUrlsString = implode(',', $videoUrls);
+				$field["video"] =  $videoUrlsString;
+			}
+
+			$check_owner_ = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
+
+			if ($check_owner_  >= 6) {
+				$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
+			}
+
+			if (!isset($returnArr)) {
+
+				$table = "tbl_property";
+
+				$where = "where id=" . '?' . " and add_user_id=" . '?' . "";
+				$h = new Estate();
+				$where_conditions = [$prop_id, $user_id];
+				$check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+			}
+		} else {
+			$returnArr    = generateResponse('false', "Edit Your Own Property!", 401);
 		}
+	}
 
-		if (!empty($imageUrls)) {
-			$imageUrlsString = implode(',', $imageUrls);
-			$field["image"] =  $imageUrlsString;
-		}
-
-
-		if (!empty($videoUrls)) {
-			$videoUrlsString = implode(',', $videoUrls);
-			$field["video"] =  $videoUrlsString;
-		}
-
-		$check_owner_ = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
-
-		if ($check_owner_  >= 6) {
-			$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
-		}
-
-		if (!isset($returnArr)) {
-
-		$table = "tbl_property";
-
-		$where = "where id=" . '?' . " and add_user_id=" . '?'. "";
-		$h = new Estate();
-		$where_conditions = [$prop_id , $user_id];
-		$check = $h->restateupdateData_Api($field, $table, $where , $where_conditions );
-		}
+	if (isset($returnArr)) {
+		echo $returnArr;
 	} else {
-		$returnArr    = generateResponse('false', "Edit Your Own Property!", 401);
+		if ($check) {
+			$returnArr    = generateResponse('true', "Property Updated Successfully", 200, array("id" => $prop_id, "title" => json_decode($title_json, true)));
+		} else {
+			$returnArr    = generateResponse('false', "Database error", 500);
+		}
+		echo $returnArr;
 	}
-}
-
-if (isset($returnArr)) {
-	echo $returnArr;
-}else{
-	if($check){
-		$returnArr    = generateResponse('true', "Property Updated Successfully", 200, array("id"=> $prop_id, "title" =>json_decode($title_json, true) ));
-	
-	}else{
-		$returnArr    = generateResponse('false', "Database error", 500);
-
-	}
-	echo $returnArr;
-
-}
 } catch (Exception $e) {
-    // Handle exceptions and return an error response
-    $returnArr = generateResponse('false', "An error occurred!", 500, array(
-        "error_message" => $e->getMessage()
-    ));
-    echo $returnArr;
+	// Handle exceptions and return an error response
+	$returnArr = generateResponse('false', "An error occurred!", 500, array(
+		"error_message" => $e->getMessage()
+	));
+	echo $returnArr;
 }
-?>
