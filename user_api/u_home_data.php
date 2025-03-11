@@ -91,9 +91,7 @@ if ($uid !== null) {
 		$query .= " AND b.uid = " . $uid;
 	
 	}
-	if(!$only_favorites && !isset($rate)  ){
-		$query .= " AND p.add_user_id = " . $uid;
-	} 
+ 
 }else{
 	$query .= " ) ";
 
@@ -234,7 +232,7 @@ while ($row = $sel->fetch_assoc()) {
 	//$pol['address'] = json_decode($row['address'], true);
 	$pol['city_name'] = json_decode($row['city'], true)[$lang];
     if ($uid){
-		$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid= .$uid and property_id=" . $row['id'] . "")->num_rows; 
+		$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid= $uid and property_id=" . $row['id'] . "")->num_rows; 
 	}else{
 		$pol['IS_FAVOURITE'] = 0 ;
 	}  
