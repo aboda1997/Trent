@@ -233,8 +233,11 @@ while ($row = $sel->fetch_assoc()) {
 	$pol['maps_url'] = $row['google_maps_url'];
 	//$pol['address'] = json_decode($row['address'], true);
 	$pol['city_name'] = json_decode($row['city'], true)[$lang];
-
-	$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  property_id=" . $row['id'] . "")->num_rows;  
+    if ($uid){
+		$pol['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid= .$uid and property_id=" . $row['id'] . "")->num_rows; 
+	}else{
+		$pol['IS_FAVOURITE'] = 0 ;
+	}  
 	$c[] = $pol;
 }
 if (empty($c)) {
