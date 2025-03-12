@@ -236,7 +236,7 @@ while ($row = $sel->fetch_assoc()) {
 		$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
 		$pol['rate'] = number_format((float)$rdata_rest['rate_rest'], 0, '.', '');
 	} else {
-		$pol['rate'] = null;
+		$pol['rate'] = 0;
 	}
 
 	$pol['latitude'] = $row['latitude'];
