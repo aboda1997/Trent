@@ -32,10 +32,9 @@
 			$setting = $rstate->query("select * from tbl_setting")->fetch_assoc();
 
 
-			$data['first_name'] = $row['first_name'];
-			$data['last_name'] = $row['last_name'];
+			$data['full_name'] = $row['name'];
 			$gender = [
-				"f" => ["ar" => "انثى", "en" => "famale"] ,
+				"f" => ["ar" => "انثى", "en" => "female"] ,
 				 "m" => ["ar" => "ذكر", "en" => "male"] 
 			];
 			$data['gender'] = $gender[$row['gender']][$lang_code];
