@@ -125,3 +125,37 @@ function validateAndExtractCoordinates($url) {
 }
 
 
+function validateName($name , $placeholder) {
+    // Trim whitespace from the name
+    $name = trim($name);
+    if ($name == '') {
+        return ['status' => false, 'response' =>"" . $placeholder ." are required"];
+    }
+    // Check length and allow only letters, spaces, and basic punctuation
+    if (strlen($name) < 3 || strlen($name) > 50) {
+        return ['status' => false, 'response' =>"" . $placeholder ." must be between 3 and 50 characters."];
+    }
+
+    // Ensure the name contains only valid characters (letters, spaces, hyphens, apostrophes)
+    if (!preg_match('/^[a-zA-Z\s\'\-]+$/u', $name)) {
+        return ['status' => false, 'response' => 'Invalid' . $placeholder . ' format.'];
+    }
+
+    return ['status' => true, 'response' => 'Valid '. $placeholder .'.'];
+}
+
+function validateEmail($email) {
+    $email = trim($email);
+
+    // Check valid email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return ['status' => false, 'response' => 'Invalid email format.'];
+    }
+
+    if (strlen($email) > 100) {
+        return ['status' => false, 'response' => 'Email is too long.'];
+    }
+
+    return ['status' => true, 'response' => 'Valid email.'];
+}
+?>

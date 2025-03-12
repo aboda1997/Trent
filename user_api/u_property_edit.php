@@ -237,7 +237,7 @@ try {
 				$field["video"] =  $videoUrlsString;
 			}
 
-			$check_owner_ = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
+			$check_owner_ = $rstate->query("select * from tbl_property where status = 1 and  add_user_id=" . $user_id . "")->num_rows;
 
 			if ($check_owner_  >= AppConstants::Property_Count) {
 				$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
