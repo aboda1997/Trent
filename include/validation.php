@@ -125,15 +125,15 @@ function validateAndExtractCoordinates($url) {
 }
 
 
-function validateName($name , $placeholder) {
+function validateName($name , $placeholder , $max = 50) {
     // Trim whitespace from the name
     $name = trim($name);
     if ($name == '') {
         return ['status' => false, 'response' =>"" . $placeholder ." are required"];
     }
     // Check length and allow only letters, spaces, and basic punctuation
-    if (strlen($name) < 3 || strlen($name) > 50) {
-        return ['status' => false, 'response' =>"" . $placeholder ." must be between 3 and 50 characters."];
+    if (strlen($name) < 3 || strlen($name) > $max) {
+        return ['status' => false, 'response' =>"" . $placeholder ." must be between 3 and $max characters."];
     }
 
     // Ensure the name contains only valid characters (letters, spaces, hyphens, apostrophes)

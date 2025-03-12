@@ -8,25 +8,21 @@ require dirname(dirname(__FILE__)) . '/include/constants.php';
 header('Content-type: text/json');
 try {
 
-    $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : '';
-    $last_name = isset($_POST['last_name']) ? $_POST['last_name'] : '';
+    $full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
     $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
 
     $field = [
-        "first_name" => $first_name,
-        "last_name" => $last_name,
+        "name" => $full_name,
         "gender" => $gender,
     ];
 
     if (  $uid == '') {
 
         $returnArr    = generateResponse('false', "You must enter User Id !", 400);
-    } else if (!validateName($first_name , 'First Name')['status']) {
-        $returnArr    = generateResponse('false', validateName($first_name , 'First Name')['response'], 400);
-    } else if (!validateName($last_name , 'Last Name')['status']) {
-        $returnArr    = generateResponse('false', validateName($last_name , 'Last Name')['response'], 400);
+    } else if (!validateName($full_name , 'Full Name' , 100)['status']) {
+        $returnArr    = generateResponse('false', validateName($full_name , 'Full Name' , 100 )['response'], 400);
     } else if (!in_array($gender, ['f', 'm'])) {
         $returnArr    = generateResponse('false', "Gender Id not valid!", 400);
     } else if ($email !== '' && (!validateEmail($email)['status'])) {
@@ -101,7 +97,7 @@ try {
         echo $returnArr;
     } else {
         if ($check) {
-            $returnArr    = generateResponse('true', "Profile Updated Successfully", 200, array("first_name" => $first_name));
+            $returnArr    = generateResponse('true', "Profile Updated Successfully", 200, array("full_name" => $full_name));
         } else {
             $returnArr    = generateResponse('false', "Database error", 500);
         }
