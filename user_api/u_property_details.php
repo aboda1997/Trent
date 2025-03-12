@@ -10,8 +10,8 @@ $data = json_decode(file_get_contents('php://input'), true);
 $pol = array();
 $c = array();
 $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
-$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
-if ($pro_id == '' || $uid == '' ) {
+$uid  =  isset($_GET['uid']) ? $_GET['uid'] : null;
+if ($pro_id == ''  ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 400);
@@ -107,8 +107,11 @@ if ($pro_id == '' || $uid == '' ) {
 
 	$fp['guest_count'] = $sel['plimit'];
 
-	$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
-
+	if ($uid){
+		$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
+	}else{
+		$pol['IS_FAVOURITE'] = 0 ;
+	}  
 	$periods = [
 		"d" => ["ar" => "يومي", "en" => "daily"],
 		"m" => ["ar" => "شهري", "en" => "monthly"]
