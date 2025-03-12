@@ -3,6 +3,7 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
+require dirname( dirname(__FILE__) ).'/include/constants.php';
 
 header('Content-type: text/json');
 try {
@@ -206,7 +207,7 @@ try {
 		}
 		$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $user_id . "")->num_rows;
 
-		if ($check_owner  >= 6) {
+		if ($check_owner  >= AppConstants::Property_Count) {
 			$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
 		}
 	}
