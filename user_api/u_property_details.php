@@ -77,10 +77,10 @@ if ($pro_id == ''  ) {
 			'name' => 'Host'
 		];
 	} else {
-		$udata = $rstate->query("select pro_pic,first_name from tbl_user where id=" . $sel['add_user_id'] . "")->fetch_assoc();
+		$udata = $rstate->query("select pro_pic,name from tbl_user where id=" . $sel['add_user_id'] . "")->fetch_assoc();
 		$fp['owner'] = [
 			'img' => (empty($udata['pro_pic'])) ? 'images/property/owner.jpg' : $udata['pro_pic'],
-			'name' =>  $udata['first_name']
+			'name' =>  $udata['name']
 		];
 	}
 
