@@ -1,6 +1,8 @@
  <?php
 	require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 	require dirname(dirname(__FILE__)) . '/include/constants.php';
+	require dirname(dirname(__FILE__)) . '/include/helper.php';
+
 	header('Content-type: text/json');
 	try{
 		$lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
@@ -32,16 +34,31 @@
 
 			$data['first_name'] = $row['first_name'];
 			$data['last_name'] = $row['last_name'];
-
-			$data['gender'] = $row['gender'];
+			$gender = [
+				"f" => ["ar" => "انثى", "en" => "famale"] ,
+				 "m" => ["ar" => "ذكر", "en" => "male"] 
+			];
+			$data['gender'] = $gender[$row['gender']][$lang_code];
 			$data['email'] = $row['email'];
-			$data['phone'] = $row['phone'];
+			$data['language'] = $lang_code;
+			$data['phone'] = $row['mobile'];
 			$data['img'] = $row['pro_pic'];
-			$data['is_deleted'] = $row['status'];
+			$data['is_deleted'] = 'false';
+			if ( $row['status'] === 0) {
+				$data['is_deleted'] = 'true';
+			}
+			$data['user_fees_percent'] = $set['gateway_percent_fees'];
+			$data['user_fees_egp'] = $set['gateway_money_fees'];
 
 			if ($row['is_owner']) {
 				$owner = $lang['owner'];
 				$data['membership'] = $owner;
+				$data['owner_fees_percent'] = $set['owner_fees'];
+
+
+			}else{
+				$data['membership'] = $owner;
+				$data['owner_fees_percent'] = $set['property_manager_fees'];
 
 			}
 			$returnArr = generateResponse(
