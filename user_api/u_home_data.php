@@ -166,7 +166,6 @@ if (isset($rate) && $rate > 0) {
 $sel_length  = $rstate->query($query)->num_rows;
 $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 // Execute the query
-
 $sel = $rstate->query($query);
 while ($row = $sel->fetch_assoc()) {
 	$vr = array();
@@ -234,9 +233,9 @@ while ($row = $sel->fetch_assoc()) {
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 	if ($checkrate != 0) {
 		$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-		$pol['rate'] = number_format((float)$rdata_rest['rate_rest'], 0, '.', '');
+		$pol['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
 	} else {
-		$pol['rate'] = 0;
+		$pol['rate'] = number_format(0, 1, '.', '');;
 	}
 
 	$pol['latitude'] = $row['latitude'];
