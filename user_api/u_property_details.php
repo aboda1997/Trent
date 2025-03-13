@@ -40,9 +40,9 @@ if ($pro_id == ''  ) {
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 	if ($checkrate != 0) {
 		$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 2, '.', '');
+		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
 	} else {
-		$fp['rate'] = 0;
+		$pol['rate'] = number_format(0, 1, '.', '');;
 	}
 
 	$fp['image_list'] = $vr;
