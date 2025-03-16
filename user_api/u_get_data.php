@@ -42,7 +42,7 @@
 			$data['email'] = $row['email'];
 			$data['language'] = $lang_code;
 			$data['phone'] = $row['mobile'];
-			$data['img'] = $row['pro_pic'];
+			$data['pro_img'] = $row['pro_pic'];
 			$data['is_deleted'] = 'false';
 			if ( $row['status'] === 0) {
 				$data['is_deleted'] = 'true';
