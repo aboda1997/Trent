@@ -37,7 +37,7 @@
 				"f" => ["ar" => "انثى", "en" => "female"] ,
 				 "m" => ["ar" => "ذكر", "en" => "male"] 
 			];
-			$data['gender'] = $gender[$row['gender']][$lang_code];
+			$data['gender'] = $row['gender'];
 			$data['email'] = $row['email'];
 			$data['language'] = $lang_code;
 			$data['phone'] = $row['mobile'];
