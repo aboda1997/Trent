@@ -38,6 +38,7 @@
 				 "m" => ["ar" => "ذكر", "en" => "male"] 
 			];
 			$data['gender'] = $row['gender'];
+			$data['c_code'] = $row['ccode'];
 			$data['email'] = $row['email'];
 			$data['language'] = $lang_code;
 			$data['phone'] = $row['mobile'];
