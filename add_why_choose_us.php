@@ -96,7 +96,10 @@ if (isset($_GET['id'])) {
 
                             ?>
 
-                                <form method="post" enctype="multipart/form-data">
+                                <form
+                                onsubmit="return submitform(true)" 
+
+                                method="post" enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div id="alert-container" class="mb-3" style="display: none;">
                                             <div class="alert alert-danger" id="alert-message"></div>
@@ -212,7 +215,10 @@ if (isset($_GET['id'])) {
                             <?php
                             } else {
                             ?>
-                                <form method="post" enctype="multipart/form-data">
+                                <form 
+                                onsubmit="return submitform(true)" 
+
+                                method="post" enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div id="alert-container" class="mb-3" style="display: none;">
                                             <div class="alert alert-danger" id="alert-message"></div>

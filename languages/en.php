@@ -211,11 +211,11 @@ return [
     'slider_img' => 'Please upload a Slider Image.',
 
     'why_choose_us' => 'Why Choose Us',
-    'why_choose_us_image'  => 'Why Choose Us Image', 
+    'why_choose_us_image'  => 'Why Choose Us Image',
     'choose_image' => 'Choose Image',
     'background_color' => "Background Color",
     'why_choose_us_title' => " Why Choose Us Title",
-    
+
     'why_choose_us_description' => " Why Choose Us Description",
     'why_choose_us_description_' => "Please enter Why Choose Us Description",
     'why_choose_us_title_' => "Please enter Why Choose Us Title",
@@ -229,7 +229,7 @@ return [
     'Why_Choose_Image' => ' Image',
     'Why_Choose_bg' => 'Background Color',
     "Delete_Confirmation" => 'Are you sure you want to delete this item',
-    
+
     'Property_Period'  => 'Property Period',
     'Select_property_Period'     => 'Select Property Period',
     'Monthly'     => 'Monthly',
@@ -241,6 +241,20 @@ return [
     'Yes'     => 'Yes',
     'No'     => 'No',
     'property_featured' => 'Please Select Is Property Featured',
+
+    'setting_name' => 'Please Enter Website Name',
+    'setting_img'  => 'Please Enter Website Logo',
+    'setting_tax'  => 'Please Enter Tax (Percent)',
+    'setting_property'  => 'Please Select Show Property Option ',
+    'setting_gmod'  =>  'Please Select Gallery Mode',
+    'setting_nemail' => 'Please Enter Valid Email Notificaton',
+    'setting_perfees' => 'Please Enter Valid Payment Gateway Fees(Percent)',
+    'setting_mfees' => 'Please Enter Valid  Payment Gateway Fees(Money EGP) Between (0,5)',
+    'setting_ofees' => 'Please Enter Valid Owner Fees(Percent)',
+    'setting_pfees' => 'Please Enter Valid Property manager Fees(Percent)',
+
+
+
 
 
 

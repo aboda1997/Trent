@@ -112,6 +112,7 @@ try {
 		$latitude = null;
 		$longitude = null;
 		$res = expandShortUrl($google_maps_url);
+		
 
 		if ($res['status']) {
 			$cordinates = validateAndExtractCoordinates($res['response']);

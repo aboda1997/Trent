@@ -16,12 +16,7 @@ while($row = $sel->fetch_assoc())
 		$pol['title'] = $row['title'];
 		$pol['img'] = $row['img'];
 		
-		
-		
-		
 		$c[] = $pol;
-	
-	
 }
 if(empty($c))
 {

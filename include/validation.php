@@ -2,7 +2,7 @@
 require 'reconfig.php';
 
 
-function validateIdAndDatabaseExistance($id, $table ,  $additionalCondition = '')
+function validateIdAndDatabaseExistance($id, $table,  $additionalCondition = '')
 {
     // Check if it's a number and a positive integer
     if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
@@ -13,7 +13,7 @@ function validateIdAndDatabaseExistance($id, $table ,  $additionalCondition = ''
             $condition .= " AND ($additionalCondition)";
         }
         // Build and execute the query
-        $query = "SELECT id FROM " . $table . " WHERE " . $condition ;
+        $query = "SELECT id FROM " . $table . " WHERE " . $condition;
         //var_dump($query);
         $result = $GLOBALS['rstate']->query($query)->num_rows;
         return $result === 1;
@@ -35,7 +35,7 @@ function checkTableStatus($id, $table)
 }
 
 function validateFacilityIds($idString)
-{ 
+{
     // Check if input is a JSON array and decode it
     $decodedIds = json_decode($idString, true);
 
@@ -68,7 +68,8 @@ function validateFacilityIds($idString)
 }
 
 
-function expandShortUrl($shortUrl) {
+function expandShortUrl($shortUrl)
+{
     // Validate the URL format
     if (!filter_var($shortUrl, FILTER_VALIDATE_URL)) {
         return ['status' => false, 'response' => 'Invalid MAP URL'];
@@ -77,63 +78,59 @@ function expandShortUrl($shortUrl) {
     // Try to fetch headers with error handling
     try {
         $headers = @get_headers($shortUrl, 1);
-
         // Check if headers were retrieved successfully
         if ($headers === false) {
             return ['status' => false, 'response' => 'Invalid MAP URL'];
         }
-
         // Check if there is a redirection (Location header)
         if (isset($headers['Location'])) {
             $finalUrl = is_array($headers['Location']) ? end($headers['Location']) : $headers['Location'];
             return ['status' => true, 'response' => $finalUrl];
         }
-
+         
         // Return the original URL if no redirection occurred
         return ['status' => true, 'response' => $shortUrl];
-
     } catch (Exception $e) {
         return ['status' => false, 'response' => 'Error: ' . $e->getMessage()];
     }
 }
 
 
-function validateAndExtractCoordinates($url) {
+function validateAndExtractCoordinates($url)
+{
+
     
-
-    // Check for OpenStreetMap coordinates
-    $osmPattern = '/openstreetmap\.org\/#map=\d+\/([-+]?\d*\.\d+)\/([-+]?\d*\.\d+)/';
-    if (preg_match($osmPattern, $url, $matches)) {
-        return [
-            'status' => true,
-            'latitude' => $matches[1],
-            'longitude' => $matches[2]
-        ];
-    }
-
     // Check for Google Maps coordinates (works for both search and place links)
-    $googlePattern = '/maps\/(?:search|place)\/([-+]?\d*\.\d+),\s?([-+]?\d*\.\d+)/';
-    if (preg_match($googlePattern, $url, $matches)) {
-        return [
-            'status' => true,
-            'latitude' => $matches[1],
-            'longitude' => $matches[2]
-        ];
+    $googlePatterns = [
+         '/(\-?\d+\.\d+),\s*\+?(\-?\d+\.\d+)/'
+
+    ];
+
+    foreach ($googlePatterns as $item) {
+        if (preg_match($item, $url, $matches)) {
+            return [
+                'status' => true,
+                'latitude' => $matches[1],
+                'longitude' => $matches[2]
+            ];
+        }
     }
+
 
     return ['status' => false, 'response' => 'MAP URL does not contain valid coordinates'];
 }
 
 
-function validateName($name , $placeholder , $max = 50) {
+function validateName($name, $placeholder, $max = 50)
+{
     // Trim whitespace from the name
     $name = trim($name);
     if ($name == '') {
-        return ['status' => false, 'response' =>"" . $placeholder ." are required"];
+        return ['status' => false, 'response' => "" . $placeholder . " are required"];
     }
     // Check length and allow only letters, spaces, and basic punctuation
     if (strlen($name) < 3 || strlen($name) > $max) {
-        return ['status' => false, 'response' =>"" . $placeholder ." must be between 3 and $max characters."];
+        return ['status' => false, 'response' => "" . $placeholder . " must be between 3 and $max characters."];
     }
 
     // Ensure the name contains only valid characters (letters, spaces, hyphens, apostrophes)
@@ -141,10 +138,11 @@ function validateName($name , $placeholder , $max = 50) {
         return ['status' => false, 'response' => 'Invalid' . $placeholder . ' format.'];
     }
 
-    return ['status' => true, 'response' => 'Valid '. $placeholder .'.'];
+    return ['status' => true, 'response' => 'Valid ' . $placeholder . '.'];
 }
 
-function validateEmail($email) {
+function validateEmail($email)
+{
     $email = trim($email);
 
     // Check valid email format
@@ -158,4 +156,3 @@ function validateEmail($email) {
 
     return ['status' => true, 'response' => 'Valid email.'];
 }
-?>
