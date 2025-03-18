@@ -208,7 +208,7 @@ try {
 		//$pol['address'] = json_decode($row['address'], true);
 		$pol['city_name'] = json_decode($row['city'], true)[$lang];
 		if ($uid) {
-			$pol['IS_FAVOURITE'] = $row['IS_FAVOURITE'];
+			$pol['IS_FAVOURITE'] =  (int) $row['IS_FAVOURITE'];
 		} else {
 			$pol['IS_FAVOURITE'] = 0;
 		}
