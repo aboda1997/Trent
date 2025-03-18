@@ -56,7 +56,10 @@ if($_SESSION['stype'] == 'Staff')
 				 {
 					 $data = $rstate->query("SELECT * FROM `tbl_staff` where id=".$_GET['id']."")->fetch_assoc();
 					 ?>
-				    <form method="post">
+				    <form
+                    onsubmit="return submitform(true)" 
+
+                    method="post">
 				
 											
 										
@@ -333,7 +336,10 @@ if($_SESSION['stype'] == 'Staff')
 				 else 
 				 {
 				 ?>
-                  <form method="post">
+                  <form 
+                  onsubmit="return submitform(true)" 
+
+                  method="post">
 				
 											
 										

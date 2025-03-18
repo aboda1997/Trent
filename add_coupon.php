@@ -94,7 +94,10 @@ if (isset($_GET['id'])) {
 									$ctitle = json_decode($data['ctitle'], true);
 									$c_desc = json_decode($data['c_desc'], true);
 								?>
-									<form method="post" enctype="multipart/form-data">
+									<form 
+									onsubmit="return submitform(true)" 
+
+									method="post" enctype="multipart/form-data">
 
 										<div class="card-body">
 											<div id="alert-container" class="mb-3" style="display: none;">
@@ -324,7 +327,10 @@ if (isset($_GET['id'])) {
 								<?php
 								} else {
 								?>
-									<form method="post" enctype="multipart/form-data">
+									<form 
+									onsubmit="return submitform(true)" 
+
+									method="post" enctype="multipart/form-data">
 
 										<div class="card-body">
 											<div id="alert-container" class="mb-3" style="display: none;">

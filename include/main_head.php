@@ -53,7 +53,7 @@ $lang_en = load_specific_langauage('en');
 
         .page-wrapper .page-header {
             z-index: 0;
-   
+
         }
 
         /* Media query for screen widths between 1200px and 1400px */
@@ -97,9 +97,62 @@ $lang_en = load_specific_langauage('en');
 </head>
 
 <body>
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+
     <script>
         var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
         var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
+       function submitform(isValid){
+        $(document).on('submit', 'form', function(event) {
+            // Disable all submit buttons to prevent multiple submissions
+            $(':input[type="submit"]').prop('disabled', true);
+            event.preventDefault(); // Prevent default form submission
+            if(!isValid){
+                return false;
+            }
+            // Create a FormData object from the submitted form
+            var formData = new FormData(this);
+
+            // Send the form data via AJAX
+            $.ajax({
+                url: 'include/property.php',
+                method: 'POST',
+                async: false,
+                cache: false,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Parse the JSON response
+                    const resultData = JSON.parse(response);
+
+                    // Display notification
+                    $.notify('<i class="fas fa-bell"></i>' + resultData.title, {
+                        type: 'theme',
+                        allow_dismiss: true,
+                        delay: 2000,
+                        showProgressbar: true,
+                        timer: 300,
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp',
+                        },
+                    });
+
+                    // Redirect after a delay if an action URL is provided
+                    if (resultData.action) {
+                        setTimeout(function() {
+                            window.location.href = resultData.action;
+                        }, 2000);
+                    }
+                },
+            });
+
+            // Prevent the default form submission behavior
+            return false;
+        });
+    }
+    
     </script>
     <!-- tap on top starts-->
     <div class="tap-top"><i data-feather="chevrons-up"></i></div>

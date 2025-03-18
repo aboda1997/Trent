@@ -72,7 +72,10 @@ if (isset($_GET['id'])) {
               if (isset($_GET['id'])) {
                 $data = $rstate->query("select * from tbl_extra where id=" . $_GET['id'] . "")->fetch_assoc();
               ?>
-                <form method="post" enctype="multipart/form-data">
+                <form 
+                onsubmit="return submitform(true)" 
+
+                method="post" enctype="multipart/form-data">
                   <div class="card-body">
 
 
@@ -144,7 +147,10 @@ if (isset($_GET['id'])) {
               <?php
               } else {
               ?>
-                <form method="post" enctype="multipart/form-data">
+                <form 
+                onsubmit="return submitform(true)" 
+
+                method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
 
