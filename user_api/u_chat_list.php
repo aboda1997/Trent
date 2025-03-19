@@ -64,7 +64,7 @@ try {
 
             $data['receiver_name'] = $user_data['name'];
             $data['receiver_image'] = $user_data['pro_pic'];
-            $data['message'] = $row["message"];
+            $data['message'] = json_decode($row["message"], true);
             $data['chat_id'] = (int)$row["chat_id"];
             $checkQuery = "SELECT prop_id FROM tbl_chat_property WHERE id = "  . $row['chat_id'] . "";
             $res = $rstate->query($checkQuery)->fetch_assoc();
