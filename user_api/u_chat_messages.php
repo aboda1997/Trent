@@ -54,7 +54,6 @@ try {
 	
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
-	var_dump($query);
 	$chat_messages = $rstate->query($query);
 	while ($row = $chat_messages->fetch_assoc()) { 
 		$messageArray = json_decode($row["message"], true);
