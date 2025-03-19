@@ -2,7 +2,8 @@
 	require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 	require dirname(dirname(__FILE__)) . '/include/constants.php';
 	require dirname(dirname(__FILE__)) . '/include/helper.php';
-
+	header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+	header("Pragma: no-cache"); // For older HTTP/1.0 clients
 	header('Content-type: text/json');
 	try{
 		$lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
