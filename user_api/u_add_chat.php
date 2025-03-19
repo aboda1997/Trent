@@ -12,7 +12,8 @@ try {
     $sender_id = isset($_POST['sender_id']) ? $_POST['sender_id'] : 0;
     $receiver_id = isset($_POST['receiver_id']) ? $_POST['receiver_id'] : 0;
     $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
-    $message = isset($_POST['message']) ? $_POST['message'] : '';
+    $message = $rstate->real_escape_string(isset($_POST['message']) ? $_POST['message'] : '');
+
     $user1 = max($sender_id, $receiver_id);
     $user2 = min($sender_id, $receiver_id);
 
