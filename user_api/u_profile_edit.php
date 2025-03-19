@@ -21,8 +21,8 @@ try {
     if (  $uid == '') {
 
         $returnArr    = generateResponse('false', "You must enter User Id !", 400);
-    } else if (!validateName($full_name , 'Full Name' , 100)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name , 'Full Name' , 100 )['response'], 400);
+    } else if (!validateName($full_name , 'Full Name' , 50)['status']) {
+        $returnArr    = generateResponse('false', validateName($full_name , 'Full Name' , 50 )['response'], 400);
     } else if (!in_array($gender, ['f', 'm'])) {
         $returnArr    = generateResponse('false', "Gender Id not valid!", 400);
     } else if ($email !== null && (!validateEmail($email)['status'])) {

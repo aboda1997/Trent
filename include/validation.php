@@ -129,7 +129,7 @@ function validateName($name, $placeholder, $max = 50)
         return ['status' => false, 'response' => "" . $placeholder . " are required"];
     }
     // Check length and allow only letters, spaces, and basic punctuation
-    if (strlen($name) < 3 || strlen($name) > $max) {
+    if (strlen($name) <= 3 || strlen($name) > $max) {
         return ['status' => false, 'response' => "" . $placeholder . " must be between 3 and $max characters."];
     }
 
