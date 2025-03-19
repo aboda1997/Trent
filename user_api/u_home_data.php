@@ -222,9 +222,9 @@ try {
 
 	echo $returnArr;
 } catch (Exception $e) {
-	// Handle exceptions and return an error response
-	$returnArr = generateResponse('false', "An error occurred!", 500, array(
-		"error_message" => $e->getMessage()
-	));
-	echo $returnArr;
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ), $e->getFile() ,  $e->getLine());
+    echo $returnArr;
 }

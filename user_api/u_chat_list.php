@@ -3,16 +3,24 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/constants.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-type: text/json');
 try {
 
     $uid = isset($_GET['uid']) ? $rstate->real_escape_string($_GET['uid']) : null;
 
+    // Get pagination parameters
+    $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+    $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
+
+    // Calculate offset
+    $offset = ($page - 1) * $itemsPerPage;
+
     if ($uid == null) {
-        $returnArr = generateResponse('false', "You must enter User id!", 400);
+        $returnArr = generateResponse('false', "You must enter User id.", 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "You must enter valid User id!", 400);
+        $returnArr = generateResponse('false', "You must enter valid User id.", 400);
     } else if (checkTableStatus($uid, 'tbl_user') === false) {
         $returnArr = generateResponse('false', "The account associated with this user ID has been deleted.", 400);
     } else {
@@ -20,29 +28,36 @@ try {
         $chat_list = array();
         $query = "
         SELECT c.*
-        FROM tbl_chat c
+        FROM tbl_messages c
         INNER JOIN (
             SELECT 
                 LEAST(sender_id, receiver_id) AS user1, 
                 GREATEST(sender_id, receiver_id) AS user2, 
                 MAX(id) AS last_msg_id
-            FROM tbl_chat
+            FROM tbl_messages
             WHERE 
                 (receiver_id = $uid AND is_approved = 1)  
                 OR sender_id = $uid   
             GROUP BY user1, user2
+            order by last_msg_id desc 
         ) last_msgs 
         ON 
             (LEAST(c.sender_id, c.receiver_id) = last_msgs.user1 AND 
              GREATEST(c.sender_id, c.receiver_id) = last_msgs.user2 AND 
-             c.id = last_msgs.last_msg_id);
+             c.id = last_msgs.last_msg_id)
+            order by last_msg_id desc 
+             
     ";
+
+        $sel_length  = $rstate->query($query)->num_rows;
+        $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
+
         $chat_data = $rstate->query($query);
-        while ($row = $chat_data->fetch_assoc()) { 
+        while ($row = $chat_data->fetch_assoc()) {
             $receiver_id = $uid;
-            if($uid == $row['sender_id']){
-              $receiver_id = $row['receiver_id'];
-            }else{
+            if ($uid == $row['sender_id']) {
+                $receiver_id = $row['receiver_id'];
+            } else {
                 $receiver_id = $row['sender_id'];
             }
             $user_data = $rstate->query("select * from tbl_user where id=" . $receiver_id . "")->fetch_assoc();
@@ -50,17 +65,21 @@ try {
             $data['receiver_name'] = $user_data['name'];
             $data['receiver_image'] = $user_data['pro_pic'];
             $data['message'] = $row["message"];
-            $data['id'] = $row["id"];
-    
+            $data['chat_id'] = (int)$row["chat_id"];
+            $checkQuery = "SELECT prop_id FROM tbl_chat_property WHERE id = "  . $row['chat_id'] . "";
+            $res = $rstate->query($checkQuery)->fetch_assoc();
+            $data['prop_id'] = (int)$res["prop_id"];
+
             $chat_list[]  = $data;
-    
         }
         $returnArr = generateResponse(
             'true',
             "Chat List Founded!",
             200,
             array(
-                "chat_list" => $chat_list
+                "chat_list" => $chat_list,
+                "length" =>  $sel_length
+
             )
         );
     }
@@ -69,6 +88,6 @@ try {
     // Handle exceptions and return an error response
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
-    ));
+    ), $e->getFile(),  $e->getLine());
     echo $returnArr;
 }
