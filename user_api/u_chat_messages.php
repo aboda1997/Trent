@@ -47,11 +47,13 @@ try {
 		WHERE 
 			(sender_id = $user1 AND receiver_id = $user2) 
 			OR (sender_id = $user2 AND receiver_id = $user1 AND is_approved = 1)
+			and chat_id = $chat_id
 		ORDER BY id DESC 
 	";
 	
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
+	var_dump($query);
 	$chat_messages = $rstate->query($query);
 	while ($row = $chat_messages->fetch_assoc()) { 
 		$messageArray = json_decode($row["message"], true);
