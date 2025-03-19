@@ -4,20 +4,31 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/constants.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-type: text/json');
 try {
 
-    $sender_id = isset($_POST['sender_id']) ? $_POST['sender_id'] : '';
-    $receiver_id = isset($_POST['receiver_id']) ? $_POST['receiver_id'] : '';
+    $sender_id = isset($_POST['sender_id']) ? $_POST['sender_id'] : 0;
+    $receiver_id = isset($_POST['receiver_id']) ? $_POST['receiver_id'] : 0;
+    $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
     $message = isset($_POST['message']) ? $_POST['message'] : '';
+    $user1 = max($sender_id, $receiver_id);
+    $user2 = min($sender_id, $receiver_id);
 
+    // Check if a chat_id already exists for the given prop_id, user1, and user2
+    $checkQuery = "SELECT id FROM tbl_chat_property WHERE prop_id = $prop_id AND user1 = $user1 AND user2 = $user2";
+    $res = $rstate->query($checkQuery);
+    if ($sender_id == 0 ||  $receiver_id == 0) {
 
-    if ($sender_id == '' ||  $receiver_id == '') {
+        $returnArr    = generateResponse('false', "You Must Enter Sender and Receiver Id .", 400);
+    } else if ($sender_id === $receiver_id) {
 
-        $returnArr    = generateResponse('false', "You must enter Sender and Receiver Id  !", 400);
+        $returnArr    = generateResponse('false', "You Must Enter Different Two Users.", 400);
     } else if (!isset($_FILES['img']) && $message == '') {
-        $returnArr    = generateResponse('false', "You must enter chat content!", 400);
+        $returnArr    = generateResponse('false', "You Must Enter Chat Content!", 400);
+    } else if ($res->num_rows ==0 &&   validateIdAndDatabaseExistance($prop_id, 'tbl_property', "  add_user_id = " . $receiver_id . " ") === false) {
+        $returnArr    = generateResponse('false', "This property id is not associated with the target user. Please verify the correct user.", 400);
     } else {
         // Allowed file types for images
         $allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
@@ -56,18 +67,31 @@ try {
             }
         }
 
-        $created_at = date('Y-m-d H:i:s'); 
+        $created_at = date('Y-m-d H:i:s');
 
 
 
         if (!isset($returnArr)) {
-
-            $field_values = ["sender_id", "receiver_id" , "message" , "img" , "created_at"] ; 
-            $data_values = [ $sender_id , $receiver_id  , $message , $imageUrl , $created_at] ; 
-
-            $table = "tbl_chat";
+            $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
-			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $table = "tbl_chat_property";
+
+            $user1 = max($sender_id, $receiver_id);
+            $user2 = min($sender_id, $receiver_id);
+
+            // Check if a chat_id already exists for the given prop_id, user1, and user2
+            $checkQuery = "SELECT id FROM tbl_chat_property WHERE prop_id = $prop_id AND user1 = $user1 AND user2 = $user2";
+            $res = $rstate->query($checkQuery);
+            if ($res->num_rows > 0) {
+                $chat_id = (int)$res->fetch_assoc()['id'];
+            } else {
+                $chat_id = $h->restateinsertdata_Api(["prop_id", "user1", "user2"], [$prop_id, $user1, $user2], $table);
+            }
+            $field_values = ["sender_id", "receiver_id", "message", "img", "created_at", "chat_id"];
+            $data_values = [$sender_id, $receiver_id, $message, $imageUrl, $created_at, $chat_id];
+            $table = "tbl_messages";
+            $message_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $GLOBALS['rstate']->commit();
         }
     }
 
@@ -75,17 +99,17 @@ try {
     if (isset($returnArr)) {
         echo $returnArr;
     } else {
-        if ($check) {
-            $returnArr    = generateResponse('true', "Chat Added Successfully", 200, array("id" => $check));
-        } else {
-            $returnArr    = generateResponse('false', "Database error", 500);
-        }
+        $returnArr    = generateResponse('true', "Chat Added Successfully", 200, array(
+            "chat_id" => $chat_id,
+            "message_id" => $message_id
+        ));
+
         echo $returnArr;
     }
 } catch (Exception $e) {
     // Handle exceptions and return an error response
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
-    ));
+    ), $e->getFile(),  $e->getLine());
     echo $returnArr;
 }

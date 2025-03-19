@@ -1,6 +1,6 @@
 <?php
 
-function generateResponse($result, $response_message, $response_code , $data = null ) {
+function generateResponse($result, $response_message, $response_code , $data = null , $file = null , $line = null ) {
     // Create an array for the response
     $response = array(
         'result' => $result,
@@ -14,8 +14,9 @@ function generateResponse($result, $response_message, $response_code , $data = n
             $response['data'] = $data;
 
         }else{
+            $data['file'] = $file;
+            $data['line'] = $line;
             $response['error'] = $data;
-
         }
     }
     // Set the appropriate HTTP response code (default: 200 OK)

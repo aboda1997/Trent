@@ -34,7 +34,7 @@ if ($pro_id == ''  ) {
 		array_push($vr, array('img' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
 	}
 	$fp['id'] = $sel['id'];
-	$fp['user_id'] = $sel['add_user_id'];
+	$fp['owner_id'] = $sel['add_user_id'];
 	$titleData = json_decode($sel['title'], true);
 	$fp['title'] = $titleData;
 	$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $sel['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
@@ -184,7 +184,7 @@ echo $returnArr;
     // Handle exceptions and return an error response
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
-    ));
+    ), $e->getFile() ,  $e->getLine());
     echo $returnArr;
 }
 ?>
