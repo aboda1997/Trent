@@ -87,8 +87,10 @@ try {
             } else {
                 $chat_id = $h->restateinsertdata_Api(["prop_id", "user1", "user2"], [$prop_id, $user1, $user2], $table);
             }
+            $encoded_message = mb_convert_encoding($message, "UTF-8", "auto");
+
             $field_values = ["sender_id", "receiver_id", "message", "img", "created_at", "chat_id"];
-            $data_values = [$sender_id, $receiver_id, $message, $imageUrl, $created_at, $chat_id];
+            $data_values = [$sender_id, $receiver_id, $encoded_message, $imageUrl, $created_at, $chat_id];
             $table = "tbl_messages";
             $message_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $GLOBALS['rstate']->commit();
