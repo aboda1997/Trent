@@ -38,7 +38,7 @@ try {
             WHERE 
                 (receiver_id = $uid AND is_approved = 1)  
                 OR sender_id = $uid   
-            GROUP BY user1, user2
+            GROUP BY user1, user2 , chat_id
             order by last_msg_id desc 
         ) last_msgs 
         ON 
@@ -51,7 +51,7 @@ try {
 
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
-
+        var_dump($query);
         $chat_data = $rstate->query($query);
         while ($row = $chat_data->fetch_assoc()) {
             $receiver_id = $uid;
