@@ -45,9 +45,10 @@ try {
 			CASE WHEN sender_id = $user1 THEN 'true' ELSE 'false' END AS is_sender
 		FROM tbl_messages 
 		WHERE 
+			chat_id = $chat_id
+            and 
 			(sender_id = $user1 AND receiver_id = $user2) 
 			OR (sender_id = $user2 AND receiver_id = $user1 AND is_approved = 1)
-			and chat_id = $chat_id
 		ORDER BY id DESC 
 	";
 	
