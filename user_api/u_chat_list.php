@@ -51,7 +51,6 @@ try {
 
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
-        var_dump($query);
         $chat_data = $rstate->query($query);
         while ($row = $chat_data->fetch_assoc()) {
             $receiver_id = $uid;
