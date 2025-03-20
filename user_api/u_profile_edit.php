@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 try {
 
     $full_name = isset($_POST['full_name']) ? $_POST['full_name'] : '';
-    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : null;
     $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
 
@@ -25,7 +25,7 @@ try {
         $returnArr    = generateResponse('false', validateName($full_name , 'Full Name' , 50 )['response'], 400);
     } else if (!in_array($gender, ['f', 'm'])) {
         $returnArr    = generateResponse('false', "Gender Id not valid!", 400);
-    } else if ($email !== '' && (!validateEmail($email)['status'])) {
+    } else if ($email !== null && $email !== '' && (!validateEmail($email)['status'])) {
 
         $returnArr    = generateResponse('false', validateEmail($email)['response'], 400);
     } else {
@@ -33,7 +33,7 @@ try {
         $check_owner = $rstate->query("select * from tbl_user where  id=" . $uid . "")->num_rows;
         if ($check_owner != 0) {
             $field["email"] = $email; 
-        
+            
 
             // Allowed file types for images
             $allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
