@@ -1,7 +1,7 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 function generate_random()
 {
@@ -15,7 +15,7 @@ function generate_random()
     }
 }
 
-if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $data['ccode'] == '' or $data['email'] == '') {
+if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $data['ccode'] == '') {
     $returnArr = array(
         "ResponseCode" => "401",
         "Result" => "false",
@@ -24,7 +24,8 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
 } else {
     
     $name     = strip_tags(mysqli_real_escape_string($rstate, $data['name']));
-    $email     = strip_tags(mysqli_real_escape_string($rstate, $data['email']));
+    $email = isset($data['email']) ? trim($data['email']) : "";
+    $email = strip_tags(mysqli_real_escape_string($rstate, $email));
     $mobile    = strip_tags(mysqli_real_escape_string($rstate, $data['mobile']));
     $ccode     = strip_tags(mysqli_real_escape_string($rstate, $data['ccode']));
     $password  = strip_tags(mysqli_real_escape_string($rstate, $data['password']));
@@ -40,13 +41,7 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
             "Result" => "false",
             "ResponseMsg" => "Mobile Number Already Used!"
         );
-    } else if ($checkemail->num_rows != 0) {
-        $returnArr = array(
-            "ResponseCode" => "401",
-            "Result" => "false",
-            "ResponseMsg" => "Email Address Already Used!"
-        );
-    } else {
+    }  else {
         
         if ($refercode != '') {
             $c_refer = $rstate->query("select * from tbl_user where refercode=" . $refercode . "")->num_rows;
@@ -55,7 +50,6 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                 $timestamp    = date("Y-m-d H:i:s");
                 $prentcode    = generate_random();
                 $wallet       = $rstate->query("select * from tbl_setting")->fetch_assoc();
-                $fin          = $wallet['scredit'];
                 $table        = "tbl_user";
                 $field_values = array(
                     "name",
@@ -65,7 +59,6 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                     "password",
                     "ccode",
                     "refercode",
-                    "wallet",
                     "parentcode",
                     "is_owner"
                 );
@@ -77,7 +70,6 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                     "$password",
                     "$ccode",
                     "$prentcode",
-                    "$fin",
                     "$refercode",
                     1
                 );
@@ -90,14 +82,12 @@ if ($data['name'] == '' or $data['mobile'] == '' or $data['password'] == '' or $
                     "uid",
                     "message",
                     "status",
-                    "amt",
                     "tdate"
                 );
                 $data_values  = array(
                     "$check",
                     'Sign up Credit Added!!',
                     'Credit',
-                    "$fin",
                     "$timestamp"
                 );
                 
