@@ -6,7 +6,7 @@ require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/constants.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
-header('Content-type: text/json');
+header('Content-Type: application/json');
 try {
 
     $sender_id = isset($_POST['sender_id']) ? $_POST['sender_id'] : 0;

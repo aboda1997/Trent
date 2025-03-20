@@ -1,7 +1,7 @@
 <?php 
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
 $data = json_decode(file_get_contents('php://input'), true);
 

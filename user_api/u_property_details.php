@@ -3,7 +3,7 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
-header('Content-type: text/json');
+header('Content-Type: application/json');
 try{
 $data = json_decode(file_get_contents('php://input'), true);
 

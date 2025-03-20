@@ -1,6 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
