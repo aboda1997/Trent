@@ -13,6 +13,7 @@ try {
     // Get pagination parameters
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
     $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
+    $prop_id = isset($_GET['prop_id']) ? intval($_GET['prop_id']) : null; // Items per page
 
     // Calculate offset
     $offset = ($page - 1) * $itemsPerPage;
@@ -27,7 +28,7 @@ try {
         $data = array();
         $chat_list = array();
         $query = "
-        SELECT c.*
+        SELECT c.* , tcp.prop_id
         FROM tbl_messages c
         INNER JOIN (
             SELECT 
@@ -45,9 +46,14 @@ try {
             (LEAST(c.sender_id, c.receiver_id) = last_msgs.user1 AND 
              GREATEST(c.sender_id, c.receiver_id) = last_msgs.user2 AND 
              c.id = last_msgs.last_msg_id)
-            order by last_msg_id desc 
-             
+          INNER JOIN tbl_chat_property tcp 
+            ON c.chat_id = tcp.id 
     ";
+        if ($prop_id !== null) {
+            $query .= "WHERE tcp.prop_id = $prop_id ";
+        }
+        $query .=   " ORDER BY last_msgs.last_msg_id DESC";
+
 
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
@@ -66,9 +72,7 @@ try {
             $messageArray = json_decode($row["message"], true);
             $data['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
             $data['chat_id'] = (int)$row["chat_id"];
-            $checkQuery = "SELECT prop_id FROM tbl_chat_property WHERE id = "  . $row['chat_id'] . "";
-            $res = $rstate->query($checkQuery)->fetch_assoc();
-            $data['prop_id'] = (int)$res["prop_id"];
+            $data['prop_id'] = (int)$row["prop_id"];
 
             $chat_list[]  = $data;
         }
