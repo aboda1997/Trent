@@ -492,11 +492,8 @@ if (isset($_GET['id'])) {
 														</label>
 														<input
 															value="<?php echo $data['security_deposit']; ?>"
-															type="text" class="form-control numberonly" id="price" name="prop_security" required="">
-														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
-															<?= $lang_en['prop_security'] ?>
-
-														</div>
+															type="text" class="form-control numberonly" id="price" name="prop_security" >
+													
 													</div>
 												</div>
 
@@ -1085,11 +1082,8 @@ if (isset($_GET['id'])) {
 															<?= $lang_en['security_deposit'] ?>
 
 														</label>
-														<input type="text" class="form-control numberonly" id="price" name="prop_security" required="">
-														<div class="invalid-feedback" id="security_deposit_feedback" style="display: none;">
-															<?= $lang_en['prop_security'] ?>
-
-														</div>
+														<input type="text" class="form-control numberonly" id="price" name="prop_security" >
+														
 													</div>
 												</div>
 
@@ -1540,10 +1534,9 @@ if (isset($_GET['id'])) {
 			isValid = false;
 		}
 
-		if (!propSecurity) {
-			document.getElementById('security_deposit_feedback').style.display = 'block';
-			isValid = false;
-		}
+		
+
+
 		if (!plimit) {
 			document.getElementById('limit_feedback').style.display = 'block';
 			isValid = false;
@@ -1621,7 +1614,6 @@ if (isset($_GET['id'])) {
 		document.getElementById('government_feedback').textContent = langData.prop_governemnt;
 		document.getElementById('owner_feedback').textContent = langData.prop_owner;
 		document.getElementById('prop_type_feedback').textContent = langData.prop_type;
-		document.getElementById('security_deposit_feedback').textContent = langData.prop_security;
 		document.getElementById('limit_feedback').textContent = langData.property_limit;
 		document.getElementById('mapurl_feedback').textContent = langData.prop_mapurl;
 		document.getElementById('sqft_feedback').textContent = langData.prop_sqft;
