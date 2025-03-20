@@ -12,7 +12,7 @@ try {
     $email = isset($_POST['email']) ? $_POST['email'] : null;
     $gender = isset($_POST['gender']) ? $_POST['gender'] : '';
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
-var_dump($email);    
+    
 
     $field = [
         "name" => $full_name,
