@@ -1,6 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 $sel = $rstate->query("select * from tbl_payment_list where status =1 ");
 $myarray = array();
 while($row = $sel->fetch_assoc())

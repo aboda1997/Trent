@@ -5,7 +5,7 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname( dirname(__FILE__) ).'/include/constants.php';
 
-header('Content-type: text/json');
+header('Content-Type: application/json');
 try {
 	$status = 1;
 	$is_approved = 0;

@@ -2,7 +2,7 @@
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 
-header('Content-type: text/json');
+header('Content-Type: application/json');
 try{
 $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 

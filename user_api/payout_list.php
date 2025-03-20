@@ -2,7 +2,7 @@
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 $data = json_decode(file_get_contents('php://input'), true);
 $owner_id = $data['owner_id'];
-header('Content-type: text/json');
+header('Content-Type: application/json');
 if($owner_id == '')
 {
 	$returnArr = array("ResponseCode"=>"401","Result"=>"false","ResponseMsg"=>"Something Went wrong  try again !");

@@ -1,7 +1,7 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 if ($data['prop_id'] == '' or $data['uid'] == '' or $data['check_in'] == '' or $data['check_out'] == '' or $data['subtotal'] == '' or $data['total'] == '' or $data['tax'] == '' or $data['p_method_id'] == '' or $data['book_for'] == '' or $data['prop_price'] == '') {
     $returnArr = array(
