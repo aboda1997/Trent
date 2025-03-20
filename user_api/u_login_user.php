@@ -3,7 +3,7 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-header('Content-type: text/json');
+header('Content-Type: application/json');
 
 $rawInput = file_get_contents('php://input');
 

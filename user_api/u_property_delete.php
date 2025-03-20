@@ -4,7 +4,7 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
 
-header('Content-type: text/json');
+header('Content-Type: application/json');
 try{
 $data = json_decode(file_get_contents('php://input'), true);
 $pro_id  = isset($data['prop_id']) ? $data['prop_id'] : '';
