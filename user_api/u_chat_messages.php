@@ -57,7 +57,6 @@ try {
 	$chat_messages = $rstate->query($query);
 	while ($row = $chat_messages->fetch_assoc()) { 
 		
-		$user_data = $rstate->query("select * from tbl_user where id=" . $row['receiver_id'] . "")->fetch_assoc();
 
 		$messageArray = json_decode($row["message"], true);
 		$message['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
@@ -67,11 +66,11 @@ try {
 		$message['created_at'] = $row['created_at'];
 		$message['sender_id'] = $row['sender_id'];
 		$message['receiver_id'] = $row['receiver_id'];
-		$message['receiver_name'] = $user_data['name'];
-		$message['receiver_image'] = $user_data['pro_pic'];
+
 	    $data[] = $message ;
 	}
-  
+	$user_data = $rstate->query("select * from tbl_user where id=" . $user2 . "")->fetch_assoc();
+
 		$returnArr = generateResponse(
 			'true',
 			"Chat Messages Founded!",
@@ -79,6 +78,8 @@ try {
 			array(
 				"chat_messages" => $data,
 				"prop_id" =>  (int)$chat_row["prop_id"], 
+				"receiver_name" =>  $user_data["name"], 
+				"receiver_image" =>  $user_data["pro_pic"], 
 				"length" =>  $sel_length
 			)
 		);
