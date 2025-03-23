@@ -56,6 +56,9 @@ try {
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 	$chat_messages = $rstate->query($query);
 	while ($row = $chat_messages->fetch_assoc()) { 
+		
+		$user_data = $rstate->query("select * from tbl_user where id=" . $row['receiver_id'] . "")->fetch_assoc();
+
 		$messageArray = json_decode($row["message"], true);
 		$message['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
 		$message['id'] = $row['id'];
@@ -64,6 +67,8 @@ try {
 		$message['created_at'] = $row['created_at'];
 		$message['sender_id'] = $row['sender_id'];
 		$message['receiver_id'] = $row['receiver_id'];
+		$message['receiver_name'] = $user_data['name'];
+		$message['receiver_image'] = $user_data['pro_pic'];
 	    $data[] = $message ;
 	}
   

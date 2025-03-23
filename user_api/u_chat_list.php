@@ -68,6 +68,7 @@ try {
             $user_data = $rstate->query("select * from tbl_user where id=" . $receiver_id . "")->fetch_assoc();
 
             $data['receiver_name'] = $user_data['name'];
+            $data['receiver_id'] = $receiver_id;
             $data['receiver_image'] = $user_data['pro_pic'];
             $messageArray = json_decode($row["message"], true);
             $data['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
