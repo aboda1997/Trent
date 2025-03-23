@@ -25,7 +25,7 @@ $email = strip_tags(mysqli_real_escape_string($rstate, $email));
 $mobile    = strip_tags(mysqli_real_escape_string($rstate, $data['mobile']));
 $ccode     = strip_tags(mysqli_real_escape_string($rstate, $data['ccode']));
 $password  = strip_tags(mysqli_real_escape_string($rstate, $data['password']));
-$refercode = strip_tags(mysqli_real_escape_string($rstate, $data['refercode']));
+$refercode = isset($data['refercode']) ? strip_tags(mysqli_real_escape_string($rstate, $data['refercode'])) : '';
 
 
 if ($name == '' or $mobile == '' or $password == '' or $ccode == '') {
