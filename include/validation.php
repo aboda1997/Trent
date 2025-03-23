@@ -87,7 +87,7 @@ function expandShortUrl($shortUrl)
             $finalUrl = is_array($headers['Location']) ? end($headers['Location']) : $headers['Location'];
             return ['status' => true, 'response' => $finalUrl];
         }
-         
+
         // Return the original URL if no redirection occurred
         return ['status' => true, 'response' => $shortUrl];
     } catch (Exception $e) {
@@ -99,25 +99,71 @@ function expandShortUrl($shortUrl)
 function validateAndExtractCoordinates($url)
 {
 
-    
-    // Check for Google Maps coordinates (works for both search and place links)
-    $googlePatterns = [
-         '/(\-?\d+\.\d+),\s*\+?(\-?\d+\.\d+)/'
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0"); // Avoid bot detection
 
-    ];
+    // Get HTML content
+    $html = curl_exec($ch);
+    curl_close($ch);
+    $decodedContent = urldecode($html);
 
-    foreach ($googlePatterns as $item) {
-        if (preg_match($item, $url, $matches)) {
-            return [
-                'status' => true,
-                'latitude' => $matches[1],
-                'longitude' => $matches[2]
-            ];
+    // Regular expression to match various coordinate formats
+    $pattern = '/([+-]?\d*\.\d+),\s*([+-]?\d*\.\d+)/';
+
+    // Find all matches
+    preg_match_all($pattern, $decodedContent, $matches, PREG_SET_ORDER);
+
+    // Store valid coordinates and their frequencies
+    $coordinatesCount = [];
+    foreach ($matches as $match) {
+        $lat = floatval($match[1]);
+        $lon = floatval($match[2]);
+
+        // Validate latitude and longitude ranges
+        if ($lat >= -90 && $lat <= 90 && $lon >= -180 && $lon <= 180) {
+            $key = "$lat,$lon"; // Create a unique key for the coordinate pair
+            if (isset($coordinatesCount[$key])) {
+                $coordinatesCount[$key]['count']++; // Increment count if the coordinate already exists
+            } else {
+                $coordinatesCount[$key] = [
+                    'latitude' => $lat,
+                    'longitude' => $lon,
+                    'count' => 1 // Initialize count for new coordinate
+                ];
+            }
         }
     }
+    if (preg_match($pattern, $url, $matches)) {
+        $lat = floatval($match[1]);
+        $lon = floatval($match[2]);
+        $key = "$lat,$lon"; // Create a unique key for the coordinate pair
+        $coordinatesCount[$key] = [
+            'latitude' => $lat,
+            'longitude' => $lon,
+            'count' => 1 
+        ];
+        
+    }
 
+    // Sort coordinates by frequency (most occurred first)
+    usort($coordinatesCount, function ($a, $b) {
+        return $b['count'] - $a['count']; // Sort in descending order of count
+    });
 
-    return ['status' => false, 'response' => 'MAP URL does not contain valid coordinates'];
+    // Prepare the final result
+    $coordinates = [];
+    foreach ($coordinatesCount as $coord) {
+        $coordinates[] = [
+            'status' => true,
+            'latitude' => $coord['latitude'],
+            'longitude' => $coord['longitude'],
+        ];
+    }
+
+    return !empty($coordinates) ? $coordinates[0] :  ['status' => false, 'response' => 'MAP URL does not contain valid coordinates'];
 }
 
 
@@ -155,4 +201,23 @@ function validateEmail($email)
     }
 
     return ['status' => true, 'response' => 'Valid email.'];
+}
+
+function validatePassword($password) {
+    if (strlen($password) >= 6 && preg_match('/\d/', $password)) {
+        return ['status' => true, 'response' => 'Valid password.'];
+
+    }
+    return ['status' => false, 'response' => 'INValid password.'];
+
+}
+
+function validateEgyptianPhoneNumber($phone) {
+    $phone = preg_replace('/\s+|-/', '', $phone);
+    if (preg_match('/^1[0|1|2|5]\d{8}$/', $phone)) {
+        return ['status' => true, 'response' => 'Valid Mobile Number.'];
+
+    }
+    return ['status' => false, 'response' => 'InValid Mobile Number.'];
+
 }

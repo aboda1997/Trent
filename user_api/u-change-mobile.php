@@ -1,0 +1,68 @@
+<?php
+require dirname(dirname(__FILE__)) . '/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/user_api/estate.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
+
+header('Content-Type: application/json');
+
+try {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    $new_mobile = isset($data['new_mobile']) ? $data['new_mobile'] : '';
+    $old_mobile = isset($data['old_mobile']) ? $data['old_mobile'] : '';
+
+    if ($new_mobile == '' || $old_mobile == '') {
+        $returnArr    = generateResponse('false', "You Must Enter Both old and new Mobile Number", 400);
+    } else if (!validateEgyptianPhoneNumber($new_mobile)['status']) {
+        $returnArr    = generateResponse('false', 'New Mobile Is '.validateEgyptianPhoneNumber($new_mobile)['response'], 400);
+    }else if (!validateEgyptianPhoneNumber($old_mobile)['status']) {
+        $returnArr    = generateResponse('false', 'Old Number Is ' . validateEgyptianPhoneNumber($new_mobile)['response'], 400);
+    }
+    else if ($old_mobile == $new_mobile) {
+        $returnArr    = generateResponse('false', 'You Must Enter Two Different Numbers ', 400);
+    } 
+    else {
+
+        $new_mobile = strip_tags(mysqli_real_escape_string($rstate, $new_mobile));
+        $old_mobile = strip_tags(mysqli_real_escape_string($rstate, $old_mobile));
+
+        $counter = $rstate->query("select * from tbl_user where mobile='" . $old_mobile . "'");
+        $otp = rand(111111, 999999);
+        $message = "Your OTP is: $otp";
+        $checkmob = $rstate->query("select * from tbl_user where mobile='" . $new_mobile . "'");
+
+        if ($checkmob->num_rows != 0) {
+            $returnArr    = generateResponse('false', "New Mobile Number Already Used!", 400);
+        } else {
+
+            if ($counter->num_rows != 0) {
+                $table = "tbl_user";
+                $field = array('mobile' => $new_mobile,  'verified' => 0 , 'otp' => $otp);
+                $where = "where mobile=" . '?' . "";
+                $where_conditions = [$old_mobile];
+
+                $h = new Estate();
+                $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+                $result = sendMessage([$new_mobile], $message);
+
+                if ($result) {
+                    $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+                } else {
+                    $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                }
+            } else {
+                $returnArr    = generateResponse('false', "Old Mobile Not Matched!!", 400);
+            }
+        }
+    }
+
+    echo $returnArr;
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ), $e->getFile(),  $e->getLine());
+    echo $returnArr;
+}

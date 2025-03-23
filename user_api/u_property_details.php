@@ -15,13 +15,15 @@ if ($pro_id == ''  ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 400);
-} else {
+}else if (checkTableStatus($pro_id, 'tbl_property') == false) {
+	$returnArr = generateResponse('false', "This Property already deleted", 410);
+}else {
 	$fp = array();
 	$f = array();
 	$v = array();
 	$vr = array();
 	$po = array();
-	$sel = $rstate->query("select * from tbl_property where    id=" . $pro_id .  "")->fetch_assoc();
+	$sel = $rstate->query("select * from tbl_property where status = 1 and  id=" . $pro_id .  "")->fetch_assoc();
 	$imageArray = explode(',', $sel['image']);
 
 	// Loop through each image URL and push to $vr array

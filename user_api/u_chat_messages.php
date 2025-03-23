@@ -47,8 +47,8 @@ try {
 		WHERE 
 			chat_id = $chat_id
             and 
-			(sender_id = $user1 AND receiver_id = $user2) 
-			OR (sender_id = $user2 AND receiver_id = $user1 AND is_approved = 1)
+			((sender_id = $user1 AND receiver_id = $user2) 
+			OR (sender_id = $user2 AND receiver_id = $user1 AND is_approved = 1) )
 		ORDER BY id DESC 
 	";
 	
