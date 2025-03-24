@@ -26,7 +26,6 @@ try {
     }
     else {
         $checkmob   = $rstate->query("select * from tbl_user where status = 1 and mobile=" . $mobile . "");
-        $c   = $rstate->query("select id, name , email , mobile , ccode  from tbl_user where status = 1 and  mobile=" . $mobile . "")->fetch_assoc();
         $data = $checkmob->fetch_assoc();
         if ($checkmob->num_rows != 0 && $data['otp'] == $otp ) { 
 
@@ -40,7 +39,6 @@ try {
 
         }else if($is_change_password === false)  {
             $new_mobile = mysqli_real_escape_string($rstate, $data['new_mobile']);
-            var_dump($new_mobile);
             $updateQuery = "UPDATE tbl_user 
             SET verified = 1, mobile = '$new_mobile' , new_mobile = null
             WHERE mobile = " . intval($mobile);
@@ -52,6 +50,8 @@ try {
             $msg = "Sign Up Successufully";
  
         }
+        $c   = $rstate->query("select id, name , email , ccode  from tbl_user where status = 1 and  mobile=" . $mobile . "")->fetch_assoc();
+
         $rstate->query($updateQuery);
         $returnArr    = generateResponse('true', $msg, 200 ,  array("user_login" => $c ));
 
