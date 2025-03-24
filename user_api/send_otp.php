@@ -5,8 +5,15 @@ require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 
 header('Content-Type: application/json');
-// Handle preflight request
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+    header('Access-Control-Max-Age: 86400');
     http_response_code(200);
     exit();
 }
