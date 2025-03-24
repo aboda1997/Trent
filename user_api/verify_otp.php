@@ -50,7 +50,7 @@ try {
             $msg = "Sign Up Successufully";
  
         }
-        $c   = $rstate->query("select id, name , email , ccode  from tbl_user where status = 1 and  mobile=" . $mobile . "")->fetch_assoc();
+        $c   = $rstate->query("select id, name , email , ccode  from tbl_user where status = 1 and  id=" . $data['id'] . "")->fetch_assoc();
 
         $rstate->query($updateQuery);
         $returnArr    = generateResponse('true', $msg, 200 ,  array("user_login" => $c ));
