@@ -5,6 +5,11 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 try{
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -37,7 +42,7 @@ if ( $mobile == '') {
         
         $returnArr    = generateResponse('true', "SignUp Successfully", 200 , array("user_login" => $c ));
     }  else {
-        $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+        $returnArr    = generateResponse('false', "OTP OR Mobile Number Not Valid", 400);
 
     }
 }        
