@@ -1,11 +1,16 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
-require dirname(dirname(__FILE__)) . '/include/estate.php';
+require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 try{
 $data = json_decode(file_get_contents('php://input'), true);
 function generate_random()
@@ -53,12 +58,30 @@ else {
     $message = "Your OTP is: $otp";
 
     
-    $checkmob   = $rstate->query("select * from tbl_user where mobile=" . $mobile . "");
-    $checkemail = $rstate->query("select * from tbl_user where email='" . $email . "'");
+    $checkmob   = $rstate->query("select * from tbl_user where status = 1 and mobile=" . $mobile . "");
+    $data = $checkmob->fetch_assoc();
+    if ($checkmob->num_rows != 0 &&  $data['verified'] == 0  ) {
+        $table = "tbl_user";
+
+        $h = new Estate();
+  
+        $field = array(  "name" => $name , "email" => $email , "password" => $password , "otp" => $otp , );
+        $where = "where mobile=" . '?' . "";
+        $where_conditions = [$mobile];
+        $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+        $result = sendMessage([$mobile] , $message);
+
+        if($result){
+            $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+
+        }else{
+            $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+
+        }
     
-    if ($checkmob->num_rows != 0) {
+    }else if ($checkmob->num_rows != 0 &&  $data['verified'] == 1  ) {
         $returnArr    = generateResponse('false', "Mobile Number Already Used!", 400);
-    }  else {
+    }else {
         
         if ($refercode != '') {
             $c_refer = $rstate->query("select * from tbl_user where refercode=" . $refercode . "")->num_rows;

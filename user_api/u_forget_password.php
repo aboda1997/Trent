@@ -23,16 +23,18 @@ try {
     $mobile = strip_tags(mysqli_real_escape_string($rstate, $mobile));
     $password = strip_tags(mysqli_real_escape_string($rstate, $password));
 
-    $counter = $rstate->query("select * from tbl_user where mobile='" . $mobile . "'");
+    $counter = $rstate->query("select id , password from tbl_user where status =1 and  mobile='" . $mobile . "'");
     $otp = rand(111111, 999999);
     $message = "Your OTP is: $otp";
 
     if ($counter->num_rows != 0) {
       $table = "tbl_user";
-      $field = array('password' => $password,  'verified' => 0 , 'otp' => $otp);
+
+      $h = new Estate();
+
+      $field = array(  "new_password" => $password ,   'otp' => $otp);
       $where = "where mobile=" . '?' . "";
       $where_conditions = [$mobile];
-      $h = new Estate();
       $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
       $result = sendMessage([$mobile], $message);
 

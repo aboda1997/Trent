@@ -28,10 +28,10 @@ try {
         $new_mobile = strip_tags(mysqli_real_escape_string($rstate, $new_mobile));
         $old_mobile = strip_tags(mysqli_real_escape_string($rstate, $old_mobile));
 
-        $counter = $rstate->query("select * from tbl_user where mobile='" . $old_mobile . "'");
+        $counter = $rstate->query("select id from tbl_user where status = 1 and  mobile='" . $old_mobile . "'");
         $otp = rand(111111, 999999);
         $message = "Your OTP is: $otp";
-        $checkmob = $rstate->query("select * from tbl_user where mobile='" . $new_mobile . "'");
+        $checkmob = $rstate->query("select * from tbl_user where status = 1 and  mobile='" . $new_mobile . "'");
 
         if ($checkmob->num_rows != 0) {
             $returnArr    = generateResponse('false', "New Mobile Number Already Used!", 400);
@@ -39,7 +39,8 @@ try {
 
             if ($counter->num_rows != 0) {
                 $table = "tbl_user";
-                $field = array('mobile' => $new_mobile,  'verified' => 0 , 'otp' => $otp);
+                
+                $field = array('new_mobile' => $new_mobile,  'otp' => $otp);
                 $where = "where mobile=" . '?' . "";
                 $where_conditions = [$old_mobile];
 

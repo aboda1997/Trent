@@ -7,18 +7,21 @@ header('Content-Type: application/json');
 try {
     $data = json_decode(file_get_contents('php://input'), true);
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
-    $is_new_user = isset($data['is_new_user']) ? $data['is_new_user'] : '';
+    $is_new_user = isset($data['is_new_user']) ? $data['is_new_user'] : true;
 
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
     } else {
-        $checkmob   = $rstate->query("select * from tbl_user where mobile=" . $mobile . "");
+        $checkmob   = $rstate->query("select * from tbl_user where status =1 and  mobile=" . $mobile . "");
 
         $otp = rand(111111, 999999);
         $message = "Your OTP is: $otp";
 
+        if($is_new_user){
+            if ($checkmob->num_rows != 0) { 
+                $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
 
-        if ($checkmob->num_rows != 0) { 
+            }else{
             $result = sendMessage([$mobile] , $message);
             if($result){
                 $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
@@ -27,10 +30,19 @@ try {
                 $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
 
             }
-        } else {
-            $returnArr    = generateResponse('false', "Mobile Not Matched!!", 400);
         }
-    }
+        }else{
+            $result = sendMessage([$mobile] , $message);
+            if($result){
+                $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+
+            }else{
+                $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+
+            }
+        }
+        }
+    
     echo $returnArr;
 } catch (Exception $e) {
     // Handle exceptions and return an error response
