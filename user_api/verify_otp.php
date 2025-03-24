@@ -47,7 +47,7 @@ try {
             $updateQuery = "UPDATE tbl_user 
             SET verified = 1
             WHERE mobile = " . intval($mobile);           
-            $msg = "Sign Up Successufully";
+            $msg = "SignUp Successfully";
  
         }
         $c   = $rstate->query("select id, name , email , ccode , mobile  from tbl_user where status = 1 and  id=" . $data['id'] . "")->fetch_assoc();

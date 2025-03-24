@@ -26,6 +26,9 @@ try {
                 $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
 
             }else{
+            $checkmob   = $rstate->query("select * from tbl_user where status =1 and verified =0 and mobile=" . $mobile . "");
+            if ($checkmob->num_rows != 0) { 
+
             $result = sendMessage([$mobile] , $message);
             if($result){
                 $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
@@ -34,6 +37,7 @@ try {
                 $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
 
             }
+        }
         }
         }else{
             $result = sendMessage([$mobile] , $message);
