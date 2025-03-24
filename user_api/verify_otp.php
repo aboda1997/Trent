@@ -29,7 +29,7 @@ try {
         $data = $checkmob->fetch_assoc();
         if ($checkmob->num_rows != 0 && $data['otp'] == $otp ) { 
 
-        if($is_change_password == true){
+        if($is_change_password == true && isset($data['new_password']) && $data['new_password'] !== null && $data['new_password'] !== ''){
             $new_password = mysqli_real_escape_string($rstate, $data['new_password']);
 
             $updateQuery = "UPDATE tbl_user 
@@ -37,7 +37,7 @@ try {
             WHERE mobile = " . intval($mobile);           
             $msg = "Password Updated Successufully";
 
-        }else if($is_change_password === false)  {
+        }else if($is_change_password === false && isset($data['new_mobile']) && $data['new_mobile'] !== null && $data['new_mobile'] !== '')  {
             $new_mobile = mysqli_real_escape_string($rstate, $data['new_mobile']);
             $updateQuery = "UPDATE tbl_user 
             SET verified = 1, mobile = '$new_mobile' , new_mobile = null
