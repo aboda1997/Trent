@@ -2,6 +2,8 @@
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
+
 header('Content-Type: application/json');
 
 try {
@@ -11,6 +13,8 @@ try {
 
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
+    }else if (!validateEgyptianPhoneNumber($mobile)['status']) {
+        $returnArr    = generateResponse('false',   validateEgyptianPhoneNumber($new_mobile)['response'], 400);
     } else {
         $checkmob   = $rstate->query("select * from tbl_user where status =1 and  mobile=" . $mobile . "");
 
