@@ -8,6 +8,10 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 header('Content-Type: application/json');
 
 try {
+  if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
   $data = json_decode(file_get_contents('php://input'), true);
 
   $mobile = isset($data['mobile']) ? $data['mobile'] : '';
