@@ -16,7 +16,7 @@ try {
     }else if (!validateEgyptianPhoneNumber($mobile)['status']) {
         $returnArr    = generateResponse('false',   validateEgyptianPhoneNumber($new_mobile)['response'], 400);
     } else {
-        $checkmob   = $rstate->query("select * from tbl_user where status =1 and  mobile=" . $mobile . "");
+        $checkmob   = $rstate->query("select * from tbl_user where status =1 and verified =1 and mobile=" . $mobile . "");
 
         $otp = rand(111111, 999999);
         $message = "Your OTP is: $otp";
