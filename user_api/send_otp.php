@@ -26,6 +26,7 @@ try {
                 $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
 
             }else{
+
             $result = sendMessage([$mobile] , $message);
             if($result){
                 $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
