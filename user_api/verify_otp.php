@@ -15,7 +15,7 @@ try {
     $data = json_decode(file_get_contents('php://input'), true);
     $otp = isset($data['otp']) ? $data['otp'] : '';
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
-    $is_change_password = isset($data['is_change_password']) ? $data['is_change_password'] : null;
+    $is_change_password = isset($data['is_change_password']) ? $data['is_change_password'] :false;
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
     }else  if ($otp == '') {
@@ -26,6 +26,7 @@ try {
     }
     else {
         $checkmob   = $rstate->query("select * from tbl_user where status = 1 and mobile=" . $mobile . "");
+        var_dump($checkmob);
         $data = $checkmob->fetch_assoc();
         if ($checkmob->num_rows != 0 && $data['otp'] == $otp ) { 
 
