@@ -15,7 +15,7 @@ try {
     $data = json_decode(file_get_contents('php://input'), true);
     $otp = isset($data['otp']) ? $data['otp'] : '';
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
-    $is_change_password = isset($data['is_change_password']) ? $data['is_change_password'] :false;
+    $is_change_password = isset($data['is_change_password']) ? $data['is_change_password'] :null;
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
     }else  if ($otp == '') {
@@ -29,7 +29,7 @@ try {
         $data = $checkmob->fetch_assoc();
         if ($checkmob->num_rows != 0 && $data['otp'] == $otp ) { 
 
-        if($is_change_password == true && isset($data['new_password']) && $data['new_password'] !== null && $data['new_password'] !== ''){
+        if($is_change_password === true && isset($data['new_password']) && $data['new_password'] !== null && $data['new_password'] !== ''){
             $new_password = mysqli_real_escape_string($rstate, $data['new_password']);
 
             $updateQuery = "UPDATE tbl_user 
