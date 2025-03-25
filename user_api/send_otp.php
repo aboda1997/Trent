@@ -27,11 +27,15 @@ try {
 
         $otp = rand(111111, 999999);
         $message = "Your OTP is: $otp";
+        $updateQuery = "UPDATE tbl_user 
+        SET otp = $otp, 
+        WHERE mobile = " . intval($mobile);
 
         if ($is_new_user) {
             if ($checkmob->num_rows != 0) {
                 $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
             } else {
+                $rstate->query($updateQuery);
 
                 $result = sendMessage([$mobile], $message);
                 if ($result) {
@@ -41,6 +45,11 @@ try {
                 }
             }
         } else {
+            $updateQuery = "UPDATE tbl_user 
+        SET otp = $otp, 
+        WHERE mobile = " . intval($mobile);
+
+            $rstate->query($updateQuery);
             $result = sendMessage([$mobile], $message);
             if ($result) {
                 $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
