@@ -147,7 +147,6 @@ function validateAndExtractCoordinates($url)
         ];
         
     }
-
     // Sort coordinates by frequency (most occurred first)
     usort($coordinatesCount, function ($a, $b) {
         return $b['count'] - $a['count']; // Sort in descending order of count
