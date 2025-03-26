@@ -18,6 +18,7 @@ try {
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
     $is_new_user = isset($data['is_new_user']) ? $data['is_new_user'] : true;
 
+    $uid = isset($data['uid']) ? $data['uid'] :null;
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
     } else if (!validateEgyptianPhoneNumber($mobile)['status']) {
@@ -28,9 +29,8 @@ try {
         $otp = rand(111111, 999999);
         $message = "Your OTP is: $otp";
         $updateQuery = "UPDATE tbl_user 
-        SET otp = $otp, 
-        WHERE mobile = " . intval($mobile);
-
+        SET otp = $otp 
+        WHERE mobile = " . intval($mobile) . " OR uid = " . intval($uid);
         if ($is_new_user) {
             if ($checkmob->num_rows != 0) {
                 $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
@@ -46,7 +46,7 @@ try {
             }
         } else {
             $updateQuery = "UPDATE tbl_user 
-        SET otp = $otp, 
+        SET otp = $otp
         WHERE mobile = " . intval($mobile);
 
             $rstate->query($updateQuery);
