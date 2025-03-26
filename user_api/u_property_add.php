@@ -26,6 +26,7 @@ try {
 	$google_maps_url = isset($_POST['maps_url']) ? $_POST['maps_url'] : '';
 	$period = isset($_POST['period']) ? $_POST['period'] : 'd';
 	$is_featured = isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
+	$cancellation_policy_id = isset($_POST['cancellation_policy_id']) ? intval($_POST['cancellation_policy_id']) : '';
 
 	$decodedIds = json_decode($facility, true);
 	$ids = array_filter(array_map('trim', $decodedIds));
@@ -83,7 +84,7 @@ try {
 	], JSON_UNESCAPED_UNICODE);
 
 
-	if ($user_id == '' or $period == '' or $government == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 	} else if (validateFacilityIds($facility) === false) {
 		$returnArr = generateResponse('false', "Facilities Ids must be valid!", 400);
@@ -91,7 +92,9 @@ try {
 		$returnArr = generateResponse('false', "Category Id must be valid!", 400);
 	} else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 		$returnArr = generateResponse('false', "Government Id must be valid!", 400);
-	} else if (!in_array($period, ['d', 'm'])) {
+	}else if (validateIdAndDatabaseExistance($cancellation_policy_id, 'tbl_cancellation_policy') === false) {
+		$returnArr = generateResponse('false', "Cancellation Policy  Id must be valid!", 400);
+	}else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 	} else {
 
@@ -200,8 +203,8 @@ try {
 
 			$table = "tbl_property";
 
-			$field_values = ["image", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-			$data_values = ["$imageUrlsString", "$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+			$field_values = ["image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+			$data_values = ["$imageUrlsString", $cancellation_policy_id,"$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
 			$h = new Estate();
 			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);

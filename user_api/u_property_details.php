@@ -151,6 +151,32 @@ if ($pro_id == ''  ) {
 			$fp['government'] = null;
 		}
 	}
+	if (is_null($sel['cancellation_policy_id'])) {
+		$fp['cancellation_policy'] = null;
+	} else {
+		$policies = $rstate->query("
+        SELECT *  
+        FROM tbl_cancellation_policy 
+        WHERE id=" . intval($sel['cancellation_policy_id']) . "
+    ");
+
+		if ($policies->num_rows > 0) {
+			$fp['cancellation_policy'] = [];
+
+			while ($tit = $policies->fetch_assoc()) {
+				// Combine the id and name into a single associative array
+				$fp['cancellation_policy'] = [
+					'id' => $tit['id'],
+					'title' => json_decode($tit['title'], true),
+					'description' => json_decode($tit['description'], true),
+					'is_recommended' => (bool)$tit['is_recommended']
+				];
+			}
+		} else {
+			// Handle case when the query fails
+			$fp['cancellation_policy'] = null;
+		}
+	}
 	$fac = $rstate->query("select img, id,
 	 JSON_UNQUOTE(title) as title 
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");

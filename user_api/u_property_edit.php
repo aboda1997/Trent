@@ -29,6 +29,7 @@ try {
 	$google_maps_url = isset($_POST['maps_url']) ? $_POST['maps_url'] : '';
 	$period = isset($_POST['period']) ? $_POST['period'] : 'd';
 	$is_featured = isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
+	$cancellation_policy_id = isset($_POST['cancellation_policy_id']) ? intval($_POST['cancellation_policy_id']) : '';
 
 	$title_en = $rstate->real_escape_string(isset($_POST['title_en']) ? $_POST['title_en'] : '');
 	$address_en = $rstate->real_escape_string(isset($_POST['address_en']) ? $_POST['address_en'] : '');
@@ -87,7 +88,7 @@ try {
 	// Validate the string
 
 
-	if ($user_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
 		$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
 	} else if (validateFacilityIds($facility) === 0) {
@@ -96,7 +97,9 @@ try {
 		$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
 	} else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 		$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
-	} else if (!in_array($period, ['d', 'm'])) {
+	}else if (validateIdAndDatabaseExistance($cancellation_policy_id, 'tbl_cancellation_policy') === false) {
+		$returnArr = generateResponse('false', "Cancellation Policy Id must be valid!", 400);
+	}	else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 	} else {
 
@@ -125,6 +128,7 @@ try {
 				"pbuysell" => $pbuysell,
 				"security_deposit" => $security_deposit,
 				"period" => $period,
+				"cancellation_policy_id" => $cancellation_policy_id,
 				"is_featured" => $is_featured,
 				"government" => $government,
 				"map_url" => $google_maps_url,
