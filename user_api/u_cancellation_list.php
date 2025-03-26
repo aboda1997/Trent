@@ -15,7 +15,7 @@ try {
 
         $pol['description'] = $row['description'];
         $pol['title'] = $row['title'];
-        $pol['is_recommended'] = $row['is_recommended'];
+        $pol['is_recommended'] = (bool)$row['is_recommended'];
         $c[] = $pol;
     }
     if (empty($c)) {
