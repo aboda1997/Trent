@@ -12,14 +12,18 @@ try {
 
     $setting = $rstate->query("select contact_us_email , contact_us_mobile	 	from tbl_setting")->fetch_assoc();
 
-    $data['contact_us_email'] = $setting['contact_us_email'];
-    $data['contact_us_mobile'] = $setting['contact_us_mobile'];
+    $data['email'] = $setting['contact_us_email'];
+    $data['mobile'] = $setting['contact_us_mobile'];
 
     $returnArr = generateResponse(
         'true',
         "Contact Us Data  Exist!",
         200,
-             $data
+    array(
+        "contact_us" => $data,
+
+    )
+             
     );
 
     echo $returnArr;
