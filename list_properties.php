@@ -170,11 +170,11 @@ FROM tbl_property
 
                           <?php if ($row['status'] == 1) { ?>
 
-                            <td><span class="badge badge-success">Publish</span></td>
+                            <td><span class="badge badge-success status-toggle">Publish</span></td>
                           <?php } else { ?>
 
                             <td>
-                              <span class="badge badge-danger">Unpublish</span>
+                              <span class="badge badge-danger status-toggle">Unpublish</span>
                             </td>
                           <?php } ?>
                           <?php
@@ -257,6 +257,7 @@ FROM tbl_property
   </div>
 </div>
 <!-- latest jquery-->
+ 
 <?php
 require 'include/footer.php';
 ?>

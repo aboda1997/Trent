@@ -10,10 +10,10 @@ try {
 
     $data = array();
 
-    $setting = $rstate->query("select contact_us_email , contact_us_mobile	 	from tbl_setting")->fetch_assoc();
+    $setting = $rstate->query("select contact_us_email , REPLACE(contact_us_mobile, ' ', '') as  contact_us_mobile	 	from tbl_setting")->fetch_assoc();
 
     $data['email'] = $setting['contact_us_email'];
-    $data['mobile'] = $setting['contact_us_mobile'];
+    $data['mobile'] =  str_replace(' ', '', $setting['contact_us_mobile']); 
 
     $returnArr = generateResponse(
         'true',

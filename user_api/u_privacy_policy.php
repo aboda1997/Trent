@@ -13,8 +13,16 @@ try {
 
     $setting = $rstate->query("select privacy_policy from tbl_setting")->fetch_assoc();
 
-    $data['privacy_policy'] = json_decode($setting['privacy_policy'], true)[$lang_code];
+    $policy = json_decode($setting['privacy_policy'], true);
 
+    // Check if decoding was successful and if the expected key exists
+    if (json_last_error() === JSON_ERROR_NONE && is_array($policy) && isset($policy[$lang_code])) {
+        $data['privacy_policy'] = $policy[$lang_code];
+    } else {
+        // Provide a default fallback value
+        $data['privacy_policy'] = "";
+    }
+    
     $returnArr = generateResponse(
         'true',
         "Privacy Policy Exist!",

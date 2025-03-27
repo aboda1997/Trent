@@ -12,9 +12,15 @@ try {
     $data = array();
 
     $setting = $rstate->query("select alert_text 	from tbl_setting")->fetch_assoc();
+    $alertText = json_decode($setting['alert_text'], true);
 
-    $data['alert_text'] = json_decode($setting['alert_text'], true)[$lang_code];
-
+    if (json_last_error() === JSON_ERROR_NONE && is_array($alertText) && isset($alertText[$lang_code])) {
+        $data['alert_text'] = $alertText[$lang_code];
+    } else {
+        // Provide a default fallback value
+        $data['alert_text'] = "";
+    }
+    
     $returnArr = generateResponse(
         'true',
         "Alert Text Exist!",
