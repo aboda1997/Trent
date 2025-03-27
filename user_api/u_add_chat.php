@@ -8,6 +8,11 @@ require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
+    // Handle preflight request
+    if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
 
     $sender_id = isset($_POST['sender_id']) ? $_POST['sender_id'] : 0;
     $receiver_id = isset($_POST['receiver_id']) ? $_POST['receiver_id'] : 0;
@@ -28,7 +33,7 @@ try {
         $returnArr    = generateResponse('false', "You Must Enter Different Two Users.", 400);
     } else if (!isset($_FILES['img']) && $message == '') {
         $returnArr    = generateResponse('false', "You Must Enter Chat Content!", 400);
-    } else if ($res->num_rows ==0 &&   validateIdAndDatabaseExistance($prop_id, 'tbl_property', "  add_user_id = " . $receiver_id . " ") === false) {
+    } else if ($res->num_rows == 0 &&   validateIdAndDatabaseExistance($prop_id, 'tbl_property', "  add_user_id = " . $receiver_id . " ") === false) {
         $returnArr    = generateResponse('false', "This property id is not associated with the target user. Please verify the correct user.", 400);
     } else {
         // Allowed file types for images
@@ -91,7 +96,7 @@ try {
             $encoded_message = json_encode([
                 "message" => $message,
 
-                ], JSON_UNESCAPED_UNICODE);
+            ], JSON_UNESCAPED_UNICODE);
             $field_values = ["sender_id", "receiver_id", "message", "img", "created_at", "chat_id"];
             $data_values = [$sender_id, $receiver_id, $encoded_message, $imageUrl, $created_at, $chat_id];
             $table = "tbl_messages";
