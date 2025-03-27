@@ -414,18 +414,18 @@ try {
             move_uploaded_file($_FILES["why_choose_us_img"]["tmp_name"], $target_file);
             $table = "tbl_why_choose_us";
             $field = array(
-                'title', 
+                'title',
                 'description',
                 'img',
                 'background_color'
 
             );
-            
+
             $table = "tbl_why_choose_us";
-            $data_values = array("$why_choose_us_title_json", "$why_choose_us_description_json", "$url" , "$why_choose_us_bg");
+            $data_values = array("$why_choose_us_title_json", "$why_choose_us_description_json", "$url", "$why_choose_us_bg");
 
             $h = new Estate();
-            $check = $h->restateinsertdata($field,$data_values ,  $table);
+            $check = $h->restateinsertdata($field, $data_values,  $table);
 
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Added Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
@@ -489,11 +489,10 @@ try {
                     $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Update Successfully!!", "message" => "Why choose Us Data section!", "action" => "list_why_choose_us.php");
                 }
             }
-        }
-        else if ($_POST['type'] == 'delete_why_choose_us') {
+        } else if ($_POST['type'] == 'delete_why_choose_us') {
             $id = $_POST['id'];
 
-            
+
             $table = "tbl_why_choose_us";
             $where = "where id=" . $id . "";
 
@@ -503,9 +502,7 @@ try {
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Deleted Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
             }
-        }
-        
-        elseif ($_POST["type"] == "add_category") {
+        } elseif ($_POST["type"] == "add_category") {
             $okey = $_POST["status"];
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
@@ -802,22 +799,22 @@ try {
             // Directories for storing images and videos
             $uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
             $uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
-			$latitude = null;
-			$longitude = null;
-			$res = expandShortUrl($google_maps_url);
+            $latitude = null;
+            $longitude = null;
+            $res = expandShortUrl($google_maps_url);
 
-			if ($res['status']) {
-				$cordinates = validateAndExtractCoordinates($res['response']);
-				if ($cordinates['status']) {
-					// Location Cordinations
-					$latitude = $cordinates['latitude'];
-					$longitude = $cordinates['longitude'];
-				} else {
-					$returnArr = generateResponse('false', $cordinates['response'],  400);
-				}
-			} else {
-				$returnArr = generateResponse('false', $res['response'], 400);
-			}
+            if ($res['status']) {
+                $cordinates = validateAndExtractCoordinates($res['response']);
+                if ($cordinates['status']) {
+                    // Location Cordinations
+                    $latitude = $cordinates['latitude'];
+                    $longitude = $cordinates['longitude'];
+                } else {
+                    $returnArr = generateResponse('false', $cordinates['response'],  400);
+                }
+            } else {
+                $returnArr = generateResponse('false', $res['response'], 400);
+            }
 
 
             // Handle image upload
@@ -886,8 +883,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["image", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["image", "period", "is_featured", "security_deposit", "government", "map_url", "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -995,22 +992,22 @@ try {
             // Directories for storing images and videos
             $uploadDirImages = dirname(dirname(__FILE__)) . "/images/property/";
             $uploadDirVideos = dirname(dirname(__FILE__)) . "/videos/property/";
-			$latitude = null;
-			$longitude = null;
-			$res = expandShortUrl($google_maps_url);
+            $latitude = null;
+            $longitude = null;
+            $res = expandShortUrl($google_maps_url);
 
-			if ($res['status']) {
-				$cordinates = validateAndExtractCoordinates($res['response']);
-				if ($cordinates['status']) {
-					// Location Cordinations
-					$latitude = $cordinates['latitude'];
-					$longitude = $cordinates['longitude'];
-				} else {
-					$returnArr = generateResponse('false', $cordinates['response'],  400);
-				}
-			} else {
-				$returnArr = generateResponse('false', $res['response'], 400);
-			}
+            if ($res['status']) {
+                $cordinates = validateAndExtractCoordinates($res['response']);
+                if ($cordinates['status']) {
+                    // Location Cordinations
+                    $latitude = $cordinates['latitude'];
+                    $longitude = $cordinates['longitude'];
+                } else {
+                    $returnArr = generateResponse('false', $cordinates['response'],  400);
+                }
+            } else {
+                $returnArr = generateResponse('false', $res['response'], 400);
+            }
 
 
             // Handle image upload
@@ -1075,8 +1072,8 @@ try {
             $table = "tbl_property";
 
 
-            $field_values = ["security_deposit",  "period", "is_featured", "government", "map_url" , "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$security_deposit", "$period", "$featured", "$government","$google_maps_url" ,"$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+            $field_values = ["security_deposit",  "period", "is_featured", "government", "map_url", "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+            $data_values = ["$security_deposit", "$period", "$featured", "$government", "$google_maps_url", "$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
             $combinedArray = array_combine($field_values, $data_values);
             if (!empty($imageUrls)) {
@@ -1100,6 +1097,24 @@ try {
                     "Result" => "true",
                     "title" => "Property Update Successfully!!",
                     "message" => "Property section!",
+                    "action" => "list_properties.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "toggle_status") {
+            $okey = $_POST["status"];
+
+            $table = "tbl_property";
+            $field = ["status" => $okey];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Status Updated Successfully!!",
+                    "message" => "Status section!",
                     "action" => "list_properties.php",
                 ];
             }
