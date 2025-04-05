@@ -1321,7 +1321,7 @@ try {
         } elseif ($_POST["type"] == "edit_guidelines") {
             $id = $_POST["id"];
             $guidelines_ar = $_POST["guidelines_ar"];
-            $guidelines_ar = $_POST["guidelines_en"];
+            $guidelines_en = $_POST["guidelines_en"];
             $guidelines_json = json_encode([
                 "en" => $guidelines_en,
                 "ar" => $guidelines_ar
