@@ -109,7 +109,7 @@ try {
     if (isset($returnArr)) {
         echo $returnArr;
     } else {
-        $returnArr    = generateResponse('true', "Chat Added Successfully", 200, array(
+        $returnArr    = generateResponse('true', "Chat Added Successfully", 201, array(
             "chat_id" => $chat_id,
             "message_id" => $message_id
         ));

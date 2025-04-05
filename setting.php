@@ -1,6 +1,6 @@
 <?php
 require 'include/main_head.php';
-if ($_SESSION['stype'] == 'Staff') {
+if ($_SESSION['restatename'] == 'Staff') {
     header('HTTP/1.1 401 Unauthorized');
 
 
@@ -177,13 +177,54 @@ if ($_SESSION['stype'] == 'Staff') {
                                             </div>
                                         </div>
 
+                                        <div class="form-group mb-3 col-12">
+                                            <h5 class="h5_set"><i class="fa fa-user-plus" aria-hidden="true"></i> Contact Information</h5>
+                                        </div>
+                                        <div class="form-group mb-3 col-4">
+                                            <label><span class="text-danger">*</span> Contact Email </label>
 
+                                            <input type="text" class="form-control " placeholder="Enter contact email" value="<?php echo $set['contact_us_email']; ?>" name="cemail" required="">
+                                            <div class="invalid-feedback" id="cemail_feedback" style="display: none;">
+                                                <?= $lang_en['setting_cemail'] ?>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-3 col-4">
+                                            <label><span class="text-danger">*</span> Contact Mobile </label>
 
+                                            <input type="text" class="form-control " placeholder="Enter Contact mobile" value="<?php echo $set['contact_us_mobile']; ?>" name="cmobile" required="">
+                                            <div class="invalid-feedback" id="cmobile_feedback" style="display: none;">
+                                                <?= $lang_en['setting_cmobile'] ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3 col-12">
+                                            <h5 class="h5_set"><i class="fa fa-user-plus" aria-hidden="true"></i> Alert Text</h5>
+                                        </div>
+                                        <?php
+                                        $alert = json_decode($set['alert_text'], true);
+                                        ?>
+                                        <div class="form-group mb-3 col-4">
+                                            <label><span class="text-danger">*</span> Alert Text (English) </label>
+
+                                            <input type="text" class="form-control " placeholder="Enter Alert Text (English)" value="<?php echo $alert['en'] ?? ''; ?>" name="ealert" required="">
+                                            <div class="invalid-feedback" id="ealert_feedback" style="display: none;">
+                                                <?= $lang_en['setting_ealert'] ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3 col-4">
+                                            <label><span class="text-danger">*</span> Alert Text (Arabic) </label>
+
+                                            <input type="text" class="form-control " placeholder="Enter Alert Text (Arabic)" value="<?php echo $alert['ar'] ?? ''; ?>" name="aalert" required="">
+                                            <div class="invalid-feedback" id="aalert_feedback" style="display: none;">
+                                                <?= $lang_en['setting_aalert'] ?>
+                                            </div>
+                                        </div>
 
 
 
                                         <div class="col-12">
-                                            <button name="edit_setting" class="btn btn-primary mb-2">Edit Setting</button>
+                                            <button onclick="return validateForm(true)"  name="edit_setting" class="btn btn-primary mb-2">Edit Setting</button>
                                         </div>
                                     </div>
                                 </form>
@@ -226,6 +267,16 @@ if ($_SESSION['stype'] == 'Staff') {
         return emailPattern.test(email);
     }
 
+    function validateEgyptianPhone(phone) {
+        // Remove spaces, dashes, or any non-numeric characters
+        phone = phone.replace(/\s|-/g, "");
+
+        // Egyptian phone number regex pattern
+        let regex = /^(?:\+20|0)?1[0-2,5]\d{8}$/;
+
+        return regex.test(phone);
+    }
+
     function getCurrentLanguage() {
         // Get the active tab
         /// const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
@@ -242,7 +293,12 @@ if ($_SESSION['stype'] == 'Staff') {
         });
         const webname = document.querySelector('input[name="webname"]').value;
         const tax = document.querySelector('input[name="tax"]').value;
+        const ealert = document.querySelector('input[name="ealert"]').value;
+        const aalert = document.querySelector('input[name="aalert"]').value;
+
         const nemail = document.querySelector('input[name="nemail"]').value;
+        const cemail = document.querySelector('input[name="cemail"]').value;
+        const cmobile = document.querySelector('input[name="cmobile"]').value;
         const perfees = document.querySelector('input[name="perfees"]').value;
         const mfees = document.querySelector('input[name="mfees"]').value;
         const ofees = document.querySelector('input[name="ofees"]').value;
@@ -271,7 +327,14 @@ if ($_SESSION['stype'] == 'Staff') {
             document.getElementById('name_feedback').style.display = 'block';
             isValid = false;
         }
-
+        if (!ealert) {
+            document.getElementById('ealert_feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!aalert) {
+            document.getElementById('aalert_feedback').style.display = 'block';
+            isValid = false;
+        }
         if (!tax || !validateRange(tax, 1, 100)) {
             document.getElementById('tax_feedback').style.display = 'block';
             isValid = false;
@@ -286,6 +349,16 @@ if ($_SESSION['stype'] == 'Staff') {
         if (!validateEmail(nemail)) {
             document.getElementById('nemail_feedback').style.display = 'block';
             isValid = false;
+        }
+        if (!cemail || !validateEmail(cemail)) {
+            document.getElementById('cemail_feedback').style.display = 'block';
+            isValid = false;
+
+        }
+        if (!cmobile || !validateEgyptianPhone(cmobile)) {
+            document.getElementById('cmobile_feedback').style.display = 'block';
+            isValid = false;
+
         }
         if (!perfees || !validateRange(perfees, 1, 100)) {
             document.getElementById('perfees_feedback').style.display = 'block';

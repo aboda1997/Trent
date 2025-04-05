@@ -134,7 +134,7 @@ FROM tbl_property
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $row['price'] ." EGP" ?>
+                            <?php echo $row['price'] . " EGP" ?>
                           </td>
 
                           <td class="align-middle">
@@ -168,15 +168,15 @@ FROM tbl_property
                             <?php echo $row['plimit']; ?>
                           </td>
 
-                          <?php if ($row['status'] == 1) { ?>
+                          <td>
+                            <span class="badge status-toggle <?php echo $row['status'] ? 'badge-success' : 'badge-danger'; ?>"
+                              data-id="<?php echo $row['id']; ?>"
+                              data-status="<?php echo $row['status']; ?>"
+                              style="cursor: pointer;">
+                              <?php echo $row['status']  ? "Publish" : "Unpublish"; ?>
+                            </span>
+                          </td>
 
-                            <td><span class="badge badge-success status-toggle">Publish</span></td>
-                          <?php } else { ?>
-
-                            <td>
-                              <span class="badge badge-danger status-toggle">Unpublish</span>
-                            </td>
-                          <?php } ?>
                           <?php
                           if ($_SESSION['restatename'] == 'Staff') {
                             if (in_array('Update', $property_per)) {
@@ -190,14 +190,7 @@ FROM tbl_property
                                         <rect width="30" height="30" rx="15" fill="#79F9B4" />
                                         <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
                                       </svg></a>
-                                    <?php if ($row['pbuysell'] != 1) {
-                                      if ($row['is_sell'] != 1) {
-                                    ?>
 
-                                        <a href="#" data-id="<?php echo $row['id']; ?>" class="drop" data-status="1" data-type="update_status" coll-type="proper_sell" style="float: none; margin: 5px;"><img src="images/9385054.png" data-toggle="tooltip" title="sell property done" width="30px" /></a>
-                                    <?php } else {
-                                      }
-                                    } ?>
                                   </div>
 
                                 </div>
@@ -214,14 +207,7 @@ FROM tbl_property
                                       <rect width="30" height="30" rx="15" fill="#79F9B4" />
                                       <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
                                     </svg></a>
-                                  <?php if ($row['pbuysell'] != 1) {
-                                    if ($row['is_sell'] != 1) {
-                                  ?>
 
-                                      <a href="#" data-id="<?php echo $row['id']; ?>" class="drop" data-status="1" data-type="update_status" coll-type="proper_sell" style="float: none; margin: 5px;"><img src="images/9385054.png" data-toggle="tooltip" title="sell property done" width="30px" /></a>
-                                  <?php } else {
-                                    }
-                                  } ?>
                                 </div>
 
                               </div>
@@ -257,7 +243,42 @@ FROM tbl_property
   </div>
 </div>
 <!-- latest jquery-->
- 
+<script>
+  $(document).ready(function() {
+    $(".status-toggle").click(function() {
+      let $this = $(this);
+      let propertyId = $this.data("id");
+      let currentStatus = $this.data("status");
+      let newStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: {
+          id: propertyId,
+          type: "toggle_status",
+          status: newStatus
+        },
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            // Toggle text and badge color
+            $this.text(newStatus === 1 ? "Publish" : "Unpublish");
+            $this.data("status", newStatus); // Update status in data attribute
+
+            // Remove previous badge class and add new one
+            $this.removeClass("badge-success badge-danger")
+              .addClass(newStatus === 1 ? "badge-success" : "badge-danger");
+
+          } else {
+            alert("Failed to update status.");
+          }
+        }
+      });
+    });
+  });
+</script>
 <?php
 require 'include/footer.php';
 ?>

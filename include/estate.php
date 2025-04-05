@@ -82,6 +82,27 @@ $cols = array();
 $result=$GLOBALS['rstate']->query($sql);
     return $result;
   }
+  function restateupdateData_Api($field, $table, $where , $where_conditions)
+  {
+    // Prepare columns and values (excluding NULL values)
+    $cols = [];
+    $values = [];
+    foreach ($field as $key => $val) {
+        if ($val !== NULL) {
+            $cols[] = "$key = ?";
+            $values[] = $val;
+        }
+    }
+      // Build the query
+      $sql = "UPDATE $table SET " . implode(', ', $cols) . " $where";
+      $combined =array_merge($values, $where_conditions);
+      $stmt = $GLOBALS['rstate']->prepare($sql);
+      
+      // Execute the query
+      $result = $stmt->execute($combined);
+      
+      return $result;
+  }
   
   
   

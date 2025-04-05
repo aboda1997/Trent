@@ -155,6 +155,7 @@ return [
     'Select_Property_Type'       => 'Select Property Type',
     'Select_Government'          => 'Select Government',
     'Select_Owner'          => 'Select Owner',
+    'Select_Privacy_Policy'          => 'Select Privacy Policy',
     'Add_Property'               => 'Add Property',
     'Edit_Property'              => 'Edit Property',
     'Property_Status'            => 'Property Status',
@@ -181,6 +182,7 @@ return [
     'prop_mapurl' => 'please enter Property Map Url ',
     'prop_governemnt' => 'please enter Property government',
     'prop_owner' => 'please enter Property owner',
+    'prop_privacy' => 'please enter Property Privacy Policy',
     'prop_type' => 'please enter Property type',
     'prop_sqft' => 'please enter Property  sqft',
     'prop_bathroom' => 'please enter Property total bathrooms',
@@ -253,12 +255,49 @@ return [
     'setting_ofees' => 'Please Enter Valid Owner Fees(Percent)',
     'setting_pfees' => 'Please Enter Valid Property manager Fees(Percent)',
 
+    'setting_cemail' => 'Please Enter Valid Email Contact',
+    'setting_cmobile' => 'Please Enter Valid mobile number for Contact',
+    'setting_aalert' => 'Please Enter alert text in arabic',
+    'setting_ealert' => 'Please Enter alert text in english',
+
+    'privacy_policy' => 'Privacy Policy',
+    'privacy_feedback' => 'Please Enter Privacy Policy ',
+    'edit_privacy' => 'Edit Privacy',
+    'Enter_Policy' => 'Enter Privacy Policy (HTML supported)',
+
+
+    'policy_title' => " Policy Title",
+    'policy_description' => " Policy Description",
+    'policy_description_' => "Please enter policy Description",
+    'policy_title_' => "Please enter policy Title",
+    'is_recommended' => 'Is Recommended', 
+    'is_recommended_' => 'please choose Is Recommended',
+    'yes' => 'Yes', 
+    'no' => 'No',
+    'add_privacy_policy' => 'Add Privacy Policy' ,
+    'edit_privacy_policy' => 'Edit Privacy Policy' ,
+    'privacy_status' => 'Privacy Status',
+
+    'policy_status' => 'please enter Policy status',
+    'privacy_policy_management'  => 'Privacy Policy  List Management',
+
+
+    'terms_and_conditions' => 'Terms And Conditions',
+    'terms_feedback' => 'Please Enter Terms And Conditions',
+    'edit_terms' => 'Edit Terms And Conditions',
+    'Enter_Terms' => 'Enter Terms And Conditions (HTML supported)',
 
 
 
+    'confidence_booking' => 'Confidence Booking',
+    'confidence_booking_feedback' => 'Please Enter Confidence Booking',
+    'edit_confidence_booking' => 'Edit Confidence Booking',
+    'Enter_Confidence_Booking' => 'Enter Confidence Booking (HTML supported)',
 
-
-
+    'guidelines' => 'Guidelines',
+    'guidelines_feedback' => 'Please Enter Guidelines',
+    'edit_guidelines' => 'Edit Guidelines',
+    'Enter_Guidelines' => 'Enter Guidelines (HTML supported)',
 
 
 

@@ -52,7 +52,7 @@ $lang_en = load_specific_langauage('en');
         }
 
         .page-wrapper .page-header {
-            z-index: 0;
+            z-index: 1;
 
         }
 
@@ -103,6 +103,7 @@ $lang_en = load_specific_langauage('en');
         var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
         var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
        function submitform(isValid){
+
         $(document).on('submit', 'form', function(event) {
             // Disable all submit buttons to prevent multiple submissions
             $(':input[type="submit"]').prop('disabled', true);

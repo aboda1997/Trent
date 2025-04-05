@@ -150,9 +150,7 @@ if (isset($_GET['id'])) {
 																<?= $lang_en['Property_Description'] ?>
 
 															</label>
-															<textarea class="form-control" rows="10" name="description_en" style="resize: none;">
-															<?php echo trim($description['en']); ?>
-															</textarea>
+															<textarea class="form-control" rows="10" name="description_en" style="resize: none;"><?php echo trim(htmlspecialchars(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $description['en']), ENT_QUOTES, 'UTF-8')); ?></textarea>
 														</div>
 													</div>
 
@@ -162,8 +160,7 @@ if (isset($_GET['id'])) {
 																<?= $lang_en['Guest_Rules'] ?>
 
 															</label>
-															<textarea class="form-control" rows="10" name="guest_rules_en" required="" style="resize: none;">
-															<?php echo trim($guest_rules['en']); ?>
+															<textarea class="form-control" rows="10" name="guest_rules_en" required="" style="resize: none;"><?php echo ltrim(htmlspecialchars(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $guest_rules['en']), ENT_QUOTES, 'UTF-8')); ?>
 
 															</textarea>
 															<div class="invalid-feedback" id="prop_guest_rules_en_feedback" style="display: none;">
@@ -270,9 +267,7 @@ if (isset($_GET['id'])) {
 																	<?= $lang_ar['Property_Description'] ?>
 
 																</label>
-																<textarea class="form-control" rows="10" name="description_ar" style="resize: none;">
-
-																<?php echo trim($description['ar']); ?>
+																<textarea class="form-control" rows="10" name="description_ar" style="resize: none;"><?php echo ltrim(htmlspecialchars(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $description['ar']), ENT_QUOTES, 'UTF-8')); ?>
 
 																</textarea>
 															</div>
@@ -284,9 +279,7 @@ if (isset($_GET['id'])) {
 																	<?= $lang_ar['Guest_Rules'] ?>
 
 																</label>
-																<textarea class="form-control" rows="10" name="guest_rules_ar" required="" style="resize: none;">
-																<?php echo trim($guest_rules['ar']); ?>
-
+																<textarea class="form-control" rows="10" name="guest_rules_ar" required="" style="resize: none;"><?php echo ltrim(htmlspecialchars(preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $guest_rules['ar']), ENT_QUOTES, 'UTF-8')); ?>
 																</textarea>
 																<div class="invalid-feedback" id="prop_guest_rules_ar_feedback" style="display: none;">
 																	<?= $lang_ar['prop_guest_rules'] ?>
@@ -747,6 +740,36 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_policy">
+																	<?= $lang_en['Select_Privacy_Policy'] ?>
+
+																</label>
+																<select
+																	name="propPrivacy" id="privacy" class=" form-control" required>
+																	<option value="" disabled selected>
+																		<?= $lang_en['Select_Privacy_Policy'] ?>
+																	</option>
+																	<?php
+																	$zone = $rstate->query("select * from tbl_cancellation_policy");
+																	while ($row = $zone->fetch_assoc()) {
+																		$title = json_decode($row['title'], true);
+																		$isSelected = in_array($row['id'],  explode(',', $data['cancellation_policy_id'])) ? 'selected' : '';
+
+																	?>
+																		<option value="<?php echo $row['id']; ?>"
+																			<?php echo $isSelected; ?>><?php echo  $title[$lang_code]; ?></option>
+																	<?php
+																	}
+																	?>
+																</select>
+																<div class="invalid-feedback" id="privacy_feedback" style="display: none;">
+																	<?= $lang_en['prop_privacy'] ?>
+
+																</div>
+															</div>
+														</div>
 
 													</div>
 												</div>
@@ -1307,6 +1330,34 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+															<div class="form-group mb-3">
+																<label id="prop_policy">
+																	<?= $lang_en['Select_Privacy_Policy'] ?>
+
+																</label>
+																<select
+																	name="propPrivacy" id="privacy" class=" form-control" required>
+																	<option value="" disabled selected>
+																		<?= $lang_en['Select_Privacy_Policy'] ?>
+																	</option>
+																	<?php
+																	$zone = $rstate->query("select * from tbl_cancellation_policy");
+																	while ($row = $zone->fetch_assoc()) {
+																		$title = json_decode($row['title'], true);
+
+																	?>
+																		<option value="<?php echo $row['id']; ?>"><?php echo $title[$lang_code]; ?></option>
+																	<?php
+																	}
+																	?>
+																</select>
+																<div class="invalid-feedback" id="privacy_feedback" style="display: none;">
+																	<?= $lang_en['prop_privacy'] ?>
+
+																</div>
+															</div>
+														</div>
 
 													</div>
 												</div>
@@ -1337,6 +1388,12 @@ if (isset($_GET['id'])) {
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
+
+		const $selectPrivacy = $('#privacy');
+		$selectPrivacy.select2({
+			placeholder: langDataEN.Select_Privacy_Policy,
+			allowClear: true
+		});
 
 		const $selectOwner = $('#owner');
 		$selectOwner.select2({
@@ -1413,6 +1470,7 @@ if (isset($_GET['id'])) {
 		const ptype = document.querySelector('select[name="ptype"]').value;
 		const pgov = document.querySelector('select[name="pgov"]').value;
 		const propowner = document.querySelector('select[name="propowner"]').value;
+		const propPrivacy = document.querySelector('select[name="propPrivacy"]').value;
 		const propSecurity = document.querySelector('input[name="prop_security"]').value;
 		const plimit = document.querySelector('input[name="plimit"]').value;
 		const mapurl = document.querySelector('input[name="mapurl"]').value;
@@ -1533,7 +1591,10 @@ if (isset($_GET['id'])) {
 			document.getElementById('owner_feedback').style.display = 'block';
 			isValid = false;
 		}
-
+		if (!propPrivacy) {
+			document.getElementById('privacy_feedback').style.display = 'block';
+			isValid = false;
+		}
 		
 
 
@@ -1613,6 +1674,7 @@ if (isset($_GET['id'])) {
 		document.getElementById('facility_feedback').textContent = langData.prop_facility;
 		document.getElementById('government_feedback').textContent = langData.prop_governemnt;
 		document.getElementById('owner_feedback').textContent = langData.prop_owner;
+		document.getElementById('privacy_feedback').textContent = langData.prop_privacy;
 		document.getElementById('prop_type_feedback').textContent = langData.prop_type;
 		document.getElementById('limit_feedback').textContent = langData.property_limit;
 		document.getElementById('mapurl_feedback').textContent = langData.prop_mapurl;
@@ -1631,6 +1693,7 @@ if (isset($_GET['id'])) {
 		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
 		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
 		document.getElementById('prop_owner').textContent = langData.Select_Owner;
+		document.getElementById('prop_policy').textContent = langData.Select_Privacy_Policy;
 		document.getElementById('prop_type').textContent = langData.Select_Property_Type;
 		document.getElementById('prop_security').textContent = langData.security_deposit;
 		document.getElementById('limitlable').textContent = langData.total_allowed_persons;
@@ -1682,6 +1745,11 @@ if (isset($_GET['id'])) {
 			allowClear: true
 		});
 
+		$('#privacy').select2('destroy');
+		$('#privacy').select2({
+			placeholder: langData.Select_Privacy_Policy,
+			allowClear: true
+		});
 		$('#product').select2('destroy');
 		$('#product').select2({
 			placeholder: langData.Select_Property_Facility,

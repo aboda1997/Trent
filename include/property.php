@@ -333,9 +333,17 @@ try {
             $pfees = $_POST['pfees'];
             $gmode = $_POST['gmode'];
             $show_property = $_POST['show_property'];
+            $cmobile = $_POST['cmobile'];
+            $cemail = $_POST['cemail'];
+            $alert_en = mysqli_real_escape_string($rstate, $_POST['ealert']);
+            $alert_ar = mysqli_real_escape_string($rstate, $_POST['aalert']);
 
             $mfees = $_POST['mfees'];
             $perfees = $_POST['perfees'];
+            $alert_json = json_encode([
+                "en" => $alert_en,
+                "ar" => $alert_ar
+            ], JSON_UNESCAPED_UNICODE);
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -357,6 +365,9 @@ try {
                     'show_property' => $show_property,
                     'gateway_percent_fees' => $perfees,
                     'gateway_money_fees' => $mfees,
+                    'contact_us_email' => $cemail,
+                    'contact_us_mobile' => $cmobile,
+                    'alert_text' => $alert_json,
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -376,8 +387,9 @@ try {
                     'show_property' => $show_property,
                     'gateway_percent_fees' => $perfees,
                     'gateway_money_fees' => $mfees,
-
-
+                    'contact_us_email' => $cemail,
+                    'contact_us_mobile' => $cmobile,
+                    'alert_text' => $alert_json,
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -501,6 +513,76 @@ try {
 
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Deleted Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
+            }
+        } else if ($_POST['type'] == 'add_cancallation_policy') {
+
+            $status = $_POST['status'];
+            $is_recommended = $_POST['is_recommended'];
+            $title_en = $_POST['policy_title_en'];
+            $title_ar = $_POST['policy_title_ar'];
+            $description_ar = htmlspecialchars(trim($_POST['policy_description_ar']));
+            $description_en = htmlspecialchars(trim($_POST['policy_description_en']));
+
+            $description_json = json_encode([
+                "en" => $description_en,
+                "ar" => $description_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $title_json = json_encode([
+                "en" => $title_en,
+                "ar" => $title_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $field = array(
+                'title',
+                'description',
+                'is_recommended',
+                'status'
+            );
+
+            $table = "tbl_cancellation_policy";
+            $data_values = array("$title_json", "$description_json", "$is_recommended", "$status");
+
+            $h = new Estate();
+            $check = $h->restateinsertdata($field, $data_values,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Cancellation Policy Added Successfully!!", "message" => "Cancellation Policy section!", "action" => "list_policies.php");
+            }
+        } else if ($_POST['type'] == 'edit_cancallation_policy') {
+            $id = $_POST['id'];
+
+            $status = $_POST['status'];
+            $is_recommended = $_POST['is_recommended'];
+            $title_en = $_POST['policy_title_en'];
+            $title_ar = $_POST['policy_title_ar'];
+            $description_ar = htmlspecialchars(trim($_POST['policy_description_ar']));
+            $description_en = htmlspecialchars(trim($_POST['policy_description_en']));
+
+            $description_json = json_encode([
+                "en" => $description_en,
+                "ar" => $description_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $title_json = json_encode([
+                "en" => $title_en,
+                "ar" => $title_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_cancellation_policy";
+            $field = array(
+
+                'title' => $title_json,
+                'description' => $description_json,
+                'is_recommended' => $is_recommended,
+                'status' => $status,
+
+            );
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Cancellation Policy Updated Successfully!!", "message" => "Cancellation Policy section!", "action" => "list_policies.php");
             }
         } elseif ($_POST["type"] == "add_category") {
             $okey = $_POST["status"];
@@ -720,6 +802,7 @@ try {
             $bathroom = $_POST['bathroom'];
             $sqft = $_POST['sqft'];
             $user_id = '0';
+            $policy = $_POST['propPrivacy'];
 
             $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
@@ -883,8 +966,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["image", "period", "is_featured", "security_deposit", "government", "map_url", "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$imageUrlsString", "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["image", "cancellation_policy_id" , "period", "is_featured", "security_deposit", "government", "map_url", "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$imageUrlsString", "$policy" ,  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -912,6 +995,7 @@ try {
             $beds = $_POST['beds'];
             $bathroom = $_POST['bathroom'];
             $sqft = $_POST['sqft'];
+            $policy = $_POST['propPrivacy'];
             $user_id = '0';
 
             $listing_date = date("Y-m-d H:i:s");
@@ -1072,8 +1156,8 @@ try {
             $table = "tbl_property";
 
 
-            $field_values = ["security_deposit",  "period", "is_featured", "government", "map_url", "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$security_deposit", "$period", "$featured", "$government", "$google_maps_url", "$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+            $field_values = ["security_deposit", "cancellation_policy_id" ,  "period", "is_featured", "government", "map_url", "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+            $data_values = ["$security_deposit",  "$policy",  "$period", "$featured", "$government", "$google_maps_url", "$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
             $combinedArray = array_combine($field_values, $data_values);
             if (!empty($imageUrls)) {
@@ -1102,6 +1186,7 @@ try {
             }
         } elseif ($_POST["type"] == "toggle_status") {
             $okey = $_POST["status"];
+            $id = $_POST["id"];
 
             $table = "tbl_property";
             $field = ["status" => $okey];
@@ -1116,6 +1201,146 @@ try {
                     "title" => "Status Updated Successfully!!",
                     "message" => "Status section!",
                     "action" => "list_properties.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "toggle_approval") {
+            $okey = $_POST["status"];
+            $id = $_POST["id"];
+
+            $table = "tbl_property";
+            $field = ["is_approved" => $okey];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Approval Updated Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending_properties.php",
+                ];
+            }
+        } 
+        elseif ($_POST["type"] == "update_approval_reason") {
+            $okey = $_POST["status"];
+            $id = $_POST["id"];
+
+            $table = "tbl_property";
+            $field = ["is_approved" => $okey];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "APProval Updated Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending_properties.php",
+                ];
+            }
+        }
+        elseif ($_POST["type"] == "edit_privacy") {
+            $id = $_POST["id"];
+            $privacy_ar = $_POST["privacy_ar"];
+            $privacy_en = $_POST["privacy_en"];
+            $privacy_json = json_encode([
+                "en" => $privacy_en,
+                "ar" => $privacy_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+
+            $table = "tbl_setting";
+            $field = ["privacy_policy" => $privacy_json];
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Privacy Updated Successfully!!",
+                    "message" => "Privacy section!",
+                    "action" => "add_privacy_policy.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "edit_confidence_booking") {
+            $id = $_POST["id"];
+            $confidence_booking_ar = $_POST["confidence_booking_ar"];
+            $confidence_booking_en = $_POST["confidence_booking_en"];
+            $confidence_booking_json = json_encode([
+                "en" => $confidence_booking_en,
+                "ar" => $confidence_booking_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+
+            $table = "tbl_setting";
+            $field = ["confidence_booking" => $confidence_booking_json];
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Confidence Booking Updated Successfully!!",
+                    "message" => "Confidence Booking section!",
+                    "action" => "add_confidence_booking.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "edit_terms") {
+            $id = $_POST["id"];
+            $terms_ar = $_POST["terms_ar"];
+            $terms_en = $_POST["terms_en"];
+            $terms_json = json_encode([
+                "en" => $terms_en,
+                "ar" => $terms_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_setting";
+            $field = ["terms_and_conditions" =>$terms_json];
+         
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Terms And Conditions  Updated Successfully!!",
+                    "message" => "Terms And Conditions  section!",
+                    "action" => "add_terms_and_conditions.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "edit_guidelines") {
+            $id = $_POST["id"];
+            $guidelines_ar = $_POST["guidelines_ar"];
+            $guidelines_ar = $_POST["guidelines_en"];
+            $guidelines_json = json_encode([
+                "en" => $guidelines_en,
+                "ar" => $guidelines_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+
+            $table = "tbl_setting";
+            $field = ["guidelines" => $guidelines_json];
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Guidelines Updated Successfully!!",
+                    "message" => "guidelines section!",
+                    "action" => "add_guidelines.php",
                 ];
             }
         } elseif ($_POST["type"] == "add_facility") {
@@ -1384,21 +1609,6 @@ try {
                         "action" => "list_slider.php",
                     ];
                 }
-            }
-        } elseif ($_POST["type"] == "coupon_delete") {
-            $id = $_POST["id"];
-            $table = "tbl_coupon";
-            $where = "where id=" . $id . "";
-            $h = new Estate();
-            $check = $h->restateDeleteData($where, $table);
-            if ($check == 1) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Coupon Code Delete Successfully!!",
-                    "message" => "Coupon Code section!",
-                    "action" => "list_coupon.php",
-                ];
             }
         } elseif ($_POST["type"] == "com_payout") {
             $payout_id = $_POST["payout_id"];

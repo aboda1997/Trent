@@ -245,12 +245,43 @@ return [
     'setting_mfees' => 'يرجى إدخال رسوم بوابة الدفع (مبلغ بالعملة جنيه مصري)',
     'setting_ofees' => 'يرجى إدخال رسوم المالك',
     'setting_pfees' => 'يرجى إدخال رسوم مدير العقار',
+    'setting_cemail' => 'الرجاء إدخال بريد إلكتروني صالح للاتصال',
+    'setting_cmobile' => 'الرجاء إدخال رقم هاتف محمول صالح للاتصال',
+    'setting_aalert' => 'الرجاء إدخال نص التنبيه باللغة العربية',
+    'setting_ealert' => 'الرجاء إدخال نص التنبيه باللغة الإنجليزية',
+
+    'privacy_policy' => 'سياسة الخصوصية',
+    'privacy_feedback' => 'الرجاء إدخال سياسة الخصوصية',
+    'edit_privacy' => 'تعديل سياسة الخصوصية',
+    'Enter_Policy' => 'أدخل سياسة الخصوصية (يدعم HTML)',
 
 
+    'policy_title' => "عنوان السياسة",
+    'policy_description' => "وصف السياسة",
+    'policy_description_' => "الرجاء إدخال وصف السياسة",
+    'policy_title_' => "الرجاء إدخال عنوان السياسة",
+    'is_recommended' => 'موصى به',
+    'is_recommended_' => 'الرجاء اختيار إذا كان موصى به',
+    'yes' => 'نعم',
+    'no' => 'لا',
+    'add_privacy_policy' => 'إضافة سياسة الخصوصية',
+    'edit_privacy_policy' => 'تعديل سياسة الخصوصية',
+    'policy_status' => 'الرجاء إدخال حالة السياسة',
+    'Select_Privacy_Policy' => 'اختر سياسة الخصوصية',
+    'prop_privacy' => 'الرجاء إدخال سياسة خصوصية العقار',
 
+    'terms_and_conditions' => 'الشروط والأحكام',  
+'terms_feedback' => 'الرجاء إدخال الشروط والأحكام',  
+'edit_terms' => 'تعديل الشروط والأحكام',  
+'Enter_Terms' => 'إدخال الشروط والأحكام (يدعم HTML)',  
 
-
-
-
+'confidence_booking' => 'حجز مضمون',  
+'confidence_booking_feedback' => 'الرجاء إدخال تفاصيل الحجز المضمون',  
+'edit_confidence_booking' => 'تعديل الحجز المضمون',  
+'Enter_Confidence_Booking' => 'إدخال الحجز المضمون (يدعم HTML)',  
+'guidelines' => 'الإرشادات',  
+'guidelines_feedback' => 'الرجاء إدخال الإرشادات',  
+'edit_guidelines' => 'تعديل الإرشادات',  
+'Enter_Guidelines' => 'إدخال الإرشادات (يدعم HTML)',  
 
 ];

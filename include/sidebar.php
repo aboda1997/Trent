@@ -115,6 +115,7 @@ if (isset($_SESSION['restatename'])) {
             <ul class="sidebar-submenu">
               <li><a href="add_properties.php">Add Properties</a></li>
               <li><a href="list_properties.php">List Properties</a></li>
+              <li><a href="pending_properties.php">Pending Properties</a></li>
             </ul>
           </li>
 
@@ -242,11 +243,11 @@ if (isset($_SESSION['restatename'])) {
           </li>
 
           <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 12l2 2 4-4" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5"></circle>
-              </svg>  
-          <span>Why Choose Us</span></a>
+              </svg>
+              <span>Why Choose Us</span></a>
             <ul class="sidebar-submenu">
               <li><a href="add_why_choose_us.php">Add Why Choose Us</a></li>
               <li><a href="list_why_choose_us.php">List Why Choose Us</a></li>
@@ -270,7 +271,7 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </g>
               </svg><span>Account</span></a></li>
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="setting.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
                     <path d="M11.1437 17.8829H4.67114" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -279,8 +280,34 @@ if (isset($_SESSION['restatename'])) {
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1153 7.39293C10.1153 5.35204 9.43436 4.67114 7.39346 4.67114C5.35167 4.67114 4.67078 5.35204 4.67078 7.39293C4.67078 9.43472 5.35167 10.1147 7.39346 10.1147C9.43436 10.1147 10.1153 9.43472 10.1153 7.39293Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                   </g>
                 </g>
-              </svg><span>Setting</span></a></li>
-          
+              </svg><span>Setting</span></a>
+            <ul class="sidebar-submenu">
+              <li><a href="setting.php">Edit Setting</a></li>
+              <li><a href="add_privacy_policy.php">Edit Privacy Policy</a></li>
+              <li><a href="add_terms_and_conditions.php">Edit Terms And Conditions</a></li>
+              <li><a href="add_confidence_booking.php">Edit Confidence Booking </a></li>
+              <li><a href="add_guidelines.php">Edit Guidelines</a></li>
+            </ul>
+          </li>
+          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                  <g>
+                    <!-- Circle (policy boundary) -->
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#130F26" stroke-width="1.5" />
+                    <!-- Diagonal strike (cancellation) -->
+                    <path d="M6 6L18 18" stroke="#FF3B30" stroke-width="2" stroke-linecap="round" />
+                    <!-- Optional: Small dotted lines (like your original) -->
+                    <path d="M10 12H10.01" stroke="#130F26" stroke-width="2" stroke-linecap="round" />
+                    <path d="M14 12H14.01" stroke="#130F26" stroke-width="2" stroke-linecap="round" />
+                  </g>
+                </g>
+              </svg><span>Cancellation Policies </span></a>
+            <ul class="sidebar-submenu">
+              <li><a href="add_policies.php">Add Policies</a></li>
+              <li><a href="list_policies.php">List Policies</a></li>
+            </ul>
+          </li>
+
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="logout.php"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logout" style="transform: rotate(90deg);">
                 <g>
                   <g>

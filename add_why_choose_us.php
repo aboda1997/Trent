@@ -125,7 +125,7 @@ if (isset($_GET['id'])) {
                                                 <?= $lang_en['background_color'] ?>
 
                                             </label>
-                                            <input type="text" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $data['background_color']; ?>" name="why_choose_us_bg" required="">
+                                            <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $data['background_color']; ?>" name="why_choose_us_bg" required="">
                                             <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
                                                 <?= $lang_en['why_choose_us_bg_color'] ?>
                                             </div>
@@ -241,7 +241,7 @@ if (isset($_GET['id'])) {
                                                 <?= $lang_en['background_color'] ?>
 
                                             </label>
-                                            <input type="text" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>"  name="why_choose_us_bg" required="">
+                                            <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>"  name="why_choose_us_bg" required="">
                                             <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
                                                 <?= $lang_en['why_choose_us_bg_color'] ?>
                                             </div>
