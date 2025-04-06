@@ -126,7 +126,7 @@ if ($_SESSION['restatename'] == 'Staff') {
                                                             style="min-height: 300px;"><?php echo htmlspecialchars($host_terms_and_conditions['ar'] ?? ''); ?></textarea>
                                                     </div>
 
-                                                    <input type="hidden" name="type" value="edit_terms" />
+                                                    <input type="hidden" name="type" value="edit_host_terms" />
                                                     <input type="hidden" name="id" value="1" />
                                                     <div class="invalid-feedback" id="host_terms_ar_feedback" style="display: none;">
                                                         <?= $lang_ar['host_terms_feedback'] ?>
