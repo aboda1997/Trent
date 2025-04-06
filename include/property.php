@@ -1341,7 +1341,110 @@ try {
                     "action" => "add_guidelines.php",
                 ];
             }
-        } elseif ($_POST["type"] == "add_facility") {
+        } 
+        elseif ($_POST["type"] == "edit_host_terms") {
+            $id = $_POST["id"];
+            $terms_ar = $_POST["host_terms_ar"];
+            $terms_en = $_POST["host_terms_en"];
+            $terms_json = json_encode([
+                "en" => $terms_en,
+                "ar" => $terms_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_setting";
+            $field = ["host_terms_and_conditions" =>$terms_json];
+         
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Host Terms And Conditions  Updated Successfully!!",
+                    "message" => "Host Terms And Conditions  section!",
+                    "action" => "add_host_terms_and_conditions.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "edit_listing_guidelines") {
+            $id = $_POST["id"];
+            $guidelines_ar = $_POST["listing_guidelines_ar"];
+            $guidelines_en = $_POST["listing_guidelines_en"];
+            $guidelines_json = json_encode([
+                "en" => $guidelines_en,
+                "ar" => $guidelines_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+
+            $table = "tbl_setting";
+            $field = ["listing_guidelines" => $guidelines_json];
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Listing Guidelines Updated Successfully!!",
+                    "message" => "listing guidelines section!",
+                    "action" => "add_listing_guidelines.php",
+                ];
+            }
+        }
+        elseif ($_POST["type"] == "edit_host_cancellation_policies") {
+            $id = $_POST["id"];
+            $terms_ar = $_POST["host_cancellation_policies_ar"];
+            $terms_en = $_POST["host_cancellation_policies_en"];
+            $terms_json = json_encode([
+                "en" => $terms_en,
+                "ar" => $terms_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_setting";
+            $field = ["host_cancellation_policies" =>$terms_json];
+         
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Host Cancellation Policies  Updated Successfully!!",
+                    "message" => "Host Cancellation Policies  section!",
+                    "action" => "add_host_cancellation_policies.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "edit_guest_cancellation_policies") {
+            $id = $_POST["id"];
+            $guidelines_ar = $_POST["guest_cancellation_policies_ar"];
+            $guidelines_en = $_POST["guest_cancellation_policies_en"];
+            $guidelines_json = json_encode([
+                "en" => $guidelines_en,
+                "ar" => $guidelines_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+
+            $table = "tbl_setting";
+            $field = ["cancellation_policies" => $guidelines_json];
+            $where = "where id=" . '?' . "";
+            $h = new Estate();
+            $check = $h->restateupdateData_Api($field, $table, $where , [$id]);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Guest Cancellation Policies Updated Successfully!!",
+                    "message" => "Guest Cancellation Policies section!",
+                    "action" => "add_guest_cancellation_policies.php",
+                ];
+            }
+        } 
+        elseif ($_POST["type"] == "add_facility") {
             $okey = $_POST["status"];
             $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
             $title_en = $rstate->real_escape_string($_POST["title_en"]);

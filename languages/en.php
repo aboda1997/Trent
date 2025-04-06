@@ -281,26 +281,45 @@ return [
     'policy_status' => 'please enter Policy status',
     'privacy_policy_management'  => 'Privacy Policy  List Management',
 
-
-    'terms_and_conditions' => 'Terms And Conditions',
-    'terms_feedback' => 'Please Enter Terms And Conditions',
-    'edit_terms' => 'Edit Terms And Conditions',
-    'Enter_Terms' => 'Enter Terms And Conditions (HTML supported)',
-
-
-
     'confidence_booking' => 'Confidence Booking',
     'confidence_booking_feedback' => 'Please Enter Confidence Booking',
     'edit_confidence_booking' => 'Edit Confidence Booking',
     'Enter_Confidence_Booking' => 'Enter Confidence Booking (HTML supported)',
 
-    'guidelines' => 'Guidelines',
-    'guidelines_feedback' => 'Please Enter Guidelines',
-    'edit_guidelines' => 'Edit Guidelines',
-    'Enter_Guidelines' => 'Enter Guidelines (HTML supported)',
+
+    'terms_and_conditions' => 'Guest Terms And Conditions',
+    'terms_feedback' => 'Please Enter Guest Terms And Conditions',
+    'edit_terms' => 'Edit Guest Terms And Conditions',
+    'Enter_Terms' => 'Enter Guest Terms And Conditions (HTML supported)',
 
 
+    'host_terms_and_conditions' => 'Host Terms And Conditions',
+    'host_terms_feedback' => 'Please Enter Host  Terms And Conditions',
+    'edit_host_terms' => 'Edit  Host  Terms And Conditions',
+    'Enter_Host_Terms' => 'Enter Host  Terms And Conditions (HTML supported)',
 
+
+    'guidelines' => 'Content Guidelines',
+    'guidelines_feedback' => 'Please Enter Content Guidelines',
+    'edit_guidelines' => 'Edit Content Guidelines',
+    'Enter_Guidelines' => 'Enter Content Guidelines (HTML supported)',
+
+    'listing_guidelines' => 'Listing Guidelines',
+    'listing_guidelines_feedback' => 'Please EnterListing Guidelines',
+    'edit_listing_guidelines' => 'Edit Listing Guidelines',
+    'Enter_Listing_Guidelines' => 'Enter  Listing Guidelines (HTML supported)',
+
+
+    'guest_cancellation_policies' => 'Guest Cancellation Policies',
+    'guest_cancellation_policies_feedback' => 'Please Enter Guest Cancellation Policies',
+    'edit_guest_cancellation_policies' => 'Edit Guest Cancellation Policies',
+    'Enter_Guest_Cancellation_Policies' => 'Enter Guest Cancellation Policies (HTML supported)',
+
+
+    'host_cancellation_policies' => 'Host Cancellation Policies',
+    'host_cancellation_policies_feedback' => 'Please Enter Host Cancellation Policies',
+    'edit_host_cancellation_policies' => 'Edit Host Cancellation Policies',
+    'Enter_Host_Cancellation_Policies' => 'Enter Host Cancellation Policies (HTML supported)',
 
 
 

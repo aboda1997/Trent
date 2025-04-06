@@ -284,9 +284,13 @@ if (isset($_SESSION['restatename'])) {
             <ul class="sidebar-submenu">
               <li><a href="setting.php">Edit Setting</a></li>
               <li><a href="add_privacy_policy.php">Edit Privacy Policy</a></li>
-              <li><a href="add_terms_and_conditions.php">Edit Terms And Conditions</a></li>
+              <li><a href="add_terms_and_conditions.php">Edit Guest Terms And Conditions</a></li>
+              <li><a href="add_host_terms_and_conditions.php">Edit Host Terms And Conditions</a></li>
               <li><a href="add_confidence_booking.php">Edit Confidence Booking </a></li>
-              <li><a href="add_guidelines.php">Edit Guidelines</a></li>
+              <li><a href="add_guidelines.php">Edit Content Guidelines</a></li>
+              <li><a href="add_listing_guidelines.php">Edit Listing Guidelines</a></li>
+              <li><a href="add_guest_cancellation_policies.php">Edit Guest Cancellation Policies</a></li>
+              <li><a href="add_host_cancellation_policies.php">Edit Host Cancellation Policies</a></li>
             </ul>
           </li>
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
