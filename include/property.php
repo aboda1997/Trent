@@ -808,8 +808,8 @@ try {
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
             $security_deposit = $_POST['prop_security'];
-            $max_days = $_POST['max_day'];
-            $min_days = $_POST['min_day'];
+            $max_days = $_POST['max_day'] == '' ? 0 : $_POST['max_day'];
+            $min_days = $_POST['min_day'] == '' ? 0 : $_POST['min_day'];
             $google_maps_url = $_POST['mapurl'];
             $propowner = $_POST['propowner'];
             $period = $_POST['period'];
@@ -1002,13 +1002,12 @@ try {
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
             $security_deposit = $_POST['prop_security'];
-            $max_days = $_POST['max_day'];
-            $min_days = $_POST['min_day'];
+            $max_days = $_POST['max_day'] == '' ? 0 : $_POST['max_day'];
+            $min_days = $_POST['min_day'] == '' ? 0 : $_POST['min_day'];
             $google_maps_url = $_POST['mapurl'];
             $propowner = $_POST['propowner'];
             $period = $_POST['period'];
             $featured = $_POST['featured'];
-
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $address_en = $rstate->real_escape_string($_POST["address_en"]);
             $description_en = $rstate->real_escape_string(trim($_POST["description_en"]));
@@ -1158,7 +1157,6 @@ try {
 
             $field_values = ["security_deposit", "cancellation_policy_id" ,  "period", "is_featured", "government", "map_url", "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
             $data_values = ["$security_deposit",  "$policy",  "$period", "$featured", "$government", "$google_maps_url", "$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
-
             $combinedArray = array_combine($field_values, $data_values);
             if (!empty($imageUrls)) {
                 $combinedArray["image"] =  $imageUrlsString;
