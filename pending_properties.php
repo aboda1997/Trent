@@ -55,57 +55,39 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
-                <?php
-                if (isset($_GET['cn_id'])) {
-                ?>
-                  <form method="POST" enctype="multipart/form-data">
 
-                    <div class="form-group mb-3">
+                <div class="table-responsive">
+                  <table class="display" id="basic-1">
+                    <thead>
+                      <tr>
+                        <th>Sr No.</th>
+                        <th>Property Title</th>
+                        <th>Property Type</th>
 
-                      <label id="basic-addon1">Enter Reason </label>
+                        <th>Property Image</th>
+                        <th>
+                          Property Approval</th>
 
-                      <textarea type="text" class="form-control" placeholder="Enter Reason" name="reason" aria-label="Username" aria-describedby="basic-addon1" style="resize:none;"></textarea>
-                      <input type="hidden" name="type" value="update_approval_reason" />
-                      <input type="hidden" name="id" value="<?php echo $_GET['cn_id']; ?>" />
-
-                    </div>
-
-
-                    <button type="submit" class="btn btn-primary">Cancle Approval</button>
-                  </form>
-                <?php
-                } else {
-                ?>
-                  <div class="table-responsive">
-                    <table class="display" id="basic-1">
-                      <thead>
-                        <tr>
-                          <th>Sr No.</th>
-                          <th>Property Title</th>
-                          <th>Property Type</th>
-                          <th>Property Image</th>
-
-                          <?php
-                          if ($_SESSION['restatename'] == 'Staff') {
-                            if (in_array('Update', $property_per)) {
-                          ?>
-                              <th>
-                                Property Approval</th>
-
-                              </th>
-                            <?php
-                            }
-                          } else {
-                            ?>
-                            <th>
-
-                            </th>
-                          <?php } ?>
-                        </tr>
-                      </thead>
-                      <tbody>
                         <?php
-                        $query = "
+                        if ($_SESSION['restatename'] == 'Staff') {
+                          if (in_array('Update', $property_per)) {
+                        ?>
+
+                            <th>
+                              <?= $lang['Action'] ?></th>
+                          <?php
+                          }
+                        } else {
+                          ?>
+                          <th>
+
+                          </th>
+                        <?php } ?>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $query = "
 SELECT 
     p.*
 FROM 
@@ -116,65 +98,70 @@ WHERE
     or p.cancel_reason = '')
 ";
 
-                        $city = $rstate->query($query);
-                        $i = 0;
-                        while ($row = $city->fetch_assoc()) {
-                          $title = json_decode($row['title'], true);
+                      $city = $rstate->query($query);
+                      $i = 0;
+                      while ($row = $city->fetch_assoc()) {
+                        $title = json_decode($row['title'], true);
 
-                          $i = $i + 1;
-                        ?>
-                          <tr>
-                            <td>
-                              <?php echo $i; ?>
-                            </td>
+                        $i = $i + 1;
+                      ?>
+                        <tr>
+                          <td>
+                            <?php echo $i; ?>
+                          </td>
 
-                            <td class="align-middle">
-                              <?php echo $title[$lang_code]; ?>
-                            </td>
+                          <td class="align-middle">
+                            <?php echo $title[$lang_code]; ?>
+                          </td>
 
-                            <td class="align-middle">
-                              <?php $type = $rstate->query("select * from tbl_category where id=" . $row['ptype'] . "")->fetch_assoc();
-                              $type = json_decode($type['title'], true);
+                          <td class="align-middle">
+                            <?php $type = $rstate->query("select * from tbl_category where id=" . $row['ptype'] . "")->fetch_assoc();
+                            $type = json_decode($type['title'], true);
 
-                              echo $type[$lang_code]; ?>
-                            </td>
+                            echo $type[$lang_code]; ?>
+                          </td>
 
-                            <td class="align-middle">
-                              <img src="<?php
-                                        $imageArray = explode(',', $row['image']);
+                          <td class="align-middle">
+                            <img src="<?php
+                                      $imageArray = explode(',', $row['image']);
 
-                                        if (!empty($imageArray[0])) {
-                                          echo $imageArray[0];
-                                        } else {
-                                          echo 'default_image.jpg';
-                                        }
-                                        ?>" width="70" height="80" />
-                            </td>
+                                      if (!empty($imageArray[0])) {
+                                        echo $imageArray[0];
+                                      } else {
+                                        echo 'default_image.jpg';
+                                      }
+                                      ?>" width="70" height="80" />
+                          </td>
+                          <td style="white-space: nowrap; width: 15%;">
+                            <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                              <div class="btn-group btn-group-sm" style="float: none;">
+                                <button class="btn btn-success drop" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-status="1" data-type="toggle_approval">Approve</button>
+                                <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
+                                  data-toggle="modal" data-target="#denyModal"
+                                  data-id="<?php echo $row['id']; ?>"
+                                  data-title="<?php echo $title['ar']; ?>"
+                                  data-uid="<?php echo $row['add_user_id']; ?>">
+                                  Deny
+                                </button>
+                              </div>
 
+                            </div>
 
-                            <?php
-                            if ($_SESSION['restatename'] == 'Staff') {
-                              if (in_array('Update', $property_per)) {
-                            ?>
-                                <td style="white-space: nowrap; width: 15%;">
-                                  <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                      <button class="btn btn-success drop" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-status="1" data-type="toggle_approval">Approved</button>
-                                      <a href="?cn_id=<?php echo $row['id']; ?>" class="btn btn-danger" style="float: none; margin: 5px;">Cancelled</a>
+                          </td>
 
-                                    </div>
+                          <?php
+                          if ($_SESSION['restatename'] == 'Staff') {
+                            if (in_array('Update', $property_per)) {
+                          ?>
 
-                                  </div>
-                                </td>
-                              <?php
-                              }
-                            } else {
-                              ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                   <div class="btn-group btn-group-sm" style="float: none;">
-                                    <button class="btn btn-success drop" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-status="1" data-type="toggle_approval">Approved</button>
-                                    <a href="?cn_id=<?php echo $row['id']; ?>" class="btn btn-danger" style="float: none; margin: 5px;">Cancelled</a>
+                                    <a href="add_properties.php?id=<?php echo $row['id']; ?>" data-toggle="tooltip" title="edit property" class="tabledit-edit-button" style="float: none; margin: 5px;">
+                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="30" height="30" rx="15" fill="#79F9B4" />
+                                        <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
+                                      </svg></a>
 
                                   </div>
 
@@ -182,17 +169,34 @@ WHERE
                               </td>
                             <?php
                             }
+                          } else {
                             ?>
 
-                          </tr>
-                        <?php
-                        }
-                        ?>
+                            <td style="white-space: nowrap; width: 15%;">
+                              <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                                <div class="btn-group btn-group-sm" style="float: none;">
+                                  <a href="add_properties.php?id=<?php echo $row['id']; ?>" data-toggle="tooltip" title="edit property" class="tabledit-edit-button" style="float: none; margin: 5px;">
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <rect width="30" height="30" rx="15" fill="#79F9B4" />
+                                      <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
+                                    </svg></a>
 
-                      </tbody>
-                    </table>
-                  </div>
-                <?php } ?>
+                                </div>
+
+                              </div>
+                            </td>
+                          <?php
+                          }
+                          ?>
+
+                        </tr>
+                      <?php
+                      }
+                      ?>
+
+                    </tbody>
+                  </table>
+                </div>
 
               </div>
 
@@ -217,6 +221,116 @@ WHERE
 <?php
 require 'include/footer.php';
 ?>
+
+<!-- Deny Modal -->
+<div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="denyModalLabel">Reason for Denial</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="denyForm">
+          <input type="hidden" id="denyId" name="id">
+          <input type="hidden" id="denyTitle" name="property_title">
+          <input type="hidden" id="denyUid" name="uid">
+          <input type="hidden" name="type" value="deny_reason" />
+
+
+          <div class="form-group">
+            <label for="denyReason">Please provide a reason:</label>
+            <textarea class="form-control" id="denyReason" name="reason" rows="3" required></textarea>
+            <div class="invalid-feedback">Please provide a denial reason.</div>
+
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveDeny">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
+<script>
+  $(document).ready(function() {
+    // Remove invalid class when user starts typing
+    $('#denyReason').on('input', function() {
+      if ($(this).val().trim() !== '') {
+        $(this).removeClass('is-invalid');
+      }
+    });
+
+    $('#denyModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var title = button.data('title');
+      var uid = button.data('uid');
+
+      var modal = $(this);
+      modal.find('#denyId').val(id);
+      modal.find('#denyUid').val(uid);
+      modal.find('#denyTitle').val(title);
+      modal.find('#propertyTitlePlaceholder').text(title);
+    });
+
+    // When save button is clicked
+    $('#saveDeny').click(function() {
+      var reasonInput = $('#denyReason');
+      var reason = reasonInput.val().trim();
+
+      // Validate
+      if (reason === '') {
+        reasonInput.addClass('is-invalid');
+        return; // Stop submission
+      }
+
+      var formData = $('#denyForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#denyModal').removeClass('show');
+            $('#denyModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("'Error saving denial reason.");
+          }
+        }
+      });
+    });
+  });
+</script>
 
 </html>
