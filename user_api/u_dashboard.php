@@ -1,15 +1,19 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/estate.php';
+
+require dirname(dirname(__FILE__)) . '/include/helper.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
+
 header('Content-Type: application/json');
+try {
+
 $data = json_decode(file_get_contents('php://input'), true);
 $uid = $data['uid'];
 if ($uid == '') {
-    $returnArr = array(
-        "ResponseCode" => "401",
-        "Result" => "false",
-        "ResponseMsg" => "Something Went Wrong!"
-    );
+	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
+
 } else {
 
 	$total_property = $rstate->query("select * from tbl_property where status = 1 and add_user_id=".$uid."")->num_rows;
@@ -24,6 +28,7 @@ if ($uid == '') {
 	$total_payout = $rstate->query("select sum(amt) as total_payout from payout_setting where owner_id=".$uid."")->fetch_assoc();
 	$payout = empty($total_payout['total_payout']) ? "0" : $total_payout['total_payout'];
 	$finalearn = floatval($earn) - floatval($payout);
+	$is_gallery_enabled = (bool)$set["gallery_mode"];
 	$check_plan = $rstate->query("select * from tbl_user where id=".$uid."")->fetch_assoc();
 	if($check_plan['pack_id'] == 0)
 	{
@@ -55,9 +60,20 @@ $h = new Estate();
 	
 	$getstatus = $rstate->query("select * from tbl_user where id=".$uid." and is_subscribe=1")->num_rows;
 	$papi = array(array("title"=>"My Property","report_data"=>$total_property,"url"=>'images/dashboard/property.png'),array("title"=>"My Extra Images","report_data"=>$total_extra_image,"url"=>'images/dashboard/extra_images.png'),array("title"=>"My Gallery Category","report_data"=>$total_gallery_category,"url"=>'images/dashboard/category.png'),array("title"=>"My Gallery Images","report_data"=>$total_gallery_image,"url"=>'images/dashboard/gallery_image.png'),array("title"=>"My Booking","report_data"=>intval($total_Booking),"url"=>'images/dashboard/my-booking.png'),array("title"=>"My Earning","report_data"=>$finalearn,"url"=>'images/dashboard/my-earning.png'),array("title"=>"My Enquiry","report_data"=>intval($total_enquiry),"url"=>'images/dashboard/my-inquiry.png'),array("title"=>"Total Review","report_data"=>$total_review,"url"=>'images/dashboard/review.png'),array("title"=>"My Payout","report_data"=>floatval($payout),"url"=>'images/dashboard/my-payout.png'));
-	$member = array(array("title"=>"Current Membership","report_data"=>$current_membership),array("title"=>"Memerbship Expired Date","report_data"=>$valid_till));
-	$returnArr = array("ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Report List Get Successfully!!!","report_data"=>$papi,"is_subscribe"=>$getstatus,"member_data"=>$member);
-	
+	$member = array(array("title"=>"Current Membership","report_data"=>$current_membership),array("title"=>"Memerbship Expired Date","report_data"=>$valid_till) );
+	$returnArr = generateResponse('true', "Report List Get Successfully!!!", 200 ,array(
+		"report_data"=>$papi,"is_subscribe"=>$getstatus,
+		"is_gallery_enabled"=>$is_gallery_enabled,
+		"member_data"=>$member
+	) );
+
+}	
+echo $returnArr;
+}  catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ), $e->getFile() ,  $e->getLine());
+    echo $returnArr;
 }
-echo json_encode($returnArr);
 ?>

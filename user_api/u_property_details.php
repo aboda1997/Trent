@@ -66,6 +66,7 @@ if ($pro_id == ''  ) {
 			$fp['category'] = null;
 		}
 	}
+	$is_gallery_enabled = (bool)$set["gallery_mode"];
 
 
 	$fp['price'] = $sel['price'];
@@ -204,7 +205,8 @@ if ($pro_id == ''  ) {
 		$bov['user_desc'] = $k['rate_text'];
 		$kol[] = $bov;
 	}
-	$returnArr    = generateResponse('true', "Property Details Founded!", 200, array("property_details" => $fp,   "facility_list" => $f, "gallery" => $v  ));
+	$returnArr    = generateResponse('true', "Property Details Founded!", 200, array("property_details" => $fp,   "facility_list" => $f, "gallery" => $v , 		"is_gallery_enabled"=>$is_gallery_enabled,
+));
 
 }
 echo $returnArr;

@@ -34,6 +34,10 @@ function checkTableStatus($id, $table)
     return false;
 }
 
+function checkPropertyBookingStatus(){
+    
+}
+
 function validateFacilityIds($idString)
 {
     // Check if input is a JSON array and decode it
