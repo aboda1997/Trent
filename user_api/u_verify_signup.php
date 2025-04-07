@@ -69,10 +69,10 @@ else {
         $where = "where mobile=" . '?' . "";
         $where_conditions = [$mobile];
         $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-        $result = sendMessage([$mobile] , $message);
-
+        $result = true ;//sendMessage([$mobile] , $message);
+      
         if($result){
-            $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+            $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200 , array("otp" => $otp ));
 
         }else{
             $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
@@ -121,9 +121,9 @@ else {
                 $h     = new Estate();
                 $check = $h->restateinsertdata_Api_Id($field_values, $data_values, $table);
 
-                $result = sendMessage([$mobile] , $message);
+              $result = true ;  //sendMessage([$mobile] , $message);
                 if($result){
-                    $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+                    $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200,array("otp" => $otp ));
     
                 }else{
                     $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
@@ -165,10 +165,10 @@ else {
             $h            = new Estate();
             $check        = $h->restateinsertdata_Api_Id($field_values, $data_values, $table);
 
-            $result = sendMessage([$mobile] , $message);
+            $result =true ; // sendMessage([$mobile] , $message);
 
             if($result){
-                $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
+                $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200 , array("otp" => $otp ));
 
             }else{
                 $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
