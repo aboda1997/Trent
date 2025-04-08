@@ -99,7 +99,12 @@ try {
 		$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
 	}else if (validateIdAndDatabaseExistance($cancellation_policy_id, 'tbl_cancellation_policy') === false) {
 		$returnArr = generateResponse('false', "Cancellation Policy Id must be valid!", 400);
-	}	else if (!in_array($period, ['d', 'm'])) {
+	}
+	else if (checkPropertyBookingStatus($prop_id) === false) {
+		$returnArr = generateResponse('false', "You cannot edit this property because it has already been booked. Please cancel the booking first to make changes.", 400);
+	}
+	
+	else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 	} else {
 
