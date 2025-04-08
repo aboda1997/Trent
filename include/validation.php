@@ -34,8 +34,31 @@ function checkTableStatus($id, $table)
     return false;
 }
 
-function checkPropertyBookingStatus(){
-    
+function checkPropertyBookingStatus($id){
+    // Check if it's a number and a positive integer
+    if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
+
+        // Build and execute the query
+        $query = "SELECT b.book_status 
+        FROM tbl_book b
+        INNER JOIN tbl_user u ON b.uid = u.id
+        WHERE b.prop_id = " . $id . "
+        AND u.status = 1 
+        AND u.verified = 1";
+        $result = $GLOBALS['rstate']->query($query);
+        $statuses = array(); 
+        while ($row = $result->fetch_assoc()) {
+            $statuses[] = $row['book_status']; // Add each status to the array
+        }        
+        $restrictedStatuses = ['Booked', 'Check_in', 'Confirmed'];
+        $hasRestrictedStatus = true;
+        foreach ($statuses as $status) {
+            if (in_array($status, $restrictedStatuses)) {
+                $hasRestrictedStatus = false;
+                break; // Exit early if found
+            }
+        }    }
+    return $hasRestrictedStatus;
 }
 
 function validateFacilityIds($idString)

@@ -8,7 +8,6 @@ header('Content-Type: application/json');
 try {
     $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 
-
     $data = array();
 
     $setting = $rstate->query("select confidence_booking from tbl_setting")->fetch_assoc();

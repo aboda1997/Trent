@@ -174,6 +174,7 @@ try {
 		$pol['guest_count'] = $row['plimit'];
 		$pol['bathrooms_count'] = $row['bathroom'];
 		$pol['sqrft'] = $row['sqrft'];
+		$pol['owner_id'] = $row['add_user_id'];
 		$periods = [
 			"d" => ["ar" => "يومي", "en" => "daily"],
 			"m" => ["ar" => "شهري", "en" => "monthly"]
