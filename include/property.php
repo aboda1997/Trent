@@ -1501,6 +1501,9 @@ try {
             $title_ar = $rstate->real_escape_string($_POST["title_ar"]);
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $target_dir = dirname(dirname(__FILE__)) . "/images/slider/";
+            $propowner = implode(',', $_POST['propowner'] ?? []);
+            $ptype = $_POST['ptype'] ?? Null;
+            $pgov = $_POST['pgov'] ?? null;
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
@@ -1513,8 +1516,8 @@ try {
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_slider";
-            $field_values = ["img", "status", "title"];
-            $data_values = ["$url", "$okey", "$title_json"];
+            $field_values = ["img", "status", "title" , "uid" , "government_id" , "cat_id"];
+            $data_values = ["$url", "$okey", "$title_json" , $propowner  , $pgov , $ptype ];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1538,6 +1541,7 @@ try {
             ], JSON_UNESCAPED_UNICODE);
             $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
             $url = "images/category/";
+            
             $temp = explode(".", $_FILES["cat_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
@@ -1687,6 +1691,9 @@ try {
             $target_dir = dirname(dirname(__FILE__)) . "/images/slider/";
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
+            $propowner = implode(',', $_POST['propowner'] ?? []);
+            $ptype = $_POST['ptype'] ?? Null;
+            $pgov = $_POST['pgov'] ?? Null;
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
             $url = $url . basename($newfilename);
@@ -1702,7 +1709,7 @@ try {
                     $target_file
                 );
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json ,  "cat_id" => $ptype ,  "government_id" => $pgov ,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
@@ -1718,7 +1725,7 @@ try {
                 }
             } else {
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "title" => $title_json];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json ,  "cat_id" => $ptype ,  "government_id" => $pgov ,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
