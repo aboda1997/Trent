@@ -54,7 +54,7 @@ try {
 		$query .= "	LEFT JOIN 
 		tbl_fav f ON p.id = f.property_id AND f.uid = $uid
 	WHERE 
-	p.status = 1 and (p.is_approved = 1 or p.is_approved = 0) and p.add_user_id = $uid";
+	  p.add_user_id = $uid";
 	} else if ($uid !== null) {
 		// authorized user 
 		$query .= "	LEFT JOIN 
