@@ -88,7 +88,7 @@ try {
 	// Validate the string
 
 
-	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $compound_en == '' or $compound_ar == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
 
 		$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
 	} else if (validateFacilityIds($facility) === 0) {

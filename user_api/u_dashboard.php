@@ -8,6 +8,11 @@ require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
+ // Handle preflight request
+ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+	http_response_code(200);
+	exit();
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
 $uid = $data['uid'];
