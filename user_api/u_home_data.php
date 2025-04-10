@@ -167,7 +167,7 @@ try {
 		} else {
 			$pol['category_type'] = null;
 		}
-		$fp['id_deleted'] = (bool) (!$row['status']);
+		$pol['id_deleted'] = (bool) (!$row['status']);
 
 		$pol['image_list'] = $vr;
 		$pol['price'] = $row['price'];
