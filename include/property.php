@@ -403,13 +403,13 @@ try {
             $why_choose_us_bg = $_POST['why_choose_us_bg'];
             $why_choose_us_title_en = $_POST['why_choose_us_title_en'];
             $why_choose_us_title_ar = $_POST['why_choose_us_title_ar'];
-            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']));
-            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']));
+            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']) ,ENT_QUOTES) ;
+            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']) , ENT_QUOTES);
 
             $why_choose_us_description_json = json_encode([
                 "en" => $why_choose_us_description_en,
                 "ar" => $why_choose_us_description_ar
-            ], JSON_UNESCAPED_UNICODE);
+            ], JSON_UNESCAPED_UNICODE|JSON_HEX_APOS);
 
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,
@@ -448,13 +448,13 @@ try {
             $why_choose_us_bg = $_POST['why_choose_us_bg'];
             $why_choose_us_title_en = $_POST['why_choose_us_title_en'];
             $why_choose_us_title_ar = $_POST['why_choose_us_title_ar'];
-            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']));
-            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']));
+            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']),ENT_QUOTES);
+            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']) , ENT_QUOTES);
 
             $why_choose_us_description_json = json_encode([
                 "en" => $why_choose_us_description_en,
                 "ar" => $why_choose_us_description_ar
-            ], JSON_UNESCAPED_UNICODE);
+            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS);
 
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,

@@ -6,6 +6,13 @@ require dirname(dirname(__FILE__)) . '/include/estate.php';
 
 header('Content-Type: application/json');
 try{
+
+	 // Handle preflight request
+	 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        http_response_code(200);
+        exit();
+    }
+
 $data = json_decode(file_get_contents('php://input'), true);
 $pro_id  = isset($data['prop_id']) ? $data['prop_id'] : '';
 $uid  = isset($data['uid']) ? $data['uid'] : '';
