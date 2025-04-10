@@ -38,13 +38,15 @@ while($row = $sel->fetch_assoc())
 if(empty($c))
 {
 	$returnArr    = generateResponse('true', "Why Choose Us Data Not Founded!", 200, array(
-		array("why_choose_us_list"=>$c , "why_choose_us_header" => $cc)
-	));
+		"why_choose_us_list"=>$c , "why_choose_us_header" => $cc)
+	);
 }
 else 
 {
 	$returnArr    = generateResponse('true', "Why Choose Us Data Founded!", 200, array(
-		array("why_choose_us_list"=>$c , "why_choose_us_header" => $cc)
+		"why_choose_us_list"=>$c , "why_choose_us_header" => $cc
+
+		
 	));
 }
 echo $returnArr;
