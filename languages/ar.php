@@ -222,6 +222,7 @@ return [
     'Why_Chooser_Title' => 'العنوان',
     'Why_Choose_Image' => 'الصورة',
     'Why_Choose_bg' => 'لون الخلفية',
+    'Why_Choose_is_Header' => 'هل هو عنوان رئيسي',
     'Property_Period' => 'مدة العقار',
     'Select_property_Period' => 'اختر مدة العقار',
     'Monthly' => 'شهري',

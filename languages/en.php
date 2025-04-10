@@ -230,6 +230,7 @@ return [
     'Why_Chooser_Title'  => '  Title',
     'Why_Choose_Image' => ' Image',
     'Why_Choose_bg' => 'Background Color',
+    'Why_Choose_is_Header' => 'Is Header',
     "Delete_Confirmation" => 'Are you sure you want to delete this item',
 
     'Property_Period'  => 'Property Period',
