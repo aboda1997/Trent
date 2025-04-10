@@ -68,7 +68,7 @@ if ($pro_id == ''  ) {
 
 
 	$fp['price'] = $sel['price'];
-	$fp['id_deleted'] = (bool) (!$sel['status']);
+	$fp['is_deleted'] = (bool) (!$sel['status']);
 	$fp['buy_or_rent'] = $sel['pbuysell'];
 	$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
 
