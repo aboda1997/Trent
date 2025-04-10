@@ -97,41 +97,42 @@ if (isset($_GET['id'])) {
                             ?>
 
                                 <form
-                                onsubmit="return submitform(true)" 
+                                    onsubmit="return submitform(true)"
 
-                                method="post" enctype="multipart/form-data">
+                                    method="post" enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div id="alert-container" class="mb-3" style="display: none;">
                                             <div class="alert alert-danger" id="alert-message"></div>
                                         </div>
-                                        <div class="row">                                        
+                                        <div class="row">
 
-                                        <div class="form-group mb-3 col-6" style="margin-bottom: 48px;">
-                                            <label id="why_choose_us_image"><span class="text-danger">*</span>
-                                                <?= $lang_en['why_choose_us_image'] ?>
+                                            <div class="form-group mb-3 col-6" style="margin-bottom: 48px;">
+                                                <label id="why_choose_us_image"><span class="text-danger">*</span>
+                                                    <?= $lang_en['why_choose_us_image'] ?>
 
-                                            </label>
-                                            <div class="custom-file">
-                                                <input type="file" accept=".jpg, .jpeg, .png, .gif" name="why_choose_us_img" class="custom-file-input form-control">
-                                                <div class="invalid-feedback" id="why_choose_us_img_feedback" style="display: none;">
-                                                    <?= $lang_en['why_choose_us_img'] ?>
+                                                </label>
+                                                <div class="custom-file">
+                                                    <input type="file" accept=".jpg, .jpeg, .png, .gif" name="why_choose_us_img" class="custom-file-input form-control">
+                                                    <div class="invalid-feedback" id="why_choose_us_img_feedback" style="display: none;">
+                                                        <?= $lang_en['why_choose_us_img'] ?>
+                                                    </div>
+                                                    <br>
+                                                    <img src="<?php echo $data['img']; ?>" width="60" height="60" />
+
                                                 </div>
-                                                <br>
-                                                <img src="<?php echo $data['img']; ?>" width="60" height="60" />
                                             </div>
-                                        </div>
-                                        <div class="form-group mb-3 col-6">
-                                            <label id="background_color"><span class="text-danger">*</span>
-                                                <?= $lang_en['background_color'] ?>
+                                            <div class="form-group mb-3 col-6">
+                                                <label id="background_color"><span class="text-danger">*</span>
+                                                    <?= $lang_en['background_color'] ?>
 
-                                            </label>
-                                            <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $data['background_color']; ?>" name="why_choose_us_bg" required="">
-                                            <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
-                                                <?= $lang_en['why_choose_us_bg_color'] ?>
+                                                </label>
+                                                <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" value="<?php echo $data['background_color']; ?>" name="why_choose_us_bg" required="">
+                                                <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
+                                                    <?= $lang_en['why_choose_us_bg_color'] ?>
+                                                </div>
+                                                <input type="hidden" name="type" value="edit_why_choose_us" />
+                                                <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
                                             </div>
-                                            <input type="hidden" name="type" value="edit_why_choose_us" />
-                                            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
-                                        </div>
                                         </div>
 
                                         <div class="tab-content">
@@ -205,7 +206,7 @@ if (isset($_GET['id'])) {
                                         </div>
 
                                         <div class="col-12">
-                                            <button onclick="return validateForm()" id="edit_why_choose_us" type="submit" class="btn btn-primary mb-2">
+                                            <button onclick="return validateForm(true)" id="edit_why_choose_us" type="submit" class="btn btn-primary mb-2">
                                                 <?= $lang_en['edit_why_choose_us'] ?>
 
                                             </button>
@@ -215,38 +216,38 @@ if (isset($_GET['id'])) {
                             <?php
                             } else {
                             ?>
-                                <form 
-                                onsubmit="return submitform(true)" 
+                                <form
+                                    onsubmit="return submitform(true)"
 
-                                method="post" enctype="multipart/form-data">
+                                    method="post" enctype="multipart/form-data">
                                     <div class="card-body">
                                         <div id="alert-container" class="mb-3" style="display: none;">
                                             <div class="alert alert-danger" id="alert-message"></div>
                                         </div>
-                                        <div class="row">                                        
+                                        <div class="row">
                                             <div class="form-group mb-6  col-6" style="margin-bottom: 48px;">
-                                            <label id="why_choose_us_image"><span class="text-danger">*</span>
-                                                <?= $lang_en['why_choose_us_image'] ?>
+                                                <label id="why_choose_us_image"><span class="text-danger">*</span>
+                                                    <?= $lang_en['why_choose_us_image'] ?>
 
-                                            </label>
-                                            <div class="custom-file">
-                                                <input type="file" accept=".jpg, .jpeg, .png, .gif" name="why_choose_us_img" class="custom-file-input form-control">
-                                                <div class="invalid-feedback" id="why_choose_us_img_feedback" style="display: none;">
-                                                    <?= $lang_en['why_choose_us_img'] ?>
+                                                </label>
+                                                <div class="custom-file">
+                                                    <input type="file" accept=".jpg, .jpeg, .png, .gif" name="why_choose_us_img" class="custom-file-input form-control">
+                                                    <div class="invalid-feedback" id="why_choose_us_img_feedback" style="display: none;">
+                                                        <?= $lang_en['why_choose_us_img'] ?>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group mb-6  col-6">
-                                            <label id="background_color"><span class="text-danger">*</span>
-                                                <?= $lang_en['background_color'] ?>
+                                            <div class="form-group mb-6  col-6">
+                                                <label id="background_color"><span class="text-danger">*</span>
+                                                    <?= $lang_en['background_color'] ?>
 
-                                            </label>
-                                            <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>"  name="why_choose_us_bg" required="">
-                                            <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
-                                                <?= $lang_en['why_choose_us_bg_color'] ?>
+                                                </label>
+                                                <input type="color" id="bg_color" class="form-control " placeholder="<?= $lang_en['background_color'] ?>" name="why_choose_us_bg" required="">
+                                                <div class="invalid-feedback" id="why_choose_us_bg_color_feedback" style="display: none;">
+                                                    <?= $lang_en['why_choose_us_bg_color'] ?>
+                                                </div>
+                                                <input type="hidden" name="type" value="add_why_choose_us" />
                                             </div>
-                                            <input type="hidden" name="type" value="add_why_choose_us" />
-                                        </div>
                                         </div>
 
                                         <div class="tab-content">
@@ -366,7 +367,7 @@ if (isset($_GET['id'])) {
         return activeTab === 'en' ? 'en' : 'ar';
     }
 
-    function validateForm() {
+    function validateForm(edit = false) {
         // Clear previous feedback
         document.querySelectorAll('.invalid-feedback').forEach(function(feedback) {
             feedback.style.display = 'none';
@@ -374,12 +375,11 @@ if (isset($_GET['id'])) {
 
         const why_choose_us_description_en = document.querySelector('textarea[name="why_choose_us_description_en"]').value;
         const why_choose_us_description_ar = document.querySelector('textarea[name="why_choose_us_description_ar"]').value;
-        debugger;
 
         const why_choose_us_title_en = document.querySelector('input[name="why_choose_us_title_en"]').value;
         const why_choose_us_title_ar = document.querySelector('input[name="why_choose_us_title_ar"]').value;
         const why_choose_us_img = document.querySelector('input[name="why_choose_us_img"]').value;
-		const why_choose_us_bg = document.querySelector('input[name="why_choose_us_bg"]').value;
+        const why_choose_us_bg = document.querySelector('input[name="why_choose_us_bg"]').value;
 
         let isValid = true;
         let isArabicValid = true;
@@ -408,12 +408,24 @@ if (isset($_GET['id'])) {
 
         }
         if (!why_choose_us_bg) {
-			document.getElementById('why_choose_us_bg_color_feedback').style.display = 'block';
-			isValid = false;
-		}
+            document.getElementById('why_choose_us_bg_color_feedback').style.display = 'block';
+            isValid = false;
+        }
 
 
         
+        if (!why_choose_us_img) {
+
+            if (edit) {
+                isValid = true;
+
+            } else {
+                document.getElementById('why_choose_us_img_feedback').style.display = 'block';
+                isValid = false;
+            }
+        }
+
+
 
 
 
@@ -460,21 +472,21 @@ if (isset($_GET['id'])) {
     function changeLanguage(lang) {
         var langData = (lang === "ar") ? langDataAR : langDataEN;
 
-		document.getElementById('background_color').textContent = langData.background_color;
-		document.getElementById('why_choose_us_image').textContent = langData.why_choose_us_image;
-		document.getElementById('why_choose_us_bg_color_feedback').textContent = langData.why_choose_us_bg_color;
+        document.getElementById('background_color').textContent = langData.background_color;
+        document.getElementById('why_choose_us_image').textContent = langData.why_choose_us_image;
+        document.getElementById('why_choose_us_bg_color_feedback').textContent = langData.why_choose_us_bg_color;
+        document.getElementById('why_choose_us_img_feedback').textContent = langData.why_choose_us_img;
 
-		document.getElementById('bg_color').placeholder  = langData.background_color;
+        document.getElementById('bg_color').placeholder = langData.background_color;
         if (document.getElementById('edit_why_choose_us')) {
             document.querySelector('button[type="submit"]').textContent = langData.edit_why_choose_us;
 
-        }else{
+        } else {
             document.querySelector('button[type="submit"]').textContent = langData.add_why_choose_us;
 
         }
 
     }
-
 </script>
 <!-- latest jquery-->
 <?php

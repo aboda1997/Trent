@@ -77,6 +77,11 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
                                                     <?= $lang['Why_Choose_bg'] ?>
 
                                                 </th>
+
+                                                <th>
+                                                    <?= $lang['Why_Choose_is_Header'] ?>
+
+                                                </th>
                                                 <?php
                                                 if ($_SESSION['restatename'] == 'Staff') {
                                                     if (in_array('Update', $why_us_per)) {
@@ -90,8 +95,8 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
                                                 } else {
                                                     ?>
                                                     <th>
-                                                    <?= $lang['Action'] ?>
-                                                    
+                                                        <?= $lang['Action'] ?>
+
                                                     </th>
                                                 <?php } ?>
                                             </tr>
@@ -122,8 +127,15 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
                                                         <?php echo $row['background_color']; ?>
                                                     </td>
 
-
-
+                                                    
+                                                    <td class="align-middle">
+                                                        <span class="badge status-toggle <?php echo $row['is_header'] ? 'badge-success' : 'badge-danger'; ?>"
+                                                            data-id="<?php echo $row['id']; ?>"
+                                                            data-status="<?php echo $row['is_header']; ?>"
+                                                            >
+                                                            <?php echo $row['is_header']  ? "Yes" : "No"; ?>
+                                                        </span>
+                                                    </td>
                                                     <?php
                                                     if ($_SESSION['restatename'] == 'Staff') {
                                                         if (in_array('Update', $why_us_per)) {
@@ -141,19 +153,16 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
                                                                             </svg>
                                                                         </a>
 
-                                                                        <!-- Delete Button -->
-                                                                        <form action="include/property.php" method="POST" style="display: inline; margin: 5px;">
-                                                                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                                            <input type="hidden" name="type" value="delete_why_choose_us">
-                                                                            <button type="submit" class="tabledit-delete-button" 
-                                                                            onclick="return confirm('<?= $lang['Delete_Confirmation'] ?>?');"
-                                                                            style="background: none; border: none; padding: 0; cursor: pointer;">
-                                                                                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                    <rect width="30" height="30" rx="15" fill="#FF6B6B" />
-                                                                                    <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
-                                                                                </svg>
-                                                                            </button>
-                                                                        </form>
+                                                                        
+                                                                    <button type="submit" class="tabledit-delete-button"
+                                                                        onclick="deleteWhyChooseUs(<?php echo $row['id']; ?>)"
+
+                                                                        style="background: none; border: none; padding: 0; cursor: pointer;">
+                                                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                                                            <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                                                        </svg>
+                                                                    </button>
 
                                                                     </div>
                                                                 </div>
@@ -175,18 +184,16 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
                                                                     </a>
 
                                                                     <!-- Delete Button -->
-                                                                    <form action="include/property.php" method="POST" style="display: inline; margin: 5px;">
-                                                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                                        <input type="hidden" name="type" value="delete_why_choose_us">
-                                                                        <button type="submit" class="tabledit-delete-button" 
-                                                                        onclick="return confirm('<?= $lang['Delete_Confirmation'] ?>?');"
+
+                                                                    <button type="submit" class="tabledit-delete-button"
+                                                                        onclick="deleteWhyChooseUs(<?php echo $row['id']; ?>)"
+
                                                                         style="background: none; border: none; padding: 0; cursor: pointer;">
-                                                                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <rect width="30" height="30" rx="15" fill="#FF6B6B" />
-                                                                                <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
-                                                                            </svg>
-                                                                        </button>
-                                                                    </form>
+                                                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                                                            <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                                                        </svg>
+                                                                    </button>
 
                                                                 </div>
                                                             </div>
@@ -220,6 +227,53 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $why_us_per)) {
     </div>
 </div>
 <!-- latest jquery-->
+<script>
+    async function deleteWhyChooseUs(id) {
+        if (!confirm('<?= $lang['Delete_Confirmation'] ?>?')) return;
+
+        try {
+            const response = await fetch('include/property.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${id}&type=delete_why_choose_us`
+            });
+
+            let res =JSON.parse( await response.text()); // Parse the JSON response
+
+            if (res.ResponseCode === "200" && res.Result === "true") {
+
+
+                // Display notification
+                $.notify('<i class="fas fa-bell"></i>' + res.title, {
+                    type: 'theme',
+                    allow_dismiss: true,
+                    delay: 2000,
+                    showProgressbar: true,
+                    timer: 300,
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp',
+                    },
+                });
+
+                // Redirect after a delay if an action URL is provided
+                if (res.action) {
+                    setTimeout(function() {
+                        window.location.href = res.action;
+                    }, 2000);
+                }
+            } else {
+                alert("'Error deleting data.");
+            }
+        } catch (error) {
+            debugger;
+
+            alert("'Error deleting data.");
+        }
+    }
+</script>
 <?php
 require 'include/footer.php';
 ?>
