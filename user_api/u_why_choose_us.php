@@ -25,11 +25,13 @@ while($row = $sel->fetch_assoc())
 			$cc['img'] = $row['img'];
 			$cc['background_color'] = $row['background_color'];
 			
+		}else{
+			$c[] = $pol;
+
 		}
 		
 		
 		
-		$c[] = $pol;
 	
 	
 }
