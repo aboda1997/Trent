@@ -90,7 +90,7 @@ try {
             $fp['image_list'] = $vr;
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $fp['total_amount'] = $days * $price;
-            $fp['taxes'] = (($days * $price) * $set['tax']) / 100;
+            $fp['taxes'] = (500 * $set['tax']) / 100;
             $fp['service_fee'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
             $fp['final_total'] = $fp['total_amount'] + $fp['taxes'] + $fp['service_fee'];
 

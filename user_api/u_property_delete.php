@@ -22,15 +22,26 @@ if ($pro_id == '' or $uid == '') {
 } else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property',  "  add_user_id = " . $uid . " ") === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 404);
 }else if (checkTableStatus($pro_id, 'tbl_property') == false) {
-	$returnArr = generateResponse('false', "This Property already deleted", 410);
-}  else {
+	$table = "tbl_property";
+	$field = "status=1";
+	$where = "where id=" . $pro_id . "";
+	$h = new Estate();
+	$check = $h->restateupdateData_single($field, $table, $where);
+	$data = [["id" => $pro_id , 'status'=> 'true' ]  ]; 
+
+	$returnArr = generateResponse('true', "Property Published Successfully!", 200 , $data);
+
+}
+else {
 
 	$table = "tbl_property";
 	$field = "status=0";
 	$where = "where id=" . $pro_id . "";
 	$h = new Estate();
 	$check = $h->restateupdateData_single($field, $table, $where);
-	$returnArr = generateResponse('true', "Property Deleted Successfully!", 200);
+	$data = [["id" => $pro_id , 'status'=> 'false' ]  ]; 
+
+	$returnArr = generateResponse('true', "Property Unpublished Successfully!", 200 , $data);
 
 }
 echo $returnArr;
