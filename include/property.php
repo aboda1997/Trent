@@ -399,22 +399,20 @@ try {
                 }
             }
         } else if ($_POST['type'] == 'add_why_choose_us') {
-
             $why_choose_us_bg = $_POST['why_choose_us_bg'];
-            $why_choose_us_title_en = htmlspecialchars(trim($_POST['why_choose_us_title_en']) ,ENT_QUOTES);
-            $why_choose_us_title_ar =  htmlspecialchars(trim($_POST['why_choose_us_title_ar']) ,ENT_QUOTES);
-            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']) ,ENT_QUOTES) ;
-            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']) , ENT_QUOTES);
-
+            $why_choose_us_title_en = $rstate->real_escape_string($_POST['why_choose_us_title_en']);
+            $why_choose_us_title_ar = $rstate->real_escape_string($_POST['why_choose_us_title_ar']);
+            $why_choose_us_description_ar = $rstate->real_escape_string($_POST['why_choose_us_description_ar']);
+            $why_choose_us_description_en = $rstate->real_escape_string($_POST['why_choose_us_description_en']);
             $why_choose_us_description_json = json_encode([
                 "en" => $why_choose_us_description_en,
                 "ar" => $why_choose_us_description_ar
-            ], JSON_UNESCAPED_UNICODE|JSON_HEX_APOS);
+            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS);
 
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,
                 "ar" => $why_choose_us_title_ar
-            ], JSON_UNESCAPED_UNICODE);
+            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS );
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -446,10 +444,10 @@ try {
             $id = $_POST['id'];
 
             $why_choose_us_bg = $_POST['why_choose_us_bg'];
-            $why_choose_us_title_en = htmlspecialchars(trim($_POST['why_choose_us_title_en']) ,ENT_QUOTES);
-            $why_choose_us_title_ar =  htmlspecialchars(trim($_POST['why_choose_us_title_ar']) ,ENT_QUOTES);
-            $why_choose_us_description_ar = htmlspecialchars(trim($_POST['why_choose_us_description_ar']),ENT_QUOTES);
-            $why_choose_us_description_en = htmlspecialchars(trim($_POST['why_choose_us_description_en']) , ENT_QUOTES);
+            $why_choose_us_title_en = $rstate->real_escape_string($_POST['why_choose_us_title_en']);
+            $why_choose_us_title_ar = $rstate->real_escape_string($_POST['why_choose_us_title_ar']);
+            $why_choose_us_description_ar = $rstate->real_escape_string($_POST['why_choose_us_description_ar']);
+            $why_choose_us_description_en = $rstate->real_escape_string($_POST['why_choose_us_description_en']);
 
             $why_choose_us_description_json = json_encode([
                 "en" => $why_choose_us_description_en,
@@ -459,7 +457,7 @@ try {
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,
                 "ar" => $why_choose_us_title_ar
-            ], JSON_UNESCAPED_UNICODE);
+            ], JSON_UNESCAPED_UNICODE |JSON_HEX_APOS);
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -1516,8 +1514,8 @@ try {
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_slider";
-            $field_values = ["img", "status", "title" , "uid" , "government_id" , "cat_id"];
-            $data_values = ["$url", "$okey", "$title_json" , $propowner  , $pgov , $ptype ];
+            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id"];
+            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1541,7 +1539,7 @@ try {
             ], JSON_UNESCAPED_UNICODE);
             $target_dir = dirname(dirname(__FILE__)) . "/images/category/";
             $url = "images/category/";
-            
+
             $temp = explode(".", $_FILES["cat_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
@@ -1709,7 +1707,7 @@ try {
                     $target_file
                 );
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json ,  "cat_id" => $ptype ,  "government_id" => $pgov ,  "uid" => "$propowner"];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json,  "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
@@ -1725,7 +1723,7 @@ try {
                 }
             } else {
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json ,  "cat_id" => $ptype ,  "government_id" => $pgov ,  "uid" => "$propowner"];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json,  "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
