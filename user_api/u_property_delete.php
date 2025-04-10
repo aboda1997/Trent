@@ -27,7 +27,7 @@ if ($pro_id == '' or $uid == '') {
 	$where = "where id=" . $pro_id . "";
 	$h = new Estate();
 	$check = $h->restateupdateData_single($field, $table, $where);
-	$data = [["id" => $pro_id , 'status'=> 'true' ]  ]; 
+	$data = [["id" => $pro_id , 'id_deleted'=> false ]  ]; 
 
 	$returnArr = generateResponse('true', "Property Published Successfully!", 200 , $data);
 
@@ -39,7 +39,7 @@ else {
 	$where = "where id=" . $pro_id . "";
 	$h = new Estate();
 	$check = $h->restateupdateData_single($field, $table, $where);
-	$data = [["id" => $pro_id , 'status'=> 'false' ]  ]; 
+	$data = [["id" => $pro_id , 'id_deleted'=> true ]  ]; 
 
 	$returnArr = generateResponse('true', "Property Unpublished Successfully!", 200 , $data);
 
