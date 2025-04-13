@@ -26,6 +26,8 @@ try {
         $returnArr    = generateResponse('false', "Property id is required", 400);
     } else if ($uid == null) {
         $returnArr    = generateResponse('false', "User id is required", 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
+        $returnArr    = generateResponse('false', "User id is not exists", 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1') === false) {
         $returnArr    = generateResponse('false', "This property  is not Available", 400);
     } else if ($valid == false) {
@@ -52,14 +54,10 @@ try {
 
             $table = "tbl_book";
 
-            $field_values = ["prop_id",  "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest"];
-            $data_values = [$res_data['id'],  $uid, date('Y-m-d') , "Booked", $res_data['price'], $res_data['image'], $res_data['title'] , $uid , "$guest_counts" ];
-
-            $h = new Estate();
-            $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $fp = array();
             $vr = array();
-            $set = $rstate->query("select tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
+            $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
+            $user = $rstate->query("select is_owner from tbl_user where  id= $uid  ")->fetch_assoc();
             $fp['id'] = $res_data['id'];
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
@@ -89,11 +87,21 @@ try {
             }
             $fp['image_list'] = $vr;
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
-            $fp['total_amount'] = $days * $price;
-            $fp['taxes'] = (500 * $set['tax']) / 100;
-            $fp['service_fee'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $fp['final_total'] = $fp['total_amount'] + $fp['taxes'] + $fp['service_fee'];
+            $fp['sub_total'] = $days * $price;
+            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total'] ) /100  : ($set["owner_fees"] * $fp['sub_total'] )/100; 
+            $deposit_fees = $res_data["security_deposit"];
 
+            $fp['taxes'] = ($trent_fess * $set['tax']) / 100;
+            $fp['service_fees'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
+            $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess ;
+            $fp['deposit_fees'] = $res_data['security_deposit'];
+            $fp['trent_fess'] = $trent_fess;
+
+            $field_values = ["prop_id",  "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
+            $data_values = [$res_data['id'],  $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $uid, "$guest_counts" , $total_amount ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
+
+            $h = new Estate();
+            $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $returnArr    = generateResponse('true', "Propperty booking Details", 200, array(
                 "booking_details" => $fp,
             ));
