@@ -45,12 +45,15 @@ try {
             $returnArr    = generateResponse('false', $status_message, 400);
         } else if ($guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false', "Guest count are exceed persons limits", 400);
-        } else if (
+        } 
+        else if (
             (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
-            ($days <= (int)$res_data['min_days'] || $days >= (int)$res_data['max_days'])
+            ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
             $returnArr    = generateResponse('false', "The selected dates are not  within the allowed limit [" . $res_data['min_days'] . ',' . $res_data['max_days'] . "]", 400);
-        } else {
+        } 
+        
+        else {
             $fp = array();
             $vr = array();
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
@@ -169,13 +172,12 @@ function processDates(string $from_date, string $to_date): array
     $date2 = new DateTime($to_date);
 
     // Validate order
-    if ($date1 >= $date2) {
+    if ($date1 > $date2) {
         return [0, "from_date must be earlier than to_date"];
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days;
-
+    $days = $interval->days+1;
     return [
         $days,
         "Successfully calculated $days days between dates"
