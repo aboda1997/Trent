@@ -76,7 +76,7 @@ try {
             $fp['from_date'] = $from_date;
             $fp['days'] = $days;
             $fp['guest_count'] = $guest_counts;
-            $fp['tax'] = $set['tax'];
+            $fp['tax_percent'] = $set['tax'];
 
             $periods = [
                 "d" => ["ar" => "يومي", "en" => "daily"],
