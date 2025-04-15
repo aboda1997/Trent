@@ -206,7 +206,7 @@ function validateName($name, $placeholder, $max = 50)
     }
 
     // Ensure the name contains only valid characters (letters, spaces, hyphens, apostrophes)
-    if (!preg_match('/^[a-zA-Z\s\'\-]+$/u', $name)) {
+    if (!preg_match('/^[\p{Arabic}a-zA-Z\s\'\-]+$/u', $name)) {
         return ['status' => false, 'response' => 'Invalid' . $placeholder . ' format.'];
     }
 
