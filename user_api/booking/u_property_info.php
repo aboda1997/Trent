@@ -28,7 +28,8 @@ if ($pro_id == ''  ) {
 
 	$fp['guest_rules'] = json_decode($sel['guest_rules'], true)[$lang];
 	$fp['guest_count'] = $sel['plimit'];
-
+	$titleData = json_decode($sel['title'], true);
+	$fp['title'] = $titleData[$lang];
 
 	$check_date_query = $rstate->query("SELECT check_in, check_out FROM tbl_book WHERE prop_id = $pro_id AND book_status != 'Cancelled' ORDER BY check_out ASC");
 
@@ -58,7 +59,7 @@ if ($pro_id == ''  ) {
 	
 	// Assign the next available date to the response
 	$fp['next_available_date'] = $next_available_date;
-	$returnArr    = generateResponse('true', "Property Book Details Founded!", 200, array("property_book_details" => $fp ));
+	$returnArr    = generateResponse('true', "Property Booking Details Founded!", 200, array("property_book_details" => $fp ));
 
 }
 echo $returnArr;

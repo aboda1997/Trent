@@ -72,6 +72,12 @@ try {
                 $fp['rate'] = number_format(0, 1, '.', '');
             }
             $fp['price'] = $res_data['price'];
+            $fp['from_date'] = $from_date;
+            $fp['from_date'] = $from_date;
+            $fp['days'] = $days;
+            $fp['guest_count'] = $guest_counts;
+            $fp['tax'] = $set['tax'];
+
             $periods = [
                 "d" => ["ar" => "يومي", "en" => "daily"],
                 "m" => ["ar" => "شهري", "en" => "monthly"]
@@ -95,7 +101,7 @@ try {
             $fp['service_fees'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess ;
             $fp['deposit_fees'] = $res_data['security_deposit'];
-            $fp['trent_fess'] = $trent_fess;
+            $fp['trent_fees'] = $trent_fess;
 
             $field_values = ["prop_id",  "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
             $data_values = [$res_data['id'],  $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $uid, "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
