@@ -73,7 +73,7 @@ try {
             }
             $fp['price'] = $res_data['price'];
             $fp['from_date'] = $from_date;
-            $fp['from_date'] = $from_date;
+            $fp['to_date'] = $to_date;
             $fp['days'] = $days;
             $fp['guest_count'] = $guest_counts;
             $fp['tax_percent'] = $set['tax'];
