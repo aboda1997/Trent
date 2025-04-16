@@ -49,7 +49,6 @@ try {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
             $table = "tbl_payout";
-
             $field_values = ["book_id", "requested_at", "profile_id", "status"];
             $data_values = [$idList, $created_at, $profile_id,  1];
             $Payout_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
