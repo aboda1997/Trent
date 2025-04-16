@@ -104,7 +104,7 @@ try {
             $fp['trent_fees'] = $trent_fess;
 
             $field_values = ["prop_id",  "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
-            $data_values = [$res_data['id'],  $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $uid, "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
+            $data_values = [$res_data['id'],  $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
