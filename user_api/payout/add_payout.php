@@ -35,7 +35,7 @@ try {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (validateIdAndDatabaseExistance($profile_id, 'tbl_payout_profiles') === false) {
         $returnArr = generateResponse('false', $lang_["payout_profile_not_exist"], 404);
-    }else if (validateFacilityIds($booking_list) === false) {
+    }else if (validateFacilityIds($booking_list ,  'tbl_book') === false) {
 		$returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
 	}
     
