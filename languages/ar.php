@@ -304,4 +304,18 @@ return [
     'host_cancellation_policies_feedback' => 'الرجاء إدخال سياسات الإلغاء للمضيفين',
     'edit_host_cancellation_policies' => 'تعديل سياسات الإلغاء للمضيفين',
     'Enter_Host_Cancellation_Policies' => 'أدخل سياسات الإلغاء للمضيفين (يدعم HTML)',
+
+    'payout_method_not_allowed' => 'طريقة الدفع هذه غير مسموح بها',
+    'invalid_payout_method_id' => 'يجب إدخال معرف طريقة دفع صالح',
+    'account_deleted' => 'الحساب المرتبط بهذا المعرف الخاص بالمستخدم تم حذفه',
+    'invalid_user_id' => 'يجب إدخال معرف مستخدم صالح',
+    'user_id_required' => 'يجب إدخال معرف المستخدم',
+    'unsupported_lang_key' => 'مفتاح اللغة المدخل غير مدعوم',
+    'payout_profile_not_exist' => 'ملف الدفع هذا غير موجود!',
+    'invalid_booking_ids' => 'يجب أن تكون معرفات الحجوزات صالحة!',
+
+    'general_error' => 'حدث خطأ ما!',
+    'payout_request_added' => 'تم إضافة طلب الدفع بنجاح',
+    'payout_profile_added' => 'تم إضافة ملف الدفع بنجاح',
+    'payout_profile_deleted' => 'تم حذف ملف الدفع بنجاح!',
 ];

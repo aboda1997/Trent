@@ -2,8 +2,9 @@
 require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require dirname(dirname(__FILE__), 2) . '/include/helper.php';
-require dirname(dirname(__FILE__) , 2) . '/user_api/estate.php';
-require_once dirname(dirname(__FILE__) , 2) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
+require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try {
@@ -14,37 +15,32 @@ try {
     }
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
-    $method_id = isset($_POST['method_id']) ? $_POST['method_id'] : '';
-    $bank_account_number = isset($_POST['bank_account_number']) ? $_POST['bank_account_number'] : '';
-    $wallet_number = isset($_POST['wallet_number']) ? $_POST['wallet_number'] : '';
+    $profile_id = isset($_POST['profile_id']) ? $_POST['profile_id'] : '';
+    $booking_list = isset($_POST['booking_list']) ? $_POST['booking_list'] : '';
 
-    $name = $rstate->real_escape_string(isset($_POST['name']) ? $_POST['name'] : '');
-    $full_name = $rstate->real_escape_string(isset($_POST['full_name']) ? $_POST['full_name'] : '');
     $lang = $rstate->real_escape_string(isset($_POST['lang']) ? $_POST['lang'] : 'en');
-    $bank_name = $rstate->real_escape_string(isset($_POST['bank_name']) ? $_POST['bank_name'] : '');
+    $decodedIds = json_decode($booking_list, true);
+    $ids = array_filter(array_map('trim', $decodedIds));
+    $idList = implode(',', $ids);
 
+    $lang_ = load_specific_langauage($lang);
 
     if ($uid == '') {
-        $returnArr = generateResponse('false', "You must enter User id.", 400);
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "You must enter valid User id.", 400);
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
     } else if (checkTableStatus($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "The account associated with this user ID has been deleted.", 400);
-    } else if (validateIdAndDatabaseExistance($method_id, 'tbl_payout_methods') === false) {
-        $returnArr = generateResponse('false', "You must enter valid Payout Method id.", 400);
-    } else if (checkTableStatus($method_id, 'tbl_payout_methods') === false) {
-        $returnArr = generateResponse('false', "This Payout Method not Allowed ", 400);
-    } else if (!validateName($name, 'Profile Name', 50)['status']) {
-        $returnArr    = generateResponse('false', validateName($name, ' Profile Name', 50)['response'], 400);
-    }
-    else if (!validateName($full_name, 'fULL Name', 100)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name, ' FULL Name', 100)['response'], 400);
-    }
-    else if (!validateName($full_name, 'Bank Name', 50)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name, ' Bank Name', 50)['response'], 400);
-    }
-     else {
-       
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } else if (!in_array($lang, ['en', 'ar'])) {
+        $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
+    } else if (validateIdAndDatabaseExistance($profile_id, 'tbl_payout_profiles') === false) {
+        $returnArr = generateResponse('false', $lang_["payout_profile_not_exist"], 404);
+    }else if (validateFacilityIds($booking_list) === false) {
+		$returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
+	}
+    
+    else {
+
         $created_at = date('Y-m-d H:i:s');
 
 
@@ -52,25 +48,11 @@ try {
         if (!isset($returnArr)) {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
-            $table = "tbl_payout_profiles";
-            $encoded_full_name = json_encode([
-                "full_name" => $name,
+            $table = "tbl_payout";
 
-            ], JSON_UNESCAPED_UNICODE);
-            
-            $encoded_name = json_encode([
-                "name" => $name,
-
-            ], JSON_UNESCAPED_UNICODE);
-            
-            $encoded_bank_name = json_encode([
-                "bank_name" => $bank_name,
-
-            ], JSON_UNESCAPED_UNICODE);
-
-            $field_values = ["uid", "name", "bank_name", "full_name", "bank_account_number", "wallet_number" , "status"];
-            $data_values = [$uid, $name, $bank_name, $full_name, $bank_account_number, $wallet_number,  1];
-            $profile_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $field_values = ["book_id", "requested_at", "profile_id", "status"];
+            $data_values = [$idList, $created_at, $profile_id,  1];
+            $Payout_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $GLOBALS['rstate']->commit();
         }
     }
@@ -79,9 +61,9 @@ try {
     if (isset($returnArr)) {
         echo $returnArr;
     } else {
-        $returnArr    = generateResponse('true', "Payout Profile Added Successfully", 201, array(
-            "Profile_id" => $profile_id,
-            "profile_name" => $name
+        $returnArr    = generateResponse('true', $lang_["payout_request_added"], 201, array(
+            "payout_id" => $Payout_id,
+            "profile_id" => $profile_id
         ));
 
         echo $returnArr;

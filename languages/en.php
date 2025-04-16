@@ -271,12 +271,12 @@ return [
     'policy_description' => " Policy Description",
     'policy_description_' => "Please enter policy Description",
     'policy_title_' => "Please enter policy Title",
-    'is_recommended' => 'Is Recommended', 
+    'is_recommended' => 'Is Recommended',
     'is_recommended_' => 'please choose Is Recommended',
-    'yes' => 'Yes', 
+    'yes' => 'Yes',
     'no' => 'No',
-    'add_privacy_policy' => 'Add Privacy Policy' ,
-    'edit_privacy_policy' => 'Edit Privacy Policy' ,
+    'add_privacy_policy' => 'Add Privacy Policy',
+    'edit_privacy_policy' => 'Edit Privacy Policy',
     'privacy_status' => 'Privacy Status',
 
     'policy_status' => 'please enter Policy status',
@@ -323,33 +323,19 @@ return [
     'Enter_Host_Cancellation_Policies' => 'Enter Host Cancellation Policies (HTML supported)',
 
 
-    
+    'payout_method_not_allowed' => 'This Payout Method is not Allowed',
+    'invalid_payout_method_id' => 'You must enter a valid Payout Method ID',
+    'account_deleted' => 'The account associated with this User ID has been deleted',
+    'invalid_user_id' => 'You must enter a valid User ID',
+    'user_id_required' => 'You must enter a User ID',
+    'unsupported_lang_key' => 'The entered language key is not supported',
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    'payout_profile_not_exist' => 'This Payout Profile Does Not Exist!',
+    'invalid_booking_ids' => 'Booking IDs must be valid!',
+    'general_error' => 'Something Went Wrong!',
+    'payout_request_added' => 'Payout Request Added Successfully',
+    'payout_profile_added' => 'Payout Profile Added Successfully',
+    'payout_profile_deleted' => 'Payout Profile Deleted Successfully!',
+   
 
 ];

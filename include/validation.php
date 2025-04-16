@@ -61,7 +61,7 @@ function checkPropertyBookingStatus($id){
     return $hasRestrictedStatus;
 }
 
-function validateFacilityIds($idString)
+function validateFacilityIds($idString , $table = "tbl_facility")
 {
     // Check if input is a JSON array and decode it
     $decodedIds = json_decode($idString, true);
@@ -82,7 +82,7 @@ function validateFacilityIds($idString)
     // Build and execute the query
     $idList = implode(',', $ids);
 
-    $query = "SELECT id FROM tbl_facility WHERE id IN ($idList)";
+    $query = "SELECT id FROM $table WHERE id IN ($idList)";
     $result = $GLOBALS['rstate']->query($query);
     // Fetch valid IDs
     $validIds = [];
@@ -193,24 +193,40 @@ function validateAndExtractCoordinates($url)
 }
 
 
-function validateName($name, $placeholder, $max = 50)
+function validateName($name, $placeholder, $max = 50, $lang = 'en')
 {
     // Trim whitespace from the name
     $name = trim($name);
+    
+    // Define language responses
+    $messages = [
+        'en' => [
+            'required' => "$placeholder is required",
+            'length' => "$placeholder must be between 3 and $max characters",
+            'invalid' => "Invalid $placeholder format",
+            'valid' => "Valid $placeholder"
+        ],
+        'ar' => [
+            'required' => "$placeholder مطلوب",
+            'length' => "$placeholder يجب أن يكون بين 3 و $max حرفًا",
+            'invalid' => "صيغة $placeholder غير صالحة",
+            'valid' => "$placeholder صالح"
+        ]
+    ];
+
     if ($name == '') {
-        return ['status' => false, 'response' => "" . $placeholder . " are required"];
+        return ['status' => false, 'response' => $messages[$lang]['required']];
     }
-    // Check length and allow only letters, spaces, and basic punctuation
+
     if (strlen($name) < 3 || strlen($name) > $max) {
-        return ['status' => false, 'response' => "" . $placeholder . " must be between 3 and $max characters."];
+        return ['status' => false, 'response' => $messages[$lang]['length']];
     }
 
-    // Ensure the name contains only valid characters (letters, spaces, hyphens, apostrophes)
     if (!preg_match('/^[\p{Arabic}a-zA-Z\s\'\-]+$/u', $name)) {
-        return ['status' => false, 'response' => 'Invalid' . $placeholder . ' format.'];
+        return ['status' => false, 'response' => $messages[$lang]['invalid']];
     }
 
-    return ['status' => true, 'response' => 'Valid ' . $placeholder . '.'];
+    return ['status' => true, 'response' => $messages[$lang]['valid']];
 }
 
 function validateEmail($email)

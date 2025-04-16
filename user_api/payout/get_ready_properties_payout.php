@@ -4,6 +4,7 @@ require dirname(dirname(__FILE__),2) . '/include/constants.php';
 require dirname(dirname(__FILE__),2) . '/include/helper.php';
 require dirname(dirname(__FILE__),2) . '/include/validation.php';
 require_once dirname(dirname(__FILE__),2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__) , 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try {
@@ -12,13 +13,14 @@ try {
 
     // Get pagination parameters
     $lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : "en"; // Current page
+    $lang_ = load_specific_langauage($lang);
 
     if ($uid == null) {
-        $returnArr = generateResponse('false', "You must enter User id.", 400);
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "You must enter valid User id.", 400);
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
     } else if (checkTableStatus($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "The account associated with this user ID has been deleted.", 400);
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
     } else {
         $data = array();
         $data_list = array();
