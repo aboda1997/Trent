@@ -3,6 +3,7 @@ require dirname(dirname(__FILE__),2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__),2) . '/include/validation.php';
 require dirname(dirname(__FILE__),2) . '/include/helper.php';
 require dirname(dirname(__FILE__),2) . '/include/estate.php';
+require_once dirname(dirname(__FILE__) , 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try{
@@ -16,11 +17,13 @@ try{
 $data = json_decode(file_get_contents('php://input'), true);
 $profile_id  = isset($data['profile_id']) ? $data['profile_id'] : '';
 $uid  = isset($data['uid']) ? $data['uid'] : '';
+$lang  = isset($data['lang']) ? $data['lang'] : 'en';
+$lang_ = load_specific_langauage($lang);
 
 if ($profile_id == '' or $uid == '') {
-	$returnArr = generateResponse('false', "Something Went Wrong!", 401);
+	$returnArr = generateResponse('false', $lang_["general_error"], 401);
 } else if (validateIdAndDatabaseExistance($profile_id, 'tbl_payout_profiles') === false) {
-	$returnArr = generateResponse('false', "This Payout Profile Not Exist!", 404);
+	$returnArr = generateResponse('false', $lang_["payout_profile_not_exist"], 404);
 }
 else {
 
@@ -31,7 +34,7 @@ else {
 	$check = $h->restateupdateData_single($field, $table, $where);
 	$data = [["id" => $profile_id , 'id_deleted'=> true ]  ]; 
 
-	$returnArr = generateResponse('true', "Payout Profile Deleted Successfully!", 200 , $data);
+	$returnArr = generateResponse('true', $lang_["payout_profile_deleted"], 200 , $data);
 
 }
 echo $returnArr;

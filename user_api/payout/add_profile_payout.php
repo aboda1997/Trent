@@ -4,6 +4,7 @@ require dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require dirname(dirname(__FILE__) , 2) . '/user_api/estate.php';
 require_once dirname(dirname(__FILE__) , 2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__) , 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try {
@@ -22,26 +23,44 @@ try {
     $full_name = $rstate->real_escape_string(isset($_POST['full_name']) ? $_POST['full_name'] : '');
     $lang = $rstate->real_escape_string(isset($_POST['lang']) ? $_POST['lang'] : 'en');
     $bank_name = $rstate->real_escape_string(isset($_POST['bank_name']) ? $_POST['bank_name'] : '');
-
+    $fieldNames = [
+        'profile_name' => [
+            'en' => 'Profile Name',
+            'ar' => 'اسم الملف الشخصي'
+        ],
+        'full_name' => [
+            'en' => 'Full name',
+            'ar' => 'الاسم الكامل'
+        ],
+        'bank_name' => [
+            'en' => 'Bank name',
+            'ar' => 'اسم البنك'
+        ]
+    ];
+    $lang_ = load_specific_langauage($lang);
 
     if ($uid == '') {
-        $returnArr = generateResponse('false', "You must enter User id.", 400);
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "You must enter valid User id.", 400);
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
     } else if (checkTableStatus($uid, 'tbl_user') === false) {
-        $returnArr = generateResponse('false', "The account associated with this user ID has been deleted.", 400);
-    } else if (validateIdAndDatabaseExistance($method_id, 'tbl_payout_methods') === false) {
-        $returnArr = generateResponse('false', "You must enter valid Payout Method id.", 400);
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } 
+    else if (!in_array($lang, ['en', 'ar'])) {
+        $returnArr    = generateResponse('false',$lang_["unsupported_lang_key"] , 400);
+    }    
+    else if (validateIdAndDatabaseExistance($method_id, 'tbl_payout_methods') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_payout_method_id"], 400);
     } else if (checkTableStatus($method_id, 'tbl_payout_methods') === false) {
-        $returnArr = generateResponse('false', "This Payout Method not Allowed ", 400);
-    } else if (!validateName($name, 'Profile Name', 50)['status']) {
-        $returnArr    = generateResponse('false', validateName($name, ' Profile Name', 50)['response'], 400);
+        $returnArr = generateResponse('false', $lang_["payout_method_not_allowed"], 400);
+    } else if (!validateName($name, $fieldNames['profile_name'][$lang], 50 , $lang)['status'] ) {
+        $returnArr    = generateResponse('false', validateName($name, $fieldNames['profile_name'][$lang] , 50 ,$lang)['response'], 400);
     }
-    else if (!validateName($full_name, 'fULL Name', 100)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name, ' FULL Name', 100)['response'], 400);
+    else if (!validateName($full_name, $fieldNames['full_name'][$lang], 100 , $lang)['status']) {
+        $returnArr    = generateResponse('false', validateName($full_name,$fieldNames['full_name'][$lang], 100 , $lang)['response'], 400);
     }
-    else if (!validateName($full_name, 'Bank Name', 50)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name, ' Bank Name', 50)['response'], 400);
+    else if (!validateName($full_name, $fieldNames['bank_name'][$lang], 50 , $lang)['status']) {
+        $returnArr    = generateResponse('false', validateName($full_name, $fieldNames['bank_name'][$lang] , 50, $lang)['response'], 400);
     }
      else {
        
@@ -79,7 +98,7 @@ try {
     if (isset($returnArr)) {
         echo $returnArr;
     } else {
-        $returnArr    = generateResponse('true', "Payout Profile Added Successfully", 201, array(
+        $returnArr    = generateResponse('true', $lang_["payout_profile_added"], 201, array(
             "Profile_id" => $profile_id,
             "profile_name" => $name
         ));
