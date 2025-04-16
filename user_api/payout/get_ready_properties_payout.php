@@ -39,7 +39,6 @@ INNER JOIN
     tbl_property p ON b.prop_id = p.id
 WHERE 
     b.book_status IN ('Check_in', 'Completed')
-    AND b.add_user_id = $uid
     AND p.add_user_id = $uid
     ";
 

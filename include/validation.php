@@ -193,7 +193,7 @@ function validateAndExtractCoordinates($url)
 }
 
 
-function validateName($name, $placeholder, $max = 50, $lang = 'en')
+function validateName($name, $placeholder, $max = 50, $lang = 'en' , $required = true)
 {
     // Trim whitespace from the name
     $name = trim($name);
@@ -213,8 +213,11 @@ function validateName($name, $placeholder, $max = 50, $lang = 'en')
             'valid' => "$placeholder صالح"
         ]
     ];
+    if ($name == '' && !$required ) {
+        return ['status' => true, 'response' => $messages[$lang]['valid']];
+    }
 
-    if ($name == '') {
+    if ($name == '' && $required ) {
         return ['status' => false, 'response' => $messages[$lang]['required']];
     }
 

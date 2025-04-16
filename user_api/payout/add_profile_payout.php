@@ -53,14 +53,14 @@ try {
         $returnArr = generateResponse('false', $lang_["invalid_payout_method_id"], 400);
     } else if (checkTableStatus($method_id, 'tbl_payout_methods') === false) {
         $returnArr = generateResponse('false', $lang_["payout_method_not_allowed"], 400);
-    } else if (!validateName($name, $fieldNames['profile_name'][$lang], 50 , $lang)['status'] ) {
-        $returnArr    = generateResponse('false', validateName($name, $fieldNames['profile_name'][$lang] , 50 ,$lang)['response'], 400);
+    } else if (!validateName($name, $fieldNames['profile_name'][$lang], 50 , $lang )['status'] ) {
+        $returnArr    = generateResponse('false', validateName($name, $fieldNames['profile_name'][$lang] , 50 ,$lang )['response'], 400);
     }
-    else if (!validateName($full_name, $fieldNames['full_name'][$lang], 100 , $lang)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name,$fieldNames['full_name'][$lang], 100 , $lang)['response'], 400);
+    else if (!validateName($full_name, $fieldNames['full_name'][$lang], 100 , $lang, false)['status']) {
+        $returnArr    = generateResponse('false', validateName($full_name,$fieldNames['full_name'][$lang], 100 , $lang ,  false)['response'], 400);
     }
-    else if (!validateName($full_name, $fieldNames['bank_name'][$lang], 50 , $lang)['status']) {
-        $returnArr    = generateResponse('false', validateName($full_name, $fieldNames['bank_name'][$lang] , 50, $lang)['response'], 400);
+    else if (!validateName($bank_name, $fieldNames['bank_name'][$lang], 50 , $lang , false)['status']) {
+        $returnArr    = generateResponse('false', validateName($bank_name, $fieldNames['bank_name'][$lang] , 50, $lang ,false)['response'], 400);
     }
      else {
        
@@ -86,7 +86,6 @@ try {
                 "bank_name" => $bank_name,
 
             ], JSON_UNESCAPED_UNICODE);
-
             $field_values = ["uid", "name", "bank_name", "full_name", "bank_account_number", "wallet_number" , "status"];
             $data_values = [$uid, $name, $bank_name, $full_name, $bank_account_number, $wallet_number,  1];
             $profile_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
