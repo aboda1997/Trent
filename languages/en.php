@@ -260,6 +260,8 @@ return [
     'setting_cmobile' => 'Please Enter Valid mobile number for Contact',
     'setting_aalert' => 'Please Enter alert text in arabic',
     'setting_ealert' => 'Please Enter alert text in english',
+    'setting_mcode' => 'Please Enter Merchant Code',
+    'setting_skey' => 'Please Enter Secure Key ',
 
     'privacy_policy' => 'Privacy Policy',
     'privacy_feedback' => 'Please Enter Privacy Policy ',

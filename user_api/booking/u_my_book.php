@@ -42,7 +42,7 @@ if ($uid == '' or $status == '') {
 
 		$wow[] = $fp;
 	}
-	$returnArr    = generateResponse('true', "My Booking Founded!", 200, array("My-Booking" => $wow));
+	$returnArr    = generateResponse('true', "My Booking Founded!", 200, array("My_Booking" => $wow));
 
 }
 echo $returnArr;
