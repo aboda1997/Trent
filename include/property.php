@@ -335,6 +335,8 @@ try {
             $show_property = $_POST['show_property'];
             $cmobile = $_POST['cmobile'];
             $cemail = $_POST['cemail'];
+            $mcode = encryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/public.pem');
+            $skey = encryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/public.pem');
             $alert_en = mysqli_real_escape_string($rstate, $_POST['ealert']);
             $alert_ar = mysqli_real_escape_string($rstate, $_POST['aalert']);
 
@@ -368,6 +370,8 @@ try {
                     'contact_us_email' => $cemail,
                     'contact_us_mobile' => $cmobile,
                     'alert_text' => $alert_json,
+                    'merchant_code' => $mcode,
+                    'secure_key' => $skey,
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -390,6 +394,9 @@ try {
                     'contact_us_email' => $cemail,
                     'contact_us_mobile' => $cmobile,
                     'alert_text' => $alert_json,
+                    'merchant_code' => $mcode,
+                    'secure_key' => $skey,
+
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();

@@ -1,5 +1,6 @@
 <?php
 require 'include/main_head.php';
+
 if ($_SESSION['restatename'] == 'Staff') {
     header('HTTP/1.1 401 Unauthorized');
 
@@ -140,8 +141,7 @@ if ($_SESSION['restatename'] == 'Staff') {
 
 
                                         <div class="form-group mb-3 col-12">
-                                            <h5 class="h5_set"><i class="fa fa-user-plus" aria-hidden="true"></i> Fees Information</h5>
-                                        </div>
+                                        <h5 class="finance-fees-header"><i class="fa fa-money-bill-wave" aria-hidden="true"></i> Fees Information</h5>                                        </div>
 
 
                                         <div class="form-group mb-3 col-6">
@@ -180,7 +180,7 @@ if ($_SESSION['restatename'] == 'Staff') {
                                         <div class="form-group mb-3 col-12">
                                             <h5 class="h5_set"><i class="fa fa-user-plus" aria-hidden="true"></i> Contact Information</h5>
                                         </div>
-                                        <div class="form-group mb-3 col-4">
+                                        <div class="form-group mb-3 col-6">
                                             <label><span class="text-danger">*</span> Contact Email </label>
 
                                             <input type="text" class="form-control " placeholder="Enter contact email" value="<?php echo $set['contact_us_email']; ?>" name="cemail" required="">
@@ -188,7 +188,7 @@ if ($_SESSION['restatename'] == 'Staff') {
                                                 <?= $lang_en['setting_cemail'] ?>
                                             </div>
                                         </div>
-                                        <div class="form-group mb-3 col-4">
+                                        <div class="form-group mb-3 col-6">
                                             <label><span class="text-danger">*</span> Contact Mobile </label>
 
                                             <input type="text" class="form-control " placeholder="Enter Contact mobile" value="<?php echo $set['contact_us_mobile']; ?>" name="cmobile" required="">
@@ -198,12 +198,13 @@ if ($_SESSION['restatename'] == 'Staff') {
                                         </div>
 
                                         <div class="form-group mb-3 col-12">
-                                            <h5 class="h5_set"><i class="fa fa-user-plus" aria-hidden="true"></i> Alert Text</h5>
+                                            
+                                            <h5 class="finance-alert-header"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Alert Text</h5>
                                         </div>
                                         <?php
                                         $alert = json_decode($set['alert_text'], true);
                                         ?>
-                                        <div class="form-group mb-3 col-4">
+                                        <div class="form-group mb-3 col-6">
                                             <label><span class="text-danger">*</span> Alert Text (English) </label>
 
                                             <input type="text" class="form-control " placeholder="Enter Alert Text (English)" value="<?php echo $alert['en'] ?? ''; ?>" name="ealert" required="">
@@ -212,7 +213,7 @@ if ($_SESSION['restatename'] == 'Staff') {
                                             </div>
                                         </div>
 
-                                        <div class="form-group mb-3 col-4">
+                                        <div class="form-group mb-3 col-6">
                                             <label><span class="text-danger">*</span> Alert Text (Arabic) </label>
 
                                             <input type="text" class="form-control " placeholder="Enter Alert Text (Arabic)" value="<?php echo $alert['ar'] ?? ''; ?>" name="aalert" required="">
@@ -221,6 +222,30 @@ if ($_SESSION['restatename'] == 'Staff') {
                                             </div>
                                         </div>
 
+
+
+                                        <div class="form-group mb-3 col-12">
+                                        <h5 class="finance-credentials-header"><i class="fa fa-credit-card-alt" aria-hidden="true"></i> Fawry Credentials</h5>                                        </div>
+                                        <?php
+                                        $alert = json_decode($set['alert_text'], true);
+                                        ?>
+                                        <div class="form-group mb-3 col-6">
+                                            <label><span class="text-danger">*</span>  Merchant Code </label>
+
+                                            <input type="text" class="form-control " placeholder="Enter Merchant Code " value="<?php echo $set['merchant_code']; ?>" name="mcode" required="">
+                                            <div class="invalid-feedback" id="mcode_feedback" style="display: none;">
+                                                <?= $lang_en['setting_mcode'] ?>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group mb-3 col-6">
+                                            <label><span class="text-danger">*</span> Secure Key </label>
+
+                                            <input type="text" class="form-control " placeholder="Enter Secure key" value="<?php echo $set['secure_key']; ?>" name="skey" required="">
+                                            <div class="invalid-feedback" id="skey_feedback" style="display: none;">
+                                                <?= $lang_en['setting_skey'] ?>
+                                            </div>
+                                        </div>
 
 
                                         <div class="col-12">
@@ -296,6 +321,9 @@ if ($_SESSION['restatename'] == 'Staff') {
         const ealert = document.querySelector('input[name="ealert"]').value;
         const aalert = document.querySelector('input[name="aalert"]').value;
 
+        const mcode = document.querySelector('input[name="mcode"]').value;
+        const skey = document.querySelector('input[name="skey"]').value;
+
         const nemail = document.querySelector('input[name="nemail"]').value;
         const cemail = document.querySelector('input[name="cemail"]').value;
         const cmobile = document.querySelector('input[name="cmobile"]').value;
@@ -333,6 +361,15 @@ if ($_SESSION['restatename'] == 'Staff') {
         }
         if (!aalert) {
             document.getElementById('aalert_feedback').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!mcode) {
+            document.getElementById('mcode_feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!skey) {
+            document.getElementById('skey_feedback').style.display = 'block';
             isValid = false;
         }
         if (!tax || !validateRange(tax, 1, 100)) {
