@@ -61,6 +61,8 @@ function sendFirebaseNotification(
             'Authorization: Bearer ' . $token['access_token']
         ],
         CURLOPT_POSTFIELDS =>  $payload,
+        CURLOPT_RETURNTRANSFER => true
+
     ]);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "post");
 
@@ -74,7 +76,6 @@ function sendFirebaseNotification(
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if ($httpCode < 200 || $httpCode >= 300) {
-            throw new Exception("HTTP request failed with status code: $httpCode");
             return false;
         }
     
@@ -89,7 +90,6 @@ function sendFirebaseNotification(
         $_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
 
         if (!$_id) {
-            throw new Exception("Failed to insert Notification record");
             return false;
         }
 
@@ -98,7 +98,6 @@ function sendFirebaseNotification(
 
         return true;
     } catch (Exception $e) {
-        throw new Exception("Error Sending Notification: $e");
         return false;
     } finally {
         // Close cURL resource
