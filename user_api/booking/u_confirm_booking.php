@@ -17,6 +17,7 @@ try {
     $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
+    $booking_id = isset($_POST['booking_id']) ? $_POST['booking_id'] : '';
     $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
 
     $is_confirmed = isset($_POST['is_confirmed']) ? $_POST['is_confirmed'] : 'false';
