@@ -319,4 +319,9 @@ return [
     'payout_request_added' => 'تم إضافة طلب الدفع بنجاح',
     'payout_profile_added' => 'تم إضافة ملف الدفع بنجاح',
     'payout_profile_deleted' => 'تم حذف ملف الدفع بنجاح!',
+
+    'invalid_cancel_id' => 'يجب إدخال معرف سبب إلغاء صالح',
+    'cancel_id_required' => 'يجب إدخال معرف سبب الإلغاء',
+    'prop_id_required' => 'يجب إدخال معرف العقار',
+    'prop_not_available' => 'هذا العقار غير متاح',
 ];

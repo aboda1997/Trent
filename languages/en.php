@@ -339,5 +339,9 @@ return [
     'payout_profile_added' => 'Payout Profile Added Successfully',
     'payout_profile_deleted' => 'Payout Profile Deleted Successfully!',
    
+    'invalid_cancel_id' => 'You must enter a valid Cancel Reason ID',
+    'cancel_id_required' => 'You must enter a Cencel Reason ID',
+    'prop_id_required' => 'You must enter a Property ID',
+    'prop_not_available' => "This property  is not Available",
 
 ];

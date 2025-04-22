@@ -1,10 +1,10 @@
 <?php
-require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
-require dirname(dirname(__FILE__), 2) . '/include/validation.php';
-require dirname(dirname(__FILE__), 2) . '/include/helper.php';
-require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
-require dirname(dirname(__FILE__), 2) . '/include/constants.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/validation.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/helper.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
 
 header('Content-Type: application/json');
 try {
@@ -57,7 +57,7 @@ try {
             $fp = array();
             $vr = array();
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
-            $user = $rstate->query("select is_owner from tbl_user where  id= $uid  ")->fetch_assoc();
+            $user = $rstate->query("select is_owner , mobile	 from tbl_user where  id= $uid  ")->fetch_assoc();
             $fp['id'] = $res_data['id'];
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
@@ -102,15 +102,20 @@ try {
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess ;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
-
+            $message = "لديك حجز جديد";
+            $mobile = $user["mobile"];
+            $whatsapp = sendMessage([$mobile] , $message);
+           // $firebase_notification = sendFirebaseNotification($message , $message , $uid);
             $field_values = ["prop_id", "check_in" , "check_out" ,   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
             $data_values = [$res_data['id'], $from_date  , $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-            $returnArr    = generateResponse('true', "Propperty booking Details", 200, array(
+            $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
-            ));
+            ));   
+
+           
         }
     }
     echo $returnArr;
