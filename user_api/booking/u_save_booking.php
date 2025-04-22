@@ -105,7 +105,7 @@ try {
             $message = "لديك حجز جديد";
             $mobile = $user["mobile"];
             $whatsapp = sendMessage([$mobile] , $message);
-           // $firebase_notification = sendFirebaseNotification($message , $message , $uid);
+            $firebase_notification = sendFirebaseNotification($message , $message , $uid);
             $field_values = ["prop_id", "check_in" , "check_out" ,   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
             $data_values = [$res_data['id'], $from_date  , $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
 
