@@ -63,7 +63,7 @@ try {
 
 		$getstatus = $rstate->query("select * from tbl_user where id=" . $uid . " and is_subscribe=1")->num_rows;
 		$papi = array(array("title" => "My Property", "report_data" => $total_property, "url" => 'images/dashboard/property.png'), array("title" => "My Extra Images", "report_data" => $total_extra_image, "url" => 'images/dashboard/extra_images.png'), array("title" => "My Gallery Category", "report_data" => $total_gallery_category, "url" => 'images/dashboard/category.png'), array("title" => "My Gallery Images", "report_data" => $total_gallery_image, "url" => 'images/dashboard/gallery_image.png'), array("title" => "My Booking", "report_data" => intval($total_Booking), "url" => 'images/dashboard/my-booking.png'), array("title" => "My Earning", "report_data" => $finalearn, "url" => 'images/dashboard/my-earning.png'), array("title" => "My Enquiry", "report_data" => intval($total_enquiry), "url" => 'images/dashboard/my-inquiry.png'), array("title" => "Total Review", "report_data" => $total_review, "url" => 'images/dashboard/review.png'), array("title" => "My Payout", "report_data" => floatval($payout), "url" => 'images/dashboard/my-payout.png'),
-		array("title" => "My Payout Profiles", "report_data" => $count_payout, "url" => 'images/dashboard/my-payout.png')
+		array("title" => "My Payout Profiles", "report_data" => intval($count_payout), "url" => 'images/dashboard/my-payout.png')
 	);
 		$member = array(array("title" => "Current Membership", "report_data" => $current_membership), array("title" => "Memerbship Expired Date", "report_data" => $valid_till));
 		$returnArr = generateResponse('true', "Report List Get Successfully!!!", 200, array(

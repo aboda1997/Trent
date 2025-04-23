@@ -39,7 +39,7 @@ try {
         $table = "tbl_book";
         $fp = array();
         $field = array('book_status' => 'Confirmed');
-        $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $deny_id);
+        $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $deny_id , "cancel_by" => 'H');
         $where = "where id=" . '?' . "";
         $where_conditions = [$booking_id];
         $booking_data = $rstate->query("select add_user_id , prop_id , book_date ,prop_title	 from tbl_book where  id= $booking_id  ")->fetch_assoc();
