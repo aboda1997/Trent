@@ -32,7 +32,7 @@ try {
 		$earn = empty($total_earn['total_amt']) ? "0" : $total_earn['total_amt'];
 		$total_payout = $rstate->query("select sum(amt) as total_payout from payout_setting where owner_id=" . $uid . "")->fetch_assoc();
 		$payout = empty($total_payout['total_payout']) ? "0" : $total_payout['total_payout'];
-		$count_payout_profiles = $rstate->query("select count(id) as count_payout from tbl_payout_profiles where uid=" . $uid . "")->fetch_assoc();
+		$count_payout_profiles = $rstate->query("select count(id) as count_payout from tbl_payout_profiles where status =1 and uid=" . $uid . "")->fetch_assoc();
 		$count_payout = empty($count_payout_profiles['count_payout']) ? "0" : $count_payout_profiles['count_payout'];
 		$finalearn = floatval($earn) - floatval($payout);
 		$is_gallery_enabled = (bool)$set["gallery_mode"];
