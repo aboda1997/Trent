@@ -19,7 +19,7 @@ try {
     $bank_account_number = isset($_POST['bank_account_number']) ? $_POST['bank_account_number'] : '';
     $wallet_number = isset($_POST['wallet_number']) ? $_POST['wallet_number'] : '';
 
-    $name = $rstate->real_escape_string(isset($_POST['name']) ? $_POST['name'] : '');
+    $profile_name = $rstate->real_escape_string(isset($_POST['profile_name']) ? $_POST['profile_name'] : '');
     $full_name = $rstate->real_escape_string(isset($_POST['full_name']) ? $_POST['full_name'] : '');
     $lang = $rstate->real_escape_string(isset($_POST['lang']) ? $_POST['lang'] : 'en');
     $bank_name = $rstate->real_escape_string(isset($_POST['bank_name']) ? $_POST['bank_name'] : '');
@@ -53,7 +53,7 @@ try {
         $returnArr = generateResponse('false', $lang_["invalid_payout_method_id"], 400);
     } else if (checkTableStatus($method_id, 'tbl_payout_methods') === false) {
         $returnArr = generateResponse('false', $lang_["payout_method_not_allowed"], 400);
-    } else if (!validateName($name, $fieldNames['profile_name'][$lang], 50 , $lang )['status'] ) {
+    } else if (!validateName($profile_name, $fieldNames['profile_name'][$lang], 50 , $lang )['status'] ) {
         $returnArr    = generateResponse('false', validateName($name, $fieldNames['profile_name'][$lang] , 50 ,$lang )['response'], 400);
     }
     else if (!validateName($full_name, $fieldNames['full_name'][$lang], 100 , $lang, false)['status']) {
@@ -72,22 +72,9 @@ try {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
             $table = "tbl_payout_profiles";
-            $encoded_full_name = json_encode([
-                "full_name" => $name,
-
-            ], JSON_UNESCAPED_UNICODE);
-            
-            $encoded_name = json_encode([
-                "name" => $name,
-
-            ], JSON_UNESCAPED_UNICODE);
-            
-            $encoded_bank_name = json_encode([
-                "bank_name" => $bank_name,
-
-            ], JSON_UNESCAPED_UNICODE);
-            $field_values = ["uid", "name", "bank_name", "full_name", "bank_account_number", "wallet_number" , "status"];
-            $data_values = [$uid, $name, $bank_name, $full_name, $bank_account_number, $wallet_number,  1];
+          
+            $field_values = ["uid", "name", "bank_name", "full_name", "bank_account_number", "wallet_number" , "method_id", "status"];
+            $data_values = [$uid, $profile_name, $bank_name, $full_name, $bank_account_number, $wallet_number,$method_id ,   1];
             $profile_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $GLOBALS['rstate']->commit();
         }
@@ -99,7 +86,7 @@ try {
     } else {
         $returnArr    = generateResponse('true', $lang_["payout_profile_added"], 201, array(
             "Profile_id" => $profile_id,
-            "profile_name" => $name
+            "profile_name" => $profile_name
         ));
 
         echo $returnArr;
