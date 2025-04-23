@@ -91,7 +91,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         </thead>
                         <tbody>
                            <?php 
-										$city = $rstate->query("select * from tbl_book where add_user_id=0 and book_status='Booked'");
+										$city = $rstate->query("select * from tbl_book where book_status='Booked'");
 										$i=0;
 										while($row = $city->fetch_assoc())
 										{

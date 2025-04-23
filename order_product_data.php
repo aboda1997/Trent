@@ -78,7 +78,7 @@ $order_date =  date_format($date,"d-m-Y");
                     <li class="list-group-item d-flex">
                       <span>Subtotal</span>
                       <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['subtotal'].' '.$set['currency'];?></span>
+    margin-left: auto!important;"><?php echo $c['subtotal'].' '.'EGP';?></span>
                     </li>
 					
 					<li class="list-group-item d-flex">
@@ -90,7 +90,7 @@ $order_date =  date_format($date,"d-m-Y");
 					 <li class="list-group-item d-flex">
                       <span>Tax</span>
                       <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['tax'].' '.$set['currency'];?></span>
+    margin-left: auto!important;"><?php echo $c['tax'].' '. 'EGP';?></span>
                     </li>
                   <?php 
   if($c['cou_amt'] != 0)
@@ -99,7 +99,7 @@ $order_date =  date_format($date,"d-m-Y");
                     <li class="list-group-item d-flex">
                       <span>Coupon Code</span>
                       <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['cou_amt'].' '.$set['currency'];?></span>
+    margin-left: auto!important;"><?php echo $c['cou_amt'].' '.'EGP';?></span>
                     </li>
                      <?php } ?>
 					 
@@ -110,7 +110,7 @@ $order_date =  date_format($date,"d-m-Y");
                     <li class="list-group-item d-flex">
                       <span>Wallet</span>
                       <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['wall_amt'].' '.$set['currency'];?></span>
+    margin-left: auto!important;"><?php echo $c['wall_amt'].' '.'EGP'?></span>
                     </li>
                      <?php } ?>
 					 
@@ -131,7 +131,7 @@ $order_date =  date_format($date,"d-m-Y");
 					?>
                       
                       <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['total'].' '.$set['currency'];?></span>
+    margin-left: auto!important;"><?php echo $c['total'].' '. 'EGP';?></span>
                     </li>
 					
 					
