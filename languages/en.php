@@ -338,10 +338,13 @@ return [
     'payout_request_added' => 'Payout Request Added Successfully',
     'payout_profile_added' => 'Payout Profile Added Successfully',
     'payout_profile_deleted' => 'Payout Profile Deleted Successfully!',
-   
+
     'invalid_cancel_id' => 'You must enter a valid Cancel Reason ID',
     'cancel_id_required' => 'You must enter a Cencel Reason ID',
     'prop_id_required' => 'You must enter a Property ID',
     'prop_not_available' => "This property  is not Available",
-
+    'booking_id_required' => 'You must enter a booking ID',
+    'booking_not_available' => "This booking  is not Available",
+    'property_booking_confirmed_success' => 'Property booking confirmed successfully',
+    'property_booking_canceled_success' => 'Property booking canceled successfully',
 ];

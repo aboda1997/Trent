@@ -207,6 +207,7 @@ try {
 
 		$pol['latitude'] = $row['latitude'];
 		$pol['longitude'] = $row['longitude'];
+		$pol['is_approved'] = (bool)$row['is_approved'];
 		//$pol['address'] = json_decode($row['address'], true);
 		$pol['city_name'] = json_decode($row['city'], true)[$lang];
 		if ($uid) {
