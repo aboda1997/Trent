@@ -324,4 +324,8 @@ return [
     'cancel_id_required' => 'يجب إدخال معرف سبب الإلغاء',
     'prop_id_required' => 'يجب إدخال معرف العقار',
     'prop_not_available' => 'هذا العقار غير متاح',
+    'booking_id_required' => 'يجب إدخال رقم الحجز',
+    'booking_not_available' => 'هذا الحجز غير متاح',
+    'property_booking_confirmed_success' => 'تم تأكيد حجز العقار بنجاح',
+    'property_booking_canceled_success' => 'تم إلغاء حجز العقار بنجاح'
 ];
