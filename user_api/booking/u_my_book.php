@@ -17,9 +17,9 @@ if ($uid == '' or $status == '') {
 	$fp = array();
 	$wow = array();
 	if ($status == 'active') {
-		$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
+		$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
 	} else {
-		$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
+		$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
 	}
 	while ($row = $bd->fetch_assoc()) {
 		$fp['book_id'] = $row['id'];

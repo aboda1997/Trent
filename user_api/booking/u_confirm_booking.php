@@ -63,7 +63,7 @@ try {
                 ],
             ));
         } else {
-            $message = $lang_["property_booking_confirmed_success"];
+            $message = $lang_["property_booking_canceled_success"];
             $mobile = $user["mobile"];
             $whatsapp = sendMessage([$mobile], $message);
             $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id);
