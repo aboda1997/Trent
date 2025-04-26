@@ -61,7 +61,7 @@ function checkPropertyBookingStatus($id){
     return $hasRestrictedStatus;
 }
 
-function validateFacilityIds($idString , $table = "tbl_facility")
+function validateFacilityIds($idString , $table = "tbl_facility"  , $uid = null )
 {
     // Check if input is a JSON array and decode it
     $decodedIds = json_decode($idString, true);
@@ -83,6 +83,9 @@ function validateFacilityIds($idString , $table = "tbl_facility")
     $idList = implode(',', $ids);
 
     $query = "SELECT id FROM $table WHERE id IN ($idList)";
+    if($uid){
+        $query .= " and add_user_id = $uid ";
+    }
     $result = $GLOBALS['rstate']->query($query);
     // Fetch valid IDs
     $validIds = [];
