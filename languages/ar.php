@@ -314,6 +314,7 @@ return [
     'unsupported_lang_key' => 'مفتاح اللغة المدخل غير مدعوم',
     'payout_profile_not_exist' => 'ملف الدفع هذا غير موجود!',
     'invalid_booking_ids' => 'يجب أن تكون معرفات الحجوزات صالحة!',
+    'payout_multiple' => 'غير مسموح بإدخال رقم المحفظة ورقم الحساب البنكي في نفس الوقت',
 
     'general_error' => 'حدث خطأ ما!',
     'payout_request_added' => 'تم إضافة طلب الدفع بنجاح',
