@@ -30,7 +30,12 @@ try {
         $returnArr    = generateResponse('false', "User id is not exists", 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1') === false) {
         $returnArr    = generateResponse('false', "This property  is not Available", 400);
-    } else if ($valid == false) {
+    }
+    
+    else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', '  add_user_id =' . $uid .'') === true) {
+        $returnArr    = generateResponse('false', "Not Allow to book Your Own Property", 400);
+    }
+    else if ($valid == false) {
         $returnArr    = generateResponse('false', $message, 400);
     } else if ($confirm_guest_rules  == 'false') {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
