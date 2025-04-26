@@ -113,7 +113,7 @@ $lang_en = load_specific_langauage('en');
             }
             // Create a FormData object from the submitted form
             var formData = new FormData(this);
-
+        
             // Send the form data via AJAX
             $.ajax({
                 url: 'include/property.php',

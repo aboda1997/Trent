@@ -419,7 +419,7 @@ try {
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,
                 "ar" => $why_choose_us_title_ar
-            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS );
+            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS);
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -464,7 +464,7 @@ try {
             $why_choose_us_title_json = json_encode([
                 "en" => $why_choose_us_title_en,
                 "ar" => $why_choose_us_title_ar
-            ], JSON_UNESCAPED_UNICODE |JSON_HEX_APOS);
+            ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS);
 
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
             $url = "images/website/";
@@ -1225,7 +1225,28 @@ try {
                     "action" => "pending_properties.php",
                 ];
             }
-        } elseif ($_POST["type"] == "deny_reason") {
+        }
+        elseif ($_POST["type"] == "approve_payout") {
+            $id = $_POST["id"];
+
+            $table = "tbl_payout_list";
+            $field = ["payout_status" => "Completed"];
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Payout Approved Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending_payout.php",
+                ];
+            }
+        }
+        
+        elseif ($_POST["type"] == "deny_reason") {
             $id = $_POST["id"];
             $uid = $_POST["uid"];
             $reason = $_POST["reason"];
@@ -1242,25 +1263,10 @@ try {
 
             // Create the message
             $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-            $result = sendMessage([$new_mobile], $message);
+           /// $result = sendMessage([$new_mobile], $message);
 
-            if ($result) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Deny Reason Added Successfully!!",
-                    "message" => "Deny section!",
-                    "action" => "pending_properties.php",
-                ];
-            } else {
-                $returnArr = [
-                    "ResponseCode" => "400",
-                    "Result" => "true",
-                    "title" => "Something Went Wrong!",
-                    "message" => "Deny section!",
-                    "action" => "pending_properties.php",
-                ];
-            }
+
+
             if ($check == 1) {
                 $returnArr = [
                     "ResponseCode" => "200",
@@ -1268,6 +1274,37 @@ try {
                     "title" => "Deny Reason Added Successfully!!",
                     "message" => "Deny section!",
                     "action" => "pending_properties.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "deny_payout_reason") {
+            $id = $_POST["id"];
+            $reason = $_POST["reason"];
+            $title = $rstate->real_escape_string($_POST["property_title"]);
+            $table = "tbl_payout_list";
+            $field = ["cancel_reason" => $reason , "payout_status" => "Rejected"];
+            $where = "where id=" . $id . "";
+            $uid = $_POST["uid"];
+            $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
+
+            $new_mobile   = $sel['mobile'];
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+
+            // Create the message
+            $message = "عذراً، تم رفض طلب سحب أموال العقار ($title) للسبب التالي:  ($reason)  
+يمكنك مراجعة بيانات الطلب والمحاولة مرة أخرى من خلال حسابك في موقع أو تطبيق ت-رينت  
+مع خالص تحيات فريق ت-رينت";
+            //$result = sendMessage([$new_mobile], $message);
+
+
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Deny Reason Added Successfully!!",
+                    "message" => "Deny section!",
+                    "action" => "pending_payout.php",
                 ];
             }
         } elseif ($_POST["type"] == "edit_privacy") {
@@ -2048,6 +2085,6 @@ try {
     echo json_encode($returnArr);
 } catch (Exception $e) {
     // Handle exceptions and return an error response
-    $returnArr = generateDashboardResponse(500, "false", "An error occurred!", "$e", "dashboard.php");
-    echo $returnArr;
+    $returnArr = array("ResponseCode" => "200", "Result" => "false", "title" => "Ar Error occured ! $e", "message" => "welcome admin!!", "action" => "dashboard.php");
+    echo json_encode($returnArr);
 }

@@ -156,7 +156,7 @@ try {
 				"ptype" => $ptype,
 				"city" => $ccount_json,
 				"listing_date" => $listing_date,
-
+				"cancel_reason" => '',
 				"latitude" => $latitude,
 				"longitude" => $longitude
 			];

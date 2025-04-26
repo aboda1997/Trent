@@ -74,24 +74,19 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         <th>Bank Account No </th>
                         <th>Formal Name ( for bank ) </th>
                         <th>Reject Reason </th>
-                        <th>action</th>
 
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $city = $rstate->query("select * from tbl_book where book_status='Cancelled'");
+                      $city = $rstate->query("SELECT  p.id as pid,p.cancel_reason,p.requested_at,p.profile_id,b.id, b.total, b.prop_title, b.uid FROM tbl_payout_list p INNER JOIN tbl_book b ON FIND_IN_SET(b.id, p.book_id) > 0 WHERE p.payout_status = 'Rejected'");
                       $i = 0;
                       while ($row = $city->fetch_assoc()) {
                         $i = $i + 1;
-                        $host_id = $row['uid'];
-                        $guest_id = $row['add_user_id'];
-                        $cancel_id = $row['cancle_reason'];
-                        $cancel_by = $row['cancel_by'] == "H" ? "Host" : "Guest";
-                        $host = $rstate->query("select name  , mobile from tbl_user where id= $host_id")->fetch_assoc();
-
+                        $guest_id = $row['uid'];
+                        $profile_id = $row['profile_id'];
                         $guest = $rstate->query("select name  , mobile from tbl_user where id= $guest_id")->fetch_assoc();
-                        $cancel_reason = $rstate->query("select reason  from tbl_cancel_reason where id= $cancel_id")->fetch_assoc();
+                        $payment_data = $rstate->query("select pf.uid ,pf.bank_name , pf.bank_account_number , pf.wallet_number , pm.name  from tbl_payout_profiles pf LEFT JOIN tbl_payout_methods pm  on pf.method_id = pm.id   where pf.id= $profile_id")->fetch_assoc();
 
                       ?>
                         <tr>
@@ -103,42 +98,44 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                             <?php echo $row['id']; ?>
                           </td>
                           <td class="align-middle">
+                            <?php
+                            $type = json_decode($row['prop_title'], true);
+
+                            echo $type[$lang_code]; ?>
+                          </td>
+
+                          <td class="align-middle">
                             <?php echo $guest['name']; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $guest['mobile']; ?>
+                            <?php echo $row['requested_at']; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $host['name']; ?>
+                            <?php echo $row['total']; ?>
+                          </td>
+                          <td class="align-middle">
+                            <?php
+                            $type = json_decode($payment_data['name'] ?? "", true);
+
+                            echo $type[$lang_code] ?? ""; ?>
+                          </td>
+                          <td class="align-middle">
+                            <?php echo $payment_data['bank_name'] ?? ''; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $host['mobile']; ?>
+                            <?php echo $payment_data['wallet_number'] ?? ''; ?>
                           </td>
                           <td class="align-middle">
-                            <?php echo $cancel_by; ?>
+                            <?php echo $payment_data['bank_account_number'] ?? ''; ?>
                           </td>
                           <td class="align-middle">
-                            <?php echo $cancel_by; ?>
+                            <?php echo $payment_data['bank_name'] ?? ''; ?>
                           </td>
                           <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo 
-                            json_decode($cancel_reason['reason'], true)[$lang_code]
-                            ; ?>
+                            <?php echo $row['cancel_reason'] ?? ''; ?>
                           </td>
                         </tr>
                       <?php
@@ -168,25 +165,8 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
   </div>
 </div>
 
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg ">
 
 
-    <div class="modal-content gray_bg_popup">
-      <div class="modal-header">
-        <h4>Order Preivew</h4>
-        <button type="button" class="close popup_open" data-bs-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body p_data">
-
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-<!-- latest jquery-->
 <?php
 require 'include/footer.php';
 ?>
