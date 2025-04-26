@@ -1263,7 +1263,7 @@ try {
 
             // Create the message
             $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-           /// $result = sendMessage([$new_mobile], $message);
+           $result = sendMessage([$new_mobile], $message);
 
 
 
@@ -1294,7 +1294,7 @@ try {
             $message = "عذراً، تم رفض طلب سحب أموال العقار ($title) للسبب التالي:  ($reason)  
 يمكنك مراجعة بيانات الطلب والمحاولة مرة أخرى من خلال حسابك في موقع أو تطبيق ت-رينت  
 مع خالص تحيات فريق ت-رينت";
-            //$result = sendMessage([$new_mobile], $message);
+        $result = sendMessage([$new_mobile], $message);
 
 
 
