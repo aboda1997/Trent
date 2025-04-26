@@ -331,6 +331,7 @@ return [
     'invalid_user_id' => 'You must enter a valid User ID',
     'user_id_required' => 'You must enter a User ID',
     'unsupported_lang_key' => 'The entered language key is not supported',
+    'payout_multiple' => 'This is not Allowed to pass wallet number and bank account at same time',
 
     'payout_profile_not_exist' => 'This Payout Profile Does Not Exist!',
     'invalid_booking_ids' => 'Booking IDs must be valid!',
