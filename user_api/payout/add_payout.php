@@ -35,11 +35,9 @@ try {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (validateIdAndDatabaseExistance($profile_id, 'tbl_payout_profiles') === false) {
         $returnArr = generateResponse('false', $lang_["payout_profile_not_exist"], 404);
-    }else if (validateFacilityIds($booking_list ,  'tbl_book') === false) {
-		$returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
-	}
-    
-    else {
+    } else if (validateFacilityIds($booking_list,  'tbl_book') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
+    } else {
 
         $created_at = date('Y-m-d H:i:s');
 
@@ -48,10 +46,17 @@ try {
         if (!isset($returnArr)) {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
-            $table = "tbl_payout";
-            $field_values = ["book_id", "requested_at", "profile_id", "status"];
-            $data_values = [$idList, $created_at, $profile_id,  1];
-            $Payout_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $table1 = "tbl_payout";
+            $table2 = "tbl_payout_list";
+            $field_values = ["requested_at"];
+            $data_values = [$created_at];
+            $Payout_id = $h->restateinsertdata_Api($field_values, $data_values, $table1);
+            foreach ($ids as $value) {
+                $field_values = ["payout_id", "book_id", "requested_at", "profile_id"];
+                $data_values = [$Payout_id, $value, $created_at, $profile_id];
+
+                $Payout_list_id = $h->restateinsertdata_Api($field_values, $data_values, $table2);
+            }
             $GLOBALS['rstate']->commit();
         }
     }

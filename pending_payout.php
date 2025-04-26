@@ -73,25 +73,20 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         <th>Wallet Number </th>
                         <th>Bank Account No </th>
                         <th>Formal Name ( for bank ) </th>
-                        <th>Reject Reason </th>
-                        <th>action</th>
+                        <th> Payout Approval </th>
 
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $city = $rstate->query("select * from tbl_book where book_status='Cancelled'");
+                      $city = $rstate->query("SELECT  p.id as pid,p.requested_at,p.profile_id,b.id, b.total, b.prop_title, b.uid FROM tbl_payout_list p INNER JOIN tbl_book b ON FIND_IN_SET(b.id, p.book_id) > 0 WHERE p.payout_status = 'Pending'");
                       $i = 0;
                       while ($row = $city->fetch_assoc()) {
                         $i = $i + 1;
-                        $host_id = $row['uid'];
-                        $guest_id = $row['add_user_id'];
-                        $cancel_id = $row['cancle_reason'];
-                        $cancel_by = $row['cancel_by'] == "H" ? "Host" : "Guest";
-                        $host = $rstate->query("select name  , mobile from tbl_user where id= $host_id")->fetch_assoc();
-
+                        $guest_id = $row['uid'];
+                        $profile_id = $row['profile_id'];
                         $guest = $rstate->query("select name  , mobile from tbl_user where id= $guest_id")->fetch_assoc();
-                        $cancel_reason = $rstate->query("select reason  from tbl_cancel_reason where id= $cancel_id")->fetch_assoc();
+                        $payment_data = $rstate->query("select pf.uid ,pf.bank_name , pf.bank_account_number , pf.wallet_number , pm.name  from tbl_payout_profiles pf LEFT JOIN tbl_payout_methods pm  on pf.method_id = pm.id   where pf.id= $profile_id")->fetch_assoc();
 
                       ?>
                         <tr>
@@ -103,42 +98,66 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                             <?php echo $row['id']; ?>
                           </td>
                           <td class="align-middle">
+                            <?php
+                            $type = json_decode($row['prop_title'], true);
+
+                            echo $type[$lang_code]; ?>
+                          </td>
+
+                          <td class="align-middle">
                             <?php echo $guest['name']; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $guest['mobile']; ?>
+                            <?php echo $row['requested_at']; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $host['name']; ?>
+                            <?php echo $row['total']; ?>
+                          </td>
+                          <td class="align-middle">
+                            <?php
+                            $type = json_decode($payment_data['name'] ?? "", true);
+
+                            echo $type[$lang_code] ?? ""; ?>
+                          </td>
+                          <td class="align-middle">
+                            <?php echo $payment_data['bank_name'] ?? ''; ?>
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $host['mobile']; ?>
+                            <?php echo $payment_data['wallet_number'] ?? ''; ?>
                           </td>
                           <td class="align-middle">
-                            <?php echo $cancel_by; ?>
+                            <?php echo $payment_data['bank_account_number'] ?? ''; ?>
                           </td>
                           <td class="align-middle">
-                            <?php echo $cancel_by; ?>
+                            <?php echo $payment_data['bank_name'] ?? ''; ?>
                           </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $cancel_by; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo 
-                            json_decode($cancel_reason['reason'], true)[$lang_code]
-                            ; ?>
+
+                          <td style="white-space: nowrap; width: 15%;">
+                            <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                              <div class="btn-group btn-group-sm" style="float: none;">
+                                <button class="btn btn-success " style="float: none; margin: 5px;"
+                                  type="button"
+                                  data-toggle="modal" data-target="#approveModal"
+                                  data-id="<?php echo $row['pid']; ?>"
+                                  data-uid="<?php echo $payment_data['uid']; ?>"
+                                  title="Approve">
+                                  <i class="fas fa-check"></i>
+                                </button>
+
+                                <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
+                                  data-toggle="modal" data-target="#denyModal"
+                                  data-id="<?php echo $row['pid']; ?>"
+                                  data-uid="<?php echo $payment_data['uid']; ?>"
+                                  title="Deny"
+                                  data-title="<?php echo  json_decode($row['prop_title'], true)['ar']; ?>">
+
+                                  <i class="fas fa-times"></i>
+                                </button>
+                              </div>
+                            </div>
                           </td>
                         </tr>
                       <?php
@@ -168,25 +187,201 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
   </div>
 </div>
 
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg ">
 
 
-    <div class="modal-content gray_bg_popup">
+<!-- latest jquery-->
+
+<!-- Deny Modal -->
+<div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
       <div class="modal-header">
-        <h4>Order Preivew</h4>
-        <button type="button" class="close popup_open" data-bs-dismiss="modal">&times;</button>
+        <h5 class="modal-title" id="denyModalLabel">Reason for Denial</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="modal-body p_data">
+      <div class="modal-body">
+        <form id="denyForm">
+          <input type="hidden" id="denyId" name="id">
+          <input type="hidden" id="denyTitle" name="property_title">
+          <input type="hidden" id="denyUid" name="uid">
+          <input type="hidden" name="type" value="deny_payout_reason" />
 
+
+          <div class="form-group">
+            <label for="denyReason">Please provide a reason:</label>
+            <textarea class="form-control" id="denyReason" name="reason" rows="3" required></textarea>
+            <div class="invalid-feedback">Please provide a denial reason.</div>
+
+
+          </div>
+        </form>
       </div>
-
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveDeny">Save</button>
+      </div>
     </div>
-
   </div>
 </div>
 
-<!-- latest jquery-->
+<!-- Confirmation Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approveModalLabel">Confirm Approval</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="approveForm">
+
+        <input type="hidden" id="approveId" name="id">
+        <input type="hidden" id="approveUid" name="uid">
+        <input type="hidden" name="type" value="approve_payout" />
+      </form>
+      <div class="modal-body">
+        Are you sure you want to approve this payout?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="confirmApproveBtn">Yes, Approve</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+  $(document).ready(function() {
+    // Remove invalid class when user starts typing
+    $('#denyReason').on('input', function() {
+      if ($(this).val().trim() !== '') {
+        $(this).removeClass('is-invalid');
+      }
+    });
+
+    $('#denyModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var title = button.data('title');
+      var uid = button.data('uid');
+
+      var modal = $(this);
+      modal.find('#denyId').val(id);
+      modal.find('#denyUid').val(uid);
+      modal.find('#denyTitle').val(title);
+      modal.find('#propertyTitlePlaceholder').text(title);
+    });
+
+    $('#approveModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var uid = button.data('uid');
+
+      var modal = $(this);
+      modal.find('#approveId').val(id);
+      modal.find('#approveUid').val(uid);
+    });
+    // When save button is clicked
+    $('#confirmApproveBtn').click(function() {
+
+
+      var formData = $('#approveForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#approveModal').removeClass('show');
+            $('#approveModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("'Error saving payout Approval.");
+          }
+        }
+      });
+    });
+    // When save button is clicked
+    $('#saveDeny').click(function() {
+      var reasonInput = $('#denyReason');
+      var reason = reasonInput.val().trim();
+
+      // Validate
+      if (reason === '') {
+        reasonInput.addClass('is-invalid');
+        return; // Stop submission
+      }
+
+      var formData = $('#denyForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#denyModal').removeClass('show');
+            $('#denyModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("'Error saving denial reason.");
+          }
+        }
+      });
+    });
+  });
+</script>
+
 <?php
 require 'include/footer.php';
 ?>

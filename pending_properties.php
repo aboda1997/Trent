@@ -135,7 +135,15 @@ WHERE
                           <td style="white-space: nowrap; width: 15%;">
                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                               <div class="btn-group btn-group-sm" style="float: none;">
-                                <button class="btn btn-success drop" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-status="1" data-type="toggle_approval">Approve</button>
+                               
+                                <button class="btn btn-success " style="float: none; margin: 5px;"
+                                  type="button"
+                                  data-toggle="modal" data-target="#approveModal"
+                                  data-id="<?php echo $row['id']; ?>"
+                                  data-status="<?php echo "1"; ?>"
+                                  title="Approve">
+                                  Approve
+                                </button>
                                 <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
                                   data-toggle="modal" data-target="#denyModal"
                                   data-id="<?php echo $row['id']; ?>"
@@ -256,6 +264,33 @@ require 'include/footer.php';
     </div>
   </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approveModalLabel">Confirm Approval</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="approveForm">
+
+        <input type="hidden" id="approveId" name="id">
+        <input type="hidden" id="approveStatus" name="status">
+        <input type="hidden" name="type" value="toggle_approval" />
+      </form>
+      <div class="modal-body">
+        Are you sure you want to approve this property?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="confirmApproveBtn">Yes, Approve</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 <script>
   $(document).ready(function() {
@@ -277,6 +312,60 @@ require 'include/footer.php';
       modal.find('#denyUid').val(uid);
       modal.find('#denyTitle').val(title);
       modal.find('#propertyTitlePlaceholder').text(title);
+    });
+
+    $('#approveModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+      var status = button.data('status');
+
+      var modal = $(this);
+      modal.find('#approveId').val(id);
+      modal.find('#approveStatus').val(status);
+    });
+    // When save button is clicked
+    $('#confirmApproveBtn').click(function() {
+
+
+      var formData = $('#approveForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#approveModal').removeClass('show');
+            $('#approveModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("'Error saving payout Approval.");
+          }
+        }
+      });
     });
 
     // When save button is clicked
