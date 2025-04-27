@@ -63,8 +63,11 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $payout_method_per)
                       <tr>
                         <th> <?= $lang['Sr_No'] ?>.</th>
                         <th>
-                          <?= $lang['Payout_Method'] ?></th>
-                        
+                          Payout Method Name(English)</th>
+
+                        <th>
+                          Payout Method Name(Arabic)</th>
+
                         <th>
                           <?= $lang['Payout_Method_Status'] ?>
 
@@ -94,11 +97,14 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $payout_method_per)
                           <td>
                             <?php echo $i; ?>
                           </td>
-
+                        
                           <td class="align-middle">
-                            <?php echo $name[$lang_code]; ?>
+                            <?php echo $name['en']; ?>
                           </td>
 
+                          <td class="align-middle">
+                            <?php echo $name['ar']; ?>
+                          </td>
 
                           <?php if ($row['status'] == 1) { ?>
 
