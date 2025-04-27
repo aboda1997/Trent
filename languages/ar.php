@@ -348,5 +348,15 @@ return [
     'Payout_Method_en' => 'الرجاء إدخال اسم طريقة الدفع باللغة الإنجليزية',
     'Payout_Method_ar' => 'الرجاء إدخال اسم طريقة الدفع باللغة العربية',
     'Payout_Method_status' => 'الرجاء تحديد حالة طريقة الدفع.',
+    'Dashboard_My_Property' => "عقاري",
+    'Dashboard_My_Extra_Images' => "الصور الإضافية",
+    'Dashboard_My_Gallery_Category' => "فئات المعرض",
+    'Dashboard_My_Gallery_Images' => "صور المعرض",
+    'Dashboard_My_Booking' => "حجوزاتي",
+    'Dashboard_My_Earning' => "أرباحي",
+    'Dashboard_Total_Review' => "إجمالي التقييمات",
+    'Dashboard_My_Payout' => "مدفوعاتي",
+    'Dashboard_My_Payout_Profiles' => "ملفاتي المالية",
+    'Dashboard_My_Enquiry' => "استفساراتي",
 
 ];

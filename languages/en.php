@@ -368,5 +368,14 @@ return [
     'Payout_Method_en' => 'Please enter the English Payout Method Name',
     'Payout_Method_ar' => 'Please enter the Arabic Payout Method Name',
     'Payout_Method_status' => 'Please select a Payout Method Status.',
-  
+    'Dashboard_My_Property' => "My Property",
+    'Dashboard_My_Extra_Images' => "My Extra Images",
+    'Dashboard_My_Gallery_Category' => "My Gallery Category",
+    'Dashboard_My_Gallery_Images' => "My Gallery Images",
+    'Dashboard_My_Booking' => "My Booking",
+    'Dashboard_My_Earning' => "My Earning",
+    'Dashboard_My_Enquiry' => "My Enquiry",
+    'Dashboard_Total_Review' => "Total Review",
+    'Dashboard_My_Payout' => "My Payout",
+    'Dashboard_My_Payout_Profiles' => "My Payout Profiles",
 ];
