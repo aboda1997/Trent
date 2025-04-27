@@ -1,9 +1,9 @@
 <?php
 require 'include/main_head.php';
-$category_per = ['Create', 'Update', 'Read', 'Delete'];
+$payout_method_per = ['Create', 'Update', 'Read', 'Delete'];
 $lang_code = load_language_code()["language_code"];
 
-if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
+if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $payout_method_per)) {
 
 
 
@@ -40,7 +40,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                <?= $lang['Category_List_Management'] ?>
+                <?= $lang['Payout_Method_List_Management'] ?>
 
               </h3>
             </div>
@@ -63,15 +63,15 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
                       <tr>
                         <th> <?= $lang['Sr_No'] ?>.</th>
                         <th>
-                          <?= $lang['Category_Title'] ?></th>
+                          <?= $lang['Payout_Method'] ?></th>
                         
                         <th>
-                          <?= $lang['Category_Status'] ?>
+                          <?= $lang['Payout_Method_Status'] ?>
 
                         </th>
                         <?php
                         if ($_SESSION['restatename'] == 'Staff') {
-                          if (in_array('Update', $category_per)) {
+                          if (in_array('Update', $payout_method_per)) {
                         ?>
                             <th> <?= $lang['Action'] ?></th>
                           <?php
@@ -84,10 +84,10 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
                     </thead>
                     <tbody>
                       <?php
-                      $city = $rstate->query("select * from tbl_cancel_reason");
+                      $city = $rstate->query("select * from tbl_payout_methods");
                       $i = 0;
                       while ($row = $city->fetch_assoc()) {
-                        $title = json_decode($row['reason'], true);
+                        $name = json_decode($row['name'], true);
                         $i = $i + 1;
                       ?>
                         <tr>
@@ -96,7 +96,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
                           </td>
 
                           <td class="align-middle">
-                            <?php echo $title[$lang_code]; ?>
+                            <?php echo $name[$lang_code]; ?>
                           </td>
 
 
@@ -117,7 +117,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $category_per)) {
 
                           <?php
                           if ($_SESSION['restatename'] == 'Staff') {
-                            if (in_array('Update', $category_per)) {
+                            if (in_array('Update', $payout_method_per)) {
                           ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">

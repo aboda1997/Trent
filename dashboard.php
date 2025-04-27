@@ -311,7 +311,7 @@ require 'include/main_head.php';
                           <div class="sale-content">
                             <h3>Total Booked Earning</h3>
                             <p><?php $earn =  $rstate->query("select sum(`total`) as total from tbl_book where book_status='Completed'")->fetch_assoc(); 
-                            echo number_format((float)$earn['total'], 2, '.', '').' '.$set['currency'];?></p>
+                            echo number_format((float)$earn['total'], 2, '.', '').' '."EGP";?></p>
                           </div>
                         </div>
                       </div>

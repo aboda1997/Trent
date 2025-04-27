@@ -589,6 +589,110 @@ try {
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Cancellation Policy Updated Successfully!!", "message" => "Cancellation Policy section!", "action" => "list_policies.php");
             }
+        } else if ($_POST['type'] == 'add_cancel_reason') {
+
+            $status = $_POST['status'];
+            $reason_en = $_POST['reason_en'];
+            $reason_ar = $_POST['reason_ar'];
+
+            $reason_json = json_encode([
+                "en" => $reason_en,
+                "ar" => $reason_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $field = array(
+                'reason',
+
+                'status'
+            );
+
+            $table = "tbl_cancel_reason";
+            $data_values = array("$reason_json",  "$status");
+
+            $h = new Estate();
+            $check = $h->restateinsertdata($field, $data_values,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => " Booking Cancel Reason Added Successfully!!", "message" => "'Booking Cancel Reason section!", "action" => "list_cancel_reason.php");
+            }
+        } else if ($_POST['type'] == 'edit_cancel_reason') {
+            $id = $_POST['id'];
+
+            $status = $_POST['status'];
+            $reason_en = $_POST['reason_en'];
+            $reason_ar = $_POST['reason_ar'];
+
+            $reason_json = json_encode([
+                "en" => $reason_en,
+                "ar" => $reason_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_cancel_reason";
+            $field = array(
+
+                'reason' => $reason_json,
+
+                'status' => $status,
+
+            );
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Booking Cancel Reason Updated Successfully!!", "message" => "'Booking Cancel Reason section!", "action" => "list_cancel_reason.php");
+            }
+        } else if ($_POST['type'] == 'add_payout_method') {
+
+            $status = $_POST['status'];
+            $name_en = $_POST['name_en'];
+            $name_ar = $_POST['name_ar'];
+
+            $name_json = json_encode([
+                "en" => $name_en,
+                "ar" => $name_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $field = array(
+                'name',
+
+                'status'
+            );
+
+            $table = "tbl_payout_methods";
+            $data_values = array("$name_json",  "$status");
+
+            $h = new Estate();
+            $check = $h->restateinsertdata($field, $data_values,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => " Payout Method  Added Successfully!!", "message" => "Payout Method  section!", "action" => "list_payout_method.php");
+            }
+        } else if ($_POST['type'] == 'edit_payout_method') {
+            $id = $_POST['id'];
+
+            $status = $_POST['status'];
+            $name_en = $_POST['name_en'];
+            $name_ar = $_POST['name_ar'];
+
+            $name_json = json_encode([
+                "en" => $name_en,
+                "ar" => $name_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_payout_methods";
+            $field = array(
+
+                'name' => $name_json,
+
+                'status' => $status,
+
+            );
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payout Method  Updated Successfully!!", "message" => "Payout Method section!", "action" => "list_payout_method.php");
+            }
         } elseif ($_POST["type"] == "add_category") {
             $okey = $_POST["status"];
 
@@ -1225,8 +1329,7 @@ try {
                     "action" => "pending_properties.php",
                 ];
             }
-        }
-        elseif ($_POST["type"] == "approve_payout") {
+        } elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
 
             $table = "tbl_payout_list";
@@ -1244,9 +1347,7 @@ try {
                     "action" => "pending_payout.php",
                 ];
             }
-        }
-        
-        elseif ($_POST["type"] == "deny_reason") {
+        } elseif ($_POST["type"] == "deny_reason") {
             $id = $_POST["id"];
             $uid = $_POST["uid"];
             $reason = $_POST["reason"];
@@ -1263,7 +1364,7 @@ try {
 
             // Create the message
             $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-           $result = sendMessage([$new_mobile], $message);
+            $result = sendMessage([$new_mobile], $message);
 
 
 
@@ -1281,7 +1382,7 @@ try {
             $reason = $_POST["reason"];
             $title = $rstate->real_escape_string($_POST["property_title"]);
             $table = "tbl_payout_list";
-            $field = ["cancel_reason" => $reason , "payout_status" => "Rejected"];
+            $field = ["cancel_reason" => $reason, "payout_status" => "Rejected"];
             $where = "where id=" . $id . "";
             $uid = $_POST["uid"];
             $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
@@ -1294,7 +1395,7 @@ try {
             $message = "عذراً، تم رفض طلب سحب أموال العقار ($title) للسبب التالي:  ($reason)  
 يمكنك مراجعة بيانات الطلب والمحاولة مرة أخرى من خلال حسابك في موقع أو تطبيق ت-رينت  
 مع خالص تحيات فريق ت-رينت";
-        $result = sendMessage([$new_mobile], $message);
+            $result = sendMessage([$new_mobile], $message);
 
 
 
