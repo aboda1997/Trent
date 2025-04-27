@@ -181,7 +181,7 @@ if (isset($_GET['id'])) {
 															<input
 																value="<?php echo $compound_name['en']; ?>"
 
-																type="text" class="form-control" name="compound_name_en" required="">
+																type="text" class="form-control" name="compound_name_en" >
 															<div class="invalid-feedback" id="prop_compound_name_en_feedback" style="display: none;">
 																<?= $lang_en['prop_compound_name'] ?>
 
@@ -299,7 +299,7 @@ if (isset($_GET['id'])) {
 																<input
 																	value="<?php echo $compound_name['ar']; ?>"
 
-																	type="text" class="form-control" name="compound_name_ar" required="">
+																	type="text" class="form-control" name="compound_name_ar" >
 																<div class="invalid-feedback" id="prop_compound_name_ar_feedback" style="display: none;">
 																	<?= $lang_ar['prop_compound_name'] ?>
 
@@ -857,7 +857,7 @@ if (isset($_GET['id'])) {
 																<?= $lang_en['Compound_Name'] ?>
 
 															</label>
-															<input type="text" class="form-control" name="compound_name_en" required="">
+															<input type="text" class="form-control" name="compound_name_en" >
 															<div class="invalid-feedback" id="prop_compound_name_en_feedback" style="display: none;">
 																<?= $lang_en['prop_compound_name'] ?>
 
@@ -957,7 +957,7 @@ if (isset($_GET['id'])) {
 																	<?= $lang_ar['Compound_Name'] ?>
 
 																</label>
-																<input type="text" class="form-control" name="compound_name_ar" required="">
+																<input type="text" class="form-control" name="compound_name_ar">
 																<div class="invalid-feedback" id="prop_compound_name_ar_feedback" style="display: none;">
 																	<?= $lang_ar['prop_compound_name'] ?>
 
@@ -1517,7 +1517,7 @@ if (isset($_GET['id'])) {
 			isArabicValid = false;
 
 		}
-		if (!compoundEn) {
+		/*if (!compoundEn) {
 			document.getElementById('prop_compound_name_en_feedback').style.display = 'block';
 			isEnglishValid = false;
 
@@ -1526,7 +1526,7 @@ if (isset($_GET['id'])) {
 			document.getElementById('prop_compound_name_ar_feedback').style.display = 'block';
 			isArabicValid = false;
 
-		}
+		}*/
 		if (!floorEn) {
 			document.getElementById('floor_en_feedback').style.display = 'block';
 			isEnglishValid = false;
