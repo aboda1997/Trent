@@ -61,11 +61,6 @@ try {
     }
     else if (!validateName($bank_name, $fieldNames['bank_name'][$lang], 50 , $lang , false)['status']) {
         $returnArr    = generateResponse('false', validateName($bank_name, $fieldNames['bank_name'][$lang] , 50, $lang ,false)['response'], 400);
-    }else if(
-        $bank_account_number != '' &&  $wallet_number != ''
-    ){
-        $returnArr = generateResponse('false', $lang_["payout_multiple"], 400);
-
     }
      else {
        
