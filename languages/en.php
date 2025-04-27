@@ -348,4 +348,25 @@ return [
     'booking_not_available' => "This booking  is not Available",
     'property_booking_confirmed_success' => 'Property booking confirmed successfully',
     'property_booking_canceled_success' => 'Property booking canceled successfully',
+
+    'Cancel_Reason_Management' => 'Booking Cancel Reason Management',
+    'Cancel_Reason_List_Management' => 'Booking Cancel Reason List Management',
+    'Cancel_Reason' => 'Booking Cancel Reason',
+    'Cancel_Reason_Status' => 'Booking Cancel Reason Status',
+    'Edit_Cancel_Reason'  => 'Edit  Booking Cancel Reason',
+    'Add_Cancel_Reason' => 'Add Booking Cancel Reason',
+    'Cancel_Reason_en' => 'Please enter the English Booking Cancel Reason',
+    'Cancel_Reason_ar' => 'Please enter the Arabic Booking Cancel Reason',
+    'Cancel_Reason_status' => 'Please select a Booking Cancel Reason Status.',
+
+    'Payout_Method_Management' => 'Payout Method Management',
+    'Payout_Method_List_Management' => 'Payout Method List Management',
+    'Payout_Method' => 'Payout Method Name',
+    'Payout_Method_Status' => 'Payout Method Status',
+    'Edit_Payout_Method'  => 'Edit  Payout Method',
+    'Add_Payout_Method' => 'Add Payout Method',
+    'Payout_Method_en' => 'Please enter the English Payout Method Name',
+    'Payout_Method_ar' => 'Please enter the Arabic Payout Method Name',
+    'Payout_Method_status' => 'Please select a Payout Method Status.',
+  
 ];

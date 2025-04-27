@@ -1,9 +1,9 @@
 <?php
 require 'include/main_head.php';
-$category_per = ['Create', 'Update', 'Read', 'Delete'];
+$canncel_reason_per = ['Create', 'Update', 'Read', 'Delete'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $category_per)) {
+  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $canncel_reason_per)) {
 
 
 
@@ -19,7 +19,7 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $category_per)) {
+  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $canncel_reason_per)) {
 
 
 
@@ -57,7 +57,7 @@ if (isset($_GET['id'])) {
           <div class="row">
             <div class="col-6">
               <h3>
-                <?= $lang['Category_Management'] ?>
+                <?= $lang['Cancel_Reason_Management'] ?>
 
               </h3>
             </div>
@@ -88,8 +88,8 @@ if (isset($_GET['id'])) {
               </div>
               <?php
               if (isset($_GET['id'])) {
-                $data = $rstate->query("select * from tbl_category where id=" . $_GET['id'] . "")->fetch_assoc();
-                $title = json_decode($data['title'], true);
+                $data = $rstate->query("select * from tbl_cancel_reason where id=" . $_GET['id'] . "")->fetch_assoc();
+                $reason = json_decode($data['reason'], true);
 
               ?>
                 <form 
@@ -106,13 +106,13 @@ if (isset($_GET['id'])) {
                       <div class="tab-pane fade show active" id="en">
                         <div class="form-group mb-3">
                           <label>
-                            <?= $lang_en['Category_Name'] ?>
+                            <?= $lang_en['Cancel_Reason'] ?>
 
                           </label>
-                          <input type="text" class="form-control" placeholder="<?= $lang_en['Category_Name'] ?>"
-                            value="<?php echo $title['en']; ?>" name="title_en" required="">
-                          <div class="invalid-feedback" id="title_en_feedback" style="display: none;">
-                            <?= $lang_en['cat_title_en'] ?>
+                          <input type="text" class="form-control" placeholder="<?= $lang_en['Cancel_Reason'] ?>"
+                            value="<?php echo $reason['en']; ?>" name="reason_en" required="">
+                          <div class="invalid-feedback" id="reason_en_feedback" style="display: none;">
+                            <?= $lang_en['Cancel_Reason_en'] ?>
 
                           </div>
                         </div>
@@ -122,27 +122,29 @@ if (isset($_GET['id'])) {
                       <div class="tab-pane fade show " id="ar">
                         <div class="form-group mb-3">
                           <label>
-                            <?= $lang_ar['Category_Name'] ?>
+                            <?= $lang_ar['Cancel_Reason'] ?>
 
                           </label>
-                          <input type="text" class="form-control" placeholder="<?= $lang_ar['Category_Name'] ?>"
-                            value="<?php echo $title['ar']; ?>" name="title_ar" required="">
-                          <div class="invalid-feedback" id="title_ar_feedback" style="display: none;">
-                            <?= $lang_ar['cat_title_ar'] ?>
+                          <input type="text" class="form-control" placeholder="<?= $lang_ar['Cancel_Reason'] ?>"
+                            value="<?php echo $reason['ar']; ?>" name="reason_ar" required="">
+                          <div class="invalid-feedback" id="reason_ar_feedback" style="display: none;">
+                            <?= $lang_ar['Cancel_Reason_ar'] ?>
 
                           </div>
                         </div>
                       </div>
                     </div>
 
+                    <input type="hidden" name="type" value="edit_cancel_reason" />
+                    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
 
                     <div class="form-group mb-3">
-                      <label id="Category-Status" for="inputGroupSelect01"><?= $lang_en['Category_Status'] ?></label>
+                      <label id="Cancel_Reason_Status" for="inputGroupSelect01"><?= $lang_en['Cancel_Reason_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
 
                         <option value="">
-                          <?= $lang_en['Category_Status'] ?>...</option>
+                          <?= $lang_en['Cancel_Reason_Status'] ?>...</option>
                         <option value="1" <?php if ($data['status'] == 1) {
                                             echo 'selected';
                                           } ?>>
@@ -156,7 +158,7 @@ if (isset($_GET['id'])) {
                         </option>
                       </select>
                       <div class="invalid-feedback" id="status_feedback" style="display: none;">
-                        <?= $lang_en['cat_status'] ?>
+                        <?= $lang_en['Cancel_Reason_status'] ?>
                       </div>
                     </div>
 
@@ -164,7 +166,7 @@ if (isset($_GET['id'])) {
                   </div>
                   <div class="card-footer text-left">
                     <button onclick="return validateForm(true)" type="submit" class="btn btn-primary">
-                      <?= $lang_en['Edit_Category'] ?>
+                      <?= $lang_en['Edit_Cancel_Reason'] ?>
 
                     </button>
                   </div>
@@ -186,13 +188,13 @@ if (isset($_GET['id'])) {
                       <div class="tab-pane fade show active" id="en">
                         <div class="form-group mb-3">
                           <label>
-                            <?= $lang_en['Category_Name'] ?>
+                            <?= $lang_en['Cancel_Reason'] ?>
 
                           </label>
-                          <input type="text" class="form-control" placeholder="<?= $lang_en['Category_Name'] ?>"
-                            name="title_en" required="">
-                          <div class="invalid-feedback" id="title_en_feedback" style="display: none;">
-                            <?= $lang_en['cat_title_en'] ?>
+                          <input type="text" class="form-control" placeholder="<?= $lang_en['Cancel_Reason'] ?>"
+                            name="reason_en" required="">
+                          <div class="invalid-feedback" id="reason_en_feedback" style="display: none;">
+                            <?= $lang_en['Cancel_Reason_en'] ?>
 
                           </div>
 
@@ -203,13 +205,13 @@ if (isset($_GET['id'])) {
                       <div class="tab-pane fade show " id="ar">
                         <div class="form-group mb-3">
                           <label>
-                            <?= $lang_ar['Category_Name'] ?>
+                            <?= $lang_ar['Cancel_Reason'] ?>
 
                           </label>
-                          <input type="text" class="form-control" placeholder="<?= $lang_ar['Category_Name'] ?>"
-                            name="title_ar" required="">
-                          <div class="invalid-feedback" id="title_ar_feedback" style="display: none;">
-                            <?= $lang_ar['cat_title_ar'] ?>
+                          <input type="text" class="form-control" placeholder="<?= $lang_ar['Cancel_Reason'] ?>"
+                            name="reason_ar" required="">
+                          <div class="invalid-feedback" id="reason_ar_feedback" style="display: none;">
+                            <?= $lang_ar['Cancel_Reason_en'] ?>
 
                           </div>
 
@@ -217,16 +219,17 @@ if (isset($_GET['id'])) {
                       </div>
                     </div>
 
-                    
+
+                    <input type="hidden" name="type" value="add_cancel_reason" />
 
 
 
                     <div class="form-group mb-3">
-                      <label id="Category-Status" for="inputGroupSelect01"><?= $lang_en['Category_Status'] ?></label>
+                      <label id="Cancel_Reason_Status" for="inputGroupSelect01"><?= $lang_en['Cancel_Reason_Status'] ?></label>
                       <select class="form-control" name="status" id="inputGroupSelect01" required>
 
                         <option value="">
-                          <?= $lang_en['Category_Status'] ?>...</option>
+                          <?= $lang_en['Cancel_Reason_Status'] ?>...</option>
                         <option value="1">
                           <?= $lang_en['Publish'] ?>
                         </option>
@@ -236,12 +239,12 @@ if (isset($_GET['id'])) {
                         </option>
                       </select>
                       <div class="invalid-feedback" id="status_feedback" style="display: none;">
-                        <?= $lang_en['cat_status'] ?>
+                        <?= $lang_en['Cancel_Reason_status'] ?>
                       </div>
                     </div>
                     <div class="card-footer text-left">
-                      <button onclick="return validateForm()" id="add-cat" type="submit" class="btn btn-primary">
-                        <?= $lang_en['Add_Category'] ?>
+                      <button onclick="return validateForm()" id="add-cancel-reason" type="submit" class="btn btn-primary">
+                        <?= $lang_en['Add_Cancel_Reason'] ?>
 
                       </button>
                     </div>
@@ -274,18 +277,7 @@ if (isset($_GET['id'])) {
     const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
     return activeTab === 'en' ? 'en' : 'ar';
   }
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-
-  document.querySelector('input[name="cat_img"]').addEventListener('change', function() {
-    const file = this.files[0];
-
-    if (file) {
-      // Check if the file type is valid
-      if (!allowedTypes.includes(file.type)) {
-        this.value = ''; // Clear invalid file
-      }
-    }
-  });
+  
 
   function validateForm(edit = false) {
     // Clear previous feedback
@@ -293,9 +285,8 @@ if (isset($_GET['id'])) {
       feedback.style.display = 'none';
     });
 
-    const titleEn = document.querySelector('input[name="title_en"]').value;
-    const titleAr = document.querySelector('input[name="title_ar"]').value;
-    const categoryImage = document.querySelector('input[name="cat_img"]').value;
+    const reasonEn = document.querySelector('input[name="reason_en"]').value;
+    const reasonAr = document.querySelector('input[name="reason_ar"]').value;
     const status = document.querySelector('select[name="status"]').value;
 
     let isValid = true;
@@ -304,25 +295,17 @@ if (isset($_GET['id'])) {
     let alertMessage = '';
     let lang = getCurrentLanguage();
 
-    if (!titleEn) {
-      document.getElementById('title_en_feedback').style.display = 'block';
+    if (!reasonEn) {
+      document.getElementById('reason_en_feedback').style.display = 'block';
       isEnglishValid = false;
 
     }
-    if (!titleAr) {
-      document.getElementById('title_ar_feedback').style.display = 'block';
+    if (!reasonAr) {
+      document.getElementById('reason_ar_feedback').style.display = 'block';
       isArabicValid = false;
 
     }
-    if (!categoryImage) {
-      if (edit) {
-        isValid = true;
-
-      } else {
-        document.getElementById('cat_img_feedback').style.display = 'block';
-        isValid = false;
-      }
-    }
+   
 
 
     if (!status) {
@@ -374,21 +357,19 @@ if (isset($_GET['id'])) {
 
   function changeLanguage(lang) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
-    document.getElementById('cat_img_feedback').textContent = langData.cat_cat_img;
-    document.getElementById('status_feedback').textContent = langData.cat_status;
-    document.getElementById('Category-Status').textContent = langData.Category_Status;
-    document.getElementById('Category-Image').textContent = langData.Category_Image;
+    document.getElementById('status_feedback').textContent = langData.Cancel_Reason_status;
+    document.getElementById('Cancel_Reason_Status').textContent = langData.Cancel_Reason_Status;
 
-    if (document.getElementById('add-cat')) {
-      document.querySelector('button[type="submit"]').textContent = langData.Add_Category;
+    if (document.getElementById('add-cancel-reason')) {
+      document.querySelector('button[type="submit"]').textContent = langData.Add_Cancel_Reason;
 
     } else {
-      document.querySelector('button[type="submit"]').textContent = langData.Edit_Category;
+      document.querySelector('button[type="submit"]').textContent = langData.Edit_Cancel_Reason;
 
     }
 
     const statusSelect = document.getElementById('inputGroupSelect01');
-    statusSelect.querySelector('option[value=""]').textContent = langData.Category_Status;
+    statusSelect.querySelector('option[value=""]').textContent = langData.Cancel_Reason_Status;
     statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
     statusSelect.querySelector('option[value="0"]').textContent = langData.Unpublish;
 
