@@ -99,6 +99,7 @@ SELECT tbl_property.*,
         WHERE FIND_IN_SET(tbl_facility.id, tbl_property.facility)
        ) AS facility_select
 FROM tbl_property
+where is_approved = 1 
 ");
                       $i = 0;
                       while ($row = $city->fetch_assoc()) {
@@ -254,6 +255,7 @@ FROM tbl_property
       let propertyId = $this.data("id");
       let currentStatus = $this.data("status");
       let newStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+      $this.css('pointer-events', 'none');
 
       $.ajax({
         url: "include/property.php",
@@ -274,7 +276,7 @@ FROM tbl_property
             // Remove previous badge class and add new one
             $this.removeClass("badge-success badge-danger")
               .addClass(newStatus === 1 ? "badge-success" : "badge-danger");
-              
+
             // Display notification
             $.notify('<i class="fas fa-bell"></i>' + res.title, {
               type: 'theme',

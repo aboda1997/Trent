@@ -98,8 +98,6 @@ FROM
     tbl_property p
 WHERE 
     p.is_approved = 0 
-    AND (p.cancel_reason IS  NULL 
-    or p.cancel_reason = '')
 ";
 
                       $city = $rstate->query($query);
