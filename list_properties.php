@@ -174,13 +174,13 @@ where is_approved = 1
                           </td>
 
                           <td>
-                          
-                            <button class="btn btn-sm status-toggle <?php echo $row['status'] ? 'btn-success' : 'btn-danger'; ?>"
+                            <span class="badge status-toggle <?php echo $row['status'] ? 'badge-success' : 'badge-danger'; ?>"
                               data-id="<?php echo $row['id']; ?>"
                               data-status="<?php echo $row['status']; ?>"
-                              style="border: none; outline: none; transition: none !important;">
-                              <?php echo $row['status'] ? "Publish" : "Unpublish"; ?>
-                            </button>
+                              style="cursor: pointer;">
+                              <?php echo $row['status']  ? "Publish" : "Unpublish"; ?>
+                            </span>
+                            
                           </td>
 
                           <?php
@@ -251,7 +251,9 @@ where is_approved = 1
 <!-- latest jquery-->
 <script>
   $(document).ready(function() {
-    $(".status-toggle").click(function() {
+    $(document).on('click', '.status-toggle', function(e) {
+
+
       let $this = $(this);
       let propertyId = $this.data("id");
       let currentStatus = $this.data("status");
@@ -275,8 +277,8 @@ where is_approved = 1
             $this.data("status", newStatus); // Update status in data attribute
 
             // Remove previous badge class and add new one
-            $this.removeClass("btn-success btn-danger")
-              .addClass(newStatus === 1 ? "btn-success" : "btn-danger");
+            $this.removeClass("badge-success badge-danger")
+              .addClass(newStatus === 1 ? "badge-success" : "badge-danger");
 
             // Display notification
             $.notify('<i class="fas fa-bell"></i>' + res.title, {
