@@ -60,6 +60,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
                     <thead>
                       <tr>
                         <th>Sr No.</th>
+                        <th>Property ID</th>
                         <th>Property Title</th>
                         <th>Property Type</th>
                         <th>Property Image</th>
@@ -108,6 +109,9 @@ FROM tbl_property
                         <tr>
                           <td>
                             <?php echo $i; ?>
+                          </td>
+                          <td class="align-middle">
+                            <?php echo $row["id"] ?>
                           </td>
 
                           <td class="align-middle">
@@ -270,6 +274,26 @@ FROM tbl_property
             // Remove previous badge class and add new one
             $this.removeClass("badge-success badge-danger")
               .addClass(newStatus === 1 ? "badge-success" : "badge-danger");
+              
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
 
           } else {
             alert("Failed to update status.");

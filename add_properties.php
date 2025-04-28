@@ -99,10 +99,10 @@ if (isset($_GET['id'])) {
 
 
 							?>
-								<form 
-								onsubmit="return submitform(true)" 
+								<form
+									onsubmit="return submitform(true)"
 
-								method="post" enctype="multipart/form-data">
+									method="post" enctype="multipart/form-data">
 
 									<div class="card-body">
 										<div id="alert-container" class="mb-3" style="display: none;">
@@ -181,7 +181,7 @@ if (isset($_GET['id'])) {
 															<input
 																value="<?php echo $compound_name['en']; ?>"
 
-																type="text" class="form-control" name="compound_name_en" >
+																type="text" class="form-control" name="compound_name_en">
 															<div class="invalid-feedback" id="prop_compound_name_en_feedback" style="display: none;">
 																<?= $lang_en['prop_compound_name'] ?>
 
@@ -299,7 +299,7 @@ if (isset($_GET['id'])) {
 																<input
 																	value="<?php echo $compound_name['ar']; ?>"
 
-																	type="text" class="form-control" name="compound_name_ar" >
+																	type="text" class="form-control" name="compound_name_ar">
 																<div class="invalid-feedback" id="prop_compound_name_ar_feedback" style="display: none;">
 																	<?= $lang_ar['prop_compound_name'] ?>
 
@@ -351,31 +351,40 @@ if (isset($_GET['id'])) {
 													<div class="form-group mb-3">
 														<label id="prop_image">
 															<?= $lang_en['Property_Image'] ?>
-
-
 														</label>
-														<input type="file" class="form-control" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
-
+														<input type="file" class="form-control" id="prop_img_upload" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="edit_property" />
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
-														<br>
-														<?php
-														if (empty($data['image'])) {
-															$firstImage = null;
-														} else {
-															// Split the string by commas
-															$imagesArray = explode(',',  $data['image']);
-
-															$firstImage = trim($imagesArray[0]);
-														}														?>
-														<img src="<?php echo $firstImage; ?>" width="100" height="100" />
-														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
-															<?= $lang_en['prop_img'] ?>
-
+														<!-- Combined Images Slider -->
+														<div id="images-slider-container" style="margin-top:15px; <?php echo empty($data['image']) ? 'display:none;' : '' ?>">
+															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
+																<div id="slides-wrapper" style="display:flex; transition:transform 0.3s ease;">
+																	<?php
+																	if (!empty($data['image'])) {
+																		$imagesArray = explode(',', $data['image']);
+																		foreach ($imagesArray as $index => $image) {
+																			$trimmedImage = trim($image);
+																			echo '<div class="slide" style="min-width:100%; text-align:center;">';
+																			echo '<img src="' . $trimmedImage . '" style="max-height:120px; max-width:100%; object-fit:contain;" />';
+																			echo '</div>';
+																		}
+																	}
+																	?>
+																</div>
+															</div>
+															<div id="slider-nav" style="text-align:center; margin-top:10px; <?php echo (empty($data['image']) || (count($imagesArray) <= 1) ? 'display:none;' : '') ?>">
+																<button type="button" class="btn btn-sm btn-success slider-prev" style="padding:2px 8px; margin-right:5px;">❮</button>
+																<span id="slider-counter">1/<?php echo !empty($data['image']) ? count($imagesArray) : '0' ?></span>
+																<button type="button" class="btn btn-sm btn-success slider-next" style="padding:2px 8px; margin-left:5px;">❯</button>
+															</div>
 														</div>
 
+														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
+															<?= $lang_en['prop_img'] ?>
+														</div>
 													</div>
+
 												</div>
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
@@ -485,8 +494,8 @@ if (isset($_GET['id'])) {
 														</label>
 														<input
 															value="<?php echo $data['security_deposit']; ?>"
-															type="text" class="form-control numberonly" id="price" name="prop_security" >
-													
+															type="text" class="form-control numberonly" id="price" name="prop_security">
+
 													</div>
 												</div>
 
@@ -550,7 +559,7 @@ if (isset($_GET['id'])) {
 															name="facility[]" id="product" class=" form-control" multiple required>
 
 															<?php
-															$zone = $rstate->query("select * from tbl_facility");
+															$zone = $rstate->query("select * from tbl_facility where status = 1");
 															while ($row = $zone->fetch_assoc()) {
 																$title = json_decode($row['title'], true);
 																$isSelected = in_array($row['id'],  explode(',', $data['facility'])) ? 'selected' : '';
@@ -655,7 +664,7 @@ if (isset($_GET['id'])) {
 
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_category");
+																	$zone = $rstate->query("select * from tbl_category where status =1");
 
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['title'], true);
@@ -690,7 +699,7 @@ if (isset($_GET['id'])) {
 
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_government");
+																	$zone = $rstate->query("select * from tbl_government where status =1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['name'], true);
 																		$isSelected = in_array($row['id'],  explode(',', $data['government'])) ? 'selected' : '';
@@ -721,7 +730,7 @@ if (isset($_GET['id'])) {
 																		<?= $lang_en['Select_Owner'] ?>
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_user");
+																	$zone = $rstate->query("select * from tbl_user where status = 1 and verified =1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = $row['name'];
 																		$isSelected = in_array($row['id'],  explode(',', $data['add_user_id'])) ? 'selected' : '';
@@ -752,7 +761,7 @@ if (isset($_GET['id'])) {
 																		<?= $lang_en['Select_Privacy_Policy'] ?>
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_cancellation_policy");
+																	$zone = $rstate->query("select * from tbl_cancellation_policy where status = 1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['title'], true);
 																		$isSelected = in_array($row['id'],  explode(',', $data['cancellation_policy_id'])) ? 'selected' : '';
@@ -770,7 +779,45 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
+															<div class="form-group mb-3">
+																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
+																<select id="approval-select" class="form-control" name="approved"  required>
+																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
+																	<option value="1"
+																		<?php if ($data['is_approved'] == 1) {
+																			echo 'selected';
+																		} ?>><?= $lang_en['Yes'] ?></option>
+																	<option value="0"
+																		<?php if ($data['is_approved'] == 0) {
+																			echo 'selected';
+																		} ?>><?= $lang_en['No'] ?></option>
+																</select>
+																<div class="invalid-feedback" id="approval_feedback" style="display: none;">
+																	<?= $lang_en['property_approval'] ?>
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
+														id="cancel-reason-container" style="display:none;"
+														>
+															<div class="form-group mb-3">
+																<label id="cancel_reason">
+																	<?= $lang_en['cancel_reason'] ?>
+
+																</label>
+																<input
+																	value="<?php echo $data['cancel_reason']; ?>"
+
+																	type="text" class="form-control " name="cancel_reason" >
+																<div class="invalid-feedback" id="cancel_reason_feedback" style="display: none;">
+																	<?= $lang_en['prop_cancel_reason'] ?>
+
+																</div>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -786,9 +833,9 @@ if (isset($_GET['id'])) {
 							} else {
 							?>
 								<form
-								onsubmit="return submitform(true)" 
+									onsubmit="return submitform(true)"
 
-								method="post" enctype="multipart/form-data">
+									method="post" enctype="multipart/form-data">
 
 									<div class="card-body">
 										<div id="alert-container" class="mb-3" style="display: none;">
@@ -857,7 +904,7 @@ if (isset($_GET['id'])) {
 																<?= $lang_en['Compound_Name'] ?>
 
 															</label>
-															<input type="text" class="form-control" name="compound_name_en" >
+															<input type="text" class="form-control" name="compound_name_en">
 															<div class="invalid-feedback" id="prop_compound_name_en_feedback" style="display: none;">
 																<?= $lang_en['prop_compound_name'] ?>
 
@@ -1000,22 +1047,31 @@ if (isset($_GET['id'])) {
 											<div class="row">
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
+													<div class="form-group mb-3" id="add-property-images" style="<?= !isset($_GET['id']) ? '' : 'display:none;' ?>">
 														<label id="prop_image">
 															<?= $lang_en['Property_Image'] ?>
-
-
 														</label>
-														<input type="file" class="form-control" name="prop_img[]" required="" accept=".jpg, .jpeg, .png, .gif" multiple />
-
+														<input type="file" class="form-control" id="prop_img_upload_add" name="prop_img[]" required accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="add_property" />
-														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
-															<?= $lang_en['prop_img'] ?>
 
+														<div id="upload-preview-container" style="margin-top:15px; display:none;">
+															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
+																<div id="upload-slides-wrapper" style="display:flex; transition:transform 0.3s ease;"></div>
+															</div>
+															<div id="upload-nav" style="text-align:center; margin-top:10px; display:none;">
+																<button type="button" class="btn btn-sm btn-success upload-prev" style="padding:2px 8px; margin-right:5px;">❮</button>
+																<span id="upload-counter">1/0</span>
+																<button type="button" class="btn btn-sm btn-success upload-next" style="padding:2px 8px; margin-left:5px;">❯</button>
+															</div>
 														</div>
 
+														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
+															<?= $lang_en['prop_img'] ?>
+														</div>
 													</div>
+
 												</div>
+
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
@@ -1105,8 +1161,8 @@ if (isset($_GET['id'])) {
 															<?= $lang_en['security_deposit'] ?>
 
 														</label>
-														<input type="text" class="form-control numberonly" id="price" name="prop_security" >
-														
+														<input type="text" class="form-control numberonly" id="price" name="prop_security">
+
 													</div>
 												</div>
 
@@ -1160,7 +1216,7 @@ if (isset($_GET['id'])) {
 															name="facility[]" id="product" class=" form-control" multiple required>
 
 															<?php
-															$zone = $rstate->query("select * from tbl_facility");
+															$zone = $rstate->query("select * from tbl_facility where status =1 ");
 															while ($row = $zone->fetch_assoc()) {
 																$title = json_decode($row['title'], true);
 
@@ -1251,7 +1307,7 @@ if (isset($_GET['id'])) {
 
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_category");
+																	$zone = $rstate->query("select * from tbl_category where status =1");
 
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['title'], true);
@@ -1284,7 +1340,7 @@ if (isset($_GET['id'])) {
 
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_government");
+																	$zone = $rstate->query("select * from tbl_government where status =1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['name'], true);
 
@@ -1313,7 +1369,7 @@ if (isset($_GET['id'])) {
 																		<?= $lang_en['Select_Owner'] ?>
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_user");
+																	$zone = $rstate->query("select * from tbl_user where status =1 and verified=1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = $row['name'];
 
@@ -1342,7 +1398,7 @@ if (isset($_GET['id'])) {
 																		<?= $lang_en['Select_Privacy_Policy'] ?>
 																	</option>
 																	<?php
-																	$zone = $rstate->query("select * from tbl_cancellation_policy");
+																	$zone = $rstate->query("select * from tbl_cancellation_policy where status =1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = json_decode($row['title'], true);
 
@@ -1358,7 +1414,38 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
+															<div class="form-group mb-3">
+																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
+																<select id="approval-select" class="form-control" name="approved"  required>
+																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
+																	<option value="1"><?= $lang_en['Yes'] ?></option>
+																	<option value="0"><?= $lang_en['No'] ?></option>
+																</select>
+																<div class="invalid-feedback" id="approval_feedback" style="display: none;">
+																	<?= $lang_en['property_approval'] ?>
+
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12" 
+														id="cancel-reason-container" style="display:none;"
+														>
+															<div class="form-group mb-3">
+																<label id="cancel_reason">
+																	<?= $lang_en['cancel_reason'] ?>
+
+																</label>
+																<input
+
+																	type="text" class="form-control " name="cancel_reason" >
+																<div class="invalid-feedback" id="cancel_reason_feedback" style="display: none;">
+																	<?= $lang_en['prop_cancel_reason'] ?>
+
+																</div>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -1466,6 +1553,7 @@ if (isset($_GET['id'])) {
 		const status = document.querySelector('select[name="status"]').value;
 		const period = document.querySelector('select[name="period"]').value;
 		const featured = document.querySelector('select[name="featured"]').value;
+		const approved = document.querySelector('select[name="approved"]').value;
 		const facility = document.querySelector('select[name="facility[]"]').value;
 		const ptype = document.querySelector('select[name="ptype"]').value;
 		const pgov = document.querySelector('select[name="pgov"]').value;
@@ -1484,7 +1572,6 @@ if (isset($_GET['id'])) {
 		let isEnglishValid = true;
 		let alertMessage = '';
 		let lang = getCurrentLanguage();
-
 		if (!titleEn) {
 			document.getElementById('title_en_feedback').style.display = 'block';
 
@@ -1574,6 +1661,19 @@ if (isset($_GET['id'])) {
 		if (!featured) {
 			document.getElementById('featured_feedback').style.display = 'block';
 			isValid = false;
+			
+		}
+		if (!approved) {
+			document.getElementById('approval_feedback').style.display = 'block';
+			isValid = false;
+		}
+		if(approved == '0'){
+			const cancel_reason = document.querySelector('input[name="cancel_reason"]').value;
+			if(!cancel_reason){
+				document.getElementById('cancel_reason_feedback').style.display = 'block';
+				isValid = false;
+			}
+
 		}
 		if (!facility) {
 			document.getElementById('facility_feedback').style.display = 'block';
@@ -1595,7 +1695,7 @@ if (isset($_GET['id'])) {
 			document.getElementById('privacy_feedback').style.display = 'block';
 			isValid = false;
 		}
-		
+
 
 
 		if (!plimit) {
@@ -1665,7 +1765,11 @@ if (isset($_GET['id'])) {
 
 	function changeLanguage(lang) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
-
+		const approved = document.querySelector('select[name="approved"]').value;
+		if(approved == '0'){
+			document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
+			document.getElementById('cancel_reason').textContent = langData.cancel_reason;
+		}
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
 		document.getElementById('status_feedback').textContent = langData.property_status;
@@ -1690,6 +1794,7 @@ if (isset($_GET['id'])) {
 		document.getElementById('property-status').textContent = langData.Property_Status;
 		document.getElementById('property-period').textContent = langData.Property_Period;
 		document.getElementById('property-featured').textContent = langData.Property_Featured;
+		document.getElementById('property-approval').textContent = langData.Property_Approval;
 		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
 		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
 		document.getElementById('prop_owner').textContent = langData.Select_Owner;
@@ -1710,6 +1815,11 @@ if (isset($_GET['id'])) {
 			document.querySelector('button[type="submit"]').textContent = langData.Edit_Property;
 
 		}
+		
+		const approvedSelect = document.getElementById('approval-select');
+		approvedSelect.querySelector('option[value=""]').textContent = langData.Select_property_Approval;
+		approvedSelect.querySelector('option[value="1"]').textContent = langData.Yes;
+		approvedSelect.querySelector('option[value="0"]').textContent = langData.No;
 
 		const statusSelect = document.getElementById('inputGroupSelect01');
 		statusSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
@@ -1726,6 +1836,8 @@ if (isset($_GET['id'])) {
 		featuredSelect.querySelector('option[value="1"]').textContent = langData.Yes;
 		featuredSelect.querySelector('option[value="0"]').textContent = langData.No;
 
+
+	
 
 		$('#propt_type').select2('destroy');
 		$('#propt_type').select2({
@@ -1759,6 +1871,168 @@ if (isset($_GET['id'])) {
 
 	}
 </script>
+
+
+<script>
+	// Unified Image Slider Controller
+	class ImageSlider {
+		constructor(options) {
+			this.slidesWrapper = document.getElementById(options.slidesWrapperId);
+			this.navContainer = document.getElementById(options.navContainerId);
+			this.counterElement = document.getElementById(options.counterId);
+			this.prevButton = document.querySelector(options.prevButtonSelector);
+			this.nextButton = document.querySelector(options.nextButtonSelector);
+			this.currentSlide = 0;
+
+			this.initialize();
+		}
+
+		initialize() {
+			if (this.prevButton && this.nextButton) {
+				this.prevButton.addEventListener('click', () => this.prevSlide());
+				this.nextButton.addEventListener('click', () => this.nextSlide());
+			}
+		}
+
+		updateSlides(files) {
+			this.slidesWrapper.innerHTML = '';
+			this.currentSlide = 0;
+
+			if (files && files.length > 0) {
+				Array.from(files).forEach((file, index) => {
+					if (file.type.match('image.*')) {
+						const reader = new FileReader();
+
+						reader.onload = (e) => {
+							const slide = document.createElement('div');
+							slide.className = 'slide';
+							slide.style.minWidth = '100%';
+							slide.style.textAlign = 'center';
+
+							const img = document.createElement('img');
+							img.src = e.target.result;
+							img.style.maxHeight = '120px';
+							img.style.maxWidth = '100%';
+							img.style.objectFit = 'contain';
+
+							slide.appendChild(img);
+							this.slidesWrapper.appendChild(slide);
+
+							this.updateControls();
+						};
+
+						reader.readAsDataURL(file);
+					}
+				});
+			}
+		}
+
+		prevSlide() {
+			const slides = this.getSlides();
+			this.currentSlide = (this.currentSlide - 1 + slides.length) % slides.length;
+			this.updateSlider();
+		}
+
+		nextSlide() {
+			const slides = this.getSlides();
+			this.currentSlide = (this.currentSlide + 1) % slides.length;
+			this.updateSlider();
+		}
+
+		getSlides() {
+			return this.slidesWrapper.querySelectorAll('.slide');
+		}
+
+		updateSlider() {
+			const slides = this.getSlides();
+			if (slides.length > 0) {
+				this.slidesWrapper.style.transform = `translateX(-${this.currentSlide * 100}%)`;
+				this.counterElement.textContent = `${this.currentSlide + 1}/${slides.length}`;
+			}
+		}
+
+		updateControls() {
+			const slides = this.getSlides();
+			if (slides.length > 1) {
+				this.navContainer.style.display = 'block';
+				this.counterElement.textContent = `1/${slides.length}`;
+			} else {
+				this.navContainer.style.display = 'none';
+			}
+			this.slidesWrapper.style.transform = 'translateX(0)';
+		}
+	}
+
+	// Initialize sliders based on which form is active
+	document.addEventListener('DOMContentLoaded', function() {
+		// Edit Property Slider
+		const editSlider = new ImageSlider({
+			slidesWrapperId: 'slides-wrapper',
+			navContainerId: 'slider-nav',
+			counterId: 'slider-counter',
+			prevButtonSelector: '.slider-prev',
+			nextButtonSelector: '.slider-next'
+		});
+
+		// Upload Property Slider
+		const uploadSlider = new ImageSlider({
+			slidesWrapperId: 'upload-slides-wrapper',
+			navContainerId: 'upload-nav',
+			counterId: 'upload-counter',
+			prevButtonSelector: '.upload-prev',
+			nextButtonSelector: '.upload-next'
+		});
+
+		// Handle edit property image uploads
+		document.getElementById('prop_img_upload_edit')?.addEventListener('change', function(e) {
+			const container = document.getElementById('images-slider-container');
+			container.style.display = 'block';
+			editSlider.updateSlides(this.files);
+		});
+
+		// Handle add property image uploads
+		document.getElementById('prop_img_upload_add')?.addEventListener('change', function(e) {
+			const container = document.getElementById('upload-preview-container');
+			container.style.display = 'block';
+			uploadSlider.updateSlides(this.files);
+		});
+
+		// Initialize with existing images for edit case
+		if (document.querySelectorAll('#slides-wrapper .slide').length > 0) {
+			editSlider.updateControls();
+		}
+	});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const approvalSelect = document.getElementById('approval-select');
+  const cancelReasonContainer = document.getElementById('cancel-reason-container');
+
+  approvalSelect.addEventListener('change', function() {
+    if (this.value === '0') {
+      cancelReasonContainer.style.display = 'block';
+    } else {
+      cancelReasonContainer.style.display = 'none';
+    }
+  });
+
+  // Trigger change event in case there's a selected value on page load
+  approvalSelect.dispatchEvent(new Event('change'));
+});
+</script>
+<style>
+	.slides-container {
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		background: #f8f9fa;
+	}
+
+	.btn-success {
+		background-color: #28a745;
+		border-color: #28a745;
+	}
+</style>
+
 <?php
 require 'include/footer.php';
 ?>
