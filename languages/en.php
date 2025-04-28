@@ -245,6 +245,12 @@ return [
     'No'     => 'No',
     'property_featured' => 'Please Select Is Property Featured',
 
+    'Property_Approval'  => 'Is Property Approved',
+    'Select_property_Approval'     => 'Select Is Property Approved',
+    'property_approval' => 'Please Select Is Property Approved',
+    'prop_cancel_reason' => 'please enter Property cancel reason',
+    'cancel_reason' => 'cancel reason',
+
     'setting_name' => 'Please Enter Website Name',
     'setting_img'  => 'Please Enter Website Logo',
     'setting_tax'  => 'Please Enter Tax (Percent)',

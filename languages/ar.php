@@ -235,6 +235,11 @@ return [
     'No' => 'لا',
     'property_featured' => 'يرجى اختيار هل العقار مميز',
     "Delete_Confirmation" => 'هل أنت متأكد أنك تريد حذف هذا العنصر',
+    'Property_Approval' => 'هل تم الموافقة على العقار',
+    'Select_property_Approval' => 'اختر حالة الموافقة على العقار',
+    'property_approval' => 'الرجاء تحديد حالة الموافقة على العقار',
+    'prop_cancel_reason' => 'الرجاء إدخال سبب إلغاء العقار',
+    'cancel_reason' => 'سبب الإلغاء',
 
     'setting_name' => 'يرجى إدخال اسم الموقع الإلكتروني',
     'setting_img'  => 'يرجى إدخال شعار الموقع الإلكتروني',

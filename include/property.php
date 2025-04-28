@@ -912,6 +912,7 @@ try {
             $sqft = $_POST['sqft'];
             $user_id = '0';
             $policy = $_POST['propPrivacy'];
+            $is_approved = $_POST['approved'];
 
             $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
@@ -940,7 +941,11 @@ try {
             $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
             $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
             $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
+            $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
 
+            if ($is_approved == '0') {
+                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+            }
 
             $guest_rules_json = json_encode([
                 "en" => $guest_rules_en,
@@ -1075,8 +1080,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["image", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$imageUrlsString", "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$imageUrlsString", "$cancel_reason" ,  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1096,6 +1101,7 @@ try {
         } elseif ($_POST["type"] == "edit_property") {
 
             $id = $_POST['id'];
+
             $status = $_POST["status"];
             $plimit = $_POST['plimit'];
             $pbuysell = 1;
@@ -1106,6 +1112,7 @@ try {
             $sqft = $_POST['sqft'];
             $policy = $_POST['propPrivacy'];
             $user_id = '0';
+            $is_approved = $_POST['approved'];
 
             $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
@@ -1115,6 +1122,7 @@ try {
             $min_days = $_POST['min_day'] == '' ? 0 : $_POST['min_day'];
             $google_maps_url = $_POST['mapurl'];
             $propowner = $_POST['propowner'];
+
             $period = $_POST['period'];
             $featured = $_POST['featured'];
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
@@ -1133,6 +1141,11 @@ try {
             $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
             $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
             $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
+            $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
+
+            if ($is_approved == '0') {
+                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+            }
 
 
             $guest_rules_json = json_encode([
@@ -1264,21 +1277,51 @@ try {
             $table = "tbl_property";
 
 
-            $field_values = ["security_deposit", "cancellation_policy_id",  "period", "is_featured", "government", "map_url", "latitude", "longitude",  "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-            $data_values = ["$security_deposit",  "$policy",  "$period", "$featured", "$government", "$google_maps_url", "$latitude", "$longitude", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
-            $combinedArray = array_combine($field_values, $data_values);
+            $field_values = [
+                "security_deposit" => "$security_deposit",
+                "cancellation_policy_id" => "$policy",
+
+                "period" => "$period",
+                "is_featured" => "$featured",
+                "is_approved" => "$is_approved",
+                "government" => "$government",
+                "map_url" => "$google_maps_url",
+                "latitude" => "$latitude",
+                "longitude" => "$longitude",
+                "guest_rules" => "$guest_rules_json",
+                "compound_name" => "$compound_name_json",
+                "floor" => "$floor_json",
+                "status" => "$status",
+                "title" => "$title_json",
+                "price" => "$price",
+                "address" => "$address_json",
+                "facility" => "$facility",
+                "description" => "$description_json",
+                "beds" => "$beds",
+                "bathroom" => "$bathroom",
+                "sqrft" => "$sqft",
+                "ptype" => "$ptype",
+                "city" => "$city_json",
+                "listing_date" => "$listing_date",
+                "add_user_id" => "$propowner",
+                "pbuysell" => "$pbuysell",
+                "plimit" => "$plimit",
+                "max_days" => "$max_days",
+                "min_days" => "$min_days",
+                "cancel_reason" => "$cancel_reason"
+            ];
             if (!empty($imageUrls)) {
-                $combinedArray["image"] =  $imageUrlsString;
+                $field_values["image"] =  $imageUrlsString;
             }
 
             if (!empty($videoUrls)) {
-                $combinedArray["video"] =  $videoUrlsString;
+                $field_values["video"] =  $videoUrlsString;
             }
-            if (!isset($returnArr)) {
 
-                $where = "where id=" . $id . " and add_user_id=" . $propowner . "";
+            if (!isset($returnArr)) {
+                $where = "where id=" . $id . "";
                 $h = new Estate();
-                $check = $h->restateupdateData($combinedArray, $table, $where);
+                $check = $h->restateupdateData($field_values, $table, $where);
             } else {
                 $check = 0;
             }
@@ -1352,21 +1395,8 @@ try {
             $uid = $_POST["uid"];
             $reason = $_POST["reason"];
             $title = $rstate->real_escape_string($_POST["property_title"]);
-            $table = "tbl_property";
-            $field = ["cancel_reason" => $reason];
-            $where = "where id=" . $id . "";
 
-            $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
-
-            $new_mobile   = $sel['mobile'];
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
-
-            // Create the message
-            $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-            $result = sendMessage([$new_mobile], $message);
-
-
+            $check =  deny_property($reason,  $id, $uid, $title, $rstate);
 
             if ($check == 1) {
                 $returnArr = [
@@ -2188,4 +2218,23 @@ try {
     // Handle exceptions and return an error response
     $returnArr = array("ResponseCode" => "200", "Result" => "false", "title" => "Ar Error occured ! $e", "message" => "welcome admin!!", "action" => "dashboard.php");
     echo json_encode($returnArr);
+}
+
+function deny_property(string $reason,  $id, $uid, $title, $rstate)
+{
+    $table = "tbl_property";
+    $field = ["cancel_reason" => $reason];
+    $where = "where id=" . $id . "";
+
+    $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
+
+    $new_mobile   = $sel['mobile'];
+    $h = new Estate();
+    $check = $h->restateupdateData($field, $table, $where);
+
+    // Create the message
+    $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
+    $result = sendMessage([$new_mobile], $message);
+
+    return $check;
 }
