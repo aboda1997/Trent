@@ -83,7 +83,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
                         } else {
                           ?>
                           <th>
-                          <?= $lang['Action'] ?>
+                            <?= $lang['Action'] ?>
 
                           </th>
                         <?php } ?>
@@ -120,27 +120,17 @@ WHERE
                             <?php echo $title[$lang_code]; ?>
                           </td>
 
-                      
 
                           <td class="align-middle">
-                            <div class="image-slider" style="width:70px; height:80px; overflow:hidden; position:relative;">
-                              <?php
-                              $imageArray = explode(',', $row['image']);
-                              if (empty($imageArray[0])) {
-                                $imageArray = ['default_image.jpg'];
-                              }
+                            <img src="<?php
+                                      $imageArray = explode(',', $row['image']);
 
-                              foreach ($imageArray as $index => $image) {
-                                echo '<img src="' . trim($image) . '" width="70" height="80" style="position:absolute; top:0; left:0; opacity:' . ($index === 0 ? '1' : '0') . '; transition:opacity 0.3s ease;" data-index="' . $index . '" />';
-                              }
-                              ?>
-                            </div>
-                            <?php if (count($imageArray) > 1): ?>
-                              <div  style=" margin-top:8px;">
-                                <button class="prev-btn" style="background:#4CAF50; color:white; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer; font-size:12px; margin:0 2px;" onclick="slideImage(this, -1)">❮</button>
-                                <button class="next-btn" style="background:#4CAF50; color:white; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer; font-size:12px; margin:0 2px;" onclick="slideImage(this, 1)">❯</button>
-                              </div>
-                            <?php endif; ?>
+                                      if (!empty($imageArray[0])) {
+                                        echo $imageArray[0];
+                                      } else {
+                                        echo 'default_image.jpg';
+                                      }
+                                      ?>" width="70" height="80" />
                           </td>
                           <td class="align-middle">
                             <?php $type = $rstate->query("select * from tbl_category where id=" . $row['ptype'] . "")->fetch_assoc();
