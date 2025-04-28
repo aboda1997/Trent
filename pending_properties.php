@@ -98,7 +98,6 @@ FROM
     tbl_property p
 WHERE 
     p.is_approved = 0 
-    AND p.status = 1 
 ";
 
                       $city = $rstate->query($query);
