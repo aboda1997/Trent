@@ -54,7 +54,7 @@ try {
     } else if (checkTableStatus($method_id, 'tbl_payout_methods') === false) {
         $returnArr = generateResponse('false', $lang_["payout_method_not_allowed"], 400);
     } else if (!validateName($profile_name, $fieldNames['profile_name'][$lang], 50 , $lang )['status'] ) {
-        $returnArr    = generateResponse('false', validateName($name, $fieldNames['profile_name'][$lang] , 50 ,$lang )['response'], 400);
+        $returnArr    = generateResponse('false', validateName($profile_name, $fieldNames['profile_name'][$lang] , 50 ,$lang )['response'], 400);
     }
     else if (!validateName($full_name, $fieldNames['full_name'][$lang], 100 , $lang, false)['status']) {
         $returnArr    = generateResponse('false', validateName($full_name,$fieldNames['full_name'][$lang], 100 , $lang ,  false)['response'], 400);

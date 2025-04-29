@@ -1,6 +1,6 @@
 <?php 
-require dirname(dirname(__FILE__)) . '/include/reconfig.php';
-require dirname(dirname(__FILE__)) . '/include/estate.php';
+require dirname(dirname(__FILE__),2) . '/include/reconfig.php';
+require dirname(dirname(__FILE__),2) . '/include/estate.php';
 header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 if($data['uid'] == '' or $data['book_id'] == '')

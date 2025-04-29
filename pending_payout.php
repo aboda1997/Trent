@@ -59,7 +59,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                   <table class="display" id="basic-1">
                     <thead>
                       <tr>
-                        <th><input type="checkbox" id="select-all"></th>
+                        <th></th>
                         <th>Sr No.</th>
                         <th class="align-middle d-none">payout id</th>
 
@@ -470,12 +470,18 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
           $('#approveModal').removeClass('show').hide();
           $('.modal-backdrop').remove();
 
-          // Show success notification
-          $.notify('<i class="fas fa-check-circle"></i> Export completed successfully!', {
-            type: 'success',
-            allow_dismiss: true,
-            delay: 3000
-          });
+         
+          $.notify('<i class="fas fa-bell"></i> Export completed successfully!', {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
         },
         error: function() {
           $.notify('<i class="fas fa-exclamation-circle"></i> Error Export Excel Sheet ', {
