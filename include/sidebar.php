@@ -91,15 +91,7 @@ if (isset($_SESSION['restatename'])) {
                 </g>
               </svg><span>Enquiry List</span></a></li>
 
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="list_payout.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                  <g>
-                    <path d="M6.91699 14.854L9.90999 10.965L13.324 13.645L16.253 9.86499" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6671 2.3501C20.7291 2.3501 21.5891 3.2101 21.5891 4.2721C21.5891 5.3331 20.7291 6.1941 19.6671 6.1941C18.6051 6.1941 17.7451 5.3331 17.7451 4.2721C17.7451 3.2101 18.6051 2.3501 19.6671 2.3501Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M20.7555 9.26898C20.8885 10.164 20.9495 11.172 20.9495 12.303C20.9495 19.241 18.6375 21.553 11.6995 21.553C4.76246 21.553 2.44946 19.241 2.44946 12.303C2.44946 5.36598 4.76246 3.05298 11.6995 3.05298C12.8095 3.05298 13.8005 3.11198 14.6825 3.23998" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </g>
-                </g>
-              </svg><span>Payout List</span></a></li>
+
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -122,7 +114,7 @@ if (isset($_SESSION['restatename'])) {
                 <!-- Credit card with multiple payment method symbols -->
                 <rect x="4" y="6" width="16" height="12" rx="2" stroke="#130F26" stroke-width="1.5" />
                 <path d="M4 10H20" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-                
+
               </svg>
               <span>Payout Methods</span>
             </a>
@@ -180,17 +172,13 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="list_facility.php">List Facility</a></li>
             </ul>
           </li>
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                  <g>
-                    <path d="M11.0791 13.8496H7.4314" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M15.4774 12.1712H15.3752" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M17.2081 15.5833H17.1059" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M8.51392 2.21606C8.5206 2.93015 9.1058 3.50295 9.81989 3.49626H10.828C11.9306 3.48767 12.8328 4.37169 12.8481 5.47432V6.48148" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.8121 13.8953C21.8121 8.33539 19.4255 6.48145 12.2646 6.48145C5.10271 6.48145 2.71606 8.33539 2.71606 13.8953C2.71606 19.4562 5.10271 21.3092 12.2646 21.3092C19.4255 21.3092 21.8121 19.4562 21.8121 13.8953Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </g>
-                </g>
-              </svg><span>Slider </span></a>
+          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="7" width="16" height="10" rx="1" stroke="#130F26" stroke-width="1.5" />
+                <circle cx="9" cy="12" r="1" fill="#130F26" />
+                <circle cx="15" cy="12" r="1" fill="#130F26" />
+              </svg>
+              <span>Slider </span></a>
             <ul class="sidebar-submenu">
               <li><a href="add_slider.php">Add Slider</a></li>
               <li><a href="list_slider.php">List Slider</a></li>

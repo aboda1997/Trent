@@ -40,7 +40,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $canncel_reason_per
           <div class="row">
             <div class="col-6">
               <h3>
-                <?= $lang['Category_List_Management'] ?>
+                <?= $lang['Cancel_Reason_List_Management'] ?>
 
               </h3>
             </div>

@@ -1912,32 +1912,7 @@ try {
                     ];
                 }
             }
-        } elseif ($_POST["type"] == "com_payout") {
-            $payout_id = $_POST["payout_id"];
-            $target_dir = dirname(dirname(__FILE__)) . "/images/proof/";
-            $url = "images/proof/";
-            $temp = explode(".", $_FILES["cat_img"]["name"]);
-            $newfilename = round(microtime(true)) . "." . end($temp);
-            $target_file = $target_dir . basename($newfilename);
-            $url = $url . basename($newfilename);
-
-            move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
-            $table = "payout_setting";
-            $field = ["proof" => $url, "status" => "completed"];
-            $where = "where id=" . $payout_id . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
-
-            if ($check == 1) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Payout Update Successfully!!",
-                    "message" => "Payout section!",
-                    "action" => "list_payout.php",
-                ];
-            }
-        } elseif ($_POST["type"] == "update_status") {
+        }elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];
             $coll_type = $_POST["coll_type"];

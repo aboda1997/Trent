@@ -57,7 +57,7 @@ if (isset($_GET['id'])) {
           <div class="row">
             <div class="col-6">
               <h3>
-                <?= $lang['Cancel_Reason_Management'] ?>
+                <?= $lang['Payout_Method_Management'] ?>
 
               </h3>
             </div>
