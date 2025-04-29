@@ -39,7 +39,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                Cancelled Booking Management</h3>
+                Payout Request Management</h3>
             </div>
             <div class="col-6">
 
@@ -59,7 +59,10 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                   <table class="display" id="basic-1">
                     <thead>
                       <tr>
+                        <th><input type="checkbox" id="select-all"></th>
                         <th>Sr No.</th>
+                        <th class="align-middle d-none">payout id</th>
+
                         <th>Booking ID</th>
                         <th>Property Name </th>
                         <th>Guest Name </th>
@@ -90,10 +93,14 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
 
                       ?>
                         <tr>
+                          <td><input type="checkbox" class="row-checkbox"></td>
                           <td>
                             <?php echo $i; ?>
                           </td>
 
+                          <td class="align-middle d-none">
+                            <?php echo $row['pid']; ?>
+                          </td>
                           <td class="align-middle">
                             <?php echo $row['id']; ?>
                           </td>
@@ -165,7 +172,11 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                       ?>
 
                     </tbody>
+                    <!-- Action button (initially hidden) -->
+                    <button id="action-btn" class="btn btn-primary" style="display:none; margin-top:20px;">
+                      Approve And Generate Payout File </button>
                   </table>
+
                 </div>
 
               </div>
@@ -328,6 +339,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
         }
       });
     });
+
     // When save button is clicked
     $('#saveDeny').click(function() {
       var reasonInput = $('#denyReason');
@@ -381,7 +393,123 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
     });
   });
 </script>
+<script>
+  $(document).ready(function() {
+    // Initialize DataTable
+    var table = $('#basic-1').DataTable();
 
+    // Select all/none functionality
+    $('#select-all').on('click', function() {
+      $('.row-checkbox').prop('checked', this.checked);
+      toggleActionButton();
+    });
+
+    // Row checkbox change handler
+    $('#basic-1 tbody').on('change', '.row-checkbox', function() {
+      // Deselect "select all" if any row is unchecked
+      if (!this.checked) {
+        $('#select-all').prop('checked', false);
+      }
+      toggleActionButton();
+    });
+
+    // Function to show/hide action button
+    function toggleActionButton() {
+      var anyChecked = $('.row-checkbox:checked').length > 0;
+      $('#action-btn').toggle(anyChecked);
+    }
+
+    // Action button click handler
+    $('#action-btn').on('click', function() {
+      var selectedIds = [];
+      $('.row-checkbox:checked').each(function() {
+        // Get data from the row (example gets name from 2nd column)
+        var rowData = table.row($(this).closest('tr')).data();
+        selectedIds.push(rowData[2]); // Push the name (or your ID)
+      });
+      var formData = {
+        type: 'approve_payout_and_generate_payout',
+        selected_ids: selectedIds,
+        // Include any other form data you need to send
+        // other_field: $('#other-field').val()
+      };
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        xhrFields: {
+          responseType: 'blob' // Important for binary response
+        },
+        success: function(blob, status, xhr) {
+          // Check for filename in headers
+          var filename = '';
+          var disposition = xhr.getResponseHeader('Content-Disposition');
+          if (disposition && disposition.indexOf('attachment') !== -1) {
+            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            var matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) {
+              filename = matches[1].replace(/['"]/g, '');
+            }
+          }
+
+          // Create download link
+          var a = document.createElement('a');
+          var url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = filename || 'download.csv';
+          document.body.appendChild(a);
+          a.click();
+
+          // Cleanup
+          setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 100);
+
+          // Handle modal and notifications
+          $('#approveModal').removeClass('show').hide();
+          $('.modal-backdrop').remove();
+
+          // Show success notification
+          $.notify('<i class="fas fa-check-circle"></i> Export completed successfully!', {
+            type: 'success',
+            allow_dismiss: true,
+            delay: 3000
+          });
+        },
+        error: function() {
+          $.notify('<i class="fas fa-exclamation-circle"></i> Error Export Excel Sheet ', {
+            type: 'danger',
+            allow_dismiss: true,
+            delay: 5000
+          });
+        }
+      });
+    });
+  });
+  // Highlight selected rows
+  $('#basic-1 tbody').on('change', '.row-checkbox', function() {
+    $(this).closest('tr').toggleClass('selected-row', this.checked);
+  });
+</script>
+<style>
+  .row-checkbox {
+    margin: 0;
+    transform: scale(1.2);
+  }
+
+  .selected-row {
+    background-color: #e3f2fd !important;
+  }
+
+  #select-all {
+    transform: scale(1.2);
+  }
+
+  #action-btn {
+    transition: all 0.3s ease;
+  }
+</style>
 <?php
 require 'include/footer.php';
 ?>
