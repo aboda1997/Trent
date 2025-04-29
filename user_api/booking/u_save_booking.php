@@ -115,6 +115,9 @@ try {
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $fp['book_status'] = 'Booked';
+            $fp['book_id'] = $check;
+
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
             ));   

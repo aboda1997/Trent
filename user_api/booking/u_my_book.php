@@ -30,6 +30,9 @@ if ($uid == '' or $status == '') {
 		$fp['p_method_id'] = $row['p_method_id'];
 		$fp['prop_price'] = $row['prop_price'];
 		$fp['total_day'] = $row['total_day'];
+		$fp['total_payout'] = $row['total'];
+		$fp['check_in'] = $row['check_in'];
+		$fp['check_out'] = $row['check_out'];
 		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $row['prop_id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
 		if ($checkrate != 0) {
 			$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['prop_id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();

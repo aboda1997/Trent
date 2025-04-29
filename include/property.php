@@ -1081,7 +1081,7 @@ try {
 
                 $table = "tbl_property";
                 $field_values = ["image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$imageUrlsString", "$cancel_reason" ,  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $data_values = ["$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1374,7 +1374,6 @@ try {
             }
         } elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
-
             $table = "tbl_payout_list";
             $field = ["payout_status" => "Completed"];
             $where = "where id=" . $id . "";
@@ -1389,8 +1388,51 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_payout.php",
                 ];
+               
             }
-        } elseif ($_POST["type"] == "deny_reason") {
+        } 
+        elseif ($_POST["type"] == "approve_payout_and_generate_payout") {
+            $selected_ids = $_POST["selected_ids"];
+            $GLOBALS['rstate']->begin_transaction();
+
+            $table = "tbl_payout_list";
+            $field = ["payout_status" => "Completed"];
+            foreach ($selected_ids as $id) {
+
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            }
+            $GLOBALS['rstate']->commit();
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Payout Approved Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending_payout.php",
+                ];
+                downloadCSV(
+                    $arabicHeaders = [
+                        'اسم العميل',
+                        'رقم الحجز',
+                        'رقم الواليت',
+                        'طريقة السحب (واليت او بنك)',
+                        'رقم حساب البنك',
+                        'اسم البنك',
+                        'اسم مالك العقار بشكل كامل',
+                        'القيمة',
+                        'تاريخ طلب السحب',
+                        'تاريخ اليوم'
+                    ]
+                    , [
+                    [1, 'John Doe', 'john@example.com', '123-456-7890'],
+                    [2, 'Jane Smith', 'jane@example.com', '987-654-3210']
+                ]);
+            }
+        } 
+        elseif ($_POST["type"] == "deny_reason") {
             $id = $_POST["id"];
             $uid = $_POST["uid"];
             $reason = $_POST["reason"];
@@ -1912,7 +1954,7 @@ try {
                     ];
                 }
             }
-        }elseif ($_POST["type"] == "update_status") {
+        } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];
             $coll_type = $_POST["coll_type"];
@@ -2212,4 +2254,35 @@ function deny_property(string $reason,  $id, $uid, $title, $rstate)
     $result = sendMessage([$new_mobile], $message);
 
     return $check;
+}
+function downloadCSV($headers, $data)
+{
+    // 1. Start output buffering
+    ob_start();
+
+    // 2. Set headers FIRST
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="export_' . date('Y-m-d') . '.csv"');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    // 3. Create CSV content
+    $output = fopen('php://output', 'w');
+
+    // Optional: Add UTF-8 BOM for Excel compatibility
+    fputs($output, "\xEF\xBB\xBF");
+
+    // Add headers
+    fputcsv($output, $headers);
+
+
+    // Add data rows
+    foreach ($data as $row) {
+        fputcsv($output, $row);
+    }
+
+    // 4. Close and exit
+    fclose($output);
+    ob_end_flush();
+    exit; // Critical - prevents any additional output
 }
