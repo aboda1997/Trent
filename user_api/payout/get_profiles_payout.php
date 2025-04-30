@@ -28,6 +28,7 @@ try {
             $method = $rstate->query("SELECT id, name  FROM tbl_payout_methods WHERE id=$method_id ")->fetch_assoc();
             $pol['id'] = $row['id'];
             $pol['profile_name'] = $row['name'];
+            $pol['full_name'] = $row['full_name'];
             $pol['bank_name'] = $row['bank_name'];
             $pol['method_name'] = $method ? json_decode($method['name'], true)[$lang_code] : '';
             $pol['bank_account_number'] = $row['bank_account_number'];

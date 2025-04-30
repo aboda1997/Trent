@@ -52,8 +52,8 @@ try {
             $data_values = [$created_at];
             $Payout_id = $h->restateinsertdata_Api($field_values, $data_values, $table1);
             foreach ($ids as $value) {
-                $field_values = ["payout_id", "book_id", "requested_at", "profile_id"];
-                $data_values = [$Payout_id, $value, $created_at, $profile_id];
+                $field_values = ["payout_id", "book_id", "requested_at", "profile_id" , "uid"];
+                $data_values = [$Payout_id, $value, $created_at, $profile_id , $uid];
 
                 $Payout_list_id = $h->restateinsertdata_Api($field_values, $data_values, $table2);
             }

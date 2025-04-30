@@ -1,6 +1,7 @@
 <?php
 require 'include/main_head.php';
 if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
+  $lang_code = load_language_code()["language_code"];
 
 
 
@@ -99,15 +100,26 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                             </td>
 
                             <td class="align-middle">
-                              <?php echo $row['prop_title']; ?>
+                              <?php 
+                              echo json_decode($row['prop_title'])->en ?>
+                            </td>
+
+
+                            
+                            <td class="align-middle">
+                              <img src="<?php
+                                        $imageArray = explode(',', $row['prop_img']);
+
+                                        if (!empty($imageArray[0])) {
+                                          echo $imageArray[0];
+                                        } else {
+                                          echo 'default_image.jpg';
+                                        }
+                                        ?>" width="70" height="80" />
                             </td>
 
                             <td class="align-middle">
-                              <img src="<?php echo $row['prop_img']; ?>" width="70" height="80" />
-                            </td>
-
-                            <td class="align-middle">
-                              <?php echo $row['prop_price'] . $set['currency']; ?>
+                              <?php echo $row['prop_price'] . "EGP"; ?>
                             </td>
 
                             <td class="align-middle">
@@ -118,8 +130,6 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                               <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                 <div class="btn-group btn-group-sm" style="float: none;">
                                   <button class="btn btn-info preview_d" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#myModal">View Details</button>
-                                  <button class="btn btn-success drop" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-status="Confirmed" data-type="update_status" coll-type="confirmed_book">Confirmed</button>
-                                  <a href="?cn_id=<?php echo $row['id']; ?>" class="btn btn-danger" style="float: none; margin: 5px;">Cancelled</a>
 
                                 </div>
 
