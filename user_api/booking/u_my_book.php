@@ -5,21 +5,39 @@ require dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require_once dirname(dirname(__FILE__) , 2) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
+try {
+
 $pol = array();
 $c = array();
 
 $status  =  isset($_GET['status']) ? $_GET['status'] : '';
 $uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
 $lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
-if ($uid == '' or $status == '') {
-	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
+$is_owner = isset($_GET['is_owner']) ? $_GET['is_owner'] : 'false';
+if ($uid == '') {
+	$returnArr    = generateResponse('false', "User id is required", 400);
+} else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
+	$returnArr    = generateResponse('false', "User id is not exists", 400);
+} else if ($status == '') {
+	$returnArr    = generateResponse('false', "Booking Status is required", 400);
 } else {
 	$fp = array();
 	$wow = array();
 	if ($status == 'active') {
+		if($is_owner == 'true'){
+			$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
+
+		}else{
 		$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
+		}
 	} else {
-		$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
+		if($is_owner == 'true'){
+			$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
+
+		}else{
+			$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
+		}
+		
 	}
 	while ($row = $bd->fetch_assoc()) {
 		$fp['book_id'] = $row['id'];
@@ -49,3 +67,11 @@ if ($uid == '' or $status == '') {
 
 }
 echo $returnArr;
+
+} catch (Exception $e) {
+	// Handle exceptions and return an error response
+	$returnArr = generateResponse('false', "An error occurred!", 500, array(
+		"error_message" => $e->getMessage()
+	), $e->getFile(),  $e->getLine());
+	echo $returnArr;
+}
