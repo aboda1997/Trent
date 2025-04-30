@@ -22,7 +22,7 @@ try {
     } else {
         $pol = array();
         $c = array();
-        $sel = $rstate->query("SELECT id, name  , bank_name , method_id , bank_account_number , wallet_number FROM tbl_payout_profiles WHERE status=1 and uid = $uid");
+        $sel = $rstate->query("SELECT id, name  , bank_name ,full_name, method_id , bank_account_number , wallet_number FROM tbl_payout_profiles WHERE status=1 and uid = $uid");
         while ($row = $sel->fetch_assoc()) {
             $method_id = $row["method_id"];
             $method = $rstate->query("SELECT id, name  FROM tbl_payout_methods WHERE id=$method_id ")->fetch_assoc();
