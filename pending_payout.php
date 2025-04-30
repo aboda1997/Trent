@@ -145,14 +145,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                           <td style="white-space: nowrap; width: 15%;">
                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                               <div class="btn-group btn-group-sm" style="float: none;">
-                                <button class="btn btn-success " style="float: none; margin: 5px;"
-                                  type="button"
-                                  data-toggle="modal" data-target="#approveModal"
-                                  data-id="<?php echo $row['pid']; ?>"
-                                  data-uid="<?php echo $payment_data['uid']; ?>"
-                                  title="Approve">
-                                  <i class="fas fa-check"></i>
-                                </button>
+                              
 
                                 <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
                                   data-toggle="modal" data-target="#denyModal"

@@ -49,8 +49,6 @@ try {
         $booking_data = $rstate->query("select add_user_id , prop_id , book_date ,prop_title	, uid from tbl_book where  id= $booking_id  ")->fetch_assoc();
         $uid = $booking_data['uid'];
         $user = $rstate->query("select  mobile	 from tbl_user where  id= $uid ")->fetch_assoc();
-        $cancel_data = $rstate->query("select  reason	 from tbl_cancel_reason where  id= $deny_id ")->fetch_assoc();
-        $cancel_text =  json_decode($cancel_data['reason'], true)[$lang];
         $title = json_decode($booking_data['prop_title'], true)['ar'];
         $h = new Estate();
         if ($is_confirmed == 'true') {
@@ -69,6 +67,9 @@ try {
                 ],
             ));
         } else {
+            $cancel_data = $rstate->query("select  reason	 from tbl_cancel_reason where  id= $deny_id ")->fetch_assoc();
+            $cancel_text =  json_decode($cancel_data['reason'], true)[$lang];
+           
             $message = "عذراً، تم إلغاء حجز العقار ($title) للأسباب التالية:\n\n($cancel_text)\n\nيمكنك مراجعة بيانات العقار وحجزه مرة أخرى عبر موقع أو تطبيق ت-رينت\n\nمع تحيات فريق ت-رينت";            $mobile = $user["mobile"];
             $whatsapp = sendMessage([$mobile], $message);
             $firebase_notification = sendFirebaseNotification($message, $message, $uid);

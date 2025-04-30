@@ -1388,24 +1388,62 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_payout.php",
                 ];
-               
             }
-        } 
-        elseif ($_POST["type"] == "approve_payout_and_generate_payout") {
+        } elseif ($_POST["type"] == "approve_payout_and_generate_payout") {
             $selected_ids = $_POST["selected_ids"];
+            $id_list = implode(",", array_map('intval', $selected_ids));
+
             $GLOBALS['rstate']->begin_transaction();
 
             $table = "tbl_payout_list";
             $field = ["payout_status" => "Completed"];
             foreach ($selected_ids as $id) {
 
-            $where = "where id=" . $id . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($field, $table, $where);
             }
             $GLOBALS['rstate']->commit();
-
+            $sel = $rstate->query("
+            SELECT 
+    pl.requested_at,
+    b.add_user_id AS owner_id,
+    owner_user.name AS owner_name,
+    b.id AS book_id,
+    b.total,
+    b.uid AS client_id,
+    client_user.name AS client_name,
+    pp.wallet_number,
+    pp.bank_account_number,
+    pp.bank_name,
+    JSON_UNQUOTE(JSON_EXTRACT(pm.name, '$.ar')) AS method_name
+FROM 
+    tbl_payout_list pl
+INNER JOIN tbl_book b ON pl.book_id = b.id
+INNER JOIN tbl_user owner_user ON b.add_user_id = owner_user.id
+INNER JOIN tbl_user client_user ON b.uid = client_user.id
+INNER JOIN tbl_payout_profiles pp ON pl.profile_id = pp.id
+INNER JOIN tbl_payout_methods pm ON pp.method_id = pm.id
+WHERE 
+    pl.id IN (" . $id_list . ")");
             if ($check == 1) {
+                $data = [];
+                $created_at = date('Y-m-d H:i:s');
+
+                while ($row = $sel->fetch_assoc()) {
+                    $data[] =   [
+                        $row['client_name'],
+                        $row['book_id'],
+                        $row['wallet_number'],
+                        $row['method_name'],
+                        $row['bank_account_number'],
+                        $row['bank_name'],
+                        $row['owner_name'],
+                        $row['total'],
+                        $row['requested_at'],
+                        $created_at
+                    ];
+                }
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1425,14 +1463,11 @@ try {
                         'القيمة',
                         'تاريخ طلب السحب',
                         'تاريخ اليوم'
-                    ]
-                    , [
-                    [1, 'John Doe', 'john@example.com', '123-456-7890'],
-                    [2, 'Jane Smith', 'jane@example.com', '987-654-3210']
-                ]);
+                    ],
+                    $data
+                );
             }
-        } 
-        elseif ($_POST["type"] == "deny_reason") {
+        } elseif ($_POST["type"] == "deny_reason") {
             $id = $_POST["id"];
             $uid = $_POST["uid"];
             $reason = $_POST["reason"];
