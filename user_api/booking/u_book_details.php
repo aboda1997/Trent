@@ -51,7 +51,7 @@ try {
 		$fp['noguest'] = $sel['noguest'];
 		$fp['prop_price'] = $sel['prop_price'];
 		$fp['cancle_reason'] = empty($sel['cancle_reason']) ? '' : $sel['cancle_reason'];
-		$returnArr    = generateResponse('true', "My Book details Founded!", 200, array("Book_details" => $fp));
+		$returnArr    = generateResponse('true', "My Booking details Founded!", 200, array("Booking_details" => $fp));
 
 	}
 	echo $returnArr;

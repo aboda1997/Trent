@@ -59,7 +59,7 @@ if ($pro_id == ''  ) {
 	
 	// Assign the next available date to the response
 	$fp['next_available_date'] = $next_available_date;
-	$returnArr    = generateResponse('true', "Property Booking Details Founded!", 200, array("property_book_details" => $fp ));
+	$returnArr    = generateResponse('true', "Property Booking Details Founded!", 200, array("property_booking_details" => $fp ));
 
 }
 echo $returnArr;
