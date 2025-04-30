@@ -17,9 +17,9 @@ try {
 	} else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
 		$returnArr    = generateResponse('false', "User id is not exists", 400);
 	} else if ($book_id == '') {
-		$returnArr    = generateResponse('false', "Book id is required", 400);
+		$returnArr    = generateResponse('false', "Booking id is required", 400);
 	} else if (validateIdAndDatabaseExistance($book_id, 'tbl_book' , "  (uid = ". $uid. " or add_user_id=".$uid.")") === false) {
-		$returnArr    = generateResponse('false', "Book id is not exists", 400);
+		$returnArr    = generateResponse('false', "Booking id is not exists", 400);
 	} else {
 		$fp = array();
 		$f = array();
