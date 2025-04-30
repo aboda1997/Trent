@@ -475,6 +475,10 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                 exit: 'animated fadeOutUp',
               },
             });
+             // Redirect after a delay if an action URL is provided
+              setTimeout(function() {
+                window.location.href = "pending_payout.php";
+              }, 2000);
         },
         error: function() {
           $.notify('<i class="fas fa-exclamation-circle"></i> Error Export Excel Sheet ', {

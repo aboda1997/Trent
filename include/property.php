@@ -51,42 +51,6 @@ try {
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Country Code Update Successfully!!", "message" => "Country Code section!", "action" => "list_code.php");
             }
-        } else if ($_POST['type'] == 'edit_payment') {
-
-            $attributes = mysqli_real_escape_string($rstate, $_POST['p_attr']);
-            $ptitle = mysqli_real_escape_string($rstate, $_POST['ptitle']);
-            $okey = $_POST['status'];
-            $id = $_POST['id'];
-            $p_show = $_POST['p_show'];
-            $s_show = $_POST['s_show'];
-            $target_dir = dirname(dirname(__FILE__)) . "/images/payment/";
-            $url = "images/payment/";
-            $temp = explode(".", $_FILES["cat_img"]["name"]);
-            $newfilename = round(microtime(true)) . '.' . end($temp);
-            $target_file = $target_dir . basename($newfilename);
-            $url = $url . basename($newfilename);
-            if ($_FILES["cat_img"]["name"] != '') {
-
-                move_uploaded_file($_FILES["cat_img"]["tmp_name"], $target_file);
-                $table = "tbl_payment_list";
-                $field = array('status' => $okey, 'img' => $url, 'attributes' => $attributes, 'subtitle' => $ptitle, 'p_show' => $p_show, 's_show' => $s_show);
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData($field, $table, $where);
-
-                if ($check == 1) {
-                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payment Gateway Update Successfully!!", "message" => "Payment Gateway section!", "action" => "paymentlist.php");
-                }
-            } else {
-                $table = "tbl_payment_list";
-                $field = array('status' => $okey, 'attributes' => $attributes, 'subtitle' => $ptitle, 'p_show' => $p_show, 's_show' => $s_show);
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData($field, $table, $where);
-                if ($check == 1) {
-                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payment Gateway Update Successfully!!", "message" => "Payment Gateway section!", "action" => "paymentlist.php");
-                }
-            }
         } else if ($_POST['type'] == 'add_coupon') {
             $ccode = $rstate->real_escape_string($_POST['coupon_code']);
 
