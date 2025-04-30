@@ -46,8 +46,11 @@ try {
     $h = new Estate();
     $keys = array_keys($exchangeRates);
     $values = array_values($exchangeRates);
+    $where = "";
 
-    $check = $h->restateinsertdata_Api_Id($keys , $values, $table);
+    $check = $h->restateDeleteData_Api_fav($table, $where);
+
+    $check = $h->restateinsertdata_Api_Id($keys, $values, $table);
   } else {
     $table = "tbl_exchange_rate";
     $where = "";
