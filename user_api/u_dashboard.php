@@ -45,19 +45,7 @@ try {
 		$is_gallery_enabled = (bool)$set["gallery_mode"];
 		$check_plan = $rstate->query("select * from tbl_user where id=" . $uid . "")->fetch_assoc();
 
-		$udata = $rstate->query("select * from tbl_user where id=" . $uid . "")->fetch_assoc();
-		$timestamp = date("Y-m-d");
-		if ($udata['end_date'] < $timestamp) {
-			$table = "tbl_user";
-			$field = ["start_date" => NULL, "end_date" => NULL, "pack_id" => "0", "is_subscribe" => "0"];
-			$where = "where id=" . $uid . "";
-			$h = new Estate();
-			$check = $h->restateupdateDatanull_Api($field, $table, $where);
-			$table = "plan_purchase_history";
-			$where = "where uid=" . $uid . "";
-			$h = new Estate();
-			$check = $h->restateDeleteData_Api($where, $table);
-		}
+		
 
 		$papi = array(
 			array("title" => $lang_["Dashboard_My_Property"], "report_data" => $total_property, "url" => 'images/dashboard/property.png'),

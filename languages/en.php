@@ -384,4 +384,14 @@ return [
     'Dashboard_Total_Review' => "Total Review",
     'Dashboard_My_Payout' => "My Payout",
     'Dashboard_My_Payout_Profiles' => "My Payout Profiles",
+    'rating_not_valid' => 'The rating you entered is not valid.',
+    'adding_rating_not_allowed' => 'Adding a rating is not allowed',
+    'rating_added' => 'Rating Added Successfully',
+    'rating_updated' => 'Rating Updated Successfully',
+    'rating_deleted' => 'Rating Deleted Successfully',
+    'rating_id_required' => 'You must enter a Rating ID',
+    'rating_not_available' => "This Rating  is not Available",
+
+    'property_id_required' => 'You must enter a Property ID',
+    'property_not_available' => "This Property  is not Available",
 ];
