@@ -363,5 +363,14 @@ return [
     'Dashboard_My_Payout' => "مدفوعاتي",
     'Dashboard_My_Payout_Profiles' => "ملفاتي المالية",
     'Dashboard_My_Enquiry' => "استفساراتي",
+    'rating_not_valid' => 'التقييم الذي أدخلته غير صالح.',
+    'adding_rating_not_allowed' => 'غير مسموح بإضافة تقييم',
+    'rating_added' => 'تم إضافة التقييم بنجاح',
+    'rating_updated' => 'تم تحديث التقييم بنجاح',
+    'rating_deleted' => 'تم حذف التقييم بنجاح',
+    'rating_id_required' => 'يجب إدخال معرف التقييم',
+    'rating_not_available' => 'هذا التقييم غير متاح',
+    'property_id_required' => 'يجب إدخال معرف العقار',
+    'property_not_available' => 'هذا العقار غير متاح',
 
 ];
