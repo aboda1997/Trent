@@ -783,7 +783,7 @@ if (isset($_GET['id'])) {
 
 															<div class="form-group mb-3">
 																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
-																<select id="approval-select" class="form-control" name="approved"  required>
+																<select id="approval-select" class="form-control" name="approved" required>
 																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
 																	<option value="1"
 																		<?php if ($data['is_approved'] == 1) {
@@ -801,8 +801,7 @@ if (isset($_GET['id'])) {
 															</div>
 														</div>
 														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
-														id="cancel-reason-container" style="display:none;"
-														>
+															id="cancel-reason-container" style="display:none;">
 															<div class="form-group mb-3">
 																<label id="cancel_reason">
 																	<?= $lang_en['cancel_reason'] ?>
@@ -811,7 +810,7 @@ if (isset($_GET['id'])) {
 																<input
 																	value="<?php echo $data['cancel_reason']; ?>"
 
-																	type="text" class="form-control " name="cancel_reason" >
+																	type="text" class="form-control " name="cancel_reason">
 																<div class="invalid-feedback" id="cancel_reason_feedback" style="display: none;">
 																	<?= $lang_en['prop_cancel_reason'] ?>
 
@@ -1418,7 +1417,7 @@ if (isset($_GET['id'])) {
 
 															<div class="form-group mb-3">
 																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
-																<select id="approval-select" class="form-control" name="approved"  required>
+																<select id="approval-select" class="form-control" name="approved" required>
 																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
 																	<option value="1"><?= $lang_en['Yes'] ?></option>
 																	<option value="0"><?= $lang_en['No'] ?></option>
@@ -1429,9 +1428,8 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12" 
-														id="cancel-reason-container" style="display:none;"
-														>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
+															id="cancel-reason-container" style="display:none;">
 															<div class="form-group mb-3">
 																<label id="cancel_reason">
 																	<?= $lang_en['cancel_reason'] ?>
@@ -1439,7 +1437,7 @@ if (isset($_GET['id'])) {
 																</label>
 																<input
 
-																	type="text" class="form-control " name="cancel_reason" >
+																	type="text" class="form-control " name="cancel_reason">
 																<div class="invalid-feedback" id="cancel_reason_feedback" style="display: none;">
 																	<?= $lang_en['prop_cancel_reason'] ?>
 
@@ -1661,15 +1659,15 @@ if (isset($_GET['id'])) {
 		if (!featured) {
 			document.getElementById('featured_feedback').style.display = 'block';
 			isValid = false;
-			
+
 		}
 		if (!approved) {
 			document.getElementById('approval_feedback').style.display = 'block';
 			isValid = false;
 		}
-		if(approved == '0'){
+		if (approved == '0') {
 			const cancel_reason = document.querySelector('input[name="cancel_reason"]').value;
-			if(!cancel_reason){
+			if (!cancel_reason) {
 				document.getElementById('cancel_reason_feedback').style.display = 'block';
 				isValid = false;
 			}
@@ -1766,7 +1764,7 @@ if (isset($_GET['id'])) {
 	function changeLanguage(lang) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
 		const approved = document.querySelector('select[name="approved"]').value;
-		if(approved == '0'){
+		if (approved == '0') {
 			document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
 			document.getElementById('cancel_reason').textContent = langData.cancel_reason;
 		}
@@ -1815,7 +1813,7 @@ if (isset($_GET['id'])) {
 			document.querySelector('button[type="submit"]').textContent = langData.Edit_Property;
 
 		}
-		
+
 		const approvedSelect = document.getElementById('approval-select');
 		approvedSelect.querySelector('option[value=""]').textContent = langData.Select_property_Approval;
 		approvedSelect.querySelector('option[value="1"]').textContent = langData.Yes;
@@ -1837,7 +1835,7 @@ if (isset($_GET['id'])) {
 		featuredSelect.querySelector('option[value="0"]').textContent = langData.No;
 
 
-	
+
 
 		$('#propt_type').select2('destroy');
 		$('#propt_type').select2({
@@ -2004,20 +2002,102 @@ if (isset($_GET['id'])) {
 	});
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const approvalSelect = document.getElementById('approval-select');
-  const cancelReasonContainer = document.getElementById('cancel-reason-container');
+	document.addEventListener('DOMContentLoaded', function() {
+		const approvalSelect = document.getElementById('approval-select');
+		const cancelReasonContainer = document.getElementById('cancel-reason-container');
 
-  approvalSelect.addEventListener('change', function() {
-    if (this.value === '0') {
-      cancelReasonContainer.style.display = 'block';
-    } else {
-      cancelReasonContainer.style.display = 'none';
+		approvalSelect.addEventListener('change', function() {
+			if (this.value === '0') {
+				cancelReasonContainer.style.display = 'block';
+			} else {
+				cancelReasonContainer.style.display = 'none';
+			}
+		});
+
+		// Trigger change event in case there's a selected value on page load
+		approvalSelect.dispatchEvent(new Event('change'));
+	});
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    // Map Arabic input names to their English counterparts
+    const fieldMap = {
+        'title_ar': 'title_en',
+        'address_ar': 'address_en',
+        'description_ar': 'description_en',
+        'guest_rules_ar': 'guest_rules_en',
+        'compound_name_ar': 'compound_name_en',
+        'floor_ar': 'floor_en',
+        'city_ar': 'city_en'
+    };
+
+    // Set up event listeners for all Arabic fields
+    Object.keys(fieldMap).forEach(arField => {
+        const inputElement = document.querySelector(`input[name="${arField}"], textarea[name="${arField}"]`);
+        
+        if (inputElement) {
+            let debounceTimer;
+            
+            inputElement.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                
+                // Only translate if there's content and the field is in the Arabic tab
+                if (this.value.trim() !== '' && this.closest('.tab-pane').id === 'ar') {
+                    debounceTimer = setTimeout(() => {
+                        translateField(this.value, fieldMap[arField]);
+                    }, 800); // 800ms delay after typing stops
+                }
+            });
+        }
+    });
+
+    // Single translation function for all fields
+    async function translateField(text, targetFieldName) {
+        try {
+            const targetElement = document.querySelector(`input[name="${targetFieldName}"], textarea[name="${targetFieldName}"]`);
+            if (!targetElement) return;
+            
+            // Show translating state
+            const originalPlaceholder = targetElement.placeholder;
+            const originalValue = targetElement.value;
+            targetElement.placeholder = "Translating...";
+            targetElement.value = "";
+            
+            // Encode the text for URL
+            const encodedText = encodeURIComponent(text);
+            
+            // Call your translation API
+            const response = await fetch(`https://ftapi.pythonanywhere.com/translate?sl=ar&dl=en&text=${encodedText}`);
+            
+            if (!response.ok) throw new Error(`Translation failed with status ${response.status}`);
+            
+            const translatedText = await response.text();
+            
+            // Only update if the target field is still empty
+            if (targetElement.value === "" || targetElement.value === originalValue) {
+                targetElement.value = translatedText;
+            }
+            targetElement.placeholder = originalPlaceholder;
+            
+        } catch (error) {
+            console.error('Translation error:', error);
+            targetElement.placeholder = "Translation failed - try again";
+            targetElement.value = originalValue;
+        }
     }
-  });
 
-  // Trigger change event in case there's a selected value on page load
-  approvalSelect.dispatchEvent(new Event('change'));
+    // Tab switching functionality for Bootstrap
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('href');
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('show', 'active');
+            });
+            document.querySelector(target).classList.add('show', 'active');
+        });
+    });
 });
 </script>
 <style>

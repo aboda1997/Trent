@@ -29,7 +29,7 @@ try {
         $data = $rstate->query("select * from tbl_rating where prop_id=" . $prop_id . " and status = 1");
         while ($row = $data->fetch_assoc()) {
             $fp['id'] = $row['id'];
-            $fp['book_id'] = $row['book_id'];
+            $fp['booking_id'] = $row['book_id'];
             $fp['prop_id'] = $row['prop_id'];
             $fp['rating'] = (int)$row['rating'];
             $fp['comment'] = $row['comment'];
