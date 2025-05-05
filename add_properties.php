@@ -2068,15 +2068,21 @@ if (isset($_GET['id'])) {
             const encodedText = encodeURIComponent(text);
             
             // Call your translation API
-            const response = await fetch(`https://ftapi.pythonanywhere.com/translate?sl=ar&dl=en&text=${encodedText}`);
+            const response = await fetch(`user_api/translate-proxy.php?sl=ar&dl=en&text=${encodedText}`
+	
+			);
             
-            if (!response.ok) throw new Error(`Translation failed with status ${response.status}`);
+           if (!response.ok) {
+			targetElement.placeholder = originalPlaceholder;
+            targetElement.value = originalValue;
             
-            const translatedText = await response.text();
+		   }
+            
+            const translatedText = await response.json();
             
             // Only update if the target field is still empty
             if (targetElement.value === "" || targetElement.value === originalValue) {
-                targetElement.value = translatedText;
+                targetElement.value = translatedText['data']['destination-text'] ;
             }
             targetElement.placeholder = originalPlaceholder;
             
@@ -2099,6 +2105,8 @@ if (isset($_GET['id'])) {
         });
     });
 });
+
+
 </script>
 <style>
 	.slides-container {
