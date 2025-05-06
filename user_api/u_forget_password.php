@@ -11,19 +11,22 @@ try {
   if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
-}
+  }
   $data = json_decode(file_get_contents('php://input'), true);
 
   $mobile = isset($data['mobile']) ? $data['mobile'] : '';
   $password = isset($data['password']) ? $data['password'] : '';
+  $ccode = isset($data['ccode']) ? $data['ccode'] : '';
 
   if ($mobile == '' or $password == '') {
     $returnArr    = generateResponse('false', "You Must Send Both mobile and new password!", 400);
+  } else if ($ccode == '') {
+    $returnArr    = generateResponse('false', "You must Enter country code", 400);
   } else if (!validatePassword($password)['status']) {
     $returnArr    = generateResponse('false', validatePassword($password)['response'], 400);
-  }else if (!validateEgyptianPhoneNumber($mobile )['status']) {
-    $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile )['response'], 400);
-}  else {
+  } else if (!validateEgyptianPhoneNumber($mobile , $ccode)['status']) {
+    $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile, $ccode)['response'], 400);
+  } else {
     $mobile = strip_tags(mysqli_real_escape_string($rstate, $mobile));
     $password = strip_tags(mysqli_real_escape_string($rstate, $password));
 
@@ -36,16 +39,16 @@ try {
 
       $h = new Estate();
 
-      $field = array(  "new_password" => $password ,   'otp' => $otp);
+      $field = array("new_password" => $password,   'otp' => $otp);
       $where = "where mobile=" . '?' . "";
       $where_conditions = [$mobile];
       $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-      $result = sendMessage([$mobile], $message);
+      $result = sendMessage([$ccode.$mobile], $message);
 
       if ($result) {
         $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
       } else {
-        $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+        $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
       }
     } else {
       $returnArr    = generateResponse('false', "Mobile Not Matched!!", 400);

@@ -146,6 +146,9 @@ WHERE
                                   type="button"
                                   data-toggle="modal" data-target="#approveModal"
                                   data-id="<?php echo $row['id']; ?>"
+                                  data-uid="<?php echo $row['add_user_id']; ?>"
+                                  data-title="<?php echo $title['ar']; ?>"
+
                                   data-status="<?php echo "1"; ?>"
                                   title="Approve">
                                   Approve
@@ -284,6 +287,9 @@ require 'include/footer.php';
       <form id="approveForm">
 
         <input type="hidden" id="approveId" name="id">
+        <input type="hidden" id="approveUid" name="uid">
+        <input type="hidden" id="approveTitle" name="property_title">
+
         <input type="hidden" id="approveStatus" name="status">
         <input type="hidden" name="type" value="toggle_approval" />
       </form>
@@ -323,11 +329,16 @@ require 'include/footer.php';
     $('#approveModal').on('show.bs.modal', function(event) {
       var button = $(event.relatedTarget);
       var id = button.data('id');
+      var uid = button.data('uid');
       var status = button.data('status');
+      var title = button.data('title');
 
       var modal = $(this);
       modal.find('#approveId').val(id);
+      modal.find('#approveUid').val(uid);
       modal.find('#approveStatus').val(status);
+      modal.find('#approveTitle').val(title);
+
     });
     // When save button is clicked
     $('#confirmApproveBtn').click(function() {

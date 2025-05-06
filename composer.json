@@ -1,5 +1,6 @@
 {
     "require": {
-        "google/auth": "^1.47"
+        "google/auth": "^1.47",
+        "giggsey/libphonenumber-for-php": "^9.0"
     }
 }

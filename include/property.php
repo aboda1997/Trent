@@ -911,6 +911,10 @@ try {
                 deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
             }
 
+            if ($is_approved == '1') {
+                approve_property($rstate , $propowner , $title_ar);
+            }
+
             $guest_rules_json = json_encode([
                 "en" => $guest_rules_en,
                 "ar" => $guest_rules_ar
@@ -1110,7 +1114,10 @@ try {
             if ($is_approved == '0') {
                 deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
             }
+            if ($is_approved == '1') {
+                approve_property($rstate , $propowner , $title_ar);
 
+            }
 
             $guest_rules_json = json_encode([
                 "en" => $guest_rules_en,
@@ -1320,6 +1327,8 @@ try {
         } elseif ($_POST["type"] == "toggle_approval") {
             $okey = $_POST["status"];
             $id = $_POST["id"];
+            $uid = $_POST["uid"];
+            $title = $rstate->real_escape_string($_POST["property_title"]);
 
             $table = "tbl_property";
             $field = ["is_approved" => $okey];
@@ -1328,6 +1337,8 @@ try {
             $check = $h->restateupdateData($field, $table, $where);
 
             if ($check == 1) {
+                approve_property($rstate , $uid , $title);
+
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1335,6 +1346,7 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_properties.php",
                 ];
+                
             }
         } elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
@@ -1345,6 +1357,7 @@ try {
             $check = $h->restateupdateData($field, $table, $where);
 
             if ($check == 1) {
+
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1352,6 +1365,7 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_payout.php",
                 ];
+
             }
         } elseif ($_POST["type"] == "approve_payout_and_generate_payout") {
             $selected_ids = $_POST["selected_ids"];
@@ -1459,6 +1473,7 @@ WHERE
             $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
             $new_mobile   = $sel['mobile'];
+            $ccode   = $sel['ccode'];
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);
 
@@ -1466,7 +1481,7 @@ WHERE
             $message = "عذراً، تم رفض طلب سحب أموال العقار ($title) للسبب التالي:  ($reason)  
 يمكنك مراجعة بيانات الطلب والمحاولة مرة أخرى من خلال حسابك في موقع أو تطبيق ت-رينت  
 مع خالص تحيات فريق ت-رينت";
-            $result = sendMessage([$new_mobile], $message);
+            $result = sendMessage([$ccode.$new_mobile], $message);
 
 
 
@@ -2245,14 +2260,27 @@ function deny_property(string $reason,  $id, $uid, $title, $rstate)
     $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
     $new_mobile   = $sel['mobile'];
+    $ccode   = $sel['ccode'];
+
     $h = new Estate();
     $check = $h->restateupdateData($field, $table, $where);
 
     // Create the message
     $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-    $result = sendMessage([$new_mobile], $message);
+    $result = sendMessage([$ccode.$new_mobile], $message);
 
     return $check;
+}
+
+function approve_property($rstate , $uid , $title_ar){
+    $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
+
+    $new_mobile   = $sel['mobile'];
+    $ccode   = $sel['ccode'];
+
+    $message = "يسعدنا إعلامكم بأنه تم نشر العقار ($title_ar) الخاص بكم
+    مع تحيات فريق Trent";
+    $result = sendMessage([$ccode.$new_mobile], $message);
 }
 function downloadCSV($headers, $data)
 {

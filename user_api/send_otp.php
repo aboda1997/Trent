@@ -17,12 +17,16 @@ try {
     $data = json_decode(file_get_contents('php://input'), true);
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
     $is_new_user = isset($data['is_new_user']) ? $data['is_new_user'] : true;
+    $ccode     = strip_tags(mysqli_real_escape_string($rstate, $data['ccode'])) ? strip_tags(mysqli_real_escape_string($rstate, $data['ccode'])) : '';
 
-    $uid = isset($data['uid']) ? $data['uid'] :null;
+    $uid = isset($data['uid']) ? $data['uid'] : null; // for change mobile number 
     if ($mobile == '') {
         $returnArr    = generateResponse('false', "You must Enter Mobile Number", 400);
-    } else if (!validateEgyptianPhoneNumber($mobile)['status']) {
-        $returnArr    = generateResponse('false',   validateEgyptianPhoneNumber($new_mobile)['response'], 400);
+    }
+    else if ($ccode == '') {
+        $returnArr    = generateResponse('false', "You must Enter country code", 400);
+    } else if (!validateEgyptianPhoneNumber($mobile, $ccode)['status']) {
+        $returnArr    = generateResponse('false',   validateEgyptianPhoneNumber($mobile, $ccode)['response'], 400);
     } else {
         $checkmob   = $rstate->query("select * from tbl_user where status =1 and verified =1 and mobile=" . $mobile . "");
 
@@ -30,18 +34,18 @@ try {
         $message = "Your OTP is: $otp";
         $updateQuery = "UPDATE tbl_user 
         SET otp = $otp 
-        WHERE mobile = " . intval($mobile) . " OR uid = " . intval($uid);
+        WHERE mobile = " . intval($mobile) . " OR id = " . intval($uid);
         if ($is_new_user) {
             if ($checkmob->num_rows != 0) {
                 $returnArr    = generateResponse('false', "Mobile Number Already Exists", 400);
             } else {
                 $rstate->query($updateQuery);
 
-                $result = sendMessage([$mobile], $message);
+                $result = sendMessage([$ccode.$mobile], $message);
                 if ($result) {
                     $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
                 } else {
-                    $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                    $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
                 }
             }
         } else {
@@ -50,11 +54,11 @@ try {
         WHERE mobile = " . intval($mobile);
 
             $rstate->query($updateQuery);
-            $result = sendMessage([$mobile], $message);
+            $result = sendMessage([$ccode.$mobile], $message);
             if ($result) {
                 $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
             } else {
-                $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
             }
         }
     }

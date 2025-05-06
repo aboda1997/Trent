@@ -28,7 +28,9 @@ if ( $mobile == '') {
     
     $returnArr    = generateResponse('false', "Mobile Number Are Required!", 400);
 
-}else if ( $otp == '') {
+}
+
+else if ( $otp == '') {
     
     $returnArr    = generateResponse('false', "OTP Are Required!", 400);
 
