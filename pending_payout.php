@@ -76,7 +76,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         <th>Wallet Number </th>
                         <th>Bank Account No </th>
                         <th>Formal Name ( for bank ) </th>
-                        <th> Payout Approval </th>
+                        <th> Payout denial </th>
 
                       </tr>
                     </thead>

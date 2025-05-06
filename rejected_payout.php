@@ -39,7 +39,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                Cancelled Booking Management</h3>
+                Cancelled Payout Management</h3>
             </div>
             <div class="col-6">
 
