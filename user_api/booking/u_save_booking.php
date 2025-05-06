@@ -61,8 +61,10 @@ try {
             $fp = array();
             $vr = array();
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
-            $user = $rstate->query("select is_owner , mobile	 from tbl_user where  id= $uid  ")->fetch_assoc();
+            $prop = $rstate->query("select add_user_id  from tbl_property where  id= $prop_id  ")->fetch_assoc();
             $fp['id'] = $res_data['id'];
+            $add_user_id = $res_data['add_user_id'];
+            $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
 
@@ -108,7 +110,8 @@ try {
             $fp['trent_fees'] = $trent_fess;
             $message = "لديك حجز جديد";
             $mobile = $user["mobile"];
-            $whatsapp = sendMessage([$mobile] , $message);
+            $ccode = $user["ccode"];
+            $whatsapp = sendMessage([$ccode.$mobile] , $message);
             $firebase_notification = sendFirebaseNotification($message , $message , $uid);
             $field_values = ["prop_id", 'total_day' , "check_in" , "check_out" ,   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
             $data_values = [$res_data['id'],$days , $from_date  , $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];

@@ -31,8 +31,8 @@ try {
 
     if (!isset($data['mobile']) || !isset($data['password']) || !isset($data['ccode'])) {
         $returnArr    = generateResponse('false', "Something Went Wrong!", 400);
-    } else if (!validateEgyptianPhoneNumber($mobile)['status']) {
-        $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile)['response'], 400);
+    } else if (!validateEgyptianPhoneNumber($mobile , $ccode)['status']) {
+        $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile, $ccode)['response'], 400);
     } else if (!validatePassword($password)['status']) {
         $returnArr    = generateResponse('false', validatePassword($password)['response'], 400);
     } else {
@@ -55,7 +55,7 @@ try {
                 $returnArr    = generateResponse('false', "Your Status Not Verified!!!", 400);
             }
         } else {
-            $returnArr    = generateResponse('true', "Your Status is Deactivated!!!", 400);
+            $returnArr    = generateResponse('true', "Your Account Not Exists!!!", 400);
         }
     }
     echo $returnArr;

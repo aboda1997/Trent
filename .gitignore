@@ -5,4 +5,5 @@ wordpress/
 images/ 
 videos/ 
 assets/ 
-vendor/ 
+/vendor/
+!vendor/autoload.php

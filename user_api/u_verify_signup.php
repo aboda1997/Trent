@@ -39,15 +39,13 @@ if ($name == '' or $mobile == '' or $password == '' or $ccode == '') {
 
 } else if (!validateName($name , 'Full Name' , 50)['status']) {
     $returnArr    = generateResponse('false', validateName($name , 'Full Name' , 50 )['response'], 400);
-} else if (!validateEgyptianPhoneNumber($mobile )['status']) {
-    $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile )['response'], 400);
+} else if (!validateEgyptianPhoneNumber($mobile , $ccode)['status']) {
+    $returnArr    = generateResponse('false', validateEgyptianPhoneNumber($mobile ,$ccode )['response'], 400);
 } 
 else if (!validatePassword($password )['status']) {
     $returnArr    = generateResponse('false', validatePassword($password )['response'], 400);
 }
-else if ($ccode !== "+20") {
-    $returnArr    = generateResponse('false', "Not Supported Country Code", 400);
-}
+
 else if ($email !== null && $email !== '' && (!validateEmail($email)['status'])) {
 
     $returnArr    = generateResponse('false', validateEmail($email)['response'], 400);
@@ -69,13 +67,13 @@ else {
         $where = "where mobile=" . '?' . "";
         $where_conditions = [$mobile];
         $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-        $result = true ;//sendMessage([$mobile] , $message);
+        $result = true ; //sendMessage([$ccode.$mobile] , $message);
       
         if($result){
-            $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200 , array("otp" => $otp ));
+            $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200 , array("otp" => $otp) );
 
         }else{
-            $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+            $returnArr    = generateResponse('false', "Something Went Wrong1 While Sending OTP Please Try Again", 400);
 
         }
     
@@ -103,6 +101,7 @@ else {
                     "is_owner",
                     "verified",
                     "otp"
+
                 );
                 $data_values  = array(
                     "$name",
@@ -115,18 +114,19 @@ else {
                     "$refercode",
                     1,
                     0,
-                    $otp
+                    "$otp",
+
                 );
                 
                 $h     = new Estate();
                 $check = $h->restateinsertdata_Api_Id($field_values, $data_values, $table);
 
-              $result = true ;  //sendMessage([$mobile] , $message);
+              $result = true; // sendMessage([$ccode.$mobile] , $message);
                 if($result){
-                    $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200,array("otp" => $otp ));
+                    $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200, array("otp" => $otp));
     
                 }else{
-                    $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                    $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
     
                 }
 
@@ -149,6 +149,7 @@ else {
                 "is_owner",
                 "verified",
                 "otp"
+
             );
             $data_values  = array(
                 "$name",
@@ -160,18 +161,19 @@ else {
                 "$prentcode",
                 1,
                 0,
-                $otp
+                "$otp",
+
             );
             $h            = new Estate();
             $check        = $h->restateinsertdata_Api_Id($field_values, $data_values, $table);
 
-            $result =true ; // sendMessage([$mobile] , $message);
+            $result =  true ;//sendMessage([$ccode.$mobile] , $message);
 
             if($result){
-                $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200 , array("otp" => $otp ));
+                $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200,  array("otp" => $otp));
 
             }else{
-                $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
 
             }
         }

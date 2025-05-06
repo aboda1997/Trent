@@ -48,7 +48,6 @@ function sendMessage($mobiles, $message)
 {
     $url = "http://whats-pro.net/backend/public/index.php/api/messages/send";
     $token = "efd2mxoGOPTwtyNl9OuufgcTnrC20ErzUKr2fh3mrwl4uAFRqVaTTY8WNyAf";
-    $ccode = "EG";
 
     // Set up the request headers
     $headers = [
@@ -61,7 +60,6 @@ function sendMessage($mobiles, $message)
     $payload = [
         "phones" => $mobiles,
         "message" => $message,
-        "country_code" => $ccode
     ];
 
     // Initialize cURL
@@ -77,7 +75,7 @@ function sendMessage($mobiles, $message)
         // Execute the request
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+        //var_dump($response);
         // Check if request was successful
         if ($httpCode >= 200 && $httpCode < 300) {
             return true;

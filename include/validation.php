@@ -1,5 +1,10 @@
 <?php
 require 'reconfig.php';
+require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+
+
+use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
 
 
 function validateIdAndDatabaseExistance($id, $table,  $additionalCondition = '')
@@ -34,7 +39,8 @@ function checkTableStatus($id, $table)
     return false;
 }
 
-function checkPropertyBookingStatus($id){
+function checkPropertyBookingStatus($id)
+{
     // Check if it's a number and a positive integer
     if (filter_var($id, FILTER_VALIDATE_INT) !== false && $id > 0) {
 
@@ -46,10 +52,10 @@ function checkPropertyBookingStatus($id){
         AND u.status = 1 
         AND u.verified = 1";
         $result = $GLOBALS['rstate']->query($query);
-        $statuses = array(); 
+        $statuses = array();
         while ($row = $result->fetch_assoc()) {
             $statuses[] = $row['book_status']; // Add each status to the array
-        }        
+        }
         $restrictedStatuses = ['Booked', 'Check_in', 'Confirmed'];
         $hasRestrictedStatus = true;
         foreach ($statuses as $status) {
@@ -57,11 +63,12 @@ function checkPropertyBookingStatus($id){
                 $hasRestrictedStatus = false;
                 break; // Exit early if found
             }
-        }    }
+        }
+    }
     return $hasRestrictedStatus;
 }
 
-function validateFacilityIds($idString , $table = "tbl_facility"  , $uid = null )
+function validateFacilityIds($idString, $table = "tbl_facility", $uid = null)
 {
     // Check if input is a JSON array and decode it
     $decodedIds = json_decode($idString, true);
@@ -83,7 +90,7 @@ function validateFacilityIds($idString , $table = "tbl_facility"  , $uid = null 
     $idList = implode(',', $ids);
 
     $query = "SELECT id FROM $table WHERE id IN ($idList)";
-    if($uid){
+    if ($uid) {
         $query .= " and add_user_id = $uid ";
     }
     $result = $GLOBALS['rstate']->query($query);
@@ -173,9 +180,8 @@ function validateAndExtractCoordinates($url)
         $coordinatesCount[$key] = [
             'latitude' => $lat,
             'longitude' => $lon,
-            'count' => 1 
+            'count' => 1
         ];
-        
     }
     // Sort coordinates by frequency (most occurred first)
     usort($coordinatesCount, function ($a, $b) {
@@ -196,11 +202,11 @@ function validateAndExtractCoordinates($url)
 }
 
 
-function validateName($name, $placeholder, $max = 50, $lang = 'en' , $required = true)
+function validateName($name, $placeholder, $max = 50, $lang = 'en', $required = true)
 {
     // Trim whitespace from the name
     $name = trim($name);
-    
+
     // Define language responses
     $messages = [
         'en' => [
@@ -216,11 +222,11 @@ function validateName($name, $placeholder, $max = 50, $lang = 'en' , $required =
             'valid' => "$placeholder صالح"
         ]
     ];
-    if ($name == '' && !$required ) {
+    if ($name == '' && !$required) {
         return ['status' => true, 'response' => $messages[$lang]['valid']];
     }
 
-    if ($name == '' && $required ) {
+    if ($name == '' && $required) {
         return ['status' => false, 'response' => $messages[$lang]['required']];
     }
 
@@ -251,21 +257,30 @@ function validateEmail($email)
     return ['status' => true, 'response' => 'Valid email.'];
 }
 
-function validatePassword($password) {
+function validatePassword($password)
+{
     if (strlen($password) >= 6 && preg_match('/\d/', $password)) {
         return ['status' => true, 'response' => 'Valid password.'];
-
     }
     return ['status' => false, 'response' => 'INValid password.'];
-
 }
 
-function validateEgyptianPhoneNumber($phone) {
+
+function validateEgyptianPhoneNumber($phone, $ccode = null)
+{
+
+    $phoneNumberUtil = PhoneNumberUtil::getInstance();
     $phone = preg_replace('/\s+|-/', '', $phone);
-    if (preg_match('/^1[0|1|2|5]\d{8}$/', $phone)) {
-        return ['status' => true, 'response' => 'Valid Mobile Number.'];
+    $internationalNumber = "+" . $ccode . $phone;
 
+    try {
+        $phoneNumberProto = $phoneNumberUtil->parse($internationalNumber);
+        if ($phoneNumberUtil->isValidNumber($phoneNumberProto)) {
+            return ['status' => true, 'response' => 'Valid Mobile Number.'];
+        } else {
+            return ['status' => false, 'response' => 'InValid Mobile Number.'];
+        }
+    } catch (\libphonenumber\NumberParseException $e) {
+        return ['status' => false, 'response' => 'InValid Mobile Number.'];
     }
-    return ['status' => false, 'response' => 'InValid Mobile Number.'];
-
 }

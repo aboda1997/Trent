@@ -16,13 +16,19 @@ try {
 
     $new_mobile = isset($data['new_mobile']) ? $data['new_mobile'] : '';
     $old_mobile = isset($data['old_mobile']) ? $data['old_mobile'] : '';
+    $new_ccode = isset($data['new_ccode']) ? $data['new_ccode'] : '';
+    $old_ccode = isset($data['old_ccode']) ? $data['old_ccode'] : '';
 
     if ($new_mobile == '' || $old_mobile == '') {
         $returnArr    = generateResponse('false', "You Must Enter Both old and new Mobile Number", 400);
-    } else if (!validateEgyptianPhoneNumber($new_mobile)['status']) {
-        $returnArr    = generateResponse('false', 'New Mobile Is '.validateEgyptianPhoneNumber($new_mobile)['response'], 400);
-    }else if (!validateEgyptianPhoneNumber($old_mobile)['status']) {
-        $returnArr    = generateResponse('false', 'Old Number Is ' . validateEgyptianPhoneNumber($new_mobile)['response'], 400);
+    }
+    else if ($new_ccode == '' || $old_ccode == '') {
+        $returnArr    = generateResponse('false', "You Must Enter Both old and new Mobile Number Country Code ", 400);
+    }
+    else if (!validateEgyptianPhoneNumber($new_mobile, $new_ccode)['status']) {
+        $returnArr    = generateResponse('false', 'New Mobile Is '.validateEgyptianPhoneNumber($new_mobile,$new_ccode)['response'], 400);
+    }else if (!validateEgyptianPhoneNumber($old_mobile, $old_ccode)['status']) {
+        $returnArr    = generateResponse('false', 'Old Number Is ' . validateEgyptianPhoneNumber($old_mobile , $old_ccode)['response'], 400);
     }
     else if ($old_mobile == $new_mobile) {
         $returnArr    = generateResponse('false', 'You Must Enter Two Different Numbers ', 400);
@@ -50,12 +56,12 @@ try {
 
                 $h = new Estate();
                 $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-                $result = sendMessage([$new_mobile], $message);
+                $result = sendMessage([$new_ccode.$new_mobile], $message);
 
                 if ($result) {
                     $returnArr    = generateResponse('true', "OTP message was sent successfully!", 200);
                 } else {
-                    $returnArr    = generateResponse('false', "Something Went Wrong Try Again", 400);
+                    $returnArr    = generateResponse('false', "Something Went Wrong While Sending OTP Please Try Again", 400);
                 }
             } else {
                 $returnArr    = generateResponse('false', "Old Mobile Not Matched!!", 400);
