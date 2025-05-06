@@ -7,4 +7,7 @@ videos/
 assets/ 
 /vendor/*
 !vendor/autoload.php
+/vendor/composer
 
+# Explicitly ignore the composer folder (redundant but ensures safety)
+/vendor/composer/
