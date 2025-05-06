@@ -1462,7 +1462,25 @@ WHERE
                     "action" => "pending_properties.php",
                 ];
             }
-        } elseif ($_POST["type"] == "deny_payout_reason") {
+        }
+        elseif ($_POST["type"] == "delete_rating") {
+            $id = $_POST["id"];
+            $table = "tbl_rating";
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restaterestateDeleteData($where,  $table);
+
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Rating Deleted Successfully!!",
+                    "message" => "Rating section!",
+                    "action" => "rating_list.php",
+                ];
+            }
+        }
+        elseif ($_POST["type"] == "deny_payout_reason") {
             $id = $_POST["id"];
             $reason = $_POST["reason"];
             $title = $rstate->real_escape_string($_POST["property_title"]);

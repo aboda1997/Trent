@@ -241,6 +241,7 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="check_in.php">Check In Booking</a></li>
               <li><a href="completed.php">Completed Booking</a></li>
               <li><a href="cancelled.php">Cancelled Booking</a></li>
+              <li><a href="rating_list.php">Rating List</a></li>
 
             </ul>
           </li>
