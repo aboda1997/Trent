@@ -94,13 +94,10 @@ try {
 		$fp['check_intime'] = $sel['check_intime'];
 		$fp['check_outtime'] = $sel['check_outtime'];
 		$fp['total_day'] = $sel['total_day'];
-		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $sel['prop_id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
-		if ($checkrate != 0) {
-			$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['prop_id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-			$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 0, '.', '');
-		} else {
-			$fp['rate'] = number_format(0, 1, '.', '');
-		}
+		
+		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['prop_id'] . "")->fetch_assoc();
+		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+
 		$fp['book_status'] = $sel['book_status'];
 		$fp['noguest'] = $sel['noguest'];
 		$fp['prop_price'] = $sel['prop_price'];

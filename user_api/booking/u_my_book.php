@@ -51,13 +51,10 @@ if ($uid == '') {
 		$fp['total_paid'] = $row['total'];
 		$fp['check_in'] = $row['check_in'];
 		$fp['check_out'] = $row['check_out'];
-		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $row['prop_id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
-		if ($checkrate != 0) {
-			$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $row['prop_id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-			$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 0, '.', '');
-		} else {
-			$fp['rate'] = number_format(0, 1, '.', '');
-		}
+		
+		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $row['prop_id'] . "")->fetch_assoc();
+		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+
 		$fp['book_status'] = $row['book_status'];
 
 

@@ -1,6 +1,7 @@
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
@@ -18,11 +19,13 @@ try {
 	$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
 	$compound_name = isset($_GET['compound_name']) ? $_GET['compound_name'] : null;
 	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : null;
+	$users_list = isset($_GET['users_list']) ? $_GET['users_list'] : null;
 	$beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
 	$bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
 	$rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
 	$guest_count = isset($_GET['guest_count']) ? intval($_GET['guest_count']) : null;
 	$facilitiesArray = json_decode($facilities, true);
+	$usersArray = json_decode($users_list, true);
 
 	// Get pagination parameters
 	$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
@@ -35,12 +38,12 @@ try {
 	SELECT 
 		p.*, 
 		CASE WHEN f.property_id IS NOT NULL THEN TRUE ELSE FALSE END AS IS_FAVOURITE, 
-		IFNULL(SUM(b.total_rate) / NULLIF(COUNT(b.id), 0), 0) AS total_avg_rate, 
-		COUNT(b.id) AS rate_count 
+		IFNULL(SUM(r.rating) / NULLIF(COUNT(r.id), 0), 0) AS total_avg_rate, 
+		COUNT(r.id) AS rate_count 
 	FROM 
 		tbl_property p 
 	LEFT JOIN 
-		tbl_book b ON p.id = b.prop_id AND b.book_status = 'Completed' AND b.total_rate != 0 
+		tbl_rating r ON p.id = r.prop_id 
 
 	";
 	if ($uid !== null && $only_favorites) {
@@ -66,12 +69,12 @@ try {
 		$query = " 
 	SELECT 
 		p.*, 
-		IFNULL(SUM(b.total_rate) / NULLIF(COUNT(b.id), 0), 0) AS total_avg_rate, 
-		COUNT(b.id) AS rate_count 
+        IFNULL(SUM(r.rating) / NULLIF(COUNT(r.id), 0), 0) AS total_avg_rate, 
+		COUNT(r.id) AS rate_count 
 	FROM 
 		tbl_property p 
 	LEFT JOIN 
-		tbl_book b ON p.id = b.prop_id AND b.book_status = 'Completed' AND b.total_rate != 0 
+		tbl_rating r ON p.id = r.prop_id 
 		WHERE 
 	p.status = 1 and p.is_approved = 1 
 	";
@@ -92,10 +95,13 @@ try {
     )";
 	}
 	if ($facilities !== null) {
+		$facilityConditions = [];
 		foreach ($facilitiesArray as $facility) {
 			$facilityConditions[] = "FIND_IN_SET(" . intval($facility) . ", p.facility)";
 		}
-		$query .= " AND (" . implode(' OR ', $facilityConditions) . ")";
+		if(count($facilityConditions)){
+			$query .= " AND (" . implode(' OR ', $facilityConditions) . ")";
+		}
 	}
 
 	if ($category_id !== null) {
@@ -127,17 +133,27 @@ try {
 	if ($only_featured) {
 		$query .= " AND p.is_featured = 1 ";
 	}
+	if ($users_list !== null) {
+		$userConditions = [];
+		foreach ($usersArray as $user) {
+			$userConditions[] = "FIND_IN_SET(" . intval($user) . ", p.add_user_id)";
+		}
+		if(count($userConditions)){
+		$query .= " AND (" . implode(' OR ', $userConditions) . ")";
+		}
+	}
 	// Add minimum rate condition
 	if (isset($rate) && $rate > 0) {
 		$query .= " GROUP BY p.id HAVING  total_avg_rate >= " . intval($rate);
 	} else {
 		$query .= " GROUP BY p.id  ";
 	}
+	//var_dump($query);
+
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
 	// Execute the query
 	$sel = $rstate->query($query);
-
 	while ($row = $sel->fetch_assoc()) {
 		$vr = array();
 		$f = array();
@@ -225,9 +241,9 @@ try {
 
 	echo $returnArr;
 } catch (Exception $e) {
-    // Handle exceptions and return an error response
-    $returnArr = generateResponse('false', "An error occurred!", 500, array(
-        "error_message" => $e->getMessage()
-    ), $e->getFile() ,  $e->getLine());
-    echo $returnArr;
+	// Handle exceptions and return an error response
+	$returnArr = generateResponse('false', "An error occurred!", 500, array(
+		"error_message" => $e->getMessage()
+	), $e->getFile(),  $e->getLine());
+	echo $returnArr;
 }

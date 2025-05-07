@@ -69,13 +69,10 @@ try {
 
             $titleData = json_decode($res_data['title'], true);
             $fp['title'] = $titleData[$lang];
-            $checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $res_data['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
-            if ($checkrate != 0) {
-                $rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $res_data['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-                $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
-            } else {
-                $fp['rate'] = number_format(0, 1, '.', '');
-            }
+           
+            $rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $res_data['id'] . "")->fetch_assoc();
+            $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+    
             $fp['price'] = $res_data['price'];
             $fp['from_date'] = $from_date;
             $fp['to_date'] = $to_date;
