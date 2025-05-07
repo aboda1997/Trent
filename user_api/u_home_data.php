@@ -18,8 +18,8 @@ try {
 	$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 	$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
 	$compound_name = isset($_GET['compound_name']) ? $_GET['compound_name'] : null;
-	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : null;
-	$users_list = isset($_GET['users_list']) ? $_GET['users_list'] : null;
+	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : '';
+	$users_list = isset($_GET['users_list']) ? $_GET['users_list'] : '';
 	$beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
 	$bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
 	$rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
@@ -94,7 +94,7 @@ try {
 		and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) IS NOT NULL
     )";
 	}
-	if ($facilities !== null) {
+	if ($facilities !== '' ) {
 		$facilityConditions = [];
 		foreach ($facilitiesArray as $facility) {
 			$facilityConditions[] = "FIND_IN_SET(" . intval($facility) . ", p.facility)";
@@ -133,7 +133,7 @@ try {
 	if ($only_featured) {
 		$query .= " AND p.is_featured = 1 ";
 	}
-	if ($users_list !== null) {
+	if ($users_list !== '') {
 		$userConditions = [];
 		foreach ($usersArray as $user) {
 			$userConditions[] = "FIND_IN_SET(" . intval($user) . ", p.add_user_id)";
