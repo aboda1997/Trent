@@ -70,13 +70,10 @@ try {
 
             $titleData = json_decode($res_data['title'], true);
             $fp['title'] = $titleData[$lang];
-            $checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=" . $res_data['id'] . " and book_status='Completed' and total_rate !=0")->num_rows;
-            if ($checkrate != 0) {
-                $rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=" . $res_data['id'] . " and book_status='Completed' and total_rate !=0")->fetch_assoc();
-                $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
-            } else {
-                $fp['rate'] = number_format(0, 1, '.', '');
-            }
+            
+            $rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $res_data['id'] . "")->fetch_assoc();
+            $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+    
             $fp['price'] = $res_data['price'];
             $fp['from_date'] = $from_date;
             $fp['to_date'] = $to_date;
@@ -112,7 +109,7 @@ try {
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
             $whatsapp = sendMessage([$ccode.$mobile] , $message);
-            $firebase_notification = sendFirebaseNotification($message , $message , $uid);
+            $firebase_notification = sendFirebaseNotification($message , $message , $add_user_id);
             $field_values = ["prop_id", 'total_day' , "check_in" , "check_out" ,   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
             $data_values = [$res_data['id'],$days , $from_date  , $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
 
