@@ -2,16 +2,17 @@
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
-require dirname(dirname(__FILE__)) . '/include/validation.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
 
 header('Content-Type: application/json');
-// Handle preflight request
+
+try{
+    // Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
-try{
 $data = json_decode(file_get_contents('php://input'), true);
 function generate_random()
 {
