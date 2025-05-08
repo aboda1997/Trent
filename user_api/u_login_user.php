@@ -49,7 +49,7 @@ try {
                         "user_login" => $c
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', "Invalid Mobile Number Or Email Address or Password!!!", 400);
+                    $returnArr    = generateResponse('false', "Invalid Mobile Number or Password!!!", 400);
                 }
             } else {
                 $returnArr    = generateResponse('false', "Your Status Not Verified!!!", 400);

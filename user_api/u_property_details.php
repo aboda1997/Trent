@@ -36,7 +36,7 @@ try {
 		}
 		$fp['id'] = $sel['id'];
 		$fp['owner_id'] = $sel['add_user_id'];
-		$titleData = json_decode($sel['title'], true);
+		$titleData = json_decode($sel['title']??'', true);
 		$fp['title'] = $titleData;
 		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['id'] . "")->fetch_assoc();
 		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
@@ -53,7 +53,7 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['category'] = [
 						'id' => $tit['id'],
-						'type' => json_decode($tit['title'], true)
+						'type' => json_decode($tit['title']??'', true)
 					];
 				}
 			} else {
@@ -96,13 +96,13 @@ try {
 		$fp['min_days'] = $sel['min_days'];
 
 
-		$fp['floor'] = json_decode($sel['floor'], true);
-		$fp['guest_rules'] = json_decode($sel['guest_rules'], true);
+		$fp['floor'] = json_decode($sel['floor']??'', true);
+		$fp['guest_rules'] = json_decode($sel['guest_rules']??'', true);
 
 
-		$fp['description'] = json_decode($sel['description'], true);
-		$fp['address'] = json_decode($sel['address'], true);
-		$fp['city'] = json_decode($sel['city'], true);
+		$fp['description'] = json_decode($sel['description']??'', true);
+		$fp['address'] = json_decode($sel['address']??'', true);
+		$fp['city'] = json_decode($sel['city']??'', true);
 
 		$fp['guest_count'] = $sel['plimit'];
 
@@ -121,7 +121,7 @@ try {
 			'name' => $periods[$sel['period']]
 		];
 
-		$fp['compound'] = json_decode($sel['compound_name'], true);
+		$fp['compound'] = json_decode($sel['compound_name']??'', true);
 
 
 		if (is_null($sel['government'])) {
@@ -140,7 +140,7 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['government'] = [
 						'id' => $tit['id'],
-						'name' => json_decode($tit['name'], true)
+						'name' => json_decode($tit['name']??'', true)
 					];
 				}
 			} else {
@@ -164,8 +164,8 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['cancellation_policy'] = [
 						'id' => $tit['id'],
-						'title' => json_decode($tit['title'], true),
-						'description' => json_decode($tit['description'], true),
+						'title' => json_decode($tit['title']??'', true),
+						'description' => json_decode($tit['description']??'', true),
 						'is_recommended' => (bool)$tit['is_recommended']
 					];
 				}
@@ -179,7 +179,7 @@ try {
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
 
 		while ($row = $fac->fetch_assoc()) {
-			$row['title'] = json_decode($row['title'], true);
+			$row['title'] = json_decode($row['title']??'', true);
 			$f[] = $row;
 		}
 

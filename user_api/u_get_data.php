@@ -18,7 +18,7 @@ try{
 	} else {
 		$data = array();
 
-		$count = $rstate->query("select * from tbl_user where id=" . $uid . "")->num_rows;
+		$count = $rstate->query("select * from tbl_user where status= 1 and verified =1 and id=" . $uid . "")->num_rows;
 		$check_count = $rstate->query("select * from tbl_property where  status = 1 and  add_user_id=" . $uid . "")->num_rows;
 
 		if ($check_count  >= AppConstants::Property_Count) {
@@ -28,7 +28,7 @@ try{
 		}
 		$owner = $lang['Property_Manager'];
 		if ($count != 0) {
-			$row = $rstate->query("select * from tbl_user where id=" . $uid . "")->fetch_assoc();
+			$row = $rstate->query("select * from tbl_user where  status= 1 and verified =1 and  id=" . $uid . "")->fetch_assoc();
 			$setting = $rstate->query("select * from tbl_setting")->fetch_assoc();
 
 
