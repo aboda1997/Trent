@@ -30,17 +30,16 @@ try {
         $returnArr    = generateResponse('false', "User id is not exists", 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1') === false) {
         $returnArr    = generateResponse('false', "This property  is not Available", 400);
-    }
-    else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', '  add_user_id =' . $uid .'') === true) {
+    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', '  add_user_id =' . $uid . '') === true) {
         $returnArr    = generateResponse('false', "Not Allow to book Your Own Property", 400);
-    }
-    else if ($valid == false) {
+    } else if ($valid == false) {
         $returnArr    = generateResponse('false', $message, 400);
     } else if ($confirm_guest_rules  == 'false') {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date);
-        [$status, $status_message] = validateDateRangeAfterNextDate($from_date, next_available_date($prop_id, $rstate));
+        $date_list = get_dates($prop_id, $rstate);
+        [$status, $status_message] = validateDateRange($from_date,$to_date, $date_list);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         if ($days == 0) {
@@ -70,10 +69,10 @@ try {
 
             $titleData = json_decode($res_data['title'], true);
             $fp['title'] = $titleData[$lang];
-            
+
             $rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $res_data['id'] . "")->fetch_assoc();
             $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
-    
+
             $fp['price'] = $res_data['price'];
             $fp['from_date'] = $from_date;
             $fp['to_date'] = $to_date;
@@ -97,21 +96,21 @@ try {
             $fp['image_list'] = $vr;
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $fp['sub_total'] = $days * $price;
-            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total'] ) /100  : ($set["owner_fees"] * $fp['sub_total'] )/100; 
+            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total']) / 100  : ($set["owner_fees"] * $fp['sub_total']) / 100;
             $deposit_fees = $res_data["security_deposit"];
 
             $fp['taxes'] = ($trent_fess * $set['tax']) / 100;
             $fp['service_fees'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess ;
+            $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees'] + $deposit_fees + $trent_fess;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
             $message = "لديك حجز جديد";
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
-            $whatsapp = sendMessage([$ccode.$mobile] , $message);
-            $firebase_notification = sendFirebaseNotification($message , $message , $add_user_id);
-            $field_values = ["prop_id", 'total_day' , "check_in" , "check_out" ,   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal" , "tax" ,"trent_fees", "service_fees", "deposit_fees" , "total"];
-            $data_values = [$res_data['id'],$days , $from_date  , $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts" , $fp['sub_total'] ,  $fp['taxes'] , $trent_fess , $fp['service_fees'] ,  $fp['deposit_fees'] ,  $fp['final_total'] ];
+            $whatsapp = sendMessage([$ccode . $mobile], $message);
+            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id);
+            $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+            $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -120,9 +119,7 @@ try {
 
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
-            ));   
-
-           
+            ));
         }
     }
     echo $returnArr;
@@ -200,7 +197,7 @@ function processDates(string $from_date, string $to_date): array
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days+1;
+    $days = $interval->days + 1;
 
     return [
         $days,
@@ -208,53 +205,49 @@ function processDates(string $from_date, string $to_date): array
     ];
 }
 
-function next_available_date(string $pro_id, $rstate): string
+function get_dates(string $pro_id, $rstate)
 {
-
-    $check_date_query = $rstate->query("SELECT check_in, check_out FROM tbl_book WHERE prop_id = $pro_id AND book_status != 'Cancelled' ORDER BY check_out ASC");
-
-    $booked_dates = [];
-    while ($row = $check_date_query->fetch_assoc()) {
-        $booked_dates[] = [
-            'check_in'  => strtotime($row['check_in']),
-            'check_out' => strtotime($row['check_out'])
-        ];
+    $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
+    $result = $rstate->query($sql);
+    $date_list = [];
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
     }
 
-    // Find the next available date
-    $next_available_date = date('Y-m-d'); // Default to today if no bookings exist
-
-    if (!empty($booked_dates)) {
-        $latest_check_out = 0;
-
-        foreach ($booked_dates as $booking) {
-            if ($booking['check_out'] > $latest_check_out) {
-                $latest_check_out = $booking['check_out'];
-            }
-        }
-
-        // The next available date is the day after the latest check_out date
-        $next_available_date = date('Y-m-d', strtotime('+1 day', $latest_check_out));
-    }
-
-    // Assign the next available date to the response
-    return $next_available_date;
+    // Remove duplicate dates
+    $date_list = array_unique($date_list);
+    // Sort the dates
+    sort($date_list);
+    return $date_list;
 }
-
-function validateDateRangeAfterNextDate(string $from_date, string $next_date): array
+function getDatesFromRange($start, $end)
 {
-    $date1 = new DateTime($from_date);
-    $date2 = new DateTime($next_date);
+    $dates = [];
+    $current = strtotime($start);
+    $end = strtotime($end);
 
-    // Check if range starts at or after next date
-    if ($date1 < $date2) {
-        return [
-            false,
-            "Range must start at or after next available date. " .
-                "Next date: {$date2->format('Y-m-d')}, " .
-                "Range starts: {$date1->format('Y-m-d')}"
-        ];
+    while ($current <= $end) {
+        $dates[] = date('Y-m-d', $current);
+        $current = strtotime('+1 day', $current);
     }
 
-    return [true, "Date range is valid relative to next available date"];
+    return $dates;
+}
+function validateDateRange($from_date, $to_date, $date_list) {
+   
+ 
+    // Check for conflicts with date_list
+    $current = strtotime($from_date);
+    $end = strtotime($to_date);
+    
+    while ($current <= $end) {
+        $current_date = date('Y-m-d', $current);
+        if (in_array($current_date, $date_list)) {
+            return [false, "Conflict from date and to date range with: $current_date"];
+        }
+        $current = strtotime('+1 day', $current);
+    }
+    
+    return [true, "Valid date range"];
 }

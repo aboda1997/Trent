@@ -41,7 +41,8 @@ try {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date);
-        [$status, $status_message] = validateDateRangeAfterNextDate($from_date, next_available_date($prop_id, $rstate));
+        $date_list = get_dates($prop_id, $rstate);
+        [$status, $status_message] = validateDateRange($from_date,$to_date, $date_list);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         if ($days == 0) {
@@ -119,6 +120,7 @@ try {
     echo $returnArr;
 }
 
+
 function validateDates(?string $from_date, ?string $to_date): array
 {
     // Check presence
@@ -185,60 +187,57 @@ function processDates(string $from_date, string $to_date): array
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days+1;
+    $days = $interval->days + 1;
+
     return [
         $days,
         "Successfully calculated $days days between dates"
     ];
 }
 
-function next_available_date(string $pro_id, $rstate): string
+function get_dates(string $pro_id, $rstate)
 {
-
-    $check_date_query = $rstate->query("SELECT check_in, check_out FROM tbl_book WHERE prop_id = $pro_id AND book_status != 'Cancelled' ORDER BY check_out ASC");
-
-    $booked_dates = [];
-    while ($row = $check_date_query->fetch_assoc()) {
-        $booked_dates[] = [
-            'check_in'  => strtotime($row['check_in']),
-            'check_out' => strtotime($row['check_out'])
-        ];
+    $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
+    $result = $rstate->query($sql);
+    $date_list = [];
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
     }
 
-    // Find the next available date
-    $next_available_date = date('Y-m-d'); // Default to today if no bookings exist
-
-    if (!empty($booked_dates)) {
-        $latest_check_out = 0;
-
-        foreach ($booked_dates as $booking) {
-            if ($booking['check_out'] > $latest_check_out) {
-                $latest_check_out = $booking['check_out'];
-            }
-        }
-
-        // The next available date is the day after the latest check_out date
-        $next_available_date = date('Y-m-d', strtotime('+1 day', $latest_check_out));
-    }
-
-    // Assign the next available date to the response
-    return $next_available_date;
+    // Remove duplicate dates
+    $date_list = array_unique($date_list);
+    // Sort the dates
+    sort($date_list);
+    return $date_list;
 }
-
-function validateDateRangeAfterNextDate(string $from_date, string $next_date): array
+function getDatesFromRange($start, $end)
 {
-    $date1 = new DateTime($from_date);
-    $date2 = new DateTime($next_date);
+    $dates = [];
+    $current = strtotime($start);
+    $end = strtotime($end);
 
-    // Check if range starts at or after next date
-    if ($date1 < $date2) {
-        return [
-            false,
-            "Range must start at or after next available date. " .
-                "Next date: {$date2->format('Y-m-d')}, " .
-                "Range starts: {$date1->format('Y-m-d')}"
-        ];
+    while ($current <= $end) {
+        $dates[] = date('Y-m-d', $current);
+        $current = strtotime('+1 day', $current);
     }
 
-    return [true, "Date range is valid relative to next available date"];
+    return $dates;
+}
+function validateDateRange($from_date, $to_date, $date_list) {
+   
+ 
+    // Check for conflicts with date_list
+    $current = strtotime($from_date);
+    $end = strtotime($to_date);
+    
+    while ($current <= $end) {
+        $current_date = date('Y-m-d', $current);
+        if (in_array($current_date, $date_list)) {
+            return [false, "Conflict from date and to date range with : $current_date"];
+        }
+        $current = strtotime('+1 day', $current);
+    }
+    
+    return [true, "Valid date range"];
 }
