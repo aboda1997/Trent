@@ -212,7 +212,7 @@ try {
 
 			if ($gov->num_rows > 0) {
 				$tit = $gov->fetch_assoc();
-				$pol['government_name'] = json_decode($tit['name']??'', true)[$lang];
+				$pol['government_name'] = json_decode($tit['name']??'', true)[$lang] ?? '';
 			} else {
 				// Handle case when the query fails
 				$pol['government_name'] = null;
@@ -225,7 +225,7 @@ try {
 		$pol['longitude'] = $row['longitude'];
 		$pol['is_approved'] = (bool)$row['is_approved'];
 		//$pol['address'] = json_decode($row['address'], true);
-		$pol['city_name'] = json_decode($row['city']??'', true)[$lang];
+		$pol['city_name'] = json_decode($row['city']??'', true)[$lang]??'';
 		if ($uid) {
 			$pol['IS_FAVOURITE'] =  (int) $row['IS_FAVOURITE'];
 		} else {

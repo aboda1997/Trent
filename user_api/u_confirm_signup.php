@@ -36,7 +36,7 @@ else if ( $otp == '') {
 
 }else{
 
-    $checkmob   = $rstate->query("select otp from tbl_user where mobile=" . $mobile . "");
+    $checkmob   = $rstate->query("select otp from tbl_user where status = 1 and mobile=" . $mobile . "");
     if ($checkmob->num_rows != 0 && $checkmob->fetch_assoc()['otp'] == $otp ) {
         $updateQuery = "UPDATE tbl_user SET verified = 1 WHERE mobile = " . $mobile;
         $rstate->query($updateQuery);

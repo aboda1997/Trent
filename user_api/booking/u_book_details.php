@@ -36,8 +36,8 @@ try {
 		}
 		$fp['book_id'] = $book_id;
 		$fp['prop_id'] = $sel['prop_id'];
-		$fp['address'] = json_decode($prop_data['address'], true)[$lang];
-		$fp['city'] = json_decode($prop_data['city'], true)[$lang];
+		$fp['address'] = json_decode($prop_data['address'], true)[$lang]??'';
+		$fp['city'] = json_decode($prop_data['city'], true)[$lang]??'';
 		if (is_null($prop_data['government'])) {
 			$fp['government'] = null;
 		} else {
