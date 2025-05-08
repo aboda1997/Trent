@@ -17,7 +17,7 @@ try {
     $data = json_decode(file_get_contents('php://input'), true);
     $mobile = isset($data['mobile']) ? $data['mobile'] : '';
     $is_new_user = isset($data['is_new_user']) ? $data['is_new_user'] : true;
-    $ccode     = strip_tags(mysqli_real_escape_string($rstate, $data['ccode'])) ? strip_tags(mysqli_real_escape_string($rstate, $data['ccode'])) : '';
+    $ccode     = isset ($data['ccode']) ? strip_tags(mysqli_real_escape_string($rstate, $data['ccode'])) : '';
 
     $uid = isset($data['uid']) ? $data['uid'] : null; // for change mobile number 
     if ($mobile == '') {
