@@ -31,32 +31,6 @@ if ($pro_id == ''  ) {
 	$titleData = json_decode($sel['title'], true);
 	$fp['title'] = $titleData[$lang]??'';
 
-	$check_date_query = $rstate->query("SELECT check_in, check_out FROM tbl_book WHERE prop_id = $pro_id AND book_status != 'Cancelled' ORDER BY check_out ASC");
-
-	$booked_dates = [];
-	while ($row = $check_date_query->fetch_assoc()) {
-		$booked_dates[] = [
-			'check_in'  => strtotime($row['check_in']),
-			'check_out' => strtotime($row['check_out'])
-		];
-	}
-	
-	// Find the next available date
-	$next_available_date = date('Y-m-d'); // Default to today if no bookings exist
-	
-	if (!empty($booked_dates)) {
-		$latest_check_out = 0;
-		
-		foreach ($booked_dates as $booking) {
-			if ($booking['check_out'] > $latest_check_out) {
-				$latest_check_out = $booking['check_out'];
-			}
-		}
-	
-		// The next available date is the day after the latest check_out date
-		$next_available_date = date('Y-m-d', strtotime('+1 day', $latest_check_out));
-	}
-	
 	// Assign the next available date to the response
 	$returnArr    = generateResponse('true', "Property Booking Details Founded!", 200, array("property_booking_details" => $fp ));
 
