@@ -31,7 +31,7 @@ try {
             $fp['id'] = $row['id'];
             $fp['booking_id'] = $row['book_id'];
             $fp['prop_id'] = $row['prop_id'];
-            $fp['rating'] = (int)$row['rating'];
+            $fp['rating'] = $row['rating'];
             $fp['comment'] = $row['comment'];
             $fp['created_at'] = $row['created_at'];
             $uid = $row['uid'];

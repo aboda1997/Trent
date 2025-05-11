@@ -49,7 +49,7 @@ try {
         $returnArr    = generateResponse('false', validateName($comment, $fieldNames['comment'][$lang], 250, $lang, false)['response'], 400);
     } else {
         $prop_id = $rstate->query("select prop_id from tbl_book where id=" . $booking_id . "")->fetch_assoc()['prop_id'];
-        $rating_exists = $rstate->query("select id from tbl_rating where book_id=" . $booking_id . " and uid = " .$uid. '')->num_rows;
+        $rating_exists = $rstate->query("select id from tbl_rating where book_id=" . $booking_id . " and uid = " .$uid. ' and status =1')->num_rows;
 
         if ($rating_exists != 0) {
             $GLOBALS['rstate']->begin_transaction();
