@@ -52,7 +52,7 @@ try {
 			$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $row['prop_id'] . "")->fetch_assoc();
 			$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
 			$book_id = $row['id'];
-			$individual_data = $rstate->query("select * from tbl_rating where book_id=" . $book_id . " and status = 1")->fetch_assoc();
+			$individual_data = $rstate->query("select * from tbl_rating where book_id=" . $book_id . " ")->fetch_assoc();
 			if ($status != 'active') {
 
 				$fp['individual_rate'] = [

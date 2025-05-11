@@ -49,13 +49,13 @@ try {
         $returnArr    = generateResponse('false', validateName($comment, $fieldNames['comment'][$lang], 250, $lang, false)['response'], 400);
     } else {
         $prop_id = $rstate->query("select prop_id from tbl_book where id=" . $booking_id . "")->fetch_assoc()['prop_id'];
-        $rating_exists = $rstate->query("select id from tbl_rating where book_id=" . $booking_id . " and uid = " .$uid. ' and status =1')->num_rows;
+        $rating_exists = $rstate->query("select id from tbl_rating where book_id=" . $booking_id . " and uid = " .$uid. ' ')->num_rows;
 
         if ($rating_exists != 0) {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
             $table = "tbl_rating";
-            $field_values = ["rating" => $rating, "comment" => $comment, "status" => 1,  "book_id" => $booking_id, "uid" => $uid, "prop_id" => $prop_id];
+            $field_values = ["rating" => $rating, "comment" => $comment,  "book_id" => $booking_id, "uid" => $uid, "prop_id" => $prop_id];
             $where = "where book_id=" . '?' . " and uid = ? ";
             $where_conditions = [$booking_id ,$uid];
             $rating_id = $h->restateupdateData_Api($field_values, $table, $where, $where_conditions);
@@ -67,8 +67,8 @@ try {
             $created_at = date('Y-m-d H:i:s');
             $h = new Estate();
             $table = "tbl_rating";
-            $field_values = ["rating", "comment", "status",  "book_id", "uid", "prop_id", 'created_at'];
-            $data_values = [$rating, $comment, 1, $booking_id, $uid, $prop_id, $created_at];
+            $field_values = ["rating", "comment",  "book_id", "uid", "prop_id", 'created_at'];
+            $data_values = [$rating, $comment,  $booking_id, $uid, $prop_id, $created_at];
             $rating_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
 
             $GLOBALS['rstate']->commit();

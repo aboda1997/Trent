@@ -26,7 +26,7 @@ try {
         $fp = array();
         $wow = array();
 
-        $data = $rstate->query("select * from tbl_rating where prop_id=" . $prop_id . " and status = 1");
+        $data = $rstate->query("select * from tbl_rating where prop_id=" . $prop_id . " ");
         while ($row = $data->fetch_assoc()) {
             $fp['id'] = $row['id'];
             $fp['booking_id'] = $row['book_id'];
