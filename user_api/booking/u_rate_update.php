@@ -62,11 +62,9 @@ try {
             $GLOBALS['rstate']->commit();
             $res_text = $lang_["rating_updated"];
 
-
         } else {
             $GLOBALS['rstate']->begin_transaction();
             $created_at = date('Y-m-d H:i:s');
-
             $h = new Estate();
             $table = "tbl_rating";
             $field_values = ["rating", "comment", "status",  "book_id", "uid", "prop_id", 'created_at'];
