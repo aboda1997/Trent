@@ -394,4 +394,6 @@ return [
 
     'property_id_required' => 'You must enter a Property ID',
     'property_not_available' => "This Property  is not Available",
+    'invalid_notification_id' => 'You must enter a valid notification ID',
+
 ];

@@ -33,6 +33,14 @@ try {
             $fp['prop_id'] = $row['prop_id'];
             $fp['rating'] = (int)$row['rating'];
             $fp['comment'] = $row['comment'];
+            $fp['created_at'] = $row['created_at'];
+            $uid = $row['uid'];
+            $user_data = $rstate->query("select * from tbl_user where id=" . $uid . " and status = 1")->fetch_assoc();
+            $fp['user_name'] = $user_data['name'];
+            $fp['user_img'] = $user_data['pro_pic'];
+            $fp['user_reg_date'] = $user_data['reg_date'];
+
+
             $wow[] = $fp;
         }
         $returnArr    = generateResponse('true', "Property Ratings Founded!", 200, array("Ratings" => $wow));
