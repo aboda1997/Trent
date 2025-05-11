@@ -38,10 +38,9 @@ try {
             $GLOBALS['rstate']->begin_transaction();
             $h = new Estate();
             $table = "tbl_rating";
-            $field_values = [ "status" => 0];
-            $where = "where id=" . '?' ;
-            $where_conditions = [$rating_id];
-            $res = $h->restateupdateData_Api($field_values, $table, $where, $where_conditions);
+            $where = "where id=" . $rating_id ;
+            $res = $h->restateDeleteData_Api_fav($where , $table);
+            
             $GLOBALS['rstate']->commit();
             $res_text = $lang_["rating_deleted"];
 

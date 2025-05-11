@@ -57,7 +57,9 @@ try {
 
 				$fp['individual_rate'] = [
 					'id' => $individual_data['id']?? null,
-					'rate' => $individual_data['rating']?? null,
+					'rate' =>  isset($individual_data['rating']) 
+					? number_format((float)$individual_data['rating'], 1, '.', '') 
+					: null ,
 					'comment' => $individual_data['comment'] ?? null ,
 					'created_at' => $individual_data['created_at'] ?? null
 
