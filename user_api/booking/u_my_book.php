@@ -56,8 +56,9 @@ try {
 			if ($status != 'active') {
 
 				$fp['individual_rate'] = [
+					'id' => $individual_data['id']?? null,
 					'rate' => $individual_data['rating']?? null,
-					'comment' => $individual_data['rating'] ?? null ,
+					'comment' => $individual_data['comment'] ?? null ,
 					'created_at' => $individual_data['created_at'] ?? null
 
 				];
