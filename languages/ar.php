@@ -372,5 +372,7 @@ return [
     'rating_not_available' => 'هذا التقييم غير متاح',
     'property_id_required' => 'يجب إدخال معرف العقار',
     'property_not_available' => 'هذا العقار غير متاح',
+    'invalid_notification_id' =>  'يجب إدخال معرف إشعار صحيح' ,
+
 
 ];

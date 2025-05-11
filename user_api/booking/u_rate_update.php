@@ -65,10 +65,12 @@ try {
 
         } else {
             $GLOBALS['rstate']->begin_transaction();
+            $created_at = date('Y-m-d H:i:s');
+
             $h = new Estate();
             $table = "tbl_rating";
-            $field_values = ["rating", "comment", "status",  "book_id", "uid", "prop_id"];
-            $data_values = [$rating, $comment, 1, $booking_id, $uid, $prop_id];
+            $field_values = ["rating", "comment", "status",  "book_id", "uid", "prop_id", 'created_at'];
+            $data_values = [$rating, $comment, 1, $booking_id, $uid, $prop_id, $created_at];
             $rating_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
 
             $GLOBALS['rstate']->commit();
