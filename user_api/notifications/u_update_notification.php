@@ -13,9 +13,11 @@ try {
         http_response_code(200);
         exit();
     }
+    $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
     $id = isset($_POST['id']) ? $_POST['id'] : null;
+    $lang_ = load_specific_langauage($lang_code);
 
 
     if ($uid == '') {
@@ -29,7 +31,7 @@ try {
     } else {
 
         $table = "tbl_notification_head";
-        $field_values = ["seen" => 1];
+        $field_values = ["is_seen" => 1];
         $h = new Estate();
         if ($id == '*') {
             $check = $h->restateupdateData_Api($field_values, $table,  "where uid=" . '?' . "", [$uid]);
