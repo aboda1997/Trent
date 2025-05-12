@@ -18,6 +18,7 @@ try {
 	$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 	$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
 	$compound_name = isset($_GET['compound_name']) ? $_GET['compound_name'] : null;
+	$city_name = isset($_GET['city_name']) ? $_GET['city_name'] : null;
 	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : '';
 	$users_list = isset($_GET['users_list']) ? $_GET['users_list'] : '';
 	$beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
@@ -90,8 +91,17 @@ try {
 		$query .= " AND (
         JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en'))   LIKE '%$compound_name%' 
         OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar'))    LIKE '%$compound_name%'
-		and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.en')) IS NOT NULL
-		and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) IS NOT NULL
+		and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) IS NOT NULL
+		and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) IS NOT NULL
+    )";
+	}
+	if ($city_name !== null) {
+		$city_name = $rstate->real_escape_string($city_name);
+		$query .= " AND (
+        JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en'))   LIKE '%$city_name%' 
+        OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar'))    LIKE '%$city_name%'
+		and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) IS NOT NULL
+		and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) IS NOT NULL
     )";
 	}
 	if ($facilities !== '' ) {
