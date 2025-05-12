@@ -233,12 +233,12 @@ function decryptData(string $base64EncodedData, string $privateKey): string|fals
     
     $encryptedData = base64_decode($base64EncodedData);
     if ($encryptedData === false) {
-        throw new Exception("Base64 decoding failed.");
+        return false;
     }
 
     if (!openssl_private_decrypt($encryptedData, $decrypted, $privateKey, OPENSSL_PKCS1_OAEP_PADDING)) {
-        throw new Exception("Decryption failed: " . openssl_error_string());
+        return false;
     }
     
-    return $decrypted;
+    return true;
 }

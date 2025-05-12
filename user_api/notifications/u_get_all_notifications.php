@@ -27,7 +27,7 @@ try {
     } else {
         $pol = array();
         $c = array();
-        $query = "SELECT *  FROM tbl_notification_head  WHERE  uid =" . $uid . "";
+        $query = "SELECT *  FROM tbl_notification_head  WHERE  uid =" . $uid . "  ORDER BY id DESC    ";
 
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
