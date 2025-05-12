@@ -299,8 +299,16 @@ try {
             $show_property = $_POST['show_property'];
             $cmobile = $_POST['cmobile'];
             $cemail = $_POST['cemail'];
-            $mcode = encryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/public.pem');
-            $skey = encryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/public.pem');
+            if (decryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/private.pem')) {
+                $skey = $_POST['skey'];
+            } else {
+                $skey = encryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/public.pem');
+            }
+            if (decryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/private.pem')) {
+                $mcode = $_POST['mcode'];
+            } else {
+                $mcode = encryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/public.pem');
+            }
             $alert_en = mysqli_real_escape_string($rstate, $_POST['ealert']);
             $alert_ar = mysqli_real_escape_string($rstate, $_POST['aalert']);
 
@@ -912,7 +920,7 @@ try {
             }
 
             if ($is_approved == '1') {
-                approve_property($rstate , $propowner , $title_ar);
+                approve_property($rstate, $propowner, $title_ar);
             }
 
             $guest_rules_json = json_encode([
@@ -1115,8 +1123,7 @@ try {
                 deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
             }
             if ($is_approved == '1') {
-                approve_property($rstate , $propowner , $title_ar);
-
+                approve_property($rstate, $propowner, $title_ar);
             }
 
             $guest_rules_json = json_encode([
@@ -1337,7 +1344,7 @@ try {
             $check = $h->restateupdateData($field, $table, $where);
 
             if ($check == 1) {
-                approve_property($rstate , $uid , $title);
+                approve_property($rstate, $uid, $title);
 
                 $returnArr = [
                     "ResponseCode" => "200",
@@ -1346,7 +1353,6 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_properties.php",
                 ];
-                
             }
         } elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
@@ -1365,7 +1371,6 @@ try {
                     "message" => "APProval section!",
                     "action" => "pending_payout.php",
                 ];
-
             }
         } elseif ($_POST["type"] == "approve_payout_and_generate_payout") {
             $selected_ids = $_POST["selected_ids"];
@@ -1462,8 +1467,7 @@ WHERE
                     "action" => "pending_properties.php",
                 ];
             }
-        }
-        elseif ($_POST["type"] == "delete_rating") {
+        } elseif ($_POST["type"] == "delete_rating") {
             $id = $_POST["id"];
             $table = "tbl_rating";
             $where = "where id=" . $id . "";
@@ -1479,8 +1483,7 @@ WHERE
                     "action" => "rating_list.php",
                 ];
             }
-        }
-        elseif ($_POST["type"] == "deny_payout_reason") {
+        } elseif ($_POST["type"] == "deny_payout_reason") {
             $id = $_POST["id"];
             $reason = $_POST["reason"];
             $title = $rstate->real_escape_string($_POST["property_title"]);
@@ -1499,7 +1502,7 @@ WHERE
             $message = "عذراً، تم رفض طلب سحب أموال العقار ($title) للسبب التالي:  ($reason)  
 يمكنك مراجعة بيانات الطلب والمحاولة مرة أخرى من خلال حسابك في موقع أو تطبيق ت-رينت  
 مع خالص تحيات فريق ت-رينت";
-            $result = sendMessage([$ccode.$new_mobile], $message);
+            $result = sendMessage([$ccode . $new_mobile], $message);
 
 
 
@@ -2285,12 +2288,13 @@ function deny_property(string $reason,  $id, $uid, $title, $rstate)
 
     // Create the message
     $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
-    $result = sendMessage([$ccode.$new_mobile], $message);
+    $result = sendMessage([$ccode . $new_mobile], $message);
 
     return $check;
 }
 
-function approve_property($rstate , $uid , $title_ar){
+function approve_property($rstate, $uid, $title_ar)
+{
     $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
     $new_mobile   = $sel['mobile'];
@@ -2298,7 +2302,7 @@ function approve_property($rstate , $uid , $title_ar){
 
     $message = "يسعدنا إعلامكم بأنه تم نشر العقار ($title_ar) الخاص بكم
     مع تحيات فريق Trent";
-    $result = sendMessage([$ccode.$new_mobile], $message);
+    $result = sendMessage([$ccode . $new_mobile], $message);
 }
 function downloadCSV($headers, $data)
 {
