@@ -24,7 +24,6 @@ try {
     } else {
         $data = array();
         $data_list = array();
-        $vr = array();
         $query = "
         SELECT 
     b.id,
@@ -47,6 +46,7 @@ WHERE
         while ($row = $query_data->fetch_assoc()) {
             $data['id'] = $row['id'];
             $imageArray = explode(',', $row['image']);
+            $vr = array();
 
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {

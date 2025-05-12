@@ -28,7 +28,6 @@ try {
         $pol = array();
         $c = array();
         $query = "SELECT *  FROM tbl_notification_head  WHERE  uid =" . $uid . "  ORDER BY id DESC    ";
-        $vr =array();
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
         $sel = $rstate->query($query);
@@ -40,7 +39,8 @@ try {
             $pol['created_at'] = $row['created_at'];
             $pol['body'] = $row['body'];
             $pol['is_seen'] = (bool)$row['is_seen'];
-            $imageArray = array_filter(explode(',', $row['img'] ?? ''));
+            $imageArray = explode(',', $row['img'] );
+            $vr =array();
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {
                 $vr[] = array('img' => trim($image));
