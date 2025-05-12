@@ -27,7 +27,7 @@ try {
         $sel_length  = $rstate->query($query)->num_rows;
 
        
-            $returnArr    = generateResponse('true', "Unseen Notification Count!", 200, array(
+            $returnArr    = generateResponse('true', "Count of Unseen Notification Founded!", 200, array(
                 "count" => $sel_length,
             ));
         

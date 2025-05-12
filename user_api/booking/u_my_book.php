@@ -9,6 +9,7 @@ try {
 
 	$pol = array();
 	$c = array();
+	$vr = array();
 
 	$status  =  isset($_GET['status']) ? $_GET['status'] : '';
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
@@ -39,7 +40,14 @@ try {
 		while ($row = $bd->fetch_assoc()) {
 			$fp['book_id'] = $row['id'];
 			$fp['prop_id'] = $row['prop_id'];
-			$fp['prop_img'] = $row['prop_img'];
+			
+            $imageArray = explode(',', $row['prop_img']);
+
+            // Loop through each image URL and push to $vr array
+            foreach ($imageArray as $image) {
+                $vr[] = array('img' => trim($image));
+            }
+            $fp['image_list'] = $vr;
 			$fp['prop_title'] = json_decode($row['prop_title'], true)[$lang];
 
 			$fp['p_method_id'] = $row['p_method_id'];
