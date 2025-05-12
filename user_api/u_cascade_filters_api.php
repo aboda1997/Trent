@@ -63,7 +63,7 @@ try {
         }
 
         $sel = $rstate->query($query);
-        var_dump($query);
+        //var_dump($query);
         // Initialize arrays
         $compounds = [];
         $cities = [];
@@ -97,7 +97,7 @@ try {
         $maxPrice = max($prices);
         $c['min_price']  =  $minPrice ;
         $c['max_price']  = $maxPrice;
-        $returnArr    = generateResponse('true', "Api Filiters Founded!", 200, array(
+        $returnArr    = generateResponse('true', "Filters Founded!", 200, array(
 
             "price_range" => $c,
             "compound_list" => $compound_list,

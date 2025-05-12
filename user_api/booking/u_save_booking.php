@@ -108,7 +108,7 @@ try {
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
             $whatsapp = sendMessage([$ccode . $mobile], $message);
-            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id);
+            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id , $res_data['image']);
             $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
             $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, date('Y-m-d'), "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 

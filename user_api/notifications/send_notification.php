@@ -37,9 +37,9 @@ function sendFirebaseNotification(
     ];
 
     // Add image if provided
-    if ($imageUrl !== null) {
-        $message['message']['notification']['image'] = $imageUrl;
-    }
+   // if ($imageUrl !== null) {
+     //   $message['message']['notification']['image'] = $imageUrl;
+  //  }
 
     // Add webpush link if provided
     if ($linkUrl !== null) {
