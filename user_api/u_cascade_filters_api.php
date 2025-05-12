@@ -10,10 +10,10 @@ try {
     $compound_name = isset($_GET['compound_name']) ? $rstate->real_escape_string($_GET['compound_name']) : null;
     $city_name = isset($_GET['city_name']) ? $rstate->real_escape_string($_GET['city_name']) : null;
     $government_id = isset($_GET['government_id']) ? $rstate->real_escape_string($_GET['government_id']) : null;
-
-    $pol = array();
+    $compound_list= array();
+    $city_list= array();
+    $cat_list= array();
     $c = array();
-    $cc = array();
     $ccc = array();
     $period = array();
     if ($government_id == null) {
@@ -37,28 +37,29 @@ try {
     SELECT  JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.$lang_code')) AS compound_name
     ,  JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.$lang_code')) AS city_name
      ,p.price,
-     JSON_UNQUOTE(JSON_EXTRACT(c.title, '$.$lang_code')) AS title
+     JSON_UNQUOTE(JSON_EXTRACT(c.title, '$.$lang_code')) AS title,
+      p.ptype
      
 
     FROM tbl_property p
     LEFT JOIN 
 		tbl_category c ON p.ptype = c.id 
     WHERE 
-    government = $government_id
-    and JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.$lang_code')) IS NOT NULL
-    and JSON_UNQUOTE(JSON_EXTRACT(city, '$.$lang_code')) IS NOT NULL
-    and status=1
+    p.government = $government_id
+    and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.$lang_code')) IS NOT NULL
+    and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.$lang_code')) IS NOT NULL
+    and p.status=1
 ";
         // If a search term is provided, add a LIKE condition for partial matching
         if ($compound_name) {
             $query .= " and 
-        (JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.en')) LIKE '%$compound_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(compound_name, '$.ar')) LIKE '%$compound_name%')";
+        (JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) LIKE '%$compound_name%' 
+        OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) LIKE '%$compound_name%')";
         }
         if ($city_name) {
             $query .= " and 
-        (JSON_UNQUOTE(JSON_EXTRACT(city, '$.en')) LIKE '%$city_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(city, '$.ar')) LIKE '%$city_name%')";
+        (JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) LIKE '%$city_name%' 
+        OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) LIKE '%$city_name%')";
         }
 
         $sel = $rstate->query($query);
@@ -72,16 +73,19 @@ try {
         // Process results
         while ($row = $sel->fetch_assoc()) {
             // Collect distinct values
-            if (!in_array($row['compound_name'], $compounds)) {
+            if (!in_array($row['compound_name'], $compounds) && $row['compound_name'] !='' ) {
                 $compounds[] = $row['compound_name'];
+                $compound_list[] = ['name'=>$row['compound_name'] ];
             }
 
             if (!in_array($row['city_name'], $cities)) {
                 $cities[] =  $row['city_name'];
+                $city_list[] = ['name'=>$row['city_name'] ];
             }
 
-            if (!in_array($row['ptype'], $ptypes)) {
+            if (!in_array($row['title'], $ptypes)) {
                 $ptypes[] = $row['title'];
+                $cat_list[] = ['title'=>$row['title'] , 'id' =>$row['ptype'] ];
             }
 
             // Collect all prices for min/max calculation
@@ -96,9 +100,9 @@ try {
         $returnArr    = generateResponse('true', "Api Filiters Founded!", 200, array(
 
             "price_range" => $c,
-            "compound_list" => $compounds,
-            "city_list" => $cities,
-            "categories" => $ptypes,
+            "compound_list" => $compound_list,
+            "city_list" => $city_list,
+            "category_list" => $cat_list,
             "period_list" => $ccc
         ));
     }
