@@ -167,7 +167,7 @@ try {
 	while ($row = $sel->fetch_assoc()) {
 		$vr = array();
 		$f = array();
-		$imageArray = explode(',', $row['image']);
+		$imageArray = array_filter (explode(',', $row['image'] ?? ''));
 
 		// Loop through each image URL and push to $vr array
 		foreach ($imageArray as $image) {

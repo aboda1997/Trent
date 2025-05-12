@@ -39,7 +39,7 @@ try {
             $pol['created_at'] = $row['created_at'];
             $pol['body'] = $row['body'];
             $pol['is_seen'] = (bool)$row['is_seen'];
-            $imageArray = explode(',', $row['img'] );
+            $imageArray = array_filter( explode(',', $row['img'] ?? '' ));
             $vr =array();
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {

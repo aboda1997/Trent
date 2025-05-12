@@ -28,7 +28,7 @@ try {
 		$po = array();
 		$sel = $rstate->query("select * from tbl_book where id=" . $book_id . " and (uid = " . $uid . " or add_user_id=" . $uid . ")")->fetch_assoc();
 		$prop_data = $rstate->query("select * from tbl_property where id=" . $sel['prop_id'] . "")->fetch_assoc();
-		$imageArray = explode(',', $prop_data['image']);
+		$imageArray = array_filter( explode(',', $prop_data['image'] ?? ''));
 
 		// Loop through each image URL and push to $vr array
 		foreach ($imageArray as $image) {

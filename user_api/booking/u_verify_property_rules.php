@@ -88,7 +88,7 @@ try {
 
             $fp['period_type'] =  $periods[$res_data['period']][$lang];
 
-            $imageArray = explode(',', $res_data['image']);
+            $imageArray = array_filter(explode(',', $res_data['image'])?? '');
 
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {
