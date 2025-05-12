@@ -45,7 +45,7 @@ WHERE
         $query_data = $rstate->query($query);
         while ($row = $query_data->fetch_assoc()) {
             $data['id'] = $row['id'];
-            $imageArray = explode(',', $row['image']);
+            $imageArray = array_filter(explode(',', $row['image'] ?? ''));
             $vr = array();
 
             // Loop through each image URL and push to $vr array

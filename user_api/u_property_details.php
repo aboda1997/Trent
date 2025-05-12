@@ -23,7 +23,7 @@ try {
 		$vr = array();
 		$po = array();
 		$sel = $rstate->query("select * from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
-		$imageArray = explode(',', $sel['image']);
+		$imageArray = array_filter( explode(',', $sel['image'] ?? '') );
 
 		// Loop through each image URL and push to $vr array
 		foreach ($imageArray as $image) {

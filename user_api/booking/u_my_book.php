@@ -41,7 +41,7 @@ try {
 			$fp['book_id'] = $row['id'];
 			$fp['prop_id'] = $row['prop_id'];
 			
-            $imageArray = explode(',', $row['prop_img']);
+            $imageArray = array_filter(explode(',', $row['prop_img'] ?? ''));
 
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {
