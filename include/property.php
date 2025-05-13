@@ -921,7 +921,7 @@ try {
             }
 
             if ($is_approved == '1') {
-                approve_property($rstate, $propowner, $title_ar);
+                //approve_property($rstate, $propowner, $title_ar);
             }
 
             $guest_rules_json = json_encode([
@@ -1122,10 +1122,10 @@ try {
             $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
 
             if ($is_approved == '0') {
-                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+               deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
             }
             if ($is_approved == '1') {
-                approve_property($rstate, $propowner, $title_ar);
+                //approve_property($rstate, $propowner, $title_ar);
             }
 
             $guest_rules_json = json_encode([
