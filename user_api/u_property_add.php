@@ -96,7 +96,10 @@ try {
 		$returnArr = generateResponse('false', "Cancellation Policy  Id must be valid!", 400);
 	}else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
-	} else {
+	}  else if (validateIdAndDatabaseExistance($user_id, 'tbl_user', ' status = 1 and verified =1 ') === false) {
+        $returnArr    = generateResponse('false', "User id is not exists", 400);
+    } 
+	else {
 
 
 		// Allowed file types for images and videos
