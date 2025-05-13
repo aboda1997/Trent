@@ -2275,7 +2275,7 @@ WHERE
 function deny_property(string $reason,  $id, $uid, $title, $rstate)
 {
     $table = "tbl_property";
-    $field = ["cancel_reason" => $reason];
+    $field = ["cancel_reason" => $reason , 'is_need_review' => 1];
     $where = "where id=" . $id . "";
 
     $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();

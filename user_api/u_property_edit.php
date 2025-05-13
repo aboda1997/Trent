@@ -158,7 +158,8 @@ try {
 				"listing_date" => $listing_date,
 				"cancel_reason" => '',
 				"latitude" => $latitude,
-				"longitude" => $longitude
+				"longitude" => $longitude,
+				'is_need_review'=>0
 			];
 
 			// Allowed file types for images and videos
