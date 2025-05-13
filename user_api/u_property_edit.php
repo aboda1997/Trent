@@ -4,6 +4,7 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname( dirname(__FILE__) ).'/include/constants.php';
+require_once dirname(dirname(__FILE__) ) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
@@ -13,6 +14,7 @@ try {
 	$prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : '';
 
 	$facility = isset($_POST['facilities']) ? $_POST['facilities'] : '';
+	$existing_images = isset($_POST['existing_images']) ? $_POST['existing_images'] : '[]';
 	$ptype = isset($_POST['category_id']) ? $_POST['category_id'] : '';
 	$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
 	$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
@@ -46,11 +48,6 @@ try {
 	$floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
 	$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 	$compound_ar = $rstate->real_escape_string(isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
-
-	$decodedIds = json_decode($facility, true);
-	$ids = array_filter(array_map('trim', $decodedIds));
-	$idList = implode(',', $ids);
-
 
 
 	$floor_json = json_encode([
@@ -107,6 +104,11 @@ try {
 	else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 	} else {
+
+		$decodedIds = json_decode($facility, true);
+		$ids = array_filter(array_map('trim', $decodedIds));
+		$idList = implode(',', $ids);
+		$existing_images_paths = implode(',' ,json_decode($existing_images , true));
 
 		$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
 		if ($check_owner != 0) {
@@ -179,7 +181,7 @@ try {
 			// Handle image upload
 			if (isset($_FILES['images'])) {
 				// Check if it's multiple images or a single image
-				if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3) {
+				if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3-count(json_decode($existing_images , true))) {
 					// Multiple images
 					foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 						if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
@@ -238,9 +240,11 @@ try {
 
 			if (!empty($imageUrls)) {
 				$imageUrlsString = implode(',', $imageUrls);
-				$field["image"] =  $imageUrlsString;
-			}
+				$field["image"] =  $imageUrlsString .','. $existing_images_paths;
+			}else {
+				$field["image"] = $existing_images_paths;
 
+			}
 
 			if (!empty($videoUrls)) {
 				$videoUrlsString = implode(',', $videoUrls);
@@ -281,6 +285,6 @@ try {
 	// Handle exceptions and return an error response
 	$returnArr = generateResponse('false', "An error occurred!", 500, array(
 		"error_message" => $e->getMessage()
-	));
+	), $e->getFile(),  $e->getLine());
 	echo $returnArr;
 }
