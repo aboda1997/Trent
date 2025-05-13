@@ -104,7 +104,8 @@ try {
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees'] + $deposit_fees + $trent_fess;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
-            $message = "لديك حجز جديد";
+            $propertyName= $titleData["ar"];
+            $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
             $whatsapp = sendMessage([$ccode . $mobile], $message);
