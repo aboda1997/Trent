@@ -64,7 +64,9 @@ try {
 
         } else {
             $GLOBALS['rstate']->begin_transaction();
-            $created_at = date('Y-m-d H:i:s');
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $created_at = $date->format('Y-m-d H:i:s');
+    
             $h = new Estate();
             $table = "tbl_rating";
             $field_values = ["rating", "comment",  "book_id", "uid", "prop_id", 'created_at'];

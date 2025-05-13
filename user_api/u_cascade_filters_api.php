@@ -93,8 +93,8 @@ try {
         }
 
         // Calculate min and max prices
-        $minPrice = !empty($prices) ? min($prices) : 0;
-        $maxPrice = !empty($prices) ? max($prices) : 0;
+        $minPrice = !empty($prices) ? min($prices) : "0";
+        $maxPrice = !empty($prices) ? max($prices) : "0";
 
         $c['min_price']  =  $minPrice ;
         $c['max_price']  = $maxPrice;
