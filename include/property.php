@@ -885,7 +885,8 @@ try {
             $user_id = '0';
             $policy = $_POST['propPrivacy'];
             $is_approved = $_POST['approved'];
-
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $updated_at = $date->format('Y-m-d H:i:s');
             $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
@@ -1056,8 +1057,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["updated_at" , "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1077,7 +1078,8 @@ try {
         } elseif ($_POST["type"] == "edit_property") {
 
             $id = $_POST['id'];
-
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $updated_at = $date->format('Y-m-d H:i:s');
             $status = $_POST["status"];
             $plimit = $_POST['plimit'];
             $pbuysell = 1;
@@ -1286,7 +1288,8 @@ try {
                 "plimit" => "$plimit",
                 "max_days" => "$max_days",
                 "min_days" => "$min_days",
-                "cancel_reason" => "$cancel_reason"
+                "cancel_reason" => "$cancel_reason",
+                'updated_at' => $updated_at
             ];
             if (!empty($imageUrls)) {
                 $field_values["image"] =  $imageUrlsString;
@@ -2275,7 +2278,11 @@ WHERE
 function deny_property(string $reason,  $id, $uid, $title, $rstate)
 {
     $table = "tbl_property";
-    $field = ["cancel_reason" => $reason , 'is_need_review' => 1];
+    
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $updated_at = $date->format('Y-m-d H:i:s');
+
+    $field = ["cancel_reason" => $reason , 'is_need_review' => 1 ,'updated_at'=>$updated_at ];
     $where = "where id=" . $id . "";
 
     $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();

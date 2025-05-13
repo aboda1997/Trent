@@ -129,7 +129,8 @@ try {
 			} else {
 				$returnArr = generateResponse('false', $res['response'], 400);
 			}
-
+			$date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+			$updated_at = $date->format('Y-m-d H:i:s');
 
 			$field = [
 				"pbuysell" => $pbuysell,
@@ -161,7 +162,8 @@ try {
 				"cancel_reason" => '',
 				"latitude" => $latitude,
 				"longitude" => $longitude,
-				'is_need_review'=>0
+				'is_need_review'=>0,
+				'updated_at' =>$updated_at
 			];
 
 			// Allowed file types for images and videos

@@ -205,9 +205,10 @@ try {
 		if (!isset($returnArr)) {
 
 			$table = "tbl_property";
-
-			$field_values = ["image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-			$data_values = ["$imageUrlsString", $cancellation_policy_id,"$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+			$date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+			$updated_at = $date->format('Y-m-d H:i:s');
+			$field_values = [ "updated_at", "image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+			$data_values = ["$updated_at","$imageUrlsString", $cancellation_policy_id,"$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
 			$h = new Estate();
 			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);

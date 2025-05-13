@@ -36,7 +36,9 @@ foreach ($targetCurrencies as $currency) {
 }
 
 // Prepare data for database update
-$currentDate = date('Y-m-d H:i:s');
+
+$date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+$currentDate = $date->format('Y-m-d H:i:s');
 $exchangeRates['UpdateDate'] = $currentDate;
 
 // Update database

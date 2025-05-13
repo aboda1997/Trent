@@ -38,8 +38,8 @@ try {
     } else if (validateFacilityIds($booking_list,  'tbl_book' , $uid) === false) {
         $returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
     } else {
-
-        $created_at = date('Y-m-d H:i:s');
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d H:i:s');
 
 
 

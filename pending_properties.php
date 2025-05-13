@@ -67,6 +67,9 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
 
                         <th>Property Image</th>
                         <th>Property Type</th>
+                        <th> Status </th>
+                        <th> cancel Reason</th>
+                        <th>updated at</th>
 
                         <th>
                           Property Approval</th>
@@ -137,6 +140,23 @@ WHERE
                             $type = json_decode($type['title'], true);
 
                             echo $type[$lang_code]; ?>
+                          </td>
+                          <?php if ($row['is_need_review'] == 1) { ?>
+
+                            <td><span class="badge badge-warning">Need Review</span></td>
+                          <?php } else { ?>
+
+                            <td>
+                              <span class="badge badge-danger">Pending</span>
+                            </td>
+                          <?php } ?>
+
+                          <td class="align-middle">
+                            <?php echo strlen($row["cancel_reason"]) > 100 ? substr($row["cancel_reason"], 0, 100) . '...' : $row["cancel_reason"]; ?>
+                          </td>
+
+                          <td class="align-middle">
+                            <?php echo $row["updated_at"] ?>
                           </td>
                           <td class="align-middle">
                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
