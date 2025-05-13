@@ -208,6 +208,11 @@ try {
 				} else {
 					$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
 				}
+			}else{
+				if(count(json_decode($existing_images , true))< 3){
+					$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
+
+				}
 			}
 
 			// Handle video upload

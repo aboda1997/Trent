@@ -56,7 +56,7 @@ try {
             (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
-            $returnArr    = generateResponse('false', "The selected dates are not  within the allowed limit [" . $res_data['min_days'] . ',' . $res_data['max_days'] . "]", 400);
+            $returnArr    = generateResponse('false', "The selected dates are not  within the allowed limit [" . $res_data['min_days'] . ',' . $res_data['max_days'] . "] days", 400);
         } 
         
         else {
