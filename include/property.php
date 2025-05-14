@@ -887,7 +887,6 @@ try {
             $is_approved = $_POST['approved'];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
-            $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
             $security_deposit = $_POST['prop_security'];
@@ -918,10 +917,14 @@ try {
 
             if ($is_approved == '0') {
                 deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+                $need_review = 1;
+
             }
 
             if ($is_approved == '1') {
-                //approve_property($rstate, $propowner, $title_ar);
+                approve_property($rstate, $propowner, $title_ar);
+                $need_review = 0;
+
             }
 
             $guest_rules_json = json_encode([
@@ -1007,15 +1010,15 @@ try {
                                     $imageUrls[] = 'images/property/' . $imageName;
                                 } else {
                                     // Handle error if file couldn't be moved
-                                    $returnArr = generateDashboardResponse(500, "false", "Failed to upload image: " . $_FILES['images']['name'][$key], "", "list_properties.php");
+                                    $returnArr = generateDashboardResponse(500, "false", "Failed to upload image: " . $_FILES['prop_img']['name'][$key], "", "list_properties.php");
                                 }
                             } else {
                                 // Handle invalid image type
-                                $returnArr = generateDashboardResponse(400, "false", "Invalid image type: " . $_FILES['images']['name'][$key], "", "list_properties.php");
+                                $returnArr = generateDashboardResponse(400, "false", "Invalid image type: " . $_FILES['prop_img']['name'][$key], "", "list_properties.php");
                             }
                         } else {
                             // Handle error during file upload
-                            $returnArr = generateDashboardResponse(400, "false", "Error uploading image: " . $_FILES['images']['name'][$key], "", "list_properties.php");
+                            $returnArr = generateDashboardResponse(400, "false", "Error uploading image: " . $_FILES['prop_img']['name'][$key], "", "list_properties.php");
                         }
                     }
                 } else {
@@ -1057,8 +1060,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["updated_at" , "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json", "$listing_date", "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["is_need_review","updated_at" , "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$need_review","$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1091,8 +1094,8 @@ try {
             $policy = $_POST['propPrivacy'];
             $user_id = '0';
             $is_approved = $_POST['approved'];
+            $existing_images = $_POST['existing_images'];
 
-            $listing_date = date("Y-m-d H:i:s");
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
             $security_deposit = $_POST['prop_security'];
@@ -1123,9 +1126,12 @@ try {
 
             if ($is_approved == '0') {
                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+               $need_review = 1;
             }
             if ($is_approved == '1') {
                 //approve_property($rstate, $propowner, $title_ar);
+                $need_review = 0;
+
             }
 
             $guest_rules_json = json_encode([
@@ -1198,7 +1204,7 @@ try {
             // Handle image upload
             if (isset($_FILES['prop_img'])) {
                 // Check if it's multiple images or a single image
-                if (is_array($_FILES['prop_img']['name']) && count($_FILES['prop_img']['name']) >= 3) {
+                if (is_array($_FILES['prop_img']['name']) && count($_FILES['prop_img']['name']) >= 1) {
                     // Multiple images
                     foreach ($_FILES['prop_img']['tmp_name'] as $key => $tmpName) {
                         if ($_FILES['prop_img']['error'][$key] === UPLOAD_ERR_OK) {
@@ -1211,15 +1217,12 @@ try {
                                     $imageUrls[] = 'images/property/' . $imageName;
                                 } else {
                                     // Handle error if file couldn't be moved
-                                    $returnArr = generateDashboardResponse(500, "false", "Failed to upload image: " . $_FILES['images']['name'][$key], "", "list_properties.php");
+                                    $returnArr = generateDashboardResponse(500, "false", "Failed to upload image: " . $_FILES['prop_img']['name'][$key], "", "list_properties.php");
                                 }
                             } else {
                                 // Handle invalid image type
-                                $returnArr = generateDashboardResponse(400, "false", "Invalid image type: " . $_FILES['images']['name'][$key], "", "list_properties.php");
+                                $returnArr = generateDashboardResponse(400, "false", "Invalid image type: " . $_FILES['prop_img']['name'][$key], "", "list_properties.php");
                             }
-                        } else {
-                            // Handle error during file upload
-                            $returnArr = generateDashboardResponse(400, "false", "Error uploading image: " . $_FILES['images']['name'][$key], "", "list_properties.php");
                         }
                     }
                 }
@@ -1252,7 +1255,7 @@ try {
             }
 
             // Convert arrays to comma-separated strings
-            $imageUrlsString = implode(',', $imageUrls);
+            $imageUrlsString = implode(',', $imageUrls) ;
             $videoUrlsString = implode(',', $videoUrls);
             $table = "tbl_property";
 
@@ -1282,17 +1285,20 @@ try {
                 "sqrft" => "$sqft",
                 "ptype" => "$ptype",
                 "city" => "$city_json",
-                "listing_date" => "$listing_date",
                 "add_user_id" => "$propowner",
                 "pbuysell" => "$pbuysell",
                 "plimit" => "$plimit",
                 "max_days" => "$max_days",
                 "min_days" => "$min_days",
                 "cancel_reason" => "$cancel_reason",
-                'updated_at' => $updated_at
+                'updated_at' => $updated_at,
+                'is_need_review' => $need_review
             ];
             if (!empty($imageUrls)) {
-                $field_values["image"] =  $imageUrlsString;
+                $field_values["image"] =  $imageUrlsString . ',' . $existing_images;
+            }else {
+                $field_values["image"] =   $existing_images;
+
             }
 
             if (!empty($videoUrls)) {
@@ -1341,7 +1347,7 @@ try {
             $title = $rstate->real_escape_string($_POST["property_title"]);
 
             $table = "tbl_property";
-            $field = ["is_approved" => $okey];
+            $field = ["is_approved" => $okey , "is_need_review" => 0];
             $where = "where id=" . $id . "";
             $h = new Estate();
             $check = $h->restateupdateData($field, $table, $where);

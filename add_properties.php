@@ -346,36 +346,38 @@ if (isset($_GET['id'])) {
 
 
 											<div class="row">
-
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-													<div class="form-group mb-3">
-														<label id="prop_image">
+													<!-- Edit Property Images Section -->
+													<div class="form-group mb-3" id="edit-property-images" style="<?= isset($_GET['id']) ? '' : 'display:none;' ?>">
+														<label id="prop_image_edit">
 															<?= $lang_en['Property_Image'] ?>
 														</label>
-														<input type="file" class="form-control" id="prop_img_upload" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
+														<input type="file" class="form-control" id="prop_img_upload_edit" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="edit_property" />
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
-														<!-- Combined Images Slider -->
-														<div id="images-slider-container" style="margin-top:15px; <?php echo empty($data['image']) ? 'display:none;' : '' ?>">
+														<!-- Hidden input to track remaining existing images -->
+														<input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
+														<!-- Hidden input to track new image URLs -->
+
+														<!-- Edit Property Preview Container -->
+														<?php $property_images = !empty($data['image']) ? explode(',', $data['image']) : []; ?>
+														<div id="images-slider-container" style="margin-top:15px; <?= empty($property_images) ? 'display:none;' : '' ?>">
 															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
-																<div id="slides-wrapper" style="display:flex; transition:transform 0.3s ease;">
-																	<?php
-																	if (!empty($data['image'])) {
-																		$imagesArray = explode(',', $data['image']);
-																		foreach ($imagesArray as $index => $image) {
-																			$trimmedImage = trim($image);
-																			echo '<div class="slide" style="min-width:100%; text-align:center;">';
-																			echo '<img src="' . $trimmedImage . '" style="max-height:120px; max-width:100%; object-fit:contain;" />';
-																			echo '</div>';
-																		}
-																	}
-																	?>
+																<div id="slides-wrapper" class="slides-wrapper" style="display:flex; transition:transform 0.3s ease;">
+																	<?php if (!empty($property_images)): ?>
+																		<?php foreach ($property_images as $index => $image): ?>
+																			<div class="slide existing-image" data-index="<?= $index ?>" style="min-width:150px; padding:5px; position:relative;" data-image-path="<?= htmlspecialchars($image) ?>">
+																				<img src="<?= $image ?>" class="img-thumbnail" style="width:100%; height:100px; object-fit:cover; cursor:pointer;">
+																				<button type="button" class="btn btn-danger btn-xs remove-image" style="position:absolute; top:5px; right:5px; padding:0 5px;">×</button>
+																			</div>
+																		<?php endforeach; ?>
+																	<?php endif; ?>
 																</div>
 															</div>
-															<div id="slider-nav" style="text-align:center; margin-top:10px; <?php echo (empty($data['image']) || (count($imagesArray) <= 1) ? 'display:none;' : '') ?>">
+															<div id="slider-nav" style="text-align:center; margin-top:10px; <?= count($property_images) > 1 ? '' : 'display:none;' ?>">
 																<button type="button" class="btn btn-sm btn-success slider-prev" style="padding:2px 8px; margin-right:5px;">❮</button>
-																<span id="slider-counter">1/<?php echo !empty($data['image']) ? count($imagesArray) : '0' ?></span>
+																<span id="slider-counter">1/<?= count($property_images) ?></span>
 																<button type="button" class="btn btn-sm btn-success slider-next" style="padding:2px 8px; margin-left:5px;">❯</button>
 															</div>
 														</div>
@@ -384,8 +386,10 @@ if (isset($_GET['id'])) {
 															<?= $lang_en['prop_img'] ?>
 														</div>
 													</div>
-
 												</div>
+
+
+
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
@@ -1052,6 +1056,7 @@ if (isset($_GET['id'])) {
 														</label>
 														<input type="file" class="form-control" id="prop_img_upload_add" name="prop_img[]" required accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="add_property" />
+														<input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
 
 														<div id="upload-preview-container" style="margin-top:15px; display:none;">
 															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
@@ -1068,8 +1073,8 @@ if (isset($_GET['id'])) {
 															<?= $lang_en['prop_img'] ?>
 														</div>
 													</div>
-
 												</div>
+
 
 
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
@@ -1565,6 +1570,14 @@ if (isset($_GET['id'])) {
 		const beds = document.querySelector('input[name="beds"]').value;
 		const prop_price = document.querySelector('input[name="prop_price"]').value;
 
+		const existingImagesInput = document.querySelector('input[name="existing_images"]');
+		const existingImagesValue = existingImagesInput.value;
+
+		// Split the comma-separated string into an array
+		const remainingImages = existingImagesValue ? existingImagesValue.split(',') : [];
+
+		// Get the count of remaining images
+		const remainingImagesCount = remainingImages.length;
 		let isValid = true;
 		let isArabicValid = true;
 		let isEnglishValid = true;
@@ -1632,17 +1645,11 @@ if (isset($_GET['id'])) {
 			isArabicValid = false;
 
 		}
-		if (!propImage || files.length < 3) {
+		if (!propImage || (files.length + remainingImagesCount) < 3) {
 
+			document.getElementById('prop_img_feedback').style.display = 'block';
+			isValid = false;
 
-			if (edit && files.length == 0) {
-				isValid = true;
-
-			} else {
-				document.getElementById('prop_img_feedback').style.display = 'block';
-				isValid = false;
-
-			}
 		}
 		//		if (!propVideo) {
 		//			document.getElementById('prop_video_feedback').style.display = 'block';
@@ -1870,9 +1877,7 @@ if (isset($_GET['id'])) {
 	}
 </script>
 
-
 <script>
-	// Unified Image Slider Controller
 	class ImageSlider {
 		constructor(options) {
 			this.slidesWrapper = document.getElementById(options.slidesWrapperId);
@@ -1881,6 +1886,10 @@ if (isset($_GET['id'])) {
 			this.prevButton = document.querySelector(options.prevButtonSelector);
 			this.nextButton = document.querySelector(options.nextButtonSelector);
 			this.currentSlide = 0;
+			this.images = []; // Store image data
+			this.fileInput = options.fileInput || null;
+			this.slideWidth = options.slideWidth || 150;
+			this.previewModal = null; // Reference to the preview modal
 
 			this.initialize();
 		}
@@ -1892,47 +1901,184 @@ if (isset($_GET['id'])) {
 			}
 		}
 
-		updateSlides(files) {
+		updateSlides(files, reset = false) {
+			if (!files || files.length === 0) return;
+
+			if (reset) {
+				this.images = []; // Clear existing images if reset is true
+			}
+
+			const newImages = [];
+
+			// Filter out duplicates and non-images
+			Array.from(files).forEach(file => {
+				if (!file.type.match('image.*')) return;
+
+				// Check for duplicates by name and size
+				const isDuplicate = this.images.some(
+					img => img.file.name === file.name && img.file.size === file.size
+				);
+
+				if (!isDuplicate) {
+					newImages.push(file);
+				}
+			});
+
+			if (newImages.length === 0) return;
+
+			// Process new images
+			let loadedCount = 0;
+			newImages.forEach(file => {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					this.images.push({
+						file: file,
+						url: e.target.result
+					});
+					loadedCount++;
+
+					if (loadedCount === newImages.length) {
+						this.renderSlides();
+					}
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+
+		renderSlides() {
 			this.slidesWrapper.innerHTML = '';
 			this.currentSlide = 0;
 
-			if (files && files.length > 0) {
-				Array.from(files).forEach((file, index) => {
-					if (file.type.match('image.*')) {
-						const reader = new FileReader();
+			this.images.forEach((image, index) => {
+				const slide = document.createElement('div');
+				slide.className = 'slide';
+				slide.dataset.index = index;
+				slide.style.minWidth = `${this.slideWidth}px`;
+				slide.style.padding = '5px';
+				slide.style.position = 'relative';
 
-						reader.onload = (e) => {
-							const slide = document.createElement('div');
-							slide.className = 'slide';
-							slide.style.minWidth = '100%';
-							slide.style.textAlign = 'center';
+				const img = document.createElement('img');
+				img.src = image.url;
+				img.className = 'img-thumbnail';
+				img.style.width = '100%';
+				img.style.height = '100px';
+				img.style.objectFit = 'cover';
+				img.style.cursor = 'pointer';
+				img.addEventListener('click', () => this.showImagePreview(image.url));
 
-							const img = document.createElement('img');
-							img.src = e.target.result;
-							img.style.maxHeight = '120px';
-							img.style.maxWidth = '100%';
-							img.style.objectFit = 'contain';
-
-							slide.appendChild(img);
-							this.slidesWrapper.appendChild(slide);
-
-							this.updateControls();
-						};
-
-						reader.readAsDataURL(file);
-					}
+				const removeBtn = document.createElement('button');
+				removeBtn.type = 'button';
+				removeBtn.className = 'btn btn-danger btn-xs remove-image';
+				removeBtn.innerHTML = '×';
+				removeBtn.style.position = 'absolute';
+				removeBtn.style.top = '5px';
+				removeBtn.style.right = '5px';
+				removeBtn.style.padding = '0 5px';
+				removeBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					this.removeImage(index);
 				});
+
+				slide.appendChild(img);
+				slide.appendChild(removeBtn);
+				this.slidesWrapper.appendChild(slide);
+			});
+
+			this.updateControls();
+			this.updateFileInput();
+		}
+
+		removeImage(index) {
+			this.images.splice(index, 1);
+			this.renderSlides();
+
+			if (this.images.length === 0) {
+				this.slidesWrapper.innerHTML = '';
+				if (this.fileInput) this.fileInput.value = '';
+			}
+		}
+
+		updateFileInput() {
+			if (!this.fileInput) return;
+
+			const dataTransfer = new DataTransfer();
+			this.images.forEach(img => dataTransfer.items.add(img.file));
+			this.fileInput.files = dataTransfer.files;
+		}
+
+		showImagePreview(imageUrl) {
+			if (!this.previewModal) {
+				this.createPreviewModal();
+			}
+
+			this.previewModal.querySelector('img').src = imageUrl;
+			this.showModal();
+		}
+
+		createPreviewModal() {
+			this.previewModal = document.createElement('div');
+			this.previewModal.id = 'imagePreviewModal';
+			this.previewModal.className = 'modal fade';
+			this.previewModal.tabIndex = '-1';
+			this.previewModal.role = 'dialog';
+			this.previewModal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Image Preview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="" style="max-width: 100%; max-height: 80vh;">
+                    </div>
+                </div>
+            </div>
+        `;
+			document.body.appendChild(this.previewModal);
+
+			// Add close event listener
+			const closeBtn = this.previewModal.querySelector('.close');
+			closeBtn.addEventListener('click', () => this.hideModal());
+		}
+
+		showModal() {
+			if (typeof jQuery !== 'undefined' && jQuery.fn.modal) {
+				jQuery(this.previewModal).modal('show');
+			} else {
+				this.previewModal.style.display = 'block';
+				// Add backdrop
+				const backdrop = document.createElement('div');
+				backdrop.className = 'modal-backdrop fade show';
+				document.body.appendChild(backdrop);
+				this.previewModal.backdrop = backdrop;
+			}
+		}
+
+		hideModal() {
+			if (typeof jQuery !== 'undefined' && jQuery.fn.modal) {
+				jQuery(this.previewModal).modal('hide');
+			} else {
+				this.previewModal.style.display = 'none';
+				if (this.previewModal.backdrop) {
+					document.body.removeChild(this.previewModal.backdrop);
+				}
 			}
 		}
 
 		prevSlide() {
 			const slides = this.getSlides();
+			if (slides.length === 0) return;
+
 			this.currentSlide = (this.currentSlide - 1 + slides.length) % slides.length;
 			this.updateSlider();
 		}
 
 		nextSlide() {
 			const slides = this.getSlides();
+			if (slides.length === 0) return;
+
 			this.currentSlide = (this.currentSlide + 1) % slides.length;
 			this.updateSlider();
 		}
@@ -1944,7 +2090,8 @@ if (isset($_GET['id'])) {
 		updateSlider() {
 			const slides = this.getSlides();
 			if (slides.length > 0) {
-				this.slidesWrapper.style.transform = `translateX(-${this.currentSlide * 100}%)`;
+				const translateX = -this.currentSlide * this.slideWidth;
+				this.slidesWrapper.style.transform = `translateX(${translateX}px)`;
 				this.counterElement.textContent = `${this.currentSlide + 1}/${slides.length}`;
 			}
 		}
@@ -1961,7 +2108,7 @@ if (isset($_GET['id'])) {
 		}
 	}
 
-	// Initialize sliders based on which form is active
+	// Initialize sliders
 	document.addEventListener('DOMContentLoaded', function() {
 		// Edit Property Slider
 		const editSlider = new ImageSlider({
@@ -1969,7 +2116,9 @@ if (isset($_GET['id'])) {
 			navContainerId: 'slider-nav',
 			counterId: 'slider-counter',
 			prevButtonSelector: '.slider-prev',
-			nextButtonSelector: '.slider-next'
+			nextButtonSelector: '.slider-next',
+			fileInput: document.getElementById('prop_img_upload_edit'),
+			slideWidth: 150
 		});
 
 		// Upload Property Slider
@@ -1978,20 +2127,22 @@ if (isset($_GET['id'])) {
 			navContainerId: 'upload-nav',
 			counterId: 'upload-counter',
 			prevButtonSelector: '.upload-prev',
-			nextButtonSelector: '.upload-next'
+			nextButtonSelector: '.upload-next',
+			fileInput: document.getElementById('prop_img_upload_add'),
+			slideWidth: 150
 		});
 
 		// Handle edit property image uploads
 		document.getElementById('prop_img_upload_edit')?.addEventListener('change', function(e) {
 			const container = document.getElementById('images-slider-container');
-			container.style.display = 'block';
+			if (container) container.style.display = 'block';
 			editSlider.updateSlides(this.files);
 		});
 
 		// Handle add property image uploads
 		document.getElementById('prop_img_upload_add')?.addEventListener('change', function(e) {
 			const container = document.getElementById('upload-preview-container');
-			container.style.display = 'block';
+			if (container) container.style.display = 'block';
 			uploadSlider.updateSlides(this.files);
 		});
 
@@ -1999,6 +2150,200 @@ if (isset($_GET['id'])) {
 		if (document.querySelectorAll('#slides-wrapper .slide').length > 0) {
 			editSlider.updateControls();
 		}
+	});
+	class PropertyImageSlider extends ImageSlider {
+		constructor(options) {
+			super(options);
+			this.existingImagesInput = document.getElementById('existing_images');
+			this.existingImages = this.existingImagesInput.value ? this.existingImagesInput.value.split(',') : [];
+			this.newUploads = []; // Stores File objects of new uploads
+			this.newImageUrls = []; // Stores data URLs of new images
+
+			// Initialize with existing images
+			if (this.existingImages.length > 0) {
+				this.images = this.existingImages.map((url, index) => ({
+					url: url,
+					isNew: false,
+					originalIndex: index
+				}));
+				this.renderSlides();
+			}
+		}
+
+		updateSlides(files) {
+			if (!files || files.length === 0) return;
+
+			// Filter out duplicates
+			const newFiles = Array.from(files).filter(file => {
+				// Check against new uploads
+				const isNewDuplicate = this.newUploads.some(
+					f => f.name === file.name && f.size === file.size
+				);
+
+				// Check against existing images (by filename)
+				const existingFilename = file.name.toLowerCase();
+				const isExistingDuplicate = this.existingImages.some(
+					url => url.toLowerCase().includes(existingFilename)
+				);
+
+				return file.type.match('image.*') && !isNewDuplicate && !isExistingDuplicate;
+			});
+
+			if (newFiles.length === 0) return;
+
+			// Store File objects for form submission
+			this.newUploads = [...this.newUploads, ...newFiles];
+			this.updateFileInput();
+
+			// Process images for preview
+			let loadedCount = 0;
+			newFiles.forEach(file => {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					const newImage = {
+						url: e.target.result,
+						isNew: true,
+						file: file
+					};
+
+					// PREPEND new images (add to beginning)
+					this.images.unshift(newImage);
+					this.newImageUrls.unshift(e.target.result);
+
+					loadedCount++;
+
+					if (loadedCount === newFiles.length) {
+						// Force full re-render to maintain proper order
+						this.renderSlides();
+						this.updateHiddenInputs();
+
+						// Show container if hidden
+						const container = document.getElementById('images-slider-container');
+						if (container) container.style.display = 'block';
+					}
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+
+		updateHiddenInputs() {
+			// Update existing images input with remaining paths
+			const remainingExisting = this.images
+				.filter(img => !img.isNew)
+				.map(img => img.url);
+			this.existingImagesInput.value = remainingExisting.join(',');
+
+			// Update new images input
+			const newImageUrls = this.images
+				.filter(img => img.isNew)
+				.map(img => img.url);
+			// You might want to add this if you need to track new image URLs separately
+			// this.newImagesInput.value = newImageUrls.join(',');
+		}
+
+		renderSlides() {
+			this.slidesWrapper.innerHTML = '';
+			this.currentSlide = 0;
+
+			// Render all images (new ones will be first since we unshifted them)
+			this.images.forEach((image, index) => {
+				const slide = this.createSlideElement(image, index);
+				this.slidesWrapper.appendChild(slide);
+			});
+
+			this.updateControls();
+			this.updateFileInput();
+		}
+
+		updateFileInput() {
+			// Update the actual file input with File objects
+			const dataTransfer = new DataTransfer();
+			this.newUploads.forEach(file => dataTransfer.items.add(file));
+			this.fileInput.files = dataTransfer.files;
+		}
+
+		createSlideElement(image, index) {
+			const slide = document.createElement('div');
+			slide.className = image.isNew ? 'slide new-image' : 'slide existing-image';
+			slide.dataset.index = index;
+			slide.style.minWidth = `${this.slideWidth}px`;
+			slide.style.padding = '5px';
+			slide.style.position = 'relative';
+
+			const img = document.createElement('img');
+			img.src = image.url;
+			img.className = 'img-thumbnail';
+			img.style.width = '100%';
+			img.style.height = '100px';
+			img.style.objectFit = 'cover';
+			img.style.cursor = 'pointer';
+			img.addEventListener('click', () => this.showImagePreview(image.url));
+
+			const removeBtn = document.createElement('button');
+			removeBtn.type = 'button';
+			removeBtn.className = 'btn btn-danger btn-xs remove-image';
+			removeBtn.innerHTML = '×';
+			removeBtn.style.position = 'absolute';
+			removeBtn.style.top = '5px';
+			removeBtn.style.right = '5px';
+			removeBtn.style.padding = '0 5px';
+			removeBtn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				this.removeImage(index);
+			});
+			slide.appendChild(removeBtn);
+
+			slide.appendChild(img);
+			return slide;
+		}
+
+		removeImage(index) {
+			const imageToRemove = this.images[index];
+
+			if (imageToRemove.isNew) {
+				// Remove from new images tracking
+				const urlIndex = this.newImageUrls.indexOf(imageToRemove.url);
+				if (urlIndex > -1) {
+					this.newImageUrls.splice(urlIndex, 1);
+				}
+
+				// Remove corresponding File object
+				const filename = imageToRemove.url.split('/').pop();
+				this.newUploads = this.newUploads.filter(file => !file.name.includes(filename));
+			} else {
+				// Remove from existing images tracking
+				this.existingImages = this.existingImages.filter(url => url !== imageToRemove.url);
+			}
+
+			// Remove from display
+			this.images.splice(index, 1);
+
+			this.updateHiddenInputs();
+			this.updateFileInput();
+			this.renderSlides();
+
+			// Hide container if no images left
+			if (this.images.length === 0) {
+				document.getElementById('images-slider-container').style.display = 'none';
+			}
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const editSlider = new PropertyImageSlider({
+			slidesWrapperId: 'slides-wrapper',
+			navContainerId: 'slider-nav',
+			counterId: 'slider-counter',
+			prevButtonSelector: '.slider-prev',
+			nextButtonSelector: '.slider-next',
+			fileInput: document.getElementById('prop_img_upload_edit'),
+			slideWidth: 150
+		});
+
+		// Handle file uploads
+		document.getElementById('prop_img_upload_edit')?.addEventListener('change', function(e) {
+			editSlider.updateSlides(this.files);
+		});
 	});
 </script>
 <script>
@@ -2021,92 +2366,90 @@ if (isset($_GET['id'])) {
 
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-    // Map Arabic input names to their English counterparts
-    const fieldMap = {
-        'title_ar': 'title_en',
-        'address_ar': 'address_en',
-        'description_ar': 'description_en',
-        'guest_rules_ar': 'guest_rules_en',
-        'compound_name_ar': 'compound_name_en',
-        'floor_ar': 'floor_en',
-        'city_ar': 'city_en'
-    };
+		// Map Arabic input names to their English counterparts
+		const fieldMap = {
+			'title_ar': 'title_en',
+			'address_ar': 'address_en',
+			'description_ar': 'description_en',
+			'guest_rules_ar': 'guest_rules_en',
+			'compound_name_ar': 'compound_name_en',
+			'floor_ar': 'floor_en',
+			'city_ar': 'city_en'
+		};
 
-    // Set up event listeners for all Arabic fields
-    Object.keys(fieldMap).forEach(arField => {
-        const inputElement = document.querySelector(`input[name="${arField}"], textarea[name="${arField}"]`);
-        
-        if (inputElement) {
-            let debounceTimer;
-            
-            inputElement.addEventListener('input', function() {
-                clearTimeout(debounceTimer);
-                
-                // Only translate if there's content and the field is in the Arabic tab
-                if (this.value.trim() !== '' && this.closest('.tab-pane').id === 'ar') {
-                    debounceTimer = setTimeout(() => {
-                        translateField(this.value, fieldMap[arField]);
-                    }, 800); // 800ms delay after typing stops
-                }
-            });
-        }
-    });
+		// Set up event listeners for all Arabic fields
+		Object.keys(fieldMap).forEach(arField => {
+			const inputElement = document.querySelector(`input[name="${arField}"], textarea[name="${arField}"]`);
 
-    // Single translation function for all fields
-    async function translateField(text, targetFieldName) {
-        try {
-            const targetElement = document.querySelector(`input[name="${targetFieldName}"], textarea[name="${targetFieldName}"]`);
-            if (!targetElement) return;
-            
-            // Show translating state
-            const originalPlaceholder = targetElement.placeholder;
-            const originalValue = targetElement.value;
-            targetElement.placeholder = "Translating...";
-            targetElement.value = "";
-            
-            // Encode the text for URL
-            const encodedText = encodeURIComponent(text);
-            
-            // Call your translation API
-            const response = await fetch(`user_api/translate-proxy.php?sl=ar&dl=en&text=${encodedText}`
-	
-			);
-            
-           if (!response.ok) {
-			targetElement.placeholder = originalPlaceholder;
-            targetElement.value = originalValue;
-            
-		   }
-            
-            const translatedText = await response.json();
-            
-            // Only update if the target field is still empty
-            if (targetElement.value === "" || targetElement.value === originalValue) {
-                targetElement.value = translatedText['data']['destination-text'] ;
-            }
-            targetElement.placeholder = originalPlaceholder;
-            
-        } catch (error) {
-            console.error('Translation error:', error);
-            targetElement.placeholder = "Translation failed - try again";
-            targetElement.value = originalValue;
-        }
-    }
+			if (inputElement) {
+				let debounceTimer;
 
-    // Tab switching functionality for Bootstrap
-    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = this.getAttribute('href');
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.classList.remove('show', 'active');
-            });
-            document.querySelector(target).classList.add('show', 'active');
-        });
-    });
-});
+				inputElement.addEventListener('input', function() {
+					clearTimeout(debounceTimer);
 
+					// Only translate if there's content and the field is in the Arabic tab
+					if (this.value.trim() !== '' && this.closest('.tab-pane').id === 'ar') {
+						debounceTimer = setTimeout(() => {
+							translateField(this.value, fieldMap[arField]);
+						}, 800); // 800ms delay after typing stops
+					}
+				});
+			}
+		});
 
+		// Single translation function for all fields
+		async function translateField(text, targetFieldName) {
+			try {
+				const targetElement = document.querySelector(`input[name="${targetFieldName}"], textarea[name="${targetFieldName}"]`);
+				if (!targetElement) return;
+
+				// Show translating state
+				const originalPlaceholder = targetElement.placeholder;
+				const originalValue = targetElement.value;
+				targetElement.placeholder = "Translating...";
+				targetElement.value = "";
+
+				// Encode the text for URL
+				const encodedText = encodeURIComponent(text);
+
+				// Call your translation API
+				const response = await fetch(`user_api/translate-proxy.php?sl=ar&dl=en&text=${encodedText}`
+
+				);
+
+				if (!response.ok) {
+					targetElement.placeholder = originalPlaceholder;
+					targetElement.value = originalValue;
+
+				}
+
+				const translatedText = await response.json();
+
+				// Only update if the target field is still empty
+				if (targetElement.value === "" || targetElement.value === originalValue) {
+					targetElement.value = translatedText['data']['destination-text'];
+				}
+				targetElement.placeholder = originalPlaceholder;
+
+			} catch (error) {
+				console.error('Translation error:', error);
+				targetElement.placeholder = "Translation failed - try again";
+				targetElement.value = originalValue;
+			}
+		}
+
+		// Tab switching functionality for Bootstrap
+		document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+			tab.addEventListener('click', function(e) {
+				e.preventDefault();
+				const target = this.getAttribute('href');
+				document.querySelectorAll('.tab-pane').forEach(pane => {
+					pane.classList.remove('show', 'active');
+				});
+				document.querySelector(target).classList.add('show', 'active');
+			});
+		});
+	});
 </script>
 <style>
 	.slides-container {
