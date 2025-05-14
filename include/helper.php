@@ -42,7 +42,7 @@ function generateDashboardResponse($response_code,  $result,  $title,  $response
     //http_response_code($response_code);
 
     // Return the response as JSON
-    return json_encode($response);
+    return $response;
 }
 function sendMessage($mobiles, $message)
 {

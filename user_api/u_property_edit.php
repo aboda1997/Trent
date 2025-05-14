@@ -19,7 +19,6 @@ try {
 	$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
 	$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
 	$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
-	$listing_date = date("Y-m-d H:i:s");
 	$price = isset($_POST['price']) ? $_POST['price'] : '';
 	$plimit = isset($_POST['guest_count']) ? $_POST['guest_count'] : '';
 	$pbuysell = 1;
@@ -85,7 +84,7 @@ try {
 	// Validate the string
 
 
-	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''   or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $price == '') {
 
 		$returnArr    = generateResponse('false', "Something Went Wrong!", 400);
 	} else if (validateFacilityIds($facility) === 0) {
@@ -158,7 +157,6 @@ try {
 				"sqrft" => $sqft,
 				"ptype" => $ptype,
 				"city" => $ccount_json,
-				"listing_date" => $listing_date,
 				"cancel_reason" => '',
 				"latitude" => $latitude,
 				"longitude" => $longitude,

@@ -14,7 +14,6 @@ try {
 	$beds = isset($_POST['beds_count']) ? $_POST['beds_count'] : '';
 	$bathroom = isset($_POST['bathrooms_count']) ? $_POST['bathrooms_count'] : '';
 	$sqft = isset($_POST['sqft']) ? $_POST['sqft'] : '';
-	$listing_date = date("Y-m-d H:i:s");
 	$price = isset($_POST['price']) ? $_POST['price'] : '';
 	$plimit = isset($_POST['guest_count']) ? $_POST['guest_count'] : '';
 	$pbuysell = 1;
@@ -84,7 +83,8 @@ try {
 	], JSON_UNESCAPED_UNICODE);
 
 
-	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == '' or $listing_date == '' or $price == '') {
+	if ($user_id == '' or $cancellation_policy_id == '' or $period == '' or $government == ''  or $google_maps_url == '' or  $floor_ar == '' or $floor_en == '' or $guest_rules_ar  == '' or $guest_rules_en == ''  or $pbuysell == '' or  $plimit == '' or $status == '' or $title_ar == '' or $title_en == '' or $address_ar == '' or $address_en == '' or $description_ar == '' or $description_en == '' or $ccount_ar == '' or $ccount_en == '' or $facility == '' or $ptype == '' or $beds == '' or $bathroom == '' or $sqft == ''
+	or $price == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 	} else if (validateFacilityIds($facility) === false) {
 		$returnArr = generateResponse('false', "Facilities Ids must be valid!", 400);
@@ -207,8 +207,8 @@ try {
 			$table = "tbl_property";
 			$date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
 			$updated_at = $date->format('Y-m-d H:i:s');
-			$field_values = [ "updated_at", "image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city", "listing_date", "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-			$data_values = ["$updated_at","$imageUrlsString", $cancellation_policy_id,"$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json", "$listing_date", "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+			$field_values = [ "updated_at", "image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url" ,"latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+			$data_values = ["$updated_at","$imageUrlsString", $cancellation_policy_id,"$period", "$is_featured", "$security_deposit", "$government","$google_maps_url" , "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json",  "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
 			$h = new Estate();
 			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
