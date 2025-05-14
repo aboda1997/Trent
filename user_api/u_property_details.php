@@ -65,7 +65,7 @@ try {
 
 
 		$fp['price'] = $sel['price'];
-		$fp['is_deleted'] = (bool) (!$sel['status']);
+		$fp['is_published'] = (bool) ($sel['status']);
 		$fp['buy_or_rent'] = $sel['pbuysell'];
 		$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
 

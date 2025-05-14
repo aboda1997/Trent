@@ -193,7 +193,7 @@ try {
 		} else {
 			$pol['category_type'] = null;
 		}
-		$pol['is_deleted'] = (bool) (!$row['status']);
+		$pol['is_published'] = (bool) ($row['status']);
 
 		$pol['image_list'] = $vr;
 		$pol['price'] = $row['price'];
