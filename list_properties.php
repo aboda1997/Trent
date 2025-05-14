@@ -178,7 +178,7 @@ where is_approved = 1
                               data-id="<?php echo $row['id']; ?>"
                               data-status="<?php echo $row['status']; ?>"
                               style="cursor: pointer;">
-                              <?php echo $row['status']  ? "Publish" : "Unpublish"; ?>
+                              <?php echo $row['status']  ? "Published" : "Unpublished"; ?>
                             </span>
                             
                           </td>
@@ -273,7 +273,7 @@ where is_approved = 1
 
           if (res.ResponseCode === "200" && res.Result === "true") {
             // Toggle text and badge color
-            $this.text(newStatus === 1 ? "Publish" : "Unpublish");
+            $this.text(newStatus === 1 ? "Published" : "Unpublished");
             $this.data("status", newStatus); // Update status in data attribute
 
             // Remove previous badge class and add new one
