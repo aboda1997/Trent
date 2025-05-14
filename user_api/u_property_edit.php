@@ -157,7 +157,6 @@ try {
 				"sqrft" => $sqft,
 				"ptype" => $ptype,
 				"city" => $ccount_json,
-				"cancel_reason" => '',
 				"latitude" => $latitude,
 				"longitude" => $longitude,
 				'is_need_review'=>0,
