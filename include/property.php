@@ -3,6 +3,8 @@ require "reconfig.php";
 require "estate.php";
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
+require dirname(dirname(__FILE__)) . '/user_api/notifications/send_notification.php';
+
 try {
     if (isset($_POST["type"])) {
 
@@ -916,13 +918,13 @@ try {
             $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
 
             if ($is_approved == '0') {
-                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+                //deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
                 $need_review = 1;
 
             }
 
             if ($is_approved == '1') {
-                approve_property($rstate, $propowner, $title_ar);
+             //   approve_property($rstate, $propowner, $title_ar);
                 $need_review = 0;
 
             }
@@ -1353,7 +1355,7 @@ try {
             $check = $h->restateupdateData($field, $table, $where);
 
             if ($check == 1) {
-                approve_property($rstate, $uid, $title);
+                approve_property($rstate, $uid, $title , $id);
 
                 $returnArr = [
                     "ResponseCode" => "200",
@@ -2283,6 +2285,7 @@ WHERE
 
 function deny_property(string $reason,  $id, $uid, $title, $rstate)
 {
+
     $table = "tbl_property";
     
     $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
@@ -2302,11 +2305,12 @@ function deny_property(string $reason,  $id, $uid, $title, $rstate)
     // Create the message
     $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
     $result = sendMessage([$ccode . $new_mobile], $message);
+    $firebase_notification = sendFirebaseNotification($message, $message, $uid , "property_id" , $id);
 
     return $check;
 }
 
-function approve_property($rstate, $uid, $title_ar)
+function approve_property($rstate, $uid, $title_ar , $id)
 {
     $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
@@ -2316,6 +2320,8 @@ function approve_property($rstate, $uid, $title_ar)
     $message = "يسعدنا إعلامكم بأنه تم نشر العقار ($title_ar) الخاص بكم
     مع تحيات فريق Trent";
     $result = sendMessage([$ccode . $new_mobile], $message);
+    $firebase_notification = sendFirebaseNotification($message, $message, $uid , "property_id" , $id);
+
 }
 function downloadCSV($headers, $data)
 {

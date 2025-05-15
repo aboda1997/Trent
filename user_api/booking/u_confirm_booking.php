@@ -6,6 +6,7 @@ require dirname(dirname(__FILE__), 2) . '/include/constants.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
@@ -49,6 +50,7 @@ try {
         $uid = $booking_data['uid'];
         $user = $rstate->query("select  mobile, ccode	 from tbl_user where  id= $uid ")->fetch_assoc();
         $title = json_decode($booking_data['prop_title'], true)['ar'];
+        $prop_id = $booking_data['prop_id'];
         $h = new Estate();
         if ($is_confirmed == 'true') {
             $mobile = $user["mobile"];
@@ -57,7 +59,7 @@ try {
             
             $whatsapp = sendMessage([$ccode . $mobile], $message);
 
-            $firebase_notification = sendFirebaseNotification($message, $message, $uid);
+            $firebase_notification = sendFirebaseNotification($message, $message, $uid , "booking_id" , $booking_id);
             $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
 
 
@@ -77,7 +79,7 @@ try {
             $ccode = $user["ccode"];
 
             $whatsapp = sendMessage([$ccode . $mobile], $message);
-            $firebase_notification = sendFirebaseNotification($message, $message, $uid);
+            $firebase_notification = sendFirebaseNotification($message, $message, $uid ,  "booking_id" , $booking_id);
             $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
 
 

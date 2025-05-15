@@ -38,7 +38,8 @@ try {
     ,  JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.$lang_code')) AS city_name
      ,p.price,
      JSON_UNQUOTE(JSON_EXTRACT(c.title, '$.$lang_code')) AS title,
-      p.ptype
+      p.ptype,
+      c.img
      
 
     FROM tbl_property p
@@ -85,7 +86,7 @@ try {
 
             if (!in_array($row['title'], $ptypes)) {
                 $ptypes[] = $row['title'];
-                $cat_list[] = ['title'=>$row['title'] , 'id' =>$row['ptype'] ];
+                $cat_list[] = ['title'=>$row['title'] , 'id' =>$row['ptype'] ,'img'=> $row['img'] ];
             }
 
             // Collect all prices for min/max calculation
