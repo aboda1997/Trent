@@ -363,7 +363,9 @@ require 'include/footer.php';
     // When save button is clicked
     $('#confirmApproveBtn').click(function() {
 
-
+  // Disable the button to prevent multiple clicks
+  var saveButton = $(this);
+  saveButton.prop('disabled', true);
       var formData = $('#approveForm').serialize();
 
       // Here you would typically make an AJAX call to save the data
@@ -407,6 +409,9 @@ require 'include/footer.php';
 
     // When save button is clicked
     $('#saveDeny').click(function() {
+      // Disable the button to prevent multiple clicks
+  var saveButton = $(this);
+  saveButton.prop('disabled', true);
       var reasonInput = $('#denyReason');
       var reason = reasonInput.val().trim();
 

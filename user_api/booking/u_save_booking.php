@@ -1,10 +1,11 @@
 <?php
-require_once dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
-require_once dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
+require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
@@ -112,13 +113,14 @@ try {
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
     
-            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id , $res_data['image']);
             $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
             $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $fp['book_status'] = 'Booked';
+            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id ,'booking_id' , $check, $res_data['image']);
+
             $fp['book_id'] = $check;
 
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(

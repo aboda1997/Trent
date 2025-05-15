@@ -1,7 +1,6 @@
 <?php
 
 require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
-require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 require dirname(dirname(__FILE__), 2) . '/vendor/autoload.php';
 
 use Google\Auth\Credentials\ServiceAccountCredentials;
@@ -12,8 +11,11 @@ function sendFirebaseNotification(
     string $title,
     string $body,
     string $uid,
+    $key, 
+    $value,
     ?string $imageUrl = null,
-    ?string $linkUrl = null
+    ?string $linkUrl = null, 
+   
 ): string {
     // Initialize credentials
     $credential = new ServiceAccountCredentials(
@@ -75,23 +77,23 @@ function sendFirebaseNotification(
         // Check if request was successful first
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($httpCode < 200 || $httpCode >= 300) {
-            return false;
-        }
+      
     
         $GLOBALS['rstate']->begin_transaction();
 
         $h = new Estate();
-        $table = "tbl_notification_head";
+        $table1 = "tbl_notification_head";
+        $table2 = "tbl_notification_body";
         $field_values = ["uid", "created_at", "is_seen", "title" , "body" , "img"];
-        $created_at = date('Y-m-d H:i:s');
+        $field_values2 = ["head_id", "name" , 'value'];
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d');
         $data_values = [$uid, $created_at ,0 , $title , $body , $imageUrl  ];
 
-        $_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+        $_id = $h->restateinsertdata_Api($field_values, $data_values, $table1);
+        $data_values2 = [$_id,$key , $value ];
 
-        if (!$_id) {
-            return false;
-        }
+        $_ned = $h->restateinsertdata_Api($field_values2, $data_values2, $table2);
 
         $GLOBALS['rstate']->commit();
         

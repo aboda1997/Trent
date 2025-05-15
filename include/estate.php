@@ -47,16 +47,21 @@ class Estate {
   return $GLOBALS['rstate']->insert_id;
   }
   
-  function restateinsertdata_Api($field,$data,$table){
+  function restateinsertdata_Api($field, $data, $table)
+  {
 
-    $field_values= implode(',',$field);
-    $data_values=implode("','",$data);
+    $field_values = implode(',', $field);
+    $placeholders = implode(',', array_fill(0, count($field), '?'));
 
-    $sql = "INSERT INTO $table($field_values)VALUES('$data_values')";
-    $result=$GLOBALS['rstate']->query($sql);
-  return $result;
+    $sql = "INSERT INTO $table ($field_values) VALUES ($placeholders)";
+    $stmt = $GLOBALS['rstate']->prepare($sql);
+
+    // Execute query with provided data
+    $stmt->execute($data);
+    // Get the last inserted ID
+    $lastId = $GLOBALS['rstate']->insert_id;
+    return $lastId;
   }
-  
   function restateinsertdata_Api_Id($field,$data,$table){
 
     $field_values= implode(',',$field);

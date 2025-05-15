@@ -27,7 +27,7 @@ try {
     } else {
         $pol = array();
         $c = array();
-        $query = "SELECT *  FROM tbl_notification_head  WHERE  uid =" . $uid . "  ORDER BY id DESC    ";
+        $query = "SELECT h.* , b.name , b.value FROM tbl_notification_head h left join tbl_notification_body b on b.head_id = h.id WHERE  uid =" . $uid . "  ORDER BY id DESC    ";
         $sel_length  = $rstate->query($query)->num_rows;
         $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
         $sel = $rstate->query($query);
@@ -38,6 +38,8 @@ try {
             $pol['title'] = $row['title'];
             $pol['created_at'] = $row['created_at'];
             $pol['body'] = $row['body'];
+            $pol['key'] = $row['name'];
+            $pol['value'] = $row['value'];
             $pol['is_seen'] = (bool)$row['is_seen'];
             $imageArray = array_filter( explode(',', $row['img'] ?? '' ));
             $vr =array();
