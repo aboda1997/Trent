@@ -346,47 +346,59 @@ if (isset($_GET['id'])) {
 
 
 											<div class="row">
-												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
-													<!-- Edit Property Images Section -->
-													<div class="form-group mb-3" id="edit-property-images" style="<?= isset($_GET['id']) ? '' : 'display:none;' ?>">
-														<label id="prop_image_edit">
-															<?= $lang_en['Property_Image'] ?>
-														</label>
-														<input type="file" class="form-control" id="prop_img_upload_edit" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
-														<input type="hidden" name="type" value="edit_property" />
-														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+											<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
+    <!-- Edit Property Images Section -->
+    <div class="form-group mb-3" id="edit-property-images" style="<?= isset($_GET['id']) ? '' : 'display:none;' ?>">
+        <label id="prop_image_edit">
+            <?= $lang_en['Property_Image'] ?>
+        </label>
+        <input type="file" class="form-control" id="prop_img_upload_edit" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
+        <input type="hidden" name="type" value="edit_property" />
+        <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
 
-														<!-- Hidden input to track remaining existing images -->
-														<input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
-														<!-- Hidden input to track new image URLs -->
+        <!-- Hidden inputs -->
+        <input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
+        <input type="hidden" id="existing_videos" name="existing_videos" value="<?= htmlspecialchars($data['video'] ?? '') ?>">
 
-														<!-- Edit Property Preview Container -->
-														<?php $property_images = !empty($data['image']) ? explode(',', $data['image']) : []; ?>
-														<div id="images-slider-container" style="margin-top:15px; <?= empty($property_images) ? 'display:none;' : '' ?>">
-															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
-																<div id="slides-wrapper" class="slides-wrapper" style="display:flex; transition:transform 0.3s ease;">
-																	<?php if (!empty($property_images)): ?>
-																		<?php foreach ($property_images as $index => $image): ?>
-																			<div class="slide existing-image" data-index="<?= $index ?>" style="min-width:150px; padding:5px; position:relative;" data-image-path="<?= htmlspecialchars($image) ?>">
-																				<img src="<?= $image ?>" class="img-thumbnail" style="width:100%; height:100px; object-fit:cover; cursor:pointer;">
-																				<button type="button" class="btn btn-danger btn-xs remove-image" style="position:absolute; top:5px; right:5px; padding:0 5px;">×</button>
-																			</div>
-																		<?php endforeach; ?>
-																	<?php endif; ?>
-																</div>
-															</div>
-															<div id="slider-nav" style="text-align:center; margin-top:10px; <?= count($property_images) > 1 ? '' : 'display:none;' ?>">
-																<button type="button" class="btn btn-sm btn-success slider-prev" style="padding:2px 8px; margin-right:5px;">❮</button>
-																<span id="slider-counter">1/<?= count($property_images) ?></span>
-																<button type="button" class="btn btn-sm btn-success slider-next" style="padding:2px 8px; margin-left:5px;">❯</button>
-															</div>
-														</div>
+        <!-- Combined Preview Container -->
+        <?php 
+        $property_images = !empty($data['image']) ? explode(',', $data['image']) : [];
+        $property_videos = !empty($data['video']) ? explode(',', $data['video']) : [];
+        $all_media = array_merge($property_images, $property_videos);
+        ?>
+        <div id="images-slider-container" style="margin-top:15px; <?= empty($all_media) ? 'display:none;' : '' ?>">
+            <div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
+                <div id="slides-wrapper" class="slides-wrapper" style="display:flex; transition:transform 0.3s ease;">
+                    <?php foreach ($property_images as $index => $image): ?>
+                        <!-- Image Slide -->
+                        <div class="slide existing-image" data-index="<?= $index ?>" style="min-width:150px; padding:5px; position:relative;" data-image-path="<?= htmlspecialchars($image) ?>">
+                            <img src="<?= $image ?>" class="img-thumbnail" style="width:100%; height:100px; object-fit:cover; cursor:pointer;">
+                            <button type="button" class="btn btn-danger btn-xs remove-image" style="position:absolute; top:5px; right:5px; padding:0 5px;">×</button>
+                        </div>
+                    <?php endforeach; ?>
+                    
+                    <?php foreach ($property_videos as $index => $video): ?>
+                        <!-- Video Slide -->
+                        <div class="slide existing-video" data-index="<?= $index + count($property_images) ?>" style="min-width:150px; padding:5px; position:relative;" data-video-path="<?= htmlspecialchars($video) ?>">
+                            <img src="<?= str_replace(['.mp4','.mov','.avi'], '.jpg', $video) ?>" class="img-thumbnail" style="width:100%; height:100px; object-fit:cover; cursor:pointer;">
+                            <button type="button" class="btn btn-danger btn-xs remove-video" style="position:absolute; top:5px; right:5px; padding:0 5px;">×</button>
+                            <div class="play-icon" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:white; font-size:30px; text-shadow:0 0 5px rgba(0,0,0,0.5);">▶</div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div id="slider-nav" style="text-align:center; margin-top:10px; <?= count($all_media) > 1 ? '' : 'display:none;' ?>">
+                <button type="button" class="btn btn-sm btn-success slider-prev" style="padding:2px 8px; margin-right:5px;">❮</button>
+                <span id="slider-counter">1/<?= count($all_media) ?></span>
+                <button type="button" class="btn btn-sm btn-success slider-next" style="padding:2px 8px; margin-left:5px;">❯</button>
+            </div>
+        </div>
 
-														<div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
-															<?= $lang_en['prop_img'] ?>
-														</div>
-													</div>
-												</div>
+        <div class="invalid-feedback" id="prop_img_feedback" style="display: none;">
+            <?= $lang_en['prop_img'] ?>
+        </div>
+    </div>
+</div>
 
 
 
@@ -1476,6 +1488,26 @@ if (isset($_GET['id'])) {
 </div>
 <!-- latest jquery-->
 
+<!-- Video Preview Modal -->
+<div class="modal fade" id="videoPreviewModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Video Preview</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <video controls style="max-width: 100%; max-height: 80vh;" id="modal-video-player">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 
@@ -2151,200 +2183,236 @@ if (isset($_GET['id'])) {
 			editSlider.updateControls();
 		}
 	});
-	class PropertyImageSlider extends ImageSlider {
-		constructor(options) {
-			super(options);
-			this.existingImagesInput = document.getElementById('existing_images');
-			this.existingImages = this.existingImagesInput.value ? this.existingImagesInput.value.split(',') : [];
-			this.newUploads = []; // Stores File objects of new uploads
-			this.newImageUrls = []; // Stores data URLs of new images
+	class PropertyMediaSlider {
+    constructor(options) {
+        this.slidesWrapper = document.getElementById(options.slidesWrapperId);
+        this.navContainer = document.getElementById(options.navContainerId);
+        this.counterElement = document.getElementById(options.counterId);
+        this.prevButton = document.querySelector(options.prevButtonSelector);
+        this.nextButton = document.querySelector(options.nextButtonSelector);
+        this.currentSlide = 0;
+        this.slideWidth = options.slideWidth || 150;
+        this.fileInput = options.fileInput || null;
+        
+        this.existingImagesInput = document.getElementById('existing_images');
+        this.existingVideosInput = document.getElementById('existing_videos');
+        this.existingImages = this.existingImagesInput.value ? this.existingImagesInput.value.split(',') : [];
+        this.existingVideos = this.existingVideosInput.value ? this.existingVideosInput.value.split(',') : [];
+        
+        this.initialize();
+    }
 
-			// Initialize with existing images
-			if (this.existingImages.length > 0) {
-				this.images = this.existingImages.map((url, index) => ({
-					url: url,
-					isNew: false,
-					originalIndex: index
-				}));
-				this.renderSlides();
-			}
-		}
+    initialize() {
+        if (this.prevButton && this.nextButton) {
+            this.prevButton.addEventListener('click', () => this.prevSlide());
+            this.nextButton.addEventListener('click', () => this.nextSlide());
+        }
 
-		updateSlides(files) {
-			if (!files || files.length === 0) return;
+        // Handle image removal
+        this.slidesWrapper.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-image')) {
+                const slide = e.target.closest('.existing-image');
+                const index = parseInt(slide.dataset.index);
+                this.removeImage(index);
+            }
+        });
 
-			// Filter out duplicates
-			const newFiles = Array.from(files).filter(file => {
-				// Check against new uploads
-				const isNewDuplicate = this.newUploads.some(
-					f => f.name === file.name && f.size === file.size
-				);
+        // Handle video removal
+        this.slidesWrapper.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-video')) {
+                const slide = e.target.closest('.existing-video');
+                const index = parseInt(slide.dataset.index) - this.existingImages.length;
+                this.removeVideo(index);
+            }
+        });
 
-				// Check against existing images (by filename)
-				const existingFilename = file.name.toLowerCase();
-				const isExistingDuplicate = this.existingImages.some(
-					url => url.toLowerCase().includes(existingFilename)
-				);
+        // Handle video clicks
+        this.slidesWrapper.addEventListener('click', (e) => {
+            const videoThumb = e.target.closest('.existing-video');
+            const playIcon = e.target.classList.contains('play-icon');
+            
+            if (videoThumb || playIcon) {
+                const videoSlide = videoThumb || e.target.closest('.existing-video');
+                const videoUrl = videoSlide.dataset.videoPath;
+                this.previewVideo(videoUrl);
+            }
+        });
+    }
 
-				return file.type.match('image.*') && !isNewDuplicate && !isExistingDuplicate;
-			});
+    previewVideo(videoUrl) {
+        const modal = document.getElementById('videoPreviewModal');
+        const videoPlayer = document.getElementById('modal-video-player');
+        videoPlayer.src = videoUrl;
+        videoPlayer.load();
+        $(modal).modal('show');
+    }
 
-			if (newFiles.length === 0) return;
+    removeImage(index) {
+        this.existingImages.splice(index, 1);
+        this.existingImagesInput.value = this.existingImages.join(',');
+        this.renderSlides();
+    }
 
-			// Store File objects for form submission
-			this.newUploads = [...this.newUploads, ...newFiles];
-			this.updateFileInput();
+    removeVideo(index) {
+        this.existingVideos.splice(index, 1);
+        this.existingVideosInput.value = this.existingVideos.join(',');
+        this.renderSlides();
+    }
 
-			// Process images for preview
-			let loadedCount = 0;
-			newFiles.forEach(file => {
-				const reader = new FileReader();
-				reader.onload = (e) => {
-					const newImage = {
-						url: e.target.result,
-						isNew: true,
-						file: file
-					};
+    renderSlides() {
+        this.slidesWrapper.innerHTML = '';
+        this.currentSlide = 0;
 
-					// PREPEND new images (add to beginning)
-					this.images.unshift(newImage);
-					this.newImageUrls.unshift(e.target.result);
+        // Render images
+        this.existingImages.forEach((image, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'slide existing-image';
+            slide.dataset.index = index;
+            slide.style.minWidth = `${this.slideWidth}px`;
+            slide.style.padding = '5px';
+            slide.style.position = 'relative';
 
-					loadedCount++;
+            const img = document.createElement('img');
+            img.src = image;
+            img.className = 'img-thumbnail';
+            img.style.width = '100%';
+            img.style.height = '100px';
+            img.style.objectFit = 'cover';
+            img.style.cursor = 'pointer';
 
-					if (loadedCount === newFiles.length) {
-						// Force full re-render to maintain proper order
-						this.renderSlides();
-						this.updateHiddenInputs();
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger btn-xs remove-image';
+            removeBtn.innerHTML = '×';
+            removeBtn.style.position = 'absolute';
+            removeBtn.style.top = '5px';
+            removeBtn.style.right = '5px';
+            removeBtn.style.padding = '0 5px';
 
-						// Show container if hidden
-						const container = document.getElementById('images-slider-container');
-						if (container) container.style.display = 'block';
-					}
-				};
-				reader.readAsDataURL(file);
-			});
-		}
+            slide.appendChild(img);
+            slide.appendChild(removeBtn);
+            this.slidesWrapper.appendChild(slide);
+        });
 
-		updateHiddenInputs() {
-			// Update existing images input with remaining paths
-			const remainingExisting = this.images
-				.filter(img => !img.isNew)
-				.map(img => img.url);
-			this.existingImagesInput.value = remainingExisting.join(',');
+        // Render videos
+        this.existingVideos.forEach((video, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'slide existing-video';
+            slide.dataset.index = index + this.existingImages.length;
+            slide.style.minWidth = `${this.slideWidth}px`;
+            slide.style.padding = '5px';
+            slide.style.position = 'relative';
+            slide.dataset.videoPath = video;
 
-			// Update new images input
-			const newImageUrls = this.images
-				.filter(img => img.isNew)
-				.map(img => img.url);
-			// You might want to add this if you need to track new image URLs separately
-			// this.newImagesInput.value = newImageUrls.join(',');
-		}
+            const img = document.createElement('img');
+            img.src = video.replace(/\.(mp4|mov|avi)$/i, '.jpg');
+            img.className = 'img-thumbnail';
+            img.style.width = '100%';
+            img.style.height = '100px';
+            img.style.objectFit = 'cover';
+            img.style.cursor = 'pointer';
 
-		renderSlides() {
-			this.slidesWrapper.innerHTML = '';
-			this.currentSlide = 0;
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger btn-xs remove-video';
+            removeBtn.innerHTML = '×';
+            removeBtn.style.position = 'absolute';
+            removeBtn.style.top = '5px';
+            removeBtn.style.right = '5px';
+            removeBtn.style.padding = '0 5px';
 
-			// Render all images (new ones will be first since we unshifted them)
-			this.images.forEach((image, index) => {
-				const slide = this.createSlideElement(image, index);
-				this.slidesWrapper.appendChild(slide);
-			});
+            const playIcon = document.createElement('div');
+            playIcon.className = 'play-icon';
+            playIcon.style.position = 'absolute';
+            playIcon.style.top = '50%';
+            playIcon.style.left = '50%';
+            playIcon.style.transform = 'translate(-50%, -50%)';
+            playIcon.style.color = 'white';
+            playIcon.style.fontSize = '30px';
+            playIcon.style.textShadow = '0 0 5px rgba(0,0,0,0.5)';
+            playIcon.innerHTML = '▶';
 
-			this.updateControls();
-			this.updateFileInput();
-		}
+            slide.appendChild(img);
+            slide.appendChild(removeBtn);
+            slide.appendChild(playIcon);
+            this.slidesWrapper.appendChild(slide);
+        });
 
-		updateFileInput() {
-			// Update the actual file input with File objects
-			const dataTransfer = new DataTransfer();
-			this.newUploads.forEach(file => dataTransfer.items.add(file));
-			this.fileInput.files = dataTransfer.files;
-		}
+        this.updateControls();
+    }
 
-		createSlideElement(image, index) {
-			const slide = document.createElement('div');
-			slide.className = image.isNew ? 'slide new-image' : 'slide existing-image';
-			slide.dataset.index = index;
-			slide.style.minWidth = `${this.slideWidth}px`;
-			slide.style.padding = '5px';
-			slide.style.position = 'relative';
+    // Slider navigation methods
+    prevSlide() {
+        const slides = this.getSlides();
+        if (slides.length === 0) return;
 
-			const img = document.createElement('img');
-			img.src = image.url;
-			img.className = 'img-thumbnail';
-			img.style.width = '100%';
-			img.style.height = '100px';
-			img.style.objectFit = 'cover';
-			img.style.cursor = 'pointer';
-			img.addEventListener('click', () => this.showImagePreview(image.url));
+        this.currentSlide = (this.currentSlide - 1 + slides.length) % slides.length;
+        this.updateSlider();
+    }
 
-			const removeBtn = document.createElement('button');
-			removeBtn.type = 'button';
-			removeBtn.className = 'btn btn-danger btn-xs remove-image';
-			removeBtn.innerHTML = '×';
-			removeBtn.style.position = 'absolute';
-			removeBtn.style.top = '5px';
-			removeBtn.style.right = '5px';
-			removeBtn.style.padding = '0 5px';
-			removeBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				this.removeImage(index);
-			});
-			slide.appendChild(removeBtn);
+    nextSlide() {
+        const slides = this.getSlides();
+        if (slides.length === 0) return;
 
-			slide.appendChild(img);
-			return slide;
-		}
+        this.currentSlide = (this.currentSlide + 1) % slides.length;
+        this.updateSlider();
+    }
 
-		removeImage(index) {
-			const imageToRemove = this.images[index];
+    getSlides() {
+        return this.slidesWrapper.querySelectorAll('.slide');
+    }
 
-			if (imageToRemove.isNew) {
-				// Remove from new images tracking
-				const urlIndex = this.newImageUrls.indexOf(imageToRemove.url);
-				if (urlIndex > -1) {
-					this.newImageUrls.splice(urlIndex, 1);
-				}
+    updateSlider() {
+        const slides = this.getSlides();
+        if (slides.length > 0) {
+            const translateX = -this.currentSlide * this.slideWidth;
+            this.slidesWrapper.style.transform = `translateX(${translateX}px)`;
+            this.counterElement.textContent = `${this.currentSlide + 1}/${slides.length}`;
+        }
+    }
 
-				// Remove corresponding File object
-				const filename = imageToRemove.url.split('/').pop();
-				this.newUploads = this.newUploads.filter(file => !file.name.includes(filename));
-			} else {
-				// Remove from existing images tracking
-				this.existingImages = this.existingImages.filter(url => url !== imageToRemove.url);
-			}
+    updateControls() {
+        const slides = this.getSlides();
+        if (slides.length > 1) {
+            this.navContainer.style.display = 'block';
+            this.counterElement.textContent = `1/${slides.length}`;
+        } else {
+            this.navContainer.style.display = 'none';
+        }
+        this.slidesWrapper.style.transform = 'translateX(0)';
+        
+        // Hide container if no media
+        document.getElementById('images-slider-container').style.display = 
+            slides.length > 0 ? 'block' : 'none';
+    }
+}
 
-			// Remove from display
-			this.images.splice(index, 1);
+document.addEventListener('DOMContentLoaded', function() {
+    const mediaSlider = new PropertyMediaSlider({
+        slidesWrapperId: 'slides-wrapper',
+        navContainerId: 'slider-nav',
+        counterId: 'slider-counter',
+        prevButtonSelector: '.slider-prev',
+        nextButtonSelector: '.slider-next',
+        fileInput: document.getElementById('prop_img_upload_edit'),
+        slideWidth: 150
+    });
 
-			this.updateHiddenInputs();
-			this.updateFileInput();
-			this.renderSlides();
-
-			// Hide container if no images left
-			if (this.images.length === 0) {
-				document.getElementById('images-slider-container').style.display = 'none';
-			}
-		}
-	}
-
-	document.addEventListener('DOMContentLoaded', function() {
-		const editSlider = new PropertyImageSlider({
-			slidesWrapperId: 'slides-wrapper',
-			navContainerId: 'slider-nav',
-			counterId: 'slider-counter',
-			prevButtonSelector: '.slider-prev',
-			nextButtonSelector: '.slider-next',
-			fileInput: document.getElementById('prop_img_upload_edit'),
-			slideWidth: 150
-		});
-
-		// Handle file uploads
-		document.getElementById('prop_img_upload_edit')?.addEventListener('change', function(e) {
-			editSlider.updateSlides(this.files);
-		});
-	});
+    // Handle file uploads (images only)
+    document.getElementById('prop_img_upload_edit')?.addEventListener('change', function(e) {
+        // Only process if files were selected
+        if (this.files && this.files.length > 0) {
+            document.getElementById('images-slider-container').style.display = 'block';
+        }
+    });
+    
+    // Pause video when modal is closed
+    $('#videoPreviewModal').on('hidden.bs.modal', function() {
+        const video = document.getElementById('modal-video-player');
+        video.pause();
+        video.currentTime = 0;
+    });
+});
 </script>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
