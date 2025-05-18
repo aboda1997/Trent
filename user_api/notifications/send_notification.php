@@ -87,7 +87,7 @@ function sendFirebaseNotification(
         $field_values = ["uid", "created_at", "is_seen", "title" , "body" , "img"];
         $field_values2 = ["head_id", "name" , 'value'];
         $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
-        $created_at = $date->format('Y-m-d');
+        $created_at = $date->format('Y-m-d H:i:s');
         $data_values = [$uid, $created_at ,0 , $title , $body , $imageUrl  ];
 
         $_id = $h->restateinsertdata_Api($field_values, $data_values, $table1);

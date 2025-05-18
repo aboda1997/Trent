@@ -358,7 +358,18 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="add_whatsapp_qr.php">Add WhatsApp QR</a></li>
             </ul>
           </li>
-
+          <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" fill="#130F26" />
+                <path d="M7 9h10v2H7zm0 4h7v2H7z" fill="#130F26" />
+              </svg>
+              <span>Chat</span>
+            </a>
+            <ul class="sidebar-submenu">
+              <li><a href="pending_chat.php">Pending Chat</a></li>
+            </ul>
+          </li>
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="logout.php"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logout" style="transform: rotate(90deg);">
                 <g>
                   <g>
