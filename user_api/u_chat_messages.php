@@ -10,7 +10,7 @@ try {
 	$chat_id = isset($_GET['chat_id']) ? $rstate->real_escape_string($_GET['chat_id']) : null;
 
 	$uid = isset($_GET['uid']) ? $rstate->real_escape_string($_GET['uid']) : null;
-	$order_by_last_message = isset($_GET['order_by_last_message']) ? $rstate->real_escape_string($_GET['order_by_last_message']) : true;
+	$order_by_last_message = isset($_GET['order_by_last_message']) ? $rstate->real_escape_string($_GET['order_by_last_message']) : "true";
 
 	// Get pagination parameters
 	$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
@@ -51,7 +51,7 @@ try {
 			((sender_id = $user1 AND receiver_id = $user2) 
 			OR (sender_id = $user2 AND receiver_id = $user1 AND is_approved = 1) )
 	";
-	if($order_by_last_message){
+	if($order_by_last_message == "true"){
 		$query .= " ORDER BY id DESC ";
 	
 	}else {
