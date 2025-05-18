@@ -401,7 +401,7 @@ require 'include/footer.php';
               }, 2000);
             }
           } else {
-            alert("'Error saving payout Approval.");
+            alert("'Error saving  Approval.");
           }
         }
       });

@@ -73,9 +73,9 @@ try {
             }
         }
 
-        $created_at = date('Y-m-d H:i:s');
 
-
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d H:i:s');
 
         if (!isset($returnArr)) {
             $GLOBALS['rstate']->begin_transaction();
