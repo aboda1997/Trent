@@ -79,6 +79,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $ulist_per)) {
 
 												<th>IsOwner</th>
 												<th>Property Count</th>
+												<th>Action</th>
 
 
 											</tr>
@@ -154,6 +155,26 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $ulist_per)) {
 														<?php echo $check_owner ?>
 													</td>
 
+													
+													<td style="white-space: nowrap; width: 15%;">
+                            <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                              <div class="btn-group btn-group-sm" style="float: none;">
+
+                                <button type="button"
+                                  style="background: none; border: none; padding: 0; cursor: pointer;"
+                                  data-toggle="modal"
+                                  data-target="#approveModal"
+                                  data-id="<?php echo $row['id']; ?>"
+                                  title="Delete">
+                                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                    <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          </td>
+
 												</tr>
 											<?php } ?>
 
@@ -182,9 +203,90 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $ulist_per)) {
 	</div>
 </div>
 <!-- latest jquery-->
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approveModalLabel">Confirm delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="approveForm">
+
+        <input type="hidden" id="approveId" name="id">
+        <input type="hidden" name="type" value="delete_user" />
+      </form>
+      <div class="modal-body">
+        Are you sure you want to delete this user?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" id="confirmApproveBtn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
 <?php
 require 'include/footer.php';
 ?>
 </body>
+<script>
+	
+    $('#approveModal').on('show.bs.modal', function(event) {
+      var button = $(event.relatedTarget);
+      var id = button.data('id');
+
+      var modal = $(this);
+      modal.find('#approveId').val(id);
+    });
+    // When save button is clicked
+    $('#confirmApproveBtn').click(function() {
+
+
+      var formData = $('#approveForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#approveModal').removeClass('show');
+            $('#approveModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("'Error saving payout Approval.");
+          }
+        }
+      });
+    });
+</script>
+
 
 </html>
