@@ -242,3 +242,15 @@ function decryptData(string $base64EncodedData, string $privateKey): string|fals
     
     return true;
 }
+function silentDeleteFiles(array $filePaths): void
+{
+    foreach ($filePaths as $path) {
+        // Skip if path is empty
+        if (empty($path)) {
+            continue;
+        }
+        
+        // Suppress all errors with @
+        @unlink($path);
+    }
+}

@@ -391,18 +391,35 @@ if (isset($_GET['id'])) {
 
 
 
+
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<div class="form-group mb-3">
 														<label id="prop_video">
 															<?= $lang_en['Property_video'] ?>
-
-
 														</label>
 														<input type="file" class="form-control" name="prop_video" id="video" accept="video/mp4,video/avi,video/mov,video/mkv">
 
+														<!-- Video preview container -->
+														<div id="video-preview-container" class="mt-2" style="<?= empty($data['video']) ? 'display:none;' : '' ?>">
+															<div class="d-flex flex-column">
+																<!-- Video Preview (Click to Open Modal) -->
+																<video id="video-preview" controls width="100%" style="cursor: pointer; border-radius: 5px; max-width: 300px;">
+																	<?php if (!empty($data['video'])): ?>
+																		<source src="<?= $data['video'] ?>" type="video/mp4">
+																	<?php endif; ?>
+																	Your browser does not support the video tag.
+																</video>
+
+																<!-- Clear Button (Below Video) -->
+																<button type="button" id="clear-video" class="btn btn-danger btn-sm mt-2 align-self-start">
+																	<i class="fas fa-trash"></i> Clear Video
+																</button>
+															</div>
+															<input type="hidden" name="existing_video" id="existing-video" value="<?= !empty($data['video']) ? $data['video'] : '' ?>">
+														</div>
+
 														<div class="invalid-feedback" id="prop_video_feedback" style="display: none;">
 															<?= $lang_en['prop_video'] ?>
-
 														</div>
 													</div>
 												</div>
@@ -1081,15 +1098,30 @@ if (isset($_GET['id'])) {
 													<div class="form-group mb-3">
 														<label id="prop_video">
 															<?= $lang_en['Property_video'] ?>
-
-
 														</label>
 														<input type="file" class="form-control" name="prop_video" id="video" accept="video/mp4,video/avi,video/mov,video/mkv">
 
-														<input type="hidden" name="type" value="add_property" />
+														<!-- Video preview container -->
+														<div id="video-preview-container" class="mt-2" style="<?= empty($data['video']) ? 'display:none;' : '' ?>">
+															<div class="d-flex flex-column">
+																<!-- Video Preview (Click to Open Modal) -->
+																<video id="video-preview" controls width="100%" style="cursor: pointer; border-radius: 5px; max-width: 300px;">
+																	<?php if (!empty($data['video'])): ?>
+																		<source src="<?= $data['video'] ?>" type="video/mp4">
+																	<?php endif; ?>
+																	Your browser does not support the video tag.
+																</video>
+
+																<!-- Clear Button (Below Video) -->
+																<button type="button" id="clear-video" class="btn btn-danger btn-sm mt-2 align-self-start">
+																	<i class="fas fa-trash"></i> Clear Video
+																</button>
+															</div>
+															<input type="hidden" name="existing_video" id="existing-video" value="<?= !empty($data['video']) ? $data['video'] : '' ?>">
+														</div>
+
 														<div class="invalid-feedback" id="prop_video_feedback" style="display: none;">
 															<?= $lang_en['prop_video'] ?>
-
 														</div>
 													</div>
 												</div>
@@ -1476,6 +1508,22 @@ if (isset($_GET['id'])) {
 </div>
 <!-- latest jquery-->
 
+<!-- Large Centered Modal for Video Preview -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg"> <!-- modal-lg for large size, centered -->
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Video Preview</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-center">
+				<video id="modal-video-preview" controls style="max-width: 100%; max-height: 70vh;">
+					Your browser does not support the video tag.
+				</video>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 
@@ -2451,6 +2499,52 @@ if (isset($_GET['id'])) {
 		});
 	});
 </script>
+
+
+<script>
+	$(document).ready(function() {
+		// Handle video file selection
+		$('#video').change(function(e) {
+			const file = e.target.files[0];
+			if (file) {
+				const videoURL = URL.createObjectURL(file);
+				updateVideoPreview(videoURL);
+				$('#existing-video').val(''); // Clear existing video reference
+				$('#video-preview-container').show();
+			}
+		});
+
+		// Clear video handler (button below video)
+		$('#clear-video').click(function() {
+			$('#video').val(''); // Clear file input
+			$('#video-preview').html(''); // Remove video source
+			$('#existing-video').val(''); // Clear hidden field
+			$('#video-preview-container').hide(); // Hide preview
+		});
+
+		// Video click handler for modal preview
+		$('#video-preview').click(function() {
+			const videoSrc = $(this).find('source').attr('src');
+			if (videoSrc) {
+				$('#modal-video-preview').html('<source src="' + videoSrc + '" type="video/mp4">');
+				$('#modal-video-preview')[0].load();
+				$('#videoModal').modal('show');
+			}
+		});
+
+		// Function to update video preview
+		function updateVideoPreview(videoURL) {
+			$('#video-preview').html('<source src="' + videoURL + '" type="video/mp4">');
+			$('#video-preview')[0].load();
+		}
+
+		// Initialize with existing video if available
+		<?php if (!empty($data['video'])): ?>
+			$('#video-preview-container').show();
+		<?php endif; ?>
+	});
+</script>
+
 <style>
 	.slides-container {
 		border: 1px solid #ddd;

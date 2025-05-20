@@ -493,7 +493,38 @@ try {
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Why choose Us Data Deleted Successfully!!", "message" => "Why choose Us  section!", "action" => "list_why_choose_us.php");
             }
-        } else if ($_POST['type'] == 'add_cancallation_policy') {
+        }
+        
+        else if ($_POST['type'] == 'delete_property') {
+            $id = $_POST['id'];
+
+
+            $table = "tbl_property";
+            $where = "where id=" . $id . "";
+
+            $h = new Estate();
+            $check = $h->restaterestateDeleteData($where,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Property Deleted Successfully!!", "message" => "Property  section!", "action" => "list_properties.php");
+            }
+        }
+
+        else if ($_POST['type'] == 'delete_user') {
+            $id = $_POST['id'];
+
+
+            $table = "tbl_user";
+            $where = "where id=" . $id . "";
+
+            $h = new Estate();
+            $check = $h->restaterestateDeleteData($where,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "User Deleted Successfully!!", "message" => "User  section!", "action" => "userlist.php");
+            }
+        }
+        else if ($_POST['type'] == 'add_cancallation_policy') {
 
             $status = $_POST['status'];
             $is_recommended = $_POST['is_recommended'];
@@ -889,6 +920,8 @@ try {
             $is_approved = $_POST['approved'];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
+
+            
             $price = $_POST['prop_price'];
             $government = $_POST['pgov'];
             $security_deposit = $_POST['prop_security'];
@@ -1062,8 +1095,8 @@ try {
             if (!isset($returnArr)) {
 
                 $table = "tbl_property";
-                $field_values = ["is_need_review","updated_at" , "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$need_review","$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $field_values = ["created_at","is_need_review","updated_at" , "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$updated_at" , "$need_review","$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -1305,12 +1338,16 @@ try {
 
             if (!empty($videoUrls)) {
                 $field_values["video"] =  $videoUrlsString;
+            }else{
+
+                $field_values["video"] =  "";
+
             }
 
             if (!isset($returnArr)) {
                 $where = "where id=" . $id . "";
                 $h = new Estate();
-                $check = $h->restateupdateData($field_values, $table, $where);
+                $check = $h->restateupdateDatanull_Api($field_values, $table, $where);
             } else {
                 $check = 0;
             }

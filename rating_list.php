@@ -39,7 +39,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-               Booking Rating list Management</h3>
+                Booking Rating list Management</h3>
             </div>
             <div class="col-6">
 
@@ -97,12 +97,12 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                           <td class="align-middle">
                             <?php echo $row['rating']; ?>
                           </td>
-                          
+
                           <td class="align-middle">
                             <?php echo $row['comment']; ?>
                           </td>
-                          
-                          
+
+
                           <td class="align-middle">
                             <?php echo $guest['name']; ?>
                           </td>
@@ -110,15 +110,17 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                           <td style="white-space: nowrap; width: 15%;">
                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                               <div class="btn-group btn-group-sm" style="float: none;">
-                              
 
-                                <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
-                                  data-toggle="modal" data-target="#approveModal"
+                                <button type="button"
+                                  style="background: none; border: none; padding: 0; cursor: pointer;"
+                                  data-toggle="modal"
+                                  data-target="#approveModal"
                                   data-id="<?php echo $row['id']; ?>"
-                                  title="Delete"
-                                  >
-
-                                  <i class="fas fa-times"></i>
+                                  title="Delete">
+                                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                    <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                  </svg>
                                 </button>
                               </div>
                             </div>
@@ -129,7 +131,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                       ?>
 
                     </tbody>
-                  
+
                   </table>
 
                 </div>
@@ -189,7 +191,7 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
       }
     });
 
-    
+
 
     $('#approveModal').on('show.bs.modal', function(event) {
       var button = $(event.relatedTarget);
