@@ -1,4 +1,3 @@
-
 <?php
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
