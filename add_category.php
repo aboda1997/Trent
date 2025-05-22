@@ -1,13 +1,11 @@
 <?php
 require 'include/main_head.php';
-$category_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $category_per)) {
+  if (!in_array('Update_Category', $per)) {
 
 
-
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -19,11 +17,9 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $category_per)) {
+  if ( !in_array('Create_Category', $per)) {
 
 
-
-    header('HTTP/1.1 401 Unauthorized');
   ?>
     <style>
       .loader-wrapper {

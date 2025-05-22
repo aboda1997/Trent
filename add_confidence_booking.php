@@ -1,7 +1,8 @@
 <?php
 require 'include/main_head.php';
-if ($_SESSION['restatename'] == 'Staff') {
-    header('HTTP/1.1 401 Unauthorized');
+$per = $_SESSION['permissions'];
+
+if (!in_array('Read_Setting', $per)) {
 
 
 ?>
@@ -135,12 +136,18 @@ if ($_SESSION['restatename'] == 'Staff') {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php
+													if (in_array('Update_Setting', $per) ) {
+														?>
                                     <div class="card-footer text-left">
                                         <button onclick="return validateForm(true)" type="submit" id="edit_confidence_booking" name="edit_confidence_booking" class="btn btn-primary mb-2">
                                         <?= $lang_en['edit_confidence_booking'] ?>
 
                                         </button>
                                     </div>
+                                    <?php
+												}
+												?>
                                 </form>
 
                             </div>

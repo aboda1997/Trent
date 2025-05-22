@@ -49,7 +49,7 @@ try {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
-        } else if ($guest_counts > $res_data['plimit']) {
+        } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false', "Guest count are exceed persons limits", 400);
         } 
         else if (

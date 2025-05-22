@@ -1,13 +1,11 @@
 <?php
 require 'include/main_head.php';
-$eimg_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
-if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $eimg_per)) {
+if ( !in_array('Read_Extra_Image', $per)) {
 
 
-
-  header('HTTP/1.1 401 Unauthorized');
 ?>
   <style>
     .loader-wrapper {
@@ -78,22 +76,14 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $eimg_per)) {
 
                         </th>
                         <?php
-                        if ($_SESSION['restatename'] == 'Staff') {
-                          if (in_array('Update', $eimg_per)) {
-                        ?>
-                            <th>
-                              <?= $lang['Action'] ?>
-
-                            </th>
-                          <?php
-                          }
-                        } else {
+                        if (in_array('Update_Extra_Image', $per) || in_array('Delete_Extra_Image', $per)) {
                           ?>
-                          <th>
-                            <?= $lang['Action'] ?>
 
-                          </th>
-                        <?php } ?>
+                          <th>
+                            <?= $lang['Action'] ?></th>
+                        <?php
+                        }
+                        ?>
                       </tr>
                     </thead>
                     <tbody>
@@ -137,9 +127,8 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $eimg_per)) {
                             </td>
                           <?php } ?>
                           <?php
-                          if ($_SESSION['restatename'] == 'Staff') {
-                            if (in_array('Update', $eimg_per)) {
-                          ?>
+                            if (in_array('Update_Extra_Image', $per) || in_array('Delete_Extra_Image', $per)) {
+                              ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                   <div class="btn-group btn-group-sm" style="float: none;">
@@ -153,22 +142,7 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $eimg_per)) {
                                 </div>
                               </td>
 
-                            <?php
-                            }
-                          } else {
-                            ?>
-                            <td style="white-space: nowrap; width: 15%;">
-                              <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-                                <div class="btn-group btn-group-sm" style="float: none;">
-                                  <a href="add_extra.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
-                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                      <rect width="30" height="30" rx="15" fill="#79F9B4" />
-                                      <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
-                                    </svg></a>
-                                </div>
-
-                              </div>
-                            </td>
+                           
                           <?php } ?>
                         </tr>
                       <?php

@@ -1,13 +1,10 @@
 <?php
 require 'include/main_head.php';
-$gal_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $gal_per)) {
+  if ( !in_array('Update_Gallery', $per)) {
 
-
-
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -19,11 +16,7 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $gal_per)) {
-
-
-
-    header('HTTP/1.1 401 Unauthorized');
+  if (!in_array('Create_Gallery', $per)) {
   ?>
     <style>
       .loader-wrapper {

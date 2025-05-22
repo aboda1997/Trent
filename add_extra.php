@@ -1,11 +1,12 @@
 <?php
 require 'include/main_head.php';
+$per = $_SESSION['permissions'];
+
 if (isset($_GET['id'])) {
-  if ($_SESSION['stype'] == 'Staff' && !in_array('Update', $eimg_per)) {
+  if ( !in_array('Update_Extra_Image', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -17,11 +18,9 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['stype'] == 'Staff' && !in_array('Write', $eimg_per)) {
+  if ( !in_array('Create_Extra_Image', $per)) {
 
 
-
-    header('HTTP/1.1 401 Unauthorized');
   ?>
     <style>
       .loader-wrapper {

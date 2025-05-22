@@ -1,5 +1,6 @@
 <?php 
 require 'include/main_head.php';
+$per = $_SESSION['permissions'];
 ?>
     <!-- Loader ends-->
     <!-- page-wrapper Start-->

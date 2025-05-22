@@ -1,8 +1,7 @@
 <?php
 
 $lang = load_language();
-
-
+$per = $_SESSION['permissions'];
 if (isset($_SESSION['restatename'])) {
 } else {
 ?>
@@ -37,258 +36,531 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </g>
               </svg><span> <?= $lang['Dashboard'] ?></span></a></li>
-
-          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+          <?php
+          if (in_array('Update_Category', $per) || in_array('Delete_Category', $per) || in_array('Read_Category', $per) || in_array('Create_Category', $per)) {
+          ?>
+            <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M15.596 15.6963H8.37598" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M15.596 11.9365H8.37598" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M11.1312 8.17725H8.37622" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3.61011 12C3.61011 18.937 5.70811 21.25 12.0011 21.25C18.2951 21.25 20.3921 18.937 20.3921 12C20.3921 5.063 18.2951 2.75 12.0011 2.75C5.70811 2.75 3.61011 5.063 3.61011 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M15.596 15.6963H8.37598" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M15.596 11.9365H8.37598" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M11.1312 8.17725H8.37622" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M3.61011 12C3.61011 18.937 5.70811 21.25 12.0011 21.25C18.2951 21.25 20.3921 18.937 20.3921 12C20.3921 5.063 18.2951 2.75 12.0011 2.75C5.70811 2.75 3.61011 5.063 3.61011 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>
-                <?= $lang['Category'] ?>
+                </svg><span>
+                  <?= $lang['Category'] ?>
 
-              </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_category.php">
-                  <?= $lang['Add_Category'] ?>
-                </a></li>
-              <li><a href="list_category.php">
-                  <?= $lang['List_Category'] ?>
+                </span></a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Category', $per)) {
+                ?>
+                  <li><a href="add_category.php">
+                      <?= $lang['Add_Category'] ?>
+                    </a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Category', $per)) {
+                ?>
+                  <li><a href="list_category.php">
+                      <?= $lang['List_Category'] ?>
 
-                </a></li>
-            </ul>
-          </li>
+                    </a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
 
-
-
-          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+          <?php
+          if (in_array('Update_Coupon', $per) || in_array('Delete_Coupon', $per) || in_array('Read_Coupon', $per) || in_array('Create_Coupon', $per)) {
+          ?>
+            <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 5.063 5.06324 2.75 12.0002 2.75C18.9372 2.75 21.2502 5.063 21.2502 12C21.2502 18.937 18.9372 21.25 12.0002 21.25C5.06324 21.25 2.75024 18.937 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M9.42993 14.5697L14.5699 9.42969" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M14.4955 14.5H14.5045" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M9.4955 9.5H9.5045" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 5.063 5.06324 2.75 12.0002 2.75C18.9372 2.75 21.2502 5.063 21.2502 12C21.2502 18.937 18.9372 21.25 12.0002 21.25C5.06324 21.25 2.75024 18.937 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M9.42993 14.5697L14.5699 9.42969" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M14.4955 14.5H14.5045" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M9.4955 9.5H9.5045" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Coupon</span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_coupon.php">Add Coupon</a></li>
-              <li><a href="list_coupon.php">List Coupon</a></li>
-            </ul>
-          </li>
-
-
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="list_enquiry.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+                </svg><span>Coupon</span></a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Coupon', $per)) {
+                ?>
+                  <li><a href="add_coupon.php">Add Coupon</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Coupon', $per)) {
+                ?>
+                  <li><a href="list_coupon.php">List Coupon</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Enquiry', $per) || in_array('Delete_Enquiry', $per) || in_array('Read_Enquiry', $per) || in_array('Create_Enquiry', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="list_enquiry.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M6.91699 14.854L9.90999 10.965L13.324 13.645L16.253 9.86499" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6671 2.3501C20.7291 2.3501 21.5891 3.2101 21.5891 4.2721C21.5891 5.3331 20.7291 6.1941 19.6671 6.1941C18.6051 6.1941 17.7451 5.3331 17.7451 4.2721C17.7451 3.2101 18.6051 2.3501 19.6671 2.3501Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M20.7555 9.26898C20.8885 10.164 20.9495 11.172 20.9495 12.303C20.9495 19.241 18.6375 21.553 11.6995 21.553C4.76246 21.553 2.44946 19.241 2.44946 12.303C2.44946 5.36598 4.76246 3.05298 11.6995 3.05298C12.8095 3.05298 13.8005 3.11198 14.6825 3.23998" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M6.91699 14.854L9.90999 10.965L13.324 13.645L16.253 9.86499" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6671 2.3501C20.7291 2.3501 21.5891 3.2101 21.5891 4.2721C21.5891 5.3331 20.7291 6.1941 19.6671 6.1941C18.6051 6.1941 17.7451 5.3331 17.7451 4.2721C17.7451 3.2101 18.6051 2.3501 19.6671 2.3501Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M20.7555 9.26898C20.8885 10.164 20.9495 11.172 20.9495 12.303C20.9495 19.241 18.6375 21.553 11.6995 21.553C4.76246 21.553 2.44946 19.241 2.44946 12.303C2.44946 5.36598 4.76246 3.05298 11.6995 3.05298C12.8095 3.05298 13.8005 3.11198 14.6825 3.23998" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Enquiry List</span></a></li>
+                </svg><span>Enquiry List</span></a></li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Payout', $per) || in_array('Delete_Payout', $per) || in_array('Read_Payout', $per) || in_array('Create_Payout', $per)) {
+          ?>
+            <li class="sidebar-list">
+              <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Simple money bill with downward arrow -->
+                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="#130F26" stroke-width="1.5" />
+                  <path d="M8 10H16" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M12 14L12 18M12 18L9 15M12 18L15 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Payouts</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Read_Payout', $per)) {
+                ?>
+                  <li><a href="completed_payout.php">Completed Payouts</a></li>
+                  <li><a href="pending_payout.php">Pending Payouts</a></li>
+                  <li><a href="rejected_payout.php">Rejected Payouts</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Payout_Method', $per) || in_array('Delete_Payout_Method', $per) || in_array('Read_Payout_Method', $per) || in_array('Create_Payout_Method', $per)) {
+          ?>
+            <li class="sidebar-list">
+              <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Credit card with multiple payment method symbols -->
+                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="#130F26" stroke-width="1.5" />
+                  <path d="M4 10H20" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
 
-
-          <li class="sidebar-list">
-            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Simple money bill with downward arrow -->
-                <rect x="4" y="6" width="16" height="12" rx="2" stroke="#130F26" stroke-width="1.5" />
-                <path d="M8 10H16" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-                <path d="M12 14L12 18M12 18L9 15M12 18L15 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span>Payouts</span>
-            </a>
-            <ul class="sidebar-submenu">
-              <li><a href="completed_payout.php">Completed Payouts</a></li>
-              <li><a href="pending_payout.php">Pending Payouts</a></li>
-              <li><a href="rejected_payout.php">Rejected Payouts</a></li>
-            </ul>
-          </li>
-          <li class="sidebar-list">
-            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Credit card with multiple payment method symbols -->
-                <rect x="4" y="6" width="16" height="12" rx="2" stroke="#130F26" stroke-width="1.5" />
-                <path d="M4 10H20" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-
-              </svg>
-              <span>Payout Methods</span>
-            </a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_payout_method.php">Add Payout Method</a></li>
-              <li><a href="list_payout_method.php">List Payout Methods</a></li>
-            </ul>
-          </li>
-
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+                </svg>
+                <span>Payout Methods</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Payout_Method', $per)) {
+                ?>
+                  <li><a href="add_payout_method.php">Add Payout Method</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Payout_Method', $per)) {
+                ?>
+                  <li><a href="list_payout_method.php">List Payout Methods</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Property', $per) || in_array('Delete_Property', $per) || in_array('Read_Property', $per) || in_array('Create_Property', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 5.063 5.06324 2.75 12.0002 2.75C18.9372 2.75 21.2502 5.063 21.2502 12C21.2502 18.937 18.9372 21.25 12.0002 21.25C5.06324 21.25 2.75024 18.937 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M15.2045 13.8999H15.2135" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M12.2045 9.8999H12.2135" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M9.19557 13.8999H9.20457" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 5.063 5.06324 2.75 12.0002 2.75C18.9372 2.75 21.2502 5.063 21.2502 12C21.2502 18.937 18.9372 21.25 12.0002 21.25C5.06324 21.25 2.75024 18.937 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M15.2045 13.8999H15.2135" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M12.2045 9.8999H12.2135" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M9.19557 13.8999H9.20457" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Properties </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_properties.php">Add Properties</a></li>
-              <li><a href="list_properties.php">List Properties</a></li>
-              <li><a href="pending_properties.php">Pending Properties</a></li>
-            </ul>
-          </li>
+                </svg><span>Properties </span></a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Property', $per)) {
+                ?>
+                  <li><a href="add_properties.php">Add Properties</a></li>
+                <?php
+                }
+                ?>
+                <?php
 
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+                if (in_array('Read_Property', $per)) {
+                ?>
+                  <li><a href="list_properties.php">List Properties</a></li>
+                <?php
+                }
+                ?>
+                <?php
+
+                if (in_array('Read_Property', $per)) {
+                ?>
+                  <li><a href="pending_properties.php">Pending Properties</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+
+          <?php
+          if (in_array('Update_Extra_Imagey', $per) || in_array('Delete_Extra_Image', $per) || in_array('Read_Extra_Image', $per) || in_array('Create_Extra_Image', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M6.07056 16.4588C6.07056 16.4588 6.88256 14.8218 8.06456 14.8218C9.24656 14.8218 9.85056 16.1968 11.1606 16.1968C12.4696 16.1968 13.9386 12.7488 15.4226 12.7488C16.9046 12.7488 17.9706 15.1398 17.9706 15.1398" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1393 9.10487C10.1393 9.96487 9.44229 10.6629 8.58129 10.6629C7.72129 10.6629 7.02429 9.96487 7.02429 9.10487C7.02429 8.24487 7.72129 7.54688 8.58129 7.54688C9.44229 7.54788 10.1393 8.24487 10.1393 9.10487Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 18.937 5.06324 21.25 12.0002 21.25C18.9372 21.25 21.2502 18.937 21.2502 12C21.2502 5.063 18.9372 2.75 12.0002 2.75C5.06324 2.75 2.75024 5.063 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M6.07056 16.4588C6.07056 16.4588 6.88256 14.8218 8.06456 14.8218C9.24656 14.8218 9.85056 16.1968 11.1606 16.1968C12.4696 16.1968 13.9386 12.7488 15.4226 12.7488C16.9046 12.7488 17.9706 15.1398 17.9706 15.1398" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1393 9.10487C10.1393 9.96487 9.44229 10.6629 8.58129 10.6629C7.72129 10.6629 7.02429 9.96487 7.02429 9.10487C7.02429 8.24487 7.72129 7.54688 8.58129 7.54688C9.44229 7.54788 10.1393 8.24487 10.1393 9.10487Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 18.937 5.06324 21.25 12.0002 21.25C18.9372 21.25 21.2502 18.937 21.2502 12C21.2502 5.063 18.9372 2.75 12.0002 2.75C5.06324 2.75 2.75024 5.063 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Extra Image </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_extra.php">Add Extra Image</a></li>
-              <li><a href="list_extra.php">List Extra Image</a></li>
-            </ul>
-          </li>
+                </svg><span>Extra Image </span></a>
+              <ul class="sidebar-submenu">
+                <?php
 
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+                if (in_array('Create_Extra_Image', $per)) {
+                ?>
+                  <li><a href="add_extra.php">Add Extra Image</a></li>
+                <?php
+                }
+                ?>
+                <?php
+
+                if (in_array('Read_Extra_Image', $per)) {
+                ?>
+
+                  <li><a href="list_extra.php">List Extra Image</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Facility', $per) || in_array('Delete_Facility', $per) || in_array('Read_Facility', $per) || in_array('Create_Facility', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M11.0791 13.8496H7.4314" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M15.4774 12.1712H15.3752" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M17.2081 15.5833H17.1059" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M8.51392 2.21606C8.5206 2.93015 9.1058 3.50295 9.81989 3.49626H10.828C11.9306 3.48767 12.8328 4.37169 12.8481 5.47432V6.48148" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.8121 13.8953C21.8121 8.33539 19.4255 6.48145 12.2646 6.48145C5.10271 6.48145 2.71606 8.33539 2.71606 13.8953C2.71606 19.4562 5.10271 21.3092 12.2646 21.3092C19.4255 21.3092 21.8121 19.4562 21.8121 13.8953Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M11.0791 13.8496H7.4314" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M15.4774 12.1712H15.3752" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M17.2081 15.5833H17.1059" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M8.51392 2.21606C8.5206 2.93015 9.1058 3.50295 9.81989 3.49626H10.828C11.9306 3.48767 12.8328 4.37169 12.8481 5.47432V6.48148" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M21.8121 13.8953C21.8121 8.33539 19.4255 6.48145 12.2646 6.48145C5.10271 6.48145 2.71606 8.33539 2.71606 13.8953C2.71606 19.4562 5.10271 21.3092 12.2646 21.3092C19.4255 21.3092 21.8121 19.4562 21.8121 13.8953Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Facility </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_facility.php">Add Facility</a></li>
-              <li><a href="list_facility.php">List Facility</a></li>
-            </ul>
-          </li>
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="7" width="16" height="10" rx="1" stroke="#130F26" stroke-width="1.5" />
-                <circle cx="9" cy="12" r="1" fill="#130F26" />
-                <circle cx="15" cy="12" r="1" fill="#130F26" />
-              </svg>
-              <span>Slider </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_slider.php">Add Slider</a></li>
-              <li><a href="list_slider.php">List Slider</a></li>
-            </ul>
-          </li>
+                </svg><span>Facility </span></a>
+              <ul class="sidebar-submenu">
+                <?php
+
+                if (in_array('Create_Facility', $per)) {
+                ?>
+                  <li><a href="add_facility.php">Add Facility</a></li>
+                <?php
+                }
+                ?>
+                <?php
+
+                if (in_array('Read_Facility', $per)) {
+                ?>
+                  <li><a href="list_facility.php">List Facility</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Slider', $per) || in_array('Delete_Slider', $per) || in_array('Read_Slider', $per) || in_array('Create_Slider', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="7" width="16" height="10" rx="1" stroke="#130F26" stroke-width="1.5" />
+                  <circle cx="9" cy="12" r="1" fill="#130F26" />
+                  <circle cx="15" cy="12" r="1" fill="#130F26" />
+                </svg>
+                <span>Slider </span></a>
+              <ul class="sidebar-submenu">
+              <?php
+          if ( in_array('Create_Slider', $per)) {
+          ?>
+                <li><a href="add_slider.php">Add Slider</a></li>
+                <?php
+          }
+          ?>
+                <?php
+          if ( in_array('Read_Slider', $per)) {
+          ?>
+                <li><a href="list_slider.php">List Slider</a></li>
+                <?php
+          }
+          ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
 
 
-
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+          <?php
+          if (in_array('Update_Gallery_Category', $per) || in_array('Delete_Gallery_Category', $per) || in_array('Read_Gallery_Category', $per) || in_array('Create_Gallery_Category', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M14.3053 15.45H8.90527" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M12.2604 11.4387H8.90442" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1598 8.3L14.4898 2.9C13.7598 2.8 12.9398 2.75 12.0398 2.75C5.74978 2.75 3.64978 5.07 3.64978 12C3.64978 18.94 5.74978 21.25 12.0398 21.25C18.3398 21.25 20.4398 18.94 20.4398 12C20.4398 10.58 20.3498 9.35 20.1598 8.3Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M13.9342 2.83276V5.49376C13.9342 7.35176 15.4402 8.85676 17.2982 8.85676H20.2492" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M14.3053 15.45H8.90527" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M12.2604 11.4387H8.90442" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1598 8.3L14.4898 2.9C13.7598 2.8 12.9398 2.75 12.0398 2.75C5.74978 2.75 3.64978 5.07 3.64978 12C3.64978 18.94 5.74978 21.25 12.0398 21.25C18.3398 21.25 20.4398 18.94 20.4398 12C20.4398 10.58 20.3498 9.35 20.1598 8.3Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M13.9342 2.83276V5.49376C13.9342 7.35176 15.4402 8.85676 17.2982 8.85676H20.2492" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Gallery Category </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="ad_gal_cat.php">Add Gallery Category</a></li>
-              <li><a href="list_gal_cat.php">List Gallery Category</a></li>
-            </ul>
-          </li>
-
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+                </svg><span>Gallery Category </span></a>
+              <ul class="sidebar-submenu">
+              <?php
+          if ( in_array('Create_Gallery_Category', $per)) {
+          ?>
+                <li><a href="ad_gal_cat.php">Add Gallery Category</a></li>
+                <?php
+          }
+          ?>
+              <?php
+          if (in_array('Read_Gallery_Category', $per)) {
+          ?>
+                <li><a href="list_gal_cat.php">List Gallery Category</a></li>
+                <?php
+          }
+          ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Gallery', $per) || in_array('Delete_Gallery', $per) || in_array('Read_Gallery', $per) || in_array('Create_Gallery', $per)) {
+          ?>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M6.07056 16.4588C6.07056 16.4588 6.88256 14.8218 8.06456 14.8218C9.24656 14.8218 9.85056 16.1968 11.1606 16.1968C12.4696 16.1968 13.9386 12.7488 15.4226 12.7488C16.9046 12.7488 17.9706 15.1398 17.9706 15.1398" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1393 9.10487C10.1393 9.96487 9.44229 10.6629 8.58129 10.6629C7.72129 10.6629 7.02429 9.96487 7.02429 9.10487C7.02429 8.24487 7.72129 7.54688 8.58129 7.54688C9.44229 7.54788 10.1393 8.24487 10.1393 9.10487Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 18.937 5.06324 21.25 12.0002 21.25C18.9372 21.25 21.2502 18.937 21.2502 12C21.2502 5.063 18.9372 2.75 12.0002 2.75C5.06324 2.75 2.75024 5.063 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M6.07056 16.4588C6.07056 16.4588 6.88256 14.8218 8.06456 14.8218C9.24656 14.8218 9.85056 16.1968 11.1606 16.1968C12.4696 16.1968 13.9386 12.7488 15.4226 12.7488C16.9046 12.7488 17.9706 15.1398 17.9706 15.1398" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1393 9.10487C10.1393 9.96487 9.44229 10.6629 8.58129 10.6629C7.72129 10.6629 7.02429 9.96487 7.02429 9.10487C7.02429 8.24487 7.72129 7.54688 8.58129 7.54688C9.44229 7.54788 10.1393 8.24487 10.1393 9.10487Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 18.937 5.06324 21.25 12.0002 21.25C18.9372 21.25 21.2502 18.937 21.2502 12C21.2502 5.063 18.9372 2.75 12.0002 2.75C5.06324 2.75 2.75024 5.063 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Gallery </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_gal.php">Add Gallery</a></li>
-              <li><a href="list_gal.php">List Gallery</a></li>
-            </ul>
-          </li>
+                </svg><span>Gallery </span></a>
+              <ul class="sidebar-submenu">
+              <?php
+          if ( in_array('Create_Gallery', $per)) {
+          ?>
+                <li><a href="add_gal.php">Add Gallery</a></li>
+                <?php
+          }
+          ?>
+                <?php
+          if (in_array('Read_Gallery', $per) ) {
+          ?>
+                <li><a href="list_gal.php">List Gallery</a></li>
+                <?php
+          }
+          ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
 
+          <?php
+          if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per) || in_array('Read_Booking', $per) || in_array('Create_Booking', $per)) {
+          ?>
 
-
-
-          <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.74976 12.7755C2.74976 5.81947 5.06876 3.50146 12.0238 3.50146C18.9798 3.50146 21.2988 5.81947 21.2988 12.7755C21.2988 19.7315 18.9798 22.0495 12.0238 22.0495C5.06876 22.0495 2.74976 19.7315 2.74976 12.7755Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M3.02515 9.32397H21.0331" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M16.4284 13.261H16.4374" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M12.0289 13.261H12.0379" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M7.62148 13.261H7.63048" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M16.4284 17.113H16.4374" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M12.0289 17.113H12.0379" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path d="M7.62148 17.113H7.63048" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"> </path>
+                    <g>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.74976 12.7755C2.74976 5.81947 5.06876 3.50146 12.0238 3.50146C18.9798 3.50146 21.2988 5.81947 21.2988 12.7755C21.2988 19.7315 18.9798 22.0495 12.0238 22.0495C5.06876 22.0495 2.74976 19.7315 2.74976 12.7755Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M3.02515 9.32397H21.0331" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M16.4284 13.261H16.4374" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M12.0289 13.261H12.0379" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M7.62148 13.261H7.63048" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M16.4284 17.113H16.4374" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M12.0289 17.113H12.0379" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M7.62148 17.113H7.63048" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"> </path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>Booking </span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="pending.php">Pending Booking</a></li>
-              <li><a href="approved.php">Approved Booking</a></li>
-              <li><a href="check_in.php">Check In Booking</a></li>
-              <li><a href="completed.php">Completed Booking</a></li>
-              <li><a href="cancelled.php">Cancelled Booking</a></li>
-              <li><a href="rating_list.php">Rating List</a></li>
+                </svg><span>Booking </span></a>
+              <ul class="sidebar-submenu">
+              <?php
+          if ( in_array('Read_Booking', $per) ) {
+          ?>
+                <li><a href="pending.php">Pending Booking</a></li>
+                <li><a href="approved.php">Approved Booking</a></li>
+                <li><a href="check_in.php">Check In Booking</a></li>
+                <li><a href="completed.php">Completed Booking</a></li>
+                <li><a href="cancelled.php">Cancelled Booking</a></li>
+                <li><a href="rating_list.php">Rating List</a></li>
+                <?php
+          }
+          ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Cancel_Reason', $per) || in_array('Delete_Cancel_Reason', $per) || in_array('Read_Cancel_Reason', $per) || in_array('Create_Cancel_Reason', $per)) {
+          ?>
+            <li class="sidebar-list">
+              <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Circle with X mark - universal cancel symbol -->
+                  <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5" />
+                  <path d="M15 9L9 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M9 9L15 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                <span>Cancel Reason</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <?php
+                if ( in_array('Create_Cancel_Reason', $per)) {
+                ?>
+                  <li><a href="add_cancel_reason.php">Add Cancel Reason</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if ( in_array('Read_Cancel_Reason', $per) ) {
+                ?>
+                  <li><a href="list_cancel_reason.php">List Cancel Reason</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
 
-            </ul>
-          </li>
-
-          <li class="sidebar-list">
-            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Circle with X mark - universal cancel symbol -->
-                <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5" />
-                <path d="M15 9L9 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-                <path d="M9 9L15 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-              </svg>
-              <span>Cancel Reason</span>
-            </a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_cancel_reason.php">Add Cancel Reason</a></li>
-              <li><a href="list_cancel_reason.php">List Cancel Reason</a></li>
-            </ul>
-          </li>
-
-
-
-          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_FAQ', $per) || in_array('Delete_FAQ', $per) || in_array('Read_FAQ', $per) || in_array('Create_FAQ', $per)) {
+          ?>
+            <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g>
-                    <path d="M8.44019 12L10.8142 14.373L15.5602 9.62695" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2.74976 12C2.74976 18.937 5.06276 21.25 11.9998 21.25C18.9368 21.25 21.2498 18.937 21.2498 12C21.2498 5.063 18.9368 2.75 11.9998 2.75C5.06276 2.75 2.74976 5.063 2.74976 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g>
+                      <path d="M8.44019 12L10.8142 14.373L15.5602 9.62695" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.74976 12C2.74976 18.937 5.06276 21.25 11.9998 21.25C18.9368 21.25 21.2498 18.937 21.2498 12C21.2498 5.063 18.9368 2.75 11.9998 2.75C5.06276 2.75 2.74976 5.063 2.74976 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
                   </g>
-                </g>
-              </svg><span>FAQ</span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_faq.php">Add FAQ</a></li>
-              <li><a href="list_faq.php">List FAQ</a></li>
-            </ul>
-          </li>
-
-          <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 12l2 2 4-4" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5"></circle>
-              </svg>
-              <span>Why Choose Us</span></a>
-            <ul class="sidebar-submenu">
-              <li><a href="add_why_choose_us.php">Add Why Choose Us</a></li>
-              <li><a href="list_why_choose_us.php">List Why Choose Us</a></li>
-            </ul>
-          </li>
+                </svg><span>FAQ</span></a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_FAQ', $per)) {
+                ?>
+                  <li><a href="add_faq.php">Add FAQ</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_FAQ', $per)) {
+                ?>
+                  <li><a href="list_faq.php">List FAQ</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+          <?php
+          if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per) || in_array('Read_Why_Choose_Us', $per) || in_array('Create_Why_Choose_Us', $per)) {
+          ?>
+            <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 12l2 2 4-4" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5"></circle>
+                </svg>
+                <span>Why Choose Us</span></a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Why_Choose_Us', $per)) {
+                ?>
+                  <li><a href="add_why_choose_us.php">Add Why Choose Us</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Why_Choose_Us', $per)) {
+                ?>
+                  <li><a href="list_why_choose_us.php">List Why Choose Us</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
+            <?php
+if (in_array('Update_Admin_User', $per) || 
+    in_array('Delete_Admin_User', $per) || 
+    in_array('Read_Admin_User', $per) || 
+    in_array('Create_Admin_User', $per)): 
+?>
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- User silhouette -->
+                <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="#130F26" stroke-width="1.5"/>
+                <path d="M20 18C20 15.7909 16.4183 14 12 14C7.58172 14 4 15.7909 4 18" stroke="#130F26" stroke-width="1.5" stroke-linecap="round"/>
+                <!-- Admin badge/shield -->
+                <path d="M18 9V8C18 6.89543 17.1046 6 16 6H8C6.89543 6 6 6.89543 6 8V9" stroke="#FF3B30" stroke-width="1.5"/>
+                <circle cx="12" cy="10" r="1" fill="#FF3B30"/>
+            </svg>
+            <span>Admin Users</span>
+        </a>
+        <ul class="sidebar-submenu">
+            <?php if (in_array('Create_Admin_User', $per)): ?>
+                <li><a href="add_admin_user.php">Add New User</a></li>
+            <?php endif; ?>
+            
+            <?php if (in_array('Read_Admin_User', $per)): ?>
+                <li><a href="list_admin_user.php">List Admin Users</a></li>
+            <?php endif; ?>
+        </ul>
+    </li>
+<?php endif; ?>
+             <?php
+          if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per) || in_array('Read_User_List', $per) || in_array('Create_User_List', $per)) {
+          ?>
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="userlist.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
@@ -299,6 +571,10 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </g>
               </svg><span>User List</span></a></li>
+              <?php
+          }
+          ?>
+           
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="profile.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
@@ -307,6 +583,9 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </g>
               </svg><span>Account</span></a></li>
+              <?php
+          if (in_array('Update_Setting', $per) || in_array('Read_Setting', $per) ) {
+          ?>   
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
@@ -329,6 +608,12 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="add_host_cancellation_policies.php">Edit Host Cancellation Policies</a></li>
             </ul>
           </li>
+          <?php
+          }
+          ?>
+               <?php
+          if (in_array('Update_Cancellation_Policy', $per) || in_array('Delete_Cancellation_Policy', $per) || in_array('Read_Cancellation_Policy', $per) || in_array('Create_Cancellation_Policy', $per)) {
+            ?>  
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g>
                   <g>
@@ -343,10 +628,25 @@ if (isset($_SESSION['restatename'])) {
                 </g>
               </svg><span>Cancellation Policies </span></a>
             <ul class="sidebar-submenu">
+            <?php
+          if ( in_array('Create_Cancellation_Policy', $per)) {
+            ?> 
               <li><a href="add_policies.php">Add Policies</a></li>
+              <?php
+          }
+          ?>
+              <?php
+          if (in_array('Read_Cancellation_Policy', $per) ) {
+            ?> 
               <li><a href="list_policies.php">List Policies</a></li>
+              <?php
+          }
+          ?>
             </ul>
           </li>
+          <?php
+          }
+          ?>
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -362,6 +662,9 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="add_whatsapp_qr.php">Add WhatsApp QR</a></li>
             </ul>
           </li>
+          <?php
+          if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per) || in_array('Read_Chat', $per) || in_array('Create_Chat', $per)) {
+            ?>  
           <li class="sidebar-list">
             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -389,6 +692,9 @@ if (isset($_SESSION['restatename'])) {
               <li><a href="pending_chat.php">Pending Chat</a></li>
             </ul>
           </li>
+          <?php
+          }
+          ?>
           <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="logout.php"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logout" style="transform: rotate(90deg);">
                 <g>
                   <g>

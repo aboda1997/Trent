@@ -1,7 +1,8 @@
 <?php
 require 'include/main_head.php';
-if ($_SESSION['restatename'] == 'Staff') {
-    header('HTTP/1.1 401 Unauthorized');
+$per = $_SESSION['permissions'];
+
+if (!in_array('Read_Setting', $per)) {
 
 
 ?>

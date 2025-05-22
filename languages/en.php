@@ -395,5 +395,27 @@ return [
     'property_id_required' => 'You must enter a Property ID',
     'property_not_available' => "This Property  is not Available",
     'invalid_notification_id' => 'You must enter a valid notification ID',
+    // Username field
+    'Username' => 'Username',
+    'Enter_Username' => 'Enter username',
+    'Username_Requirements' => 'Username must be 3-20 characters',
+
+    // Email field
+    'Email' => 'Email',
+    'Enter_Email' => 'Enter email address',
+    'Valid_Email_Required' => 'Please enter a valid email address',
+
+    // Password field
+    'Password' => 'Password',
+    'Enter_Password' => 'Enter password',
+    'Password_Requirements' => 'Password must be at least 8 characters',
+    'Admin_User_Management' =>     'Admin User Management',
+    'Admin_Type' => 'User Type',
+    'Staff' => 'Staff',
+    'Admin' => 'Administrator',
+    'Admin_type' => 'Please select a user type',
+    'add_admin_user' => 'Add new User',
+    'edit_admin_user' => 'Edit User',
+
 
 ];

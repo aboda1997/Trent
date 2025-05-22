@@ -1,13 +1,12 @@
 <?php
 require 'include/main_head.php';
-$faq_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $faq_per)) {
+  if (!in_array('Update_FAQ', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -19,11 +18,10 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $faq_per)) {
+  if ( !in_array('Create_FAQ', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
   ?>
     <style>
       .loader-wrapper {

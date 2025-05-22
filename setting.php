@@ -1,8 +1,8 @@
 <?php
 require 'include/main_head.php';
+$per = $_SESSION['permissions'];
 
-if ($_SESSION['restatename'] == 'Staff') {
-    header('HTTP/1.1 401 Unauthorized');
+if (!in_array('Read_Setting', $per)) {
 
 
 ?>
@@ -247,10 +247,15 @@ if ($_SESSION['restatename'] == 'Staff') {
                                             </div>
                                         </div>
 
-
+                                        <?php
+													if (in_array('Update_Setting', $per) ) {
+														?>
                                         <div class="col-12">
                                             <button onclick="return validateForm(true)"  name="edit_setting" class="btn btn-primary mb-2">Edit Setting</button>
                                         </div>
+                                        <?php
+												}
+												?>
                                     </div>
                                 </form>
 
