@@ -13,7 +13,7 @@ $pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
 $lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 if ($pro_id == ''  ) {
 	$returnArr = generateResponse('false', "Something Went Wrong!", 400);
-} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
+} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' , ' status = 1 and is_approved =1 and is_deleted =0') === false) {
 	$returnArr = generateResponse('false', "this property not exist!", 400);
 }else if (checkTableStatus($pro_id, 'tbl_property') == false) {
 	$returnArr = generateResponse('false', "This Property already deleted", 410);

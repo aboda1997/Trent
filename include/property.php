@@ -581,13 +581,13 @@ try {
             }
         } else if ($_POST['type'] == 'delete_property') {
             $id = $_POST['id'];
-
+            $status = (int)$_POST['status'];
 
             $table = "tbl_property";
             $where = "where id=" . $id . "";
 
             $h = new Estate();
-            $check = $h->restaterestateDeleteData($where,  $table);
+            $check = $h->restateupdateData(["is_deleted" => "$status"] ,  $table, $where);
 
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Property Deleted Successfully!!", "message" => "Property  section!", "action" => "list_properties.php");

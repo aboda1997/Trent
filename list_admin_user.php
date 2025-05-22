@@ -58,14 +58,12 @@ if (!in_array('Read_Admin_User', $per)) {
 										<thead>
 											<tr>
 												<th>User Name</th>
-												<th>Email</th>
 												<th>User Type</th>
-												<th>Join Date</th>
 
-												
+
 												<th>Status</th>
 
-																						<?php
+												<?php
 												if (in_array('Update_Admin_User', $per) || in_array('Delete_Admin_User', $per)) {
 												?>
 
@@ -80,35 +78,33 @@ if (!in_array('Read_Admin_User', $per)) {
 										</thead>
 										<tbody>
 											<?php
-											$stmt = $rstate->query("SELECT * FROM `tbl_user`");
+											$stmt = $rstate->query("SELECT * FROM `admin`");
 											$i = 0;
 											while ($row = $stmt->fetch_assoc()) {
 												$i = $i + 1;
 											?>
 												<tr>
-													
-													<td><?php echo $row['name']; ?></td>
-													<td><?php echo $row['email']; ?></td>
-													<td><?php echo $row['email']; ?></td>
-													<td><?php echo $row['reg_date']; ?></td>
+
+													<td><?php echo $row['username']; ?></td>
+													<td><?php echo $row['type']; ?></td>
 
 													<?php if ($row['status'] == 1) { ?>
 
-														<td><span data-id="<?php echo $row['id']; ?>"  class=" badge badge-success">Active</span></td>
+														<td><span data-id="<?php echo $row['id']; ?>" class=" badge badge-success">Active</span></td>
 													<?php } else { ?>
 
 														<td>
-															<span data-id="<?php echo $row['id']; ?>"  class="badge  badge-danger">Not Active</span>
+															<span data-id="<?php echo $row['id']; ?>" class="badge  badge-danger">Not Active</span>
 														</td>
 													<?php } ?>
 
 
 
 
-												
+
 
 													<?php
-												if (in_array('Update_Admin_User', $per) || in_array('Delete_Admin_User', $per)) {
+													if ((in_array('Update_Admin_User', $per) || in_array('Delete_Admin_User', $per)) && $row['status'] == 1 ) {
 													?>
 														<td style="white-space: nowrap; width: 15%;">
 															<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
@@ -129,7 +125,13 @@ if (!in_array('Read_Admin_User', $per)) {
 																</div>
 															</div>
 														</td>
-													<?php } ?>
+													<?php
+													} else {
+													?>
+														<td></td>
+													<?php
+													}
+													?>
 
 												</tr>
 											<?php } ?>
@@ -172,9 +174,9 @@ if (!in_array('Read_Admin_User', $per)) {
 			</div>
 			<form id="approveForm">
 
-			<input type="hidden" id="approveId" name="id">
-			<input type="hidden" id="status" name="status">
-			<input type="hidden" name="type" value="delete_user" />
+				<input type="hidden" id="approveId" name="id">
+				<input type="hidden" id="status" name="status">
+				<input type="hidden" name="type" value="delete_admin_user" />
 			</form>
 			<div class="modal-body">
 				Are you sure you want to delete this user?

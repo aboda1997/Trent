@@ -109,7 +109,7 @@ try {
 		$idList = implode(',', $ids);
 		$existing_images_paths = implode(',' ,json_decode($existing_images , true));
 
-		$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . "")->num_rows;
+		$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . " and is_deleted = 0")->num_rows;
 		if ($check_owner != 0) {
 
 			$latitude = null;
@@ -255,7 +255,7 @@ try {
 				$field["video"] =  $videoUrlsString;
 			}
 
-			$check_owner_ = $rstate->query("select * from tbl_property where status = 1 and  add_user_id=" . $user_id . "")->num_rows;
+			$check_owner_ = $rstate->query("select * from tbl_property where status = 1 and  add_user_id=" . $user_id . " and is_deleted =0")->num_rows;
 
 			if ($check_owner_  >= AppConstants::Property_Count) {
 				$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);

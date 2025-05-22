@@ -24,7 +24,7 @@ try {
 		$returnArr    = generateResponse('false', "User id is not exists", 400);
 	} else {
 
-		$total_property = $rstate->query("select * from tbl_property where  add_user_id=" . $uid . "")->num_rows;
+		$total_property = $rstate->query("select * from tbl_property where  add_user_id=" . $uid . " and is_deleted = 0")->num_rows;
 		$total_extra_image = $rstate->query("select * from tbl_extra where add_user_id=" . $uid . "")->num_rows;
 		$total_gallery_image = $rstate->query("select * from tbl_gallery where add_user_id=" . $uid . "")->num_rows;
 		$total_gallery_category = $rstate->query("select * from tbl_gal_cat where add_user_id=" . $uid . "")->num_rows;

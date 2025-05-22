@@ -33,7 +33,7 @@ try {
         $returnArr    = generateResponse('false', "You Must Enter Different Two Users.", 400);
     } else if (!isset($_FILES['img']) && $message == '') {
         $returnArr    = generateResponse('false', "You Must Enter Chat Content!", 400);
-    } else if ($res->num_rows == 0 &&   validateIdAndDatabaseExistance($prop_id, 'tbl_property', "  add_user_id = " . $receiver_id . " ") === false) {
+    } else if ($res->num_rows == 0 &&   validateIdAndDatabaseExistance($prop_id, 'tbl_property', "  add_user_id = " . $receiver_id . " and is_deleted = 0 ") === false) {
         $returnArr    = generateResponse('false', "This property id is not associated with the target user. Please verify the correct user.", 400);
     } else {
         // Allowed file types for images

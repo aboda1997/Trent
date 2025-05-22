@@ -18,7 +18,7 @@ try {
 
     if ($prop_id == '') {
         $returnArr = generateResponse('false', $lang_["property_id_required"], 400);
-    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1') === false) {
+    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
         $returnArr = generateResponse('false', $lang_["property_not_available"], 400);
     } else if (!in_array($lang, ['en', 'ar'])) {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);

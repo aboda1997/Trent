@@ -98,7 +98,7 @@ $per = $_SESSION['permissions'];
                           <div class="icon"><i data-feather="home"></i></div>
                           <div class="sale-content">
                             <h3>Total Property</h3>
-                            <p><?php echo $rstate->query("select * from tbl_property")->num_rows;?></p>
+                            <p><?php echo $rstate->query("select * from tbl_property where is_deleted = 0")->num_rows;?></p>
                           </div>
                         </div>
                       </div>

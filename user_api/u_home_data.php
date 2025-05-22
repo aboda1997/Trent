@@ -52,19 +52,19 @@ try {
 		$query .= "	inner JOIN 
 		tbl_fav f ON p.id = f.property_id AND f.uid = $uid
 	WHERE 
-		p.status = 1 ";
+		p.status = 1 and p.is_deleted = 0 ";
 	} else if ($uid !== null && $owner_mode) {
 		//owner mode 
 		$query .= "	LEFT JOIN 
 		tbl_fav f ON p.id = f.property_id AND f.uid = $uid
 	WHERE 
-	  p.add_user_id = $uid";
+	  p.add_user_id = $uid and p.is_deleted = 0";
 	} else if ($uid !== null) {
 		// authorized user 
 		$query .= "	LEFT JOIN 
 		tbl_fav f ON p.id = f.property_id AND f.uid = $uid
 	WHERE 
-	p.status = 1 and p.is_approved = 1 ";
+	p.status = 1 and p.is_approved = 1 and p.is_deleted = 0 ";
 	} else {
 		// guest case 
 		$query = " 
@@ -77,7 +77,7 @@ try {
 	LEFT JOIN 
 		tbl_rating r ON p.id = r.prop_id 
 		WHERE 
-	p.status = 1 and p.is_approved = 1 
+	p.status = 1 and p.is_approved = 1 and p.is_deleted = 0
 	";
 	}
 

@@ -166,7 +166,9 @@ where is_approved = 1
                           <td class="align-middle">
                             <?php echo $row['plimit']; ?>
                           </td>
-
+                          <?php
+                        if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0' ) {
+                          ?>
                           <td>
                             <span class="badge status-toggle <?php echo $row['status'] ?   'badge-danger' : 'badge-success'; ?>"
                               data-id="<?php echo $row['id']; ?>"
@@ -176,6 +178,13 @@ where is_approved = 1
                             </span>
 
                           </td>
+                          <?php
+                        }else{
+                          ?>
+                          <td></td>
+                          <?php
+                          }
+                          ?>
                           <td class="align-middle">
                             <?php echo $row['created_at']; ?>
                           </td>
@@ -184,7 +193,7 @@ where is_approved = 1
                             <?php echo $row['updated_at']; ?>
                           </td>
                           <?php
-                        if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)) {
+                        if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0' ) {
                           ?>
 
                               <td style="white-space: nowrap; width: 15%;">
@@ -210,6 +219,7 @@ where is_approved = 1
                                       data-toggle="modal"
                                       data-target="#approveModal"
                                       data-id="<?php echo $row['id']; ?>"
+                                      data-status="<?php echo '1'; ?>"
                                       title="Delete">
                                       <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect width="30" height="30" rx="15" fill="#FF6B6B" />
@@ -225,10 +235,13 @@ where is_approved = 1
                                 </div>
                               </td>
                          
+                              <?php
+                        }else{
+                          ?>
+                          <td></td>
                           <?php
                           }
                           ?>
-
                         </tr>
                       <?php
                       }
@@ -267,8 +280,9 @@ where is_approved = 1
       </div>
       <form id="approveForm">
 
-        <input type="hidden" id="approveId" name="id">
-        <input type="hidden" name="type" value="delete_property" />
+      <input type="hidden" id="approveId" name="id">
+      <input type="hidden" id="status" name="status">
+      <input type="hidden" name="type" value="delete_property" />
       </form>
       <div class="modal-body">
         Are you sure you want to delete this property?
@@ -344,9 +358,11 @@ where is_approved = 1
   $('#approveModal').on('show.bs.modal', function(event) {
     var button = $(event.relatedTarget);
     var id = button.data('id');
+    var status = button.data('status');
 
     var modal = $(this);
     modal.find('#approveId').val(id);
+    modal.find('#status').val(status);
   });
   // When save button is clicked
   $('#confirmApproveBtn').click(function() {
@@ -387,7 +403,7 @@ where is_approved = 1
             }, 2000);
           }
         } else {
-          alert("'Error saving payout Approval.");
+          alert("'Error saving property deletion.");
         }
       }
     });
