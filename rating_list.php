@@ -1,12 +1,12 @@
 <?php
 require 'include/main_head.php';
 $lang_code = load_language_code()["language_code"];
+$per = $_SESSION['permissions'];
 
-if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
+if (!in_array('Read_Booking', $per)) {
 
 
 
-  header('HTTP/1.1 401 Unauthorized');
 ?>
   <style>
     .loader-wrapper {
@@ -68,8 +68,15 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
 
 
                         <th> Full Name </th>
-                        <th> action </th>
+                        <?php
+                        if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)) {
+                        ?>
 
+                          <th>
+                            <?= $lang['Action'] ?></th>
+                        <?php
+                        }
+                        ?>
                       </tr>
                     </thead>
                     <tbody>
@@ -106,7 +113,9 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                           <td class="align-middle">
                             <?php echo $guest['name']; ?>
                           </td>
-
+                          <?php
+                        if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)) {
+                        ?>
                           <td style="white-space: nowrap; width: 15%;">
                             <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                               <div class="btn-group btn-group-sm" style="float: none;">
@@ -125,6 +134,10 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                               </div>
                             </div>
                           </td>
+                          <?php
+                      }
+                      ?>
+
                         </tr>
                       <?php
                       }

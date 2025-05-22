@@ -46,14 +46,15 @@ try {
 		if (is_null($sel['ptype'])) {
 			$fp['category'] = null;
 		} else {
-			$title = $rstate->query("SELECT id, title FROM tbl_category WHERE id=" . $sel['ptype']);
+			$title = $rstate->query("SELECT id, title,img FROM tbl_category WHERE id=" . $sel['ptype']);
 
 			if ($title->num_rows > 0) {
 				while ($tit = $title->fetch_assoc()) {
 					// Combine the id and name into a single associative array
 					$fp['category'] = [
 						'id' => $tit['id'],
-						'type' => json_decode($tit['title']??'', true)
+						'type' => json_decode($tit['title']??'', true),
+						'img' => $tit['img'],
 					];
 				}
 			} else {

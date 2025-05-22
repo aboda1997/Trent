@@ -1,13 +1,10 @@
 <?php
 require 'include/main_head.php';
-$payout_method_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $payout_method_per)) {
+  if ( !in_array('Update_Payout_Method', $per)) {
 
-
-
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -19,11 +16,8 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $payout_method_per)) {
+  if (!in_array('Create_Payout_Method', $per)) {
 
-
-
-    header('HTTP/1.1 401 Unauthorized');
   ?>
     <style>
       .loader-wrapper {

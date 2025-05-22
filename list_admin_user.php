@@ -3,7 +3,7 @@ require 'include/main_head.php';
 $per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
-if (!in_array('Read_User_List', $per)) {
+if (!in_array('Read_Admin_User', $per)) {
 
 
 ?>
@@ -38,7 +38,7 @@ if (!in_array('Read_User_List', $per)) {
 					<div class="row">
 						<div class="col-6">
 							<h3>
-								User List Management</h3>
+								Admin User List Management</h3>
 						</div>
 						<div class="col-6">
 
@@ -57,20 +57,16 @@ if (!in_array('Read_User_List', $per)) {
 									<table class="display" id="basic-1">
 										<thead>
 											<tr>
-												<th></th>
-												<th>Name</th>
+												<th>User Name</th>
 												<th>Email</th>
-												<th>mobile</th>
+												<th>User Type</th>
 												<th>Join Date</th>
 
 												
-													<th>Status</th>
+												<th>Status</th>
 
-
-												<th>IsOwner</th>
-												<th>Property Count</th>
-												<?php
-												if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) {
+																						<?php
+												if (in_array('Update_Admin_User', $per) || in_array('Delete_Admin_User', $per)) {
 												?>
 
 													<th>
@@ -90,17 +86,10 @@ if (!in_array('Read_User_List', $per)) {
 												$i = $i + 1;
 											?>
 												<tr>
-													<td>
-														<?php
-														if (empty($row['pro_pic'])) {
-														} else {
-														?>
-															<img class="rounded-circle" width="35" height="35" src="<?php echo $row['pro_pic']; ?>" alt="">
-														<?php } ?>
-													</td>
+													
 													<td><?php echo $row['name']; ?></td>
 													<td><?php echo $row['email']; ?></td>
-													<td><?php echo $row['mobile']; ?></td>
+													<td><?php echo $row['email']; ?></td>
 													<td><?php echo $row['reg_date']; ?></td>
 
 													<?php if ($row['status'] == 1) { ?>
@@ -116,28 +105,10 @@ if (!in_array('Read_User_List', $per)) {
 
 
 
-													<td>
-
-
-														<?php if ($row['is_owner'] == 1) { ?>
-															Owner
-
-														<?php } else { ?>
-															Property
-
-														<?php } ?>
-
-													</td>
-													<td>
-														<?php
-														$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $row['id'] . "")->num_rows;
-
-														?>
-														<?php echo $check_owner ?>
-													</td>
+												
 
 													<?php
-													if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) {
+												if (in_array('Update_Admin_User', $per) || in_array('Delete_Admin_User', $per)) {
 													?>
 														<td style="white-space: nowrap; width: 15%;">
 															<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">

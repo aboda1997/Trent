@@ -5,18 +5,11 @@ class Estate
 {
 
 
-  function restatelogin($username, $password, $tblname)
+  function restatelogin($username, $password, $type)
   {
-    if ($tblname == 'admin') {
-      $q = "select * from " . $tblname . " where username='" . $username . "' and password='" . $password . "'";
-      return $GLOBALS['rstate']->query($q)->num_rows;
-    } else if ($tblname == 'restate_details') {
-      $q = "select * from " . $tblname . " where email='" . $username . "' and password='" . $password . "'";
-      return $GLOBALS['rstate']->query($q)->num_rows;
-    } else {
-      $q = "select * from " . $tblname . " where email='" . $username . "' and password='" . $password . "' and status=1";
-      return $GLOBALS['rstate']->query($q)->num_rows;
-    }
+      $q = "select id from " . 'admin' . " where username='" . $username . "' and password='" . $password . "' and type='" . $type . "' and status = '1'";
+      return $GLOBALS['rstate']->query($q);
+ 
   }
 
   function restateinsertdata($field, $data, $table)

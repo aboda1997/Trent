@@ -1,13 +1,12 @@
 <?php
 require 'include/main_head.php';
-$property_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
-if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
+if (!in_array('Read_Chat', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
         .loader-wrapper {
@@ -70,21 +69,16 @@ if ($_SESSION['restatename'] == 'Staff' && !in_array('Read', $property_per)) {
                                                 <th>Created at</th>
 
                                                 <?php
-                                                if ($_SESSION['restatename'] == 'Staff') {
-                                                    if (in_array('Update', $property_per)) {
+                                                                if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per)) {
+                                                                    ?>
+
+                                                    <th>
+                                                        <?= $lang['Action'] ?></th>
+                                                <?php
+                                                }
                                                 ?>
 
-                                                        <th>
-                                                            <?= $lang['Action'] ?></th>
-                                                    <?php
-                                                    }
-                                                } else {
-                                                    ?>
-                                                    <th>
-                                                        <?= $lang['Action'] ?>
 
-                                                    </th>
-                                                <?php } ?>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -105,7 +99,7 @@ INNER JOIN
                                             $city = $rstate->query($query);
                                             $i = 0;
                                             while ($row = $city->fetch_assoc()) {
-                                            $i++;
+                                                $i++;
                                             ?>
                                                 <tr>
                                                     <td>
@@ -133,23 +127,28 @@ INNER JOIN
                                                     <td class="align-middle">
                                                         <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                                             <div class="btn-group btn-group-sm" style="float: none;">
+                                                                <?php
+                                                                if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per)) {
+                                                                ?>
+                                                                    <button class="btn btn-success " style="float: none; margin: 5px;"
+                                                                        type="button"
+                                                                        data-toggle="modal" data-target="#approveModal"
+                                                                        data-id="<?php echo $row['id']; ?>"
+                                                                        data-status="<?php echo "1"; ?>"
 
-                                                                <button class="btn btn-success " style="float: none; margin: 5px;"
-                                                                    type="button"
-                                                                    data-toggle="modal" data-target="#approveModal"
-                                                                    data-id="<?php echo $row['id']; ?>"
-                                                                    data-status="<?php echo "1"; ?>"
+                                                                        title="Approve">
+                                                                        Approve
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
+                                                                        data-toggle="modal" data-target="#rejectModal"
+                                                                        data-status="<?php echo "0"; ?>"
 
-                                                                    title="Approve">
-                                                                    Approve
-                                                                </button>
-                                                                <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
-                                                                    data-toggle="modal" data-target="#rejectModal"
-                                                                    data-status="<?php echo "0"; ?>"
-
-                                                                    data-id="<?php echo $row['id']; ?>">
-                                                                    Reject
-                                                                </button>
+                                                                        data-id="<?php echo $row['id']; ?>">
+                                                                        Reject
+                                                                    </button>
+                                                                <?php
+                                                                }
+                                                                ?>
                                                             </div>
 
                                                         </div>
@@ -306,21 +305,20 @@ require 'include/footer.php';
                             exit: 'animated fadeOutUp',
                         },
                     });
-  // Redirect after a delay if an action URL is provided
-  if (res.action) {
-              setTimeout(function() {
-                window.location.href = res.action;
-              }, 2000);
-            }
-                
+                    // Redirect after a delay if an action URL is provided
+                    if (res.action) {
+                        setTimeout(function() {
+                            window.location.href = res.action;
+                        }, 2000);
+                    }
+
                 } else {
                     alert("'Error saving  Approval.");
                 }
+            },
+            complete: function() {
+                saveButton.prop('disabled', false); // Re-enable button on success/fail
             }
-            ,
-        complete: function() {
-            saveButton.prop('disabled', false); // Re-enable button on success/fail
-        }
         });
     });
 
@@ -357,21 +355,20 @@ require 'include/footer.php';
                             exit: 'animated fadeOutUp',
                         },
                     });
-  // Redirect after a delay if an action URL is provided
-  if (res.action) {
-              setTimeout(function() {
-                window.location.href = res.action;
-              }, 2000);
-            }
-                 
+                    // Redirect after a delay if an action URL is provided
+                    if (res.action) {
+                        setTimeout(function() {
+                            window.location.href = res.action;
+                        }, 2000);
+                    }
+
                 } else {
                     alert("'Error saving rejection .");
                 }
+            },
+            complete: function() {
+                saveButton.prop('disabled', false); // Re-enable button on success/fail
             }
-            ,
-        complete: function() {
-            saveButton.prop('disabled', false); // Re-enable button on success/fail
-        }
         });
     });
 </script>

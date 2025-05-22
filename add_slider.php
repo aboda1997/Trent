@@ -1,14 +1,11 @@
 <?php
 require 'include/main_head.php';
-$slider_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
 if (isset($_GET['id'])) {
-    if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $slider_per)) {
+    if (!in_array('Update_Slider', $per)) {
 
-
-
-        header('HTTP/1.1 401 Unauthorized');
 ?>
         <style>
             .loader-wrapper {
@@ -20,11 +17,8 @@ if (isset($_GET['id'])) {
         exit();
     }
 } else {
-    if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $slider_per)) {
+    if ( !in_array('Create_Slider', $per)) {
 
-
-
-        header('HTTP/1.1 401 Unauthorized');
     ?>
         <style>
             .loader-wrapper {

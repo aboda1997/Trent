@@ -1,13 +1,12 @@
 <?php
 require 'include/main_head.php';
-$canncel_reason_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $canncel_reason_per)) {
+  if ( !in_array('Update_Cancel_Reason', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
 ?>
     <style>
       .loader-wrapper {
@@ -19,11 +18,10 @@ if (isset($_GET['id'])) {
     exit();
   }
 } else {
-  if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $canncel_reason_per)) {
+  if (!in_array('Create_Cancel_Reason', $per)) {
 
 
 
-    header('HTTP/1.1 401 Unauthorized');
   ?>
     <style>
       .loader-wrapper {

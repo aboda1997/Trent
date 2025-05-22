@@ -1,12 +1,12 @@
 <?php
 require 'include/main_head.php';
 $lang_code = load_language_code()["language_code"];
+$per = $_SESSION['permissions'];
 
-if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
+if (!in_array('Read_Payout', $per)) {
 
 
 
-  header('HTTP/1.1 401 Unauthorized');
 ?>
   <style>
     .loader-wrapper {
@@ -59,7 +59,13 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                   <table class="display" id="basic-1">
                     <thead>
                       <tr>
-                        <th></th>
+                        <?php
+                        if (in_array('Update_Payout', $per) && in_array('Delete_Payout', $per)) {
+                        ?>
+                          <th></th>
+                        <?php
+                        }
+                        ?>
                         <th>Sr No.</th>
                         <th class="align-middle d-none">payout id</th>
 
@@ -76,7 +82,13 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         <th>Wallet Number </th>
                         <th>Bank Account No </th>
                         <th>Formal Name ( for bank ) </th>
-                        <th> Payout denial </th>
+                        <?php
+                        if (in_array('Update_Payout', $per) || in_array('Delete_Payout', $per)) {
+                        ?>
+                          <th> Payout denial </th>
+                        <?php
+                        }
+                        ?>
 
                       </tr>
                     </thead>
@@ -93,8 +105,16 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
 
                       ?>
                         <tr>
+                          <?php
+                          if (in_array('Update_Payout', $per) && in_array('Delete_Payout', $per)) {
+                          ?>
+                       
                           <td><input type="checkbox" class="row-checkbox"></td>
+                          <?php
+                          }
+                          ?>
                           <td>
+
                             <?php echo $i; ?>
                           </td>
 
@@ -141,24 +161,31 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                           <td class="align-middle">
                             <?php echo $payment_data['bank_name'] ?? ''; ?>
                           </td>
+                          <?php
+                          if (in_array('Update_Payout', $per) || in_array('Delete_Payout', $per)) {
+                          ?>
+                            <td style="white-space: nowrap; width: 15%;">
+                              <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                                <div class="btn-group btn-group-sm" style="float: none;">
 
-                          <td style="white-space: nowrap; width: 15%;">
-                            <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-                              <div class="btn-group btn-group-sm" style="float: none;">
-                              
 
-                                <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
-                                  data-toggle="modal" data-target="#denyModal"
-                                  data-id="<?php echo $row['pid']; ?>"
-                                  data-uid="<?php echo $payment_data['uid']; ?>"
-                                  title="Deny"
-                                  data-title="<?php echo  json_decode($row['prop_title'], true)['ar']; ?>">
+                                  <button type="button" style="background: none; border: none; padding: 0; cursor: pointer;"
+                                    data-toggle="modal" data-target="#denyModal"
+                                    data-id="<?php echo $row['pid']; ?>"
+                                    data-uid="<?php echo $payment_data['uid']; ?>"
+                                    title="Deny"
+                                    data-title="<?php echo  json_decode($row['prop_title'], true)['ar']; ?>">
 
-                                  <i class="fas fa-times"></i>
-                                </button>
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                      <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                    </svg> </button>
+                                </div>
                               </div>
-                            </div>
-                          </td>
+                            </td>
+                          <?php
+                          }
+                          ?>
                         </tr>
                       <?php
                       }
@@ -166,8 +193,14 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
 
                     </tbody>
                     <!-- Action button (initially hidden) -->
-                    <button id="action-btn" class="btn btn-primary" style="display:none; margin-top:20px;">
-                      Approve And Generate Payout File </button>
+                    <?php
+                    if (in_array('Update_Payout', $per) && in_array('Delete_Payout', $per)) {
+                    ?>
+                      <button id="action-btn" class="btn btn-primary" style="display:none; margin-top:20px;">
+                        Approve And Generate Payout File </button>
+                    <?php
+                    }
+                    ?>
                   </table>
 
                 </div>
@@ -463,22 +496,22 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
           $('#approveModal').removeClass('show').hide();
           $('.modal-backdrop').remove();
 
-         
+
           $.notify('<i class="fas fa-bell"></i> Export completed successfully!', {
-              type: 'theme',
-              allow_dismiss: true,
-              delay: 2000,
-              showProgressbar: true,
-              timer: 300,
-              animate: {
-                enter: 'animated fadeInDown',
-                exit: 'animated fadeOutUp',
-              },
-            });
-             // Redirect after a delay if an action URL is provided
-              setTimeout(function() {
-                window.location.href = "pending_payout.php";
-              }, 2000);
+            type: 'theme',
+            allow_dismiss: true,
+            delay: 2000,
+            showProgressbar: true,
+            timer: 300,
+            animate: {
+              enter: 'animated fadeInDown',
+              exit: 'animated fadeOutUp',
+            },
+          });
+          // Redirect after a delay if an action URL is provided
+          setTimeout(function() {
+            window.location.href = "pending_payout.php";
+          }, 2000);
         },
         error: function() {
           $.notify('<i class="fas fa-exclamation-circle"></i> Error Export Excel Sheet ', {

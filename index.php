@@ -2,6 +2,7 @@
 require 'include/main_head.php';
 if(isset($_SESSION['restatename']))
 {
+
 	?>
 	<script>
 	window.location.href="dashboard.php";

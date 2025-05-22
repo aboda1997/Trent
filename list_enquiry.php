@@ -1,10 +1,11 @@
 <?php 
 require 'include/main_head.php';
-if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $enquiry_per)) {
+$per = $_SESSION['permissions'];
+
+if ( !in_array('Read_Enquiry', $per)) {
     
 
     
-    header('HTTP/1.1 401 Unauthorized');
     ?>
     <style>
         .loader-wrapper {

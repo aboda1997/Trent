@@ -1,11 +1,12 @@
 <?php
 require 'include/main_head.php';
-if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
+$per = $_SESSION['permissions'];
+$lang_code = load_language_code()["language_code"];
 
-  $lang_code = load_language_code()["language_code"];
+if (!in_array('Read_Booking', $per)) {
 
 
-  header('HTTP/1.1 401 Unauthorized');
+
 ?>
   <style>
     .loader-wrapper {
@@ -66,8 +67,15 @@ if ($_SESSION['stype'] == 'Staff' && !in_array('Read', $booking_per)) {
                         <th>Property Total Day</th>
                         <th>User Rating</th>
                         <th>User FeedBack</th>
-                        <th>Action</th>
-                      </tr>
+                        <?php
+                        if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)) {
+                        ?>
+
+                          <th>
+                            <?= $lang['Action'] ?></th>
+                        <?php
+                        }
+                        ?>                      </tr>
                     </thead>
                     <tbody>
                       <?php

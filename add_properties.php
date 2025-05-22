@@ -1,15 +1,14 @@
 <?php
 require 'include/main_head.php';
 
-$coupon_per = ['Create', 'Update', 'Read', 'Delete'];
+$per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
 if (isset($_GET['id'])) {
-	if ($_SESSION['restatename'] == 'Staff' && !in_array('Update', $property_per)) {
+	if ( !in_array('Update_Property', $per)) {
 
 
 
-		header('HTTP/1.1 401 Unauthorized');
 ?>
 		<style>
 			.loader-wrapper {
@@ -21,11 +20,9 @@ if (isset($_GET['id'])) {
 		exit();
 	}
 } else {
-	if ($_SESSION['restatename'] == 'Staff' && !in_array('Write', $property_per)) {
+	if ( !in_array('Create_Property', $per)) {
 
 
-
-		header('HTTP/1.1 401 Unauthorized');
 	?>
 		<style>
 			.loader-wrapper {
