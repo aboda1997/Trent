@@ -63,8 +63,8 @@ if (!in_array('Read_User_List', $per)) {
 												<th>mobile</th>
 												<th>Join Date</th>
 
-												
-													<th>Status</th>
+
+												<th>Status</th>
 
 
 												<th>IsOwner</th>
@@ -105,11 +105,11 @@ if (!in_array('Read_User_List', $per)) {
 
 													<?php if ($row['status'] == 1) { ?>
 
-														<td><span data-id="<?php echo $row['id']; ?>"  class=" badge badge-success">Active</span></td>
+														<td><span data-id="<?php echo $row['id']; ?>" class=" badge badge-success">Active</span></td>
 													<?php } else { ?>
 
 														<td>
-															<span data-id="<?php echo $row['id']; ?>"  class="badge  badge-danger">Not Active</span>
+															<span data-id="<?php echo $row['id']; ?>" class="badge  badge-danger">Not Active</span>
 														</td>
 													<?php } ?>
 
@@ -130,14 +130,14 @@ if (!in_array('Read_User_List', $per)) {
 													</td>
 													<td>
 														<?php
-														$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $row['id'] . "")->num_rows;
+														$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $row['id'] . " and is_deleted = 0")->num_rows;
 
 														?>
 														<?php echo $check_owner ?>
 													</td>
 
 													<?php
-													if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) {
+													if ((in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) &&  $row['status'] == '1') {
 													?>
 														<td style="white-space: nowrap; width: 15%;">
 															<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
@@ -158,7 +158,13 @@ if (!in_array('Read_User_List', $per)) {
 																</div>
 															</div>
 														</td>
-													<?php } ?>
+													<?php
+													} else {
+													?>
+														<td></td>
+													<?php
+													}
+													?>
 
 												</tr>
 											<?php } ?>
@@ -201,9 +207,9 @@ if (!in_array('Read_User_List', $per)) {
 			</div>
 			<form id="approveForm">
 
-			<input type="hidden" id="approveId" name="id">
-			<input type="hidden" id="status" name="status">
-			<input type="hidden" name="type" value="delete_user" />
+				<input type="hidden" id="approveId" name="id">
+				<input type="hidden" id="status" name="status">
+				<input type="hidden" name="type" value="delete_user" />
 			</form>
 			<div class="modal-body">
 				Are you sure you want to delete this user?

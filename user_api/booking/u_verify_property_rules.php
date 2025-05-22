@@ -28,7 +28,7 @@ try {
         $returnArr    = generateResponse('false', "User id is required", 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
         $returnArr    = generateResponse('false', "User id is not exists", 400);
-    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1') === false) {
+    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
         $returnArr    = generateResponse('false', "This property  is not Available", 400);
     }
     

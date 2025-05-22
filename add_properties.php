@@ -85,7 +85,7 @@ if (isset($_GET['id'])) {
 							</div>
 							<?php
 							if (isset($_GET['id'])) {
-								$data = $rstate->query("select * from tbl_property where id=" . $_GET['id'] . "")->fetch_assoc();
+								$data = $rstate->query("select * from tbl_property where id=" . $_GET['id'] . " and is_deleted = 0")->fetch_assoc();
 								$title = json_decode($data['title'], true);
 								$address = json_decode($data['address'], true);
 								$description = json_decode($data['description'], true);

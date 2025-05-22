@@ -49,7 +49,7 @@ try {
     p.government = $government_id
     and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.$lang_code')) IS NOT NULL
     and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.$lang_code')) IS NOT NULL
-    and p.status=1
+    and p.status=1 and p.is_deleted = 0
 ";
         // If a search term is provided, add a LIKE condition for partial matching
         if ($compound_name) {

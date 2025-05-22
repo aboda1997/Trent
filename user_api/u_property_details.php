@@ -14,7 +14,7 @@ try {
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : null;
 	if ($pro_id == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
-	} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property') === false) {
+	} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  ' is_deleted =0') === false) {
 		$returnArr = generateResponse('false', "this property not exist!", 400);
 	} else {
 		$fp = array();
