@@ -58,7 +58,7 @@ class AppConstants
         return $methods;
     }
 
-    public static function getPaymentMethod($lang = 'ar', $key)
+    public static function getPaymentMethod( $key , $lang = 'ar')
     {
         $method = [];
         foreach (self::PAYMENT_METHODS as $code => $config) {

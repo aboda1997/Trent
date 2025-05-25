@@ -91,7 +91,7 @@ try {
 		$fp['subtotal'] = $sel['subtotal'];
 		$fp['total'] = $sel['total'];
 		$fp['prop_title'] = json_decode($sel['prop_title'], true)[$lang];
-		$fp['pay_method'] = AppConstants::getPaymentMethod($lang ,$sel['method_key']);
+		$fp['pay_method'] = AppConstants::getPaymentMethod($sel['method_key'] ,$lang );
 		$fp['check_intime'] = $sel['check_intime'];
 		$fp['check_outtime'] = $sel['check_outtime'];
 		$fp['total_day'] = $sel['total_day'];
