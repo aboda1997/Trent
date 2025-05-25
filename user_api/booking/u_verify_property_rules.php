@@ -21,8 +21,6 @@ try {
     $to_date = isset($_POST['to_date']) ? $_POST['to_date'] : null;
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
     $guest_counts = isset($_POST['guest_counts']) ? $_POST['guest_counts'] : 0;
-    $method_key = isset($_POST['method_key']) ? $_POST['method_key'] : '';
-    $methods  = AppConstants::getAllMethodKeys();
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
         $returnArr    = generateResponse('false', "Property id is required", 400);
@@ -42,8 +40,6 @@ try {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
     } else if ($confirm_guest_rules  == 'false') {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
-    } else if (!in_array($method_key, $methods)) {
-        $returnArr    = generateResponse('false', "Payment method not valid", 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
@@ -122,14 +118,11 @@ try {
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']  ){
-                $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
-
-            }else{
+        
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
             ));
-        }
+        
         }
     }
     echo $returnArr;
