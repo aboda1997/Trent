@@ -25,6 +25,8 @@ try {
 	$bathrooms_count = isset($_GET['bathrooms_count']) ? intval($_GET['bathrooms_count']) : null;
 	$rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
 	$guest_count = isset($_GET['guest_count']) ? intval($_GET['guest_count']) : null;
+	$check_in = isset($_GET['check_in']) ? $_GET['check_in'] : null;
+    $check_out = isset($_GET['check_out']) ? $_GET['check_out'] : null;
 	$facilitiesArray = json_decode($facilities, true);
 	$usersArray = json_decode($users_list, true);
 
