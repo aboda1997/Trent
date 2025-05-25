@@ -3,6 +3,7 @@ require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
 
 header('Content-Type: application/json');
 try {
@@ -90,7 +91,7 @@ try {
 		$fp['subtotal'] = $sel['subtotal'];
 		$fp['total'] = $sel['total'];
 		$fp['prop_title'] = json_decode($sel['prop_title'], true)[$lang];
-		$fp['p_method_id'] = $sel['p_method_id'];
+		$fp['pay_method'] = AppConstants::getPaymentMethod($lang ,$sel['method_key']);
 		$fp['check_intime'] = $sel['check_intime'];
 		$fp['check_outtime'] = $sel['check_outtime'];
 		$fp['total_day'] = $sel['total_day'];
