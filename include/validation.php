@@ -91,7 +91,7 @@ function validateFacilityIds($idString, $table = "tbl_facility", $uid = null)
 
     $query = "SELECT id FROM $table WHERE id IN ($idList)";
     if ($uid) {
-        $query .= " and add_user_id = $uid ";
+        $query .= " and add_user_id = $uid and book_status  IN ('Check_in', 'Completed') ";
     }
     $result = $GLOBALS['rstate']->query($query);
     // Fetch valid IDs
@@ -105,6 +105,39 @@ function validateFacilityIds($idString, $table = "tbl_facility", $uid = null)
 }
 
 
+function validatePayouts($idString)
+{
+    // Check if input is a JSON array and decode it
+    $decodedIds = json_decode($idString, true);
+
+    // If JSON decoding fails, assume it's a comma-separated string
+    if (!is_array($decodedIds)) {
+        $decodedIds = explode(',', $idString);
+    }
+    // Convert comma-separated string to an array and sanitize
+    $ids = array_filter(array_map('trim', $decodedIds));
+
+    // Ensure all values are positive integers
+    foreach ($ids as $id) {
+        if (!ctype_digit($id) || $id <= 0) {
+            return false; // Invalid ID detected
+        }
+    }
+    // Build and execute the query
+    $idList = implode(',', $ids);
+
+    $query = "SELECT b.id 
+          FROM tbl_book b
+          WHERE b.id IN ($idList)
+          AND  EXISTS (
+              SELECT 1 
+              FROM tbl_payout_list pl
+              WHERE pl.book_id = b.id
+              AND pl.payout_status IN ('Pending', 'Completed')
+          )";
+    $result = $GLOBALS['rstate']->query($query);
+    return $result->num_rows;
+}
 function expandShortUrl($shortUrl)
 {
     // Validate the URL format

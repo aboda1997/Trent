@@ -25,7 +25,7 @@ try {
         $data = array();
         $data_list = array();
         $query = "
-        SELECT 
+       SELECT 
     b.id,
     b.check_in,
     b.check_out,
@@ -39,6 +39,12 @@ INNER JOIN
 WHERE 
     b.book_status IN ('Check_in', 'Completed')
     AND p.add_user_id = $uid
+    AND NOT EXISTS (
+        SELECT 1 
+        FROM tbl_payout_list pl 
+        WHERE pl.book_id = b.id 
+        AND pl.payout_status IN ('Completed', 'Pending')
+    )
     ";
 
         $sel_length  = $rstate->query($query)->num_rows;
