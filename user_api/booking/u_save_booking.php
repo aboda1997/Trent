@@ -22,6 +22,8 @@ try {
     $to_date = isset($_POST['to_date']) ? $_POST['to_date'] : null;
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
     $guest_counts = isset($_POST['guest_counts']) ? $_POST['guest_counts'] : 0;
+    $method_key = isset($_POST['method_key']) ? $_POST['method_key'] : '';
+    $methods  = AppConstants::getAllMethodKeys();
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
         $returnArr    = generateResponse('false', "Property id is required", 400);
@@ -37,12 +39,25 @@ try {
         $returnArr    = generateResponse('false', $message, 400);
     } else if ($confirm_guest_rules  == 'false') {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
-    } else {
+    } else if (!in_array($method_key, $methods)) {
+        $returnArr    = generateResponse('false', "Payment method not valid", 400);
+    }
+     else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date,$to_date, $date_list);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
+        $balance = '0.00';
+        $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
+        while ($row = $sel->fetch_assoc()) {
+
+            if ($row['status'] == 'Adding') {
+                $balance = bcadd($balance, $row['amt'], 2);
+            } else if ($row['status'] == 'Withdraw') {
+                $balance = bcsub($balance, $row['amt'], 2);
+            }
+        }
         if ($days == 0) {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
@@ -80,6 +95,7 @@ try {
             $fp['days'] = $days;
             $fp['guest_count'] = $guest_counts;
             $fp['tax_percent'] = $set['tax'];
+            $fp['wallet_balance'] = $balance;
 
             $periods = [
                 "d" => ["ar" => "يومي", "en" => "daily"],
@@ -109,23 +125,40 @@ try {
             $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
-            $whatsapp = sendMessage([$ccode . $mobile], $message);
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
     
-            $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-            $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
-
-            $h = new Estate();
-            $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+           
             $fp['book_status'] = 'Booked';
-            $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id ,'booking_id' , $check, $res_data['image']);
 
-            $fp['book_id'] = $check;
+            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']  ){
+                $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
+
+            }else{
+                $GLOBALS['rstate']->begin_transaction();
+
+                $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+    
+                $h = new Estate();
+                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                $fp['book_id'] = $check;
+
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id ,'booking_id' , $check, $res_data['image']);
+                $created_at1 = $date->format('Y-m-d H:i:s');
+
+                $field_values1 = ["uid" , 'status' , 'amt' , 'tdate'];
+                $data_values1  = [$uid , 'Withdraw' , $fp['final_total'] , $created_at1 ];
+                $table1 = 'wallet_report';
+        
+                $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
+                $GLOBALS['rstate']->commit();
 
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
             ));
+        }
         }
     }
     echo $returnArr;

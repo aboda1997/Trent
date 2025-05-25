@@ -3,6 +3,7 @@ require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
 
 header('Content-Type: application/json');
 try {
@@ -50,7 +51,7 @@ try {
             $fp['image_list'] = $vr;
 			$fp['prop_title'] = json_decode($row['prop_title'], true)[$lang];
 
-			$fp['p_method_id'] = $row['p_method_id'];
+			$fp['pay_method'] = AppConstants::getPaymentMethod($lang ,$row['method_key']);
 			$fp['prop_price'] = $row['prop_price'];
 			$fp['total_day'] = $row['total_day'];
 			$fp['total_paid'] = $row['total'];
