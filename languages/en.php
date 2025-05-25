@@ -341,6 +341,7 @@ return [
 
     'payout_profile_not_exist' => 'This Payout Profile Does Not Exist!',
     'invalid_booking_ids' => 'Booking IDs must be valid!',
+    'invalid_payout' => 'Payout request Already sent for this Properties',
     'general_error' => 'Something Went Wrong!',
     'payout_request_added' => 'Payout Request Added Successfully',
     'payout_profile_added' => 'Payout Profile Added Successfully',

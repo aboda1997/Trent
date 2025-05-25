@@ -37,6 +37,8 @@ try {
         $returnArr = generateResponse('false', $lang_["payout_profile_not_exist"], 404);
     } else if (validateFacilityIds($booking_list,  'tbl_book' , $uid) === false) {
         $returnArr = generateResponse('false', $lang_["invalid_booking_ids"], 400);
+    } else if (validatePayouts($booking_list) !== 0) {
+        $returnArr = generateResponse('false', $lang_["invalid_payout"], 400);
     } else {
         $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
         $created_at = $date->format('Y-m-d H:i:s');
