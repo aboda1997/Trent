@@ -1,9 +1,6 @@
 <?php
 require_once dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/helper.php';
-require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
-require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
-require dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
 require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
