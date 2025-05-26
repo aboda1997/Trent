@@ -9,7 +9,9 @@ require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
-    $input = json_decode(file_get_contents('php://input'), true); 
+    $input = json_decode(file_get_contents('php://input'), true);
+    $stringValues = implode(", ", $input);
+ 
     $field_values = [ "res"];
     $data_values = [$input];
 
