@@ -10,10 +10,12 @@ require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 header('Content-Type: application/json');
 try {
     $input = json_decode(file_get_contents('php://input'), true);
-    $stringValues = implode(", ", $input);
- 
+   
+    
+    $flattened = flattenArray($input);
+    $result = implode(', ', $flattened); 
     $field_values = [ "res"];
-    $data_values = [$input];
+    $data_values = [$result];
 
     $h = new Estate();
     $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
@@ -30,3 +32,10 @@ try {
     echo $returnArr;
 }
 
+function flattenArray($array) {
+    $result = [];
+    array_walk_recursive($array, function($value) use (&$result) {
+        $result[] = (string)$value;
+    });
+    return $result;
+}
