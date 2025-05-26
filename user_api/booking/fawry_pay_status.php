@@ -33,7 +33,7 @@ try {
 
     $h = new Estate();
     $returnArr    = generateResponse('true', "Success", 200);
-    $check = $h->restateinserttdata_Api($field_values, $data_values, 'payment');
+    $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
     echo $returnArr;
 } catch (Exception $e) {
 
