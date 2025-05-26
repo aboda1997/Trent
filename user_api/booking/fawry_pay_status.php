@@ -9,13 +9,11 @@ require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = file_get_contents('php://input');
    
     
-    $flattened = flattenArray($input);
-    $result = implode(', ', $flattened); 
     $field_values = [ "res"];
-    $data_values = [$result];
+    $data_values = [$input];
 
     $h = new Estate();
     $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
