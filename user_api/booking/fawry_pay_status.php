@@ -18,7 +18,7 @@ try {
 } catch (Exception $e) {
     // Handle exceptions and return an error response
     $field_values = [ "res"];
-    $data_values = [$e];
+    $data_values = ["tes the data"];
 
     $h = new Estate();
     $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
