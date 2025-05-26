@@ -239,7 +239,7 @@ function decryptData(string $base64EncodedData, string $privateKey): string|fals
     if (!openssl_private_decrypt($encryptedData, $decrypted, $privateKey, OPENSSL_PKCS1_OAEP_PADDING)) {
         return false;
     }
-    
+    var_dump($decrypted);
     return true;
 }
 function silentDeleteFiles(array $filePaths): void
