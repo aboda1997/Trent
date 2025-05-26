@@ -17,9 +17,11 @@ try {
     $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
 } catch (Exception $e) {
     // Handle exceptions and return an error response
-    $returnArr = generateResponse('false', "An error occurred!", 500, array(
-        "error_message" => $e->getMessage()
-    ), $e->getFile(),  $e->getLine());
-    echo $returnArr;
+    $field_values = [ "res"];
+    $data_values = [$e];
+
+    $h = new Estate();
+    $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
+  
 }
 
