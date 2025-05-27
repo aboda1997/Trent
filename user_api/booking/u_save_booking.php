@@ -46,9 +46,7 @@ try {
         $returnArr    = generateResponse('false', "Payment method not valid", 400);
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false', 'you must enter the item id', 400);
-    } else if ($merchant_ref_number == null) {
-        $returnArr = generateResponse('false', 'you must enter the merchant ref number', 400);
-    } else {
+    }  else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list);
@@ -174,7 +172,7 @@ try {
                 $decrypted_secure_key =  decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
                 $decrypted_code = decryptData($merchantCode,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
 
-                $check_push_pay = $rstate->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE merchantRefNumber = '" . $merchant_ref_number . "'");
+                $check_push_pay = $rstate->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE itemCode = $item_id and merchantRefNumber = '" . $merchant_ref_number . "'");
                 // Trim all fields to avoid hidden characters
                 $concatenatedString =
                     trim($decrypted_code) .
@@ -197,7 +195,7 @@ try {
 
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
-
+                    $check =  $h->restateDeleteData_Api_fav( "where id=" . $item_id ."" , 'tbl_non_completed');
                     $GLOBALS['rstate']->commit();
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
