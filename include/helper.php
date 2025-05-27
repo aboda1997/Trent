@@ -225,7 +225,7 @@ function encryptData(string $data, string $publicKey): string
     return base64_encode($encrypted);
 }
 
-function decryptData(string $base64EncodedData, string $privateKey): string|false
+function decryptData(string $base64EncodedData, string $privateKey): array|false
 {
     if (is_file($privateKey)) {
         $privateKey = file_get_contents($privateKey);
@@ -233,14 +233,14 @@ function decryptData(string $base64EncodedData, string $privateKey): string|fals
     
     $encryptedData = base64_decode($base64EncodedData);
     if ($encryptedData === false) {
-        return false;
+        return ['status'=>false , 'data' =>''];
     }
 
     if (!openssl_private_decrypt($encryptedData, $decrypted, $privateKey, OPENSSL_PKCS1_OAEP_PADDING)) {
-        return false;
+        return ['status'=>false , 'data' => ''];
     }
-    var_dump($decrypted);
-    return true;
+    //var_dump($decrypted);
+    return ['status'=>true , 'data' => $decrypted ];
 }
 function silentDeleteFiles(array $filePaths): void
 {

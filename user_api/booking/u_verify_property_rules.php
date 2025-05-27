@@ -118,7 +118,14 @@ try {
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
-        
+            $postString = http_build_query($_POST);
+
+            $field_values = ["data"];
+            $data_values = [$postString];
+
+            $h = new Estate();
+            $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
+            $fp['item_id'] = $check; 
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
             ));

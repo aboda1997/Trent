@@ -387,12 +387,12 @@ try {
             $show_property = $_POST['show_property'];
             $cmobile = $_POST['cmobile'];
             $cemail = $_POST['cemail'];
-            if (decryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/private.pem')) {
+            if (decryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/private.pem')['status']) {
                 $skey = $_POST['skey'];
             } else {
                 $skey = encryptData($_POST['skey'], dirname(dirname(__FILE__)) . '/keys/public.pem');
             }
-            if (decryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/private.pem')) {
+            if (decryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/private.pem')['status']) {
                 $mcode = $_POST['mcode'];
             } else {
                 $mcode = encryptData($_POST['mcode'], dirname(dirname(__FILE__)) . '/keys/public.pem');
