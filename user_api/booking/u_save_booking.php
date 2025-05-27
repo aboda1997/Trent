@@ -6,6 +6,7 @@ require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notification.php';
 require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
+require  'fawry_pull_status.php';
 
 header('Content-Type: application/json');
 try {
@@ -18,6 +19,8 @@ try {
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
     $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
+    $merchant_ref_number = isset($_POST['merchant_ref_number']) ? $_POST['merchant_ref_number'] : null;
+    $item_id = isset($_POST['item_id']) ? $_POST['item_id'] : 0;
     $from_date = isset($_POST['from_date']) ? $_POST['from_date'] : null;
     $to_date = isset($_POST['to_date']) ? $_POST['to_date'] : null;
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
@@ -41,15 +44,15 @@ try {
         $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
     } else if (!in_array($method_key, $methods)) {
         $returnArr    = generateResponse('false', "Payment method not valid", 400);
-    }
-     else {
+    } else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
-        [$status, $status_message] = validateDateRange($from_date,$to_date, $date_list);
+        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
+        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
         while ($row = $sel->fetch_assoc()) {
 
             if ($row['status'] == 'Adding') {
@@ -58,7 +61,9 @@ try {
                 $balance = bcsub($balance, $row['amt'], 2);
             }
         }
-        if ($days == 0) {
+        if ($non_completed_data == 0) {
+            $returnArr    = generateResponse('false', "Something Went Wrong Enure that sent data are correct", 400);
+        } elseif ($days == 0) {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
@@ -104,7 +109,7 @@ try {
 
             $fp['period_type'] =  $periods[$res_data['period']][$lang];
 
-            $imageArray = array_filter( explode(',', $res_data['image'] ?? ''));
+            $imageArray = array_filter(explode(',', $res_data['image'] ?? ''));
 
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {
@@ -121,44 +126,88 @@ try {
             $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees'] + $deposit_fees + $trent_fess;
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
-            $propertyName= $titleData["ar"];
+            $propertyName = $titleData["ar"];
             $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
-    
-           
+            $total_as_int = (int)$fp['final_total'];
+
             $fp['book_status'] = 'Booked';
 
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']  ){
+            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
+            }else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
 
-            }else{
                 $GLOBALS['rstate']->begin_transaction();
 
                 $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
                 $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
-    
+
                 $h = new Estate();
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
                 $fp['book_id'] = $check;
 
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
-                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id ,'booking_id' , $check, $res_data['image']);
+                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
-                $field_values1 = ["uid" , 'status' , 'amt' , 'tdate'];
-                $data_values1  = [$uid , 'Withdraw' , $fp['final_total'] , $created_at1 ];
+                $field_values1 = ["uid", 'status', 'amt', 'tdate'];
+                $data_values1  = [$uid, 'Withdraw', $fp['final_total'], $created_at1];
                 $table1 = 'wallet_report';
-        
+
                 $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
                 $GLOBALS['rstate']->commit();
 
-            $returnArr    = generateResponse('true', "Property booking Details", 200, array(
-                "booking_details" => $fp,
-            ));
-        }
+                $returnArr    = generateResponse('true', "Property booking Details", 200, array(
+                    "booking_details" => $fp,
+                ));
+            } 
+            else {
+                $get_secure_key = $rstate->query("select merchant_code ,secure_key from tbl_setting ")->fetch_assoc();
+                $secureKey = $get_secure_key['secure_key'];
+                $merchantCode = $get_secure_key['merchant_code'];
+                $decrypted_secure_key =  decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
+                $decrypted_code = decryptData($merchantCode,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
+               
+               
+                $check_push_pay = $rstate->query("select orderStatus ,orderAmount , itemId  as itemCode from payment where merchantRefNumber= " . $merchant_ref_number);
+
+                // Trim all fields to avoid hidden characters
+                $concatenatedString =
+                    trim($decrypted_code) .
+                    trim($merchant_ref_number) .
+                    trim($decrypted_secure_key);
+                $expectedSignature = hash('sha256', $concatenatedString);
+                $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
+
+
+               if(isPaymentValid($check_push_pay , $check_pull_pay ,$item_id , $total_as_int)){
+
+               
+                $GLOBALS['rstate']->begin_transaction();
+
+                $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+
+                $h = new Estate();
+                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                $fp['book_id'] = $check;
+
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
+             
+                $GLOBALS['rstate']->commit();
+
+                $returnArr    = generateResponse('true', "Property booking Details", 200, array(
+                    "booking_details" => $fp,
+                ));
+            }else{
+                $returnArr    = generateResponse('false', "Payment validation failed!", 400);
+
+            }
+            }
         }
     }
     echo $returnArr;
@@ -273,13 +322,14 @@ function getDatesFromRange($start, $end)
 
     return $dates;
 }
-function validateDateRange($from_date, $to_date, $date_list) {
-   
- 
+function validateDateRange($from_date, $to_date, $date_list)
+{
+
+
     // Check for conflicts with date_list
     $current = strtotime($from_date);
     $end = strtotime($to_date);
-    
+
     while ($current <= $end) {
         $current_date = date('Y-m-d', $current);
         if (in_array($current_date, $date_list)) {
@@ -287,6 +337,28 @@ function validateDateRange($from_date, $to_date, $date_list) {
         }
         $current = strtotime('+1 day', $current);
     }
-    
+
     return [true, "Valid date range"];
+}
+function isPaymentValid($check_push_pay, $check_pull_pay, $item_id, $total_as_int) {
+    // Check if push payment has rows and pull payment status exists
+    if ($check_push_pay->num_rows && isset($check_pull_pay["status"])) {
+        $check_push_pay_data = $check_push_pay->fetch_assoc();
+        
+        // Convert amounts to integers for strict comparison
+        $push_amount = (int)$check_push_pay_data['orderAmount'];
+        $pull_amount = (int)$check_pull_pay['orderAmount'];
+        
+        // Verify all conditions with integer comparison
+        return (
+            $check_push_pay_data['orderStatus'] == 'PAID' &&
+            $check_push_pay_data['itemCode'] == $item_id &&
+            $check_pull_pay['orderStatus'] == 'PAID' &&
+            $check_pull_pay['itemCode'] == $item_id &&
+            $push_amount === $total_as_int &&
+            $pull_amount === $total_as_int
+        );
+    }
+    
+    return false;
 }
