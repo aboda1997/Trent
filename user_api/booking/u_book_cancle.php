@@ -39,7 +39,7 @@ try {
     $table = "tbl_book";
     $h = new Estate();
     $where_conditions = [$uid ,$booking_id];
-    $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+    $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
     $returnArr = array("ResponseCode" => "200", "Result" => "true", "ResponseMsg" => "Booking  Cancelled Successfully!");
   }
   echo $returnArr;
