@@ -22,7 +22,7 @@ try {
     $orderStatus = $inputData['orderStatus'] ?? '';
     $paymentMethod = $inputData['paymentMethod'] ?? '';
     $itemCode = $inputData['orderItems'][0]['itemCode'] ?? 0;
-    $checkKey = $rstate->query("select id from payment where  merchantRefNumber =" . $merchantRefNumber . "");
+    $checkKey = $rstate->query("SELECT id FROM payment WHERE merchantRefNumber = '" . $merchantRefNumber . "'");
     $get_secure_key = $rstate->query("select merchant_code ,secure_key from tbl_setting ");
     $secureKey = $get_secure_key->fetch_assoc()['secure_key'];
     $decrypted_secure_key = decryptData($secureKey,  dirname(dirname(__FILE__),2) . '/keys/private.pem'); 
