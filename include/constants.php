@@ -50,7 +50,7 @@ class AppConstants
     {
         $methods = [];
         foreach (self::PAYMENT_METHODS as $code => $config) {
-            $methods[$code] = [
+            $methods[] = [
                 'name' => $config['name'][$lang],
                 'key' => $config['key'],
             ];
