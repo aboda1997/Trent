@@ -170,10 +170,8 @@ try {
                 $merchantCode = $get_secure_key['merchant_code'];
                 $decrypted_secure_key =  decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
                 $decrypted_code = decryptData($merchantCode,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
-               
-               
-                $check_push_pay = $rstate->query("select orderStatus ,orderAmount , itemId  as itemCode from payment where merchantRefNumber= " . $merchant_ref_number);
 
+                $check_push_pay = $rstate->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE merchantRefNumber = '" . $merchant_ref_number . "'");
                 // Trim all fields to avoid hidden characters
                 $concatenatedString =
                     trim($decrypted_code) .
@@ -342,9 +340,9 @@ function validateDateRange($from_date, $to_date, $date_list)
 }
 function isPaymentValid($check_push_pay, $check_pull_pay, $item_id, $total_as_int) {
     // Check if push payment has rows and pull payment status exists
-    if ($check_push_pay->num_rows && isset($check_pull_pay["status"])) {
+    if ($check_push_pay->num_rows && $check_pull_pay["status"]) {
         $check_push_pay_data = $check_push_pay->fetch_assoc();
-        
+
         // Convert amounts to integers for strict comparison
         $push_amount = (int)$check_push_pay_data['orderAmount'];
         $pull_amount = (int)$check_pull_pay['orderAmount'];
