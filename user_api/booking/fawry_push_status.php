@@ -53,7 +53,7 @@ try {
     }
     echo $returnArr;
 } catch (Exception $e) {
-
+   
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
