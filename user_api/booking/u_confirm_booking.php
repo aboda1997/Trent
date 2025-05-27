@@ -25,9 +25,11 @@ try {
     $deny_id = isset($_POST['deny_id']) ? $_POST['deny_id'] : null;
     $lang_ = load_specific_langauage($lang);
     if ($uid == '') {
-        $returnArr    = generateResponse('false', "User id is required", 400);
-    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
-        $returnArr    = generateResponse('false', "User id is not exists", 400);
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
+    } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
     } else if (!in_array($lang, ['en', 'ar'])) {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if ($is_confirmed == 'false' && $deny_id == null) {
