@@ -119,6 +119,9 @@ try {
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
             $postString = http_build_query($_POST);
+            $total_as_int = (int)$fp['final_total'];
+
+            $fb['total_int'] = $total_as_int;
 
             $field_values = ["data"];
             $data_values = [$postString];
