@@ -10,15 +10,15 @@ class AppConstants
     const PAYMENT_METHODS = [
 
         'wallet' => [
-            'key' => 'E_WALLET_PAY',
+            'key' => 'MWALLET',
             'name' => ['en' => 'E-Wallet', 'ar' => 'المحفظة الإلكترونية'],
         ],
         'card' => [
-            'key' => 'CARD_PAY',
+            'key' => 'CARD',
             'name' => ['en' => 'Card', 'ar' => 'البطاقة'],
         ],
         'fawry' => [
-            'key' => 'FAWRY_PAY',
+            'key' => 'PayAtFawry',
             'name' => ['en' => 'Fawry Pay', 'ar' => 'فوري باي'],
         ],
         'trent' => [
@@ -63,10 +63,8 @@ class AppConstants
         $method = [];
         foreach (self::PAYMENT_METHODS as $code => $config) {
             if ($config['key'] == $key) {
-                $method = [
-                    'name' => $config['name'][$lang],
-                    'key' => $config['key'],
-                ];
+                $method=  $config['name'][$lang];
+                
             }
         }
         return $method;
