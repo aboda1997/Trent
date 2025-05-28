@@ -21,6 +21,17 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
         trim($decrypted_secure_key);
     $expectedSignature = hash('sha256', $concatenatedString);
     $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
+    $file = 'data.txt';
+        
+        // Open the file in append mode
+        $handle = fopen($file, 'a');
+        
+        $entry = json_encode($check_push_pay) . json_encode($check_pull_pay) . $total_as_int;
+        // Write the data
+        fwrite($handle, $entry);
+        
+        // Close the file
+        fclose($handle);
     // Check if push payment has rows and pull payment status exists
     if ($check_push_pay->num_rows && $check_pull_pay["status"]) {
         $check_push_pay->data_seek(0);
