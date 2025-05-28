@@ -85,8 +85,7 @@ try {
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
             $prop = $rstate->query("select add_user_id  from tbl_property where  id= $prop_id  ")->fetch_assoc();
             $fp['id'] = $res_data['id'];
-            $add_user_id = $res_data['add_user_id'];
-            $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
+            $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
 
@@ -190,10 +189,7 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', "Payment validation failed!", 400 , array(
-                        "booking_details" => $fp,
-
-                    ));
+                    $returnArr    = generateResponse('false', "Payment validation failed!", 400 );
                 }
             }
         }
