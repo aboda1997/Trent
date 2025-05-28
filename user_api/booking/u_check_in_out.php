@@ -11,7 +11,7 @@ try {
 
   $booking_id  =  isset($_POST['booking_id']) ? $_POST['booking_id'] : null;
   $uid  =  isset($_POST['uid']) ? $_POST['uid'] : '';
-  $cancel_id = isset($_POST['cancel_id']) ? $_POST['cancel_id'] : null;
+  $is_check_in = isset($_POST['is_check_in']) ? $_POST['is_check_in'] :'true';
   $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
   $lang_ = load_specific_langauage($lang);
 
@@ -27,20 +27,10 @@ try {
     $returnArr    = generateResponse('false', $lang_["booking_id_required"], 400);
   } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . '') === false) {
     $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
-  } else if ($cancel_id == null) {
-    $returnArr = generateResponse('false', $lang_["cancel_id_required"], 400);
-  }else if ( validateIdAndDatabaseExistance($cancel_id, 'tbl_user_cancel_reason') === false) {
-    $returnArr = generateResponse('false', $lang_["invalid_cancel_id"], 400);
-} else {
-   $table="tbl_book";
-   $field = array('book_status'=>'Check_in','check_intime'=>$timestamp);
-   $where = "where add_user_id=".$uid." and id=".$book_id."";
- $h = new Estate();
-      $check = $h->restateupdateData_Api($field,$table,$where);
- 
- 
+  } 
+  else { 
     $table = "tbl_book";
-    $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $cancel_id, "cancel_by" => 'G');
+    $field = array('book_status'=>'Check_in','check_intime'=>$timestamp);
     $where = "where uid=" . '?' . " and id=" . '?' ."";
     $table = "tbl_book";
     $h = new Estate();
