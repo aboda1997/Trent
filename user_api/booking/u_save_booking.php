@@ -188,7 +188,7 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', "Payment validation failed!", 400);
+                    $returnArr    = generateResponse('false', "Payment validation failed!". $total_as_int, 400);
                 }
             }
         }
