@@ -23,6 +23,7 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
     $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
     // Check if push payment has rows and pull payment status exists
     if ($check_push_pay->num_rows && $check_pull_pay["status"]) {
+        $check_push_pay->data_seek(0);
         $check_push_pay_data = $check_push_pay->fetch_assoc();
         // Convert amounts to integers for strict comparison
         $push_amount = (int)$check_push_pay_data['orderAmount'];
