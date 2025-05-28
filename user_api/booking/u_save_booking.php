@@ -85,6 +85,7 @@ try {
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
             $prop = $rstate->query("select add_user_id  from tbl_property where  id= $prop_id  ")->fetch_assoc();
             $fp['id'] = $res_data['id'];
+            $add_user_id = $res_data['add_user_id'];
             $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
@@ -128,9 +129,6 @@ try {
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
             $propertyName = $titleData["ar"];
-            $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
-            $mobile = $user["mobile"];
-            $ccode = $user["ccode"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
@@ -179,6 +177,11 @@ try {
                     $h = new Estate();
                     $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
                     $fp['book_id'] = $check;
+                    $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
+
+                    $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
+                    $mobile = $user1["mobile"];
+                    $ccode = $user1["ccode"];
 
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
