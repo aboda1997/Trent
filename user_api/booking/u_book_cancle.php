@@ -35,7 +35,7 @@ try {
 
     $table = "tbl_book";
     $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $cancel_id, "cancel_by" => 'G');
-    $where = "where uid=" . '?' . " and id=" . '?' . " and book_status='Booked'";
+    $where = "where uid=" . '?' . " and id=" . '?' ."";
     $table = "tbl_book";
     $h = new Estate();
     $where_conditions = [$uid ,$booking_id];
