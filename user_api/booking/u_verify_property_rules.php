@@ -121,7 +121,7 @@ try {
             $postString = http_build_query($_POST);
             $total_as_int = (int)$fp['final_total'];
 
-            $fb['total_int'] = $total_as_int;
+            $fp['total_int'] = $total_as_int;
 
             $field_values = ["data"];
             $data_values = [$postString];
