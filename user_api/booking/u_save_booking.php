@@ -135,7 +135,9 @@ try {
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
+            $total_as_int = (int)$fp['final_total'];
 
+            $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
 
             if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
@@ -188,7 +190,10 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', "Payment validation failed!". $total_as_int, 400);
+                    $returnArr    = generateResponse('false', "Payment validation failed!", 400 , array(
+                        "booking_details" => $fp,
+
+                    ));
                 }
             }
         }
