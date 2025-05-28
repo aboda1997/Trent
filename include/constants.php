@@ -60,7 +60,7 @@ class AppConstants
 
     public static function getPaymentMethod( $key , $lang = 'ar')
     {
-        $method = [];
+        $method = '';
         foreach (self::PAYMENT_METHODS as $code => $config) {
             if ($config['key'] == $key) {
                 $method=  $config['name'][$lang];
