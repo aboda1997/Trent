@@ -135,7 +135,6 @@ try {
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
-            $fb['total_int'] = $total_as_int;
 
             $fp['book_status'] = 'Booked';
 
