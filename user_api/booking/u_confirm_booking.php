@@ -40,7 +40,10 @@ try {
         $returnArr    = generateResponse('false', $lang_["booking_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' add_user_id  =' . $uid . '') === false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
-    } else {
+    } else if (getBookingStatus($booking_id)['book_status'] != 'Booked') {
+        $returnArr    = generateResponse('false', $lang_["not_allow_to_do"], 400);
+    } 
+    else {
 
         $table = "tbl_book";
         $fp = array();
@@ -60,7 +63,6 @@ try {
             $message = "تمت الموافقة على حجز العقار ($title) بنجاح!\n\nيمكنك مراجعة بيانات العقار عبر موقع أو تطبيق ت-رينت\n\nمع تحيات فريق ت-رينت";   
             
             $whatsapp = sendMessage([$ccode . $mobile], $message);
-
             $firebase_notification = sendFirebaseNotification($message, $message, $uid , "booking_id" , $booking_id);
             $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
 

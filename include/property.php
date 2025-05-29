@@ -1179,12 +1179,9 @@ try {
                 $data_values = ["$updated_at", "$need_review", "$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
-                $check = $h->restateinsertdata($field_values, $data_values, $table);
-            } else {
-                $check = 0;
-            }
-
-            if ($check == 1) {
+                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+            } 
+            if ($check ) {
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1422,13 +1419,13 @@ try {
             }
 
             if (!isset($returnArr)) {
-                $where = "where id=" . $id . "";
+                $where = "where id=" . '?' . "";
+                $where_conditions  = [$id];
                 $h = new Estate();
-                $check = $h->restateupdateDatanull_Api($field_values, $table, $where);
-            } else {
-                $check = 0;
-            }
-            if ($check == 1) {
+                $check = $h->restateupdateData_Api($field_values, $table, $where, $where_conditions);
+
+            } 
+            if ($check ) {
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",

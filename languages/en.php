@@ -355,7 +355,8 @@ return [
     'booking_not_available' => "This booking  is not Available",
     'property_booking_confirmed_success' => 'Property booking confirmed successfully',
     'property_booking_canceled_success' => 'Property booking canceled successfully',
-
+    'property_booking_check_in_success' => 'Property booking check in successfully',
+    'property_booking_check_out_success' => 'Property booking check out successfully',
     'Cancel_Reason_Management' => 'Booking Cancel Reason Management',
     'Cancel_Reason_List_Management' => 'Booking Cancel Reason List Management',
     'Cancel_Reason' => 'Booking Cancel Reason',
@@ -417,6 +418,7 @@ return [
     'Admin_type' => 'Please select a user type',
     'add_admin_user' => 'Add new User',
     'edit_admin_user' => 'Edit User',
+    'not_allow_to_do' => 'This Action Not allowed',
 
 
 ];

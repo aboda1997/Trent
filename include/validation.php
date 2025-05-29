@@ -319,6 +319,21 @@ function validateEgyptianPhoneNumber($phone, $ccode = null)
 }
 
 
+function validateCheckInDate($booking_id, $timestamp)
+{
+    $data = getBookingStatus($booking_id);
 
+    // Convert to timestamps if they're strings
+    $check_in =  $data['check_in'];
+    $check_out =  $data['check_out']; 
+    return ($timestamp >= $check_in && $timestamp <= $check_out);
+}
 
-
+function getBookingStatus($booking_id)
+{
+    $query = "SELECT b.id ,b.book_status ,b.check_in ,b.check_out
+    FROM tbl_book b
+    WHERE b.id = $booking_id";
+    $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
+    return $result;
+}

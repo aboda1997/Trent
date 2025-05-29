@@ -25,12 +25,7 @@ try {
 	} else {
 
 		$total_property = $rstate->query("select * from tbl_property where  add_user_id=" . $uid . " and is_deleted = 0")->num_rows;
-		$total_extra_image = $rstate->query("select * from tbl_extra where add_user_id=" . $uid . "")->num_rows;
-		$total_gallery_image = $rstate->query("select * from tbl_gallery where add_user_id=" . $uid . "")->num_rows;
-		$total_gallery_category = $rstate->query("select * from tbl_gal_cat where add_user_id=" . $uid . "")->num_rows;
 		$total_Booking = $rstate->query("select * from tbl_book where add_user_id=" . $uid . "")->num_rows;
-		$total_enquiry = $rstate->query("select * from tbl_enquiry where add_user_id=" . $uid . "")->num_rows;
-		$total_review = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and is_rate=1")->num_rows;
 		$total_earn = $rstate->query("select sum(total) as total_amt from tbl_book where add_user_id=" . $uid . " and book_status='Completed' ")->fetch_assoc();
 		$earn = empty($total_earn['total_amt']) ? "0" : $total_earn['total_amt'];
 		$total_payout = $rstate->query("SELECT SUM(b.total) AS total_payout
@@ -41,7 +36,6 @@ try {
 		$payout = empty($total_payout['total_payout']) ? "0" : $total_payout['total_payout'];
 		$count_payout_profiles = $rstate->query("select count(id) as count_payout from tbl_payout_profiles where status =1 and uid=" . $uid . "")->fetch_assoc();
 		$count_payout = empty($count_payout_profiles['count_payout']) ? "0" : $count_payout_profiles['count_payout'];
-		$finalearn = floatval($earn) - floatval($payout);
 		$is_gallery_enabled = (bool)$set["gallery_mode"];
 		$check_plan = $rstate->query("select * from tbl_user where id=" . $uid . "")->fetch_assoc();
 
@@ -49,13 +43,7 @@ try {
 
 		$papi = array(
 			array("title" => $lang_["Dashboard_My_Property"], "report_data" => $total_property, "url" => 'images/dashboard/property.png'),
-			array("title" => $lang_["Dashboard_My_Extra_Images"], "report_data" => $total_extra_image, "url" => 'images/dashboard/extra_images.png'),
-			array("title" => $lang_["Dashboard_My_Gallery_Category"], "report_data" => $total_gallery_category, "url" => 'images/dashboard/category.png'),
-			array("title" => $lang_["Dashboard_My_Gallery_Images"], "report_data" => $total_gallery_image, "url" => 'images/dashboard/gallery_image.png'),
 			array("title" => $lang_["Dashboard_My_Booking"], "report_data" => intval($total_Booking), "url" => 'images/dashboard/my-booking.png'),
-			array("title" => $lang_["Dashboard_My_Earning"], "report_data" => $finalearn, "url" => 'images/dashboard/my-earning.png'),
-			array("title" => $lang_["Dashboard_My_Enquiry"], "report_data" => intval($total_enquiry), "url" => 'images/dashboard/my-inquiry.png'),
-			array("title" => $lang_["Dashboard_Total_Review"], "report_data" => $total_review, "url" => 'images/dashboard/review.png'),
 			array("title" => $lang_["Dashboard_My_Payout"], "report_data" => floatval($payout), "url" => 'images/dashboard/my-payout.png'),
 			array("title" => $lang_["Dashboard_My_Payout_Profiles"], "report_data" => intval($count_payout), "url" => 'images/dashboard/my-payout.png')
 		);

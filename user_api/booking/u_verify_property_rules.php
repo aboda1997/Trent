@@ -128,6 +128,9 @@ try {
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
+            if(!$check) {
+                throw new Exception("Insert failed");
+            }
             $fp['item_id'] = $check; 
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,

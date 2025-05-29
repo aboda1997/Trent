@@ -29,18 +29,20 @@ try {
     $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
   } else if ($cancel_id == null) {
     $returnArr = generateResponse('false', $lang_["cancel_id_required"], 400);
-  }else if ( validateIdAndDatabaseExistance($cancel_id, 'tbl_user_cancel_reason') === false) {
+  } else if (validateIdAndDatabaseExistance($cancel_id, 'tbl_user_cancel_reason') === false) {
     $returnArr = generateResponse('false', $lang_["invalid_cancel_id"], 400);
-} else {
+  } else if (!in_array(getBookingStatus($booking_id)['book_status'], ['Booked', 'Confirmed'])){
+    $returnArr    = generateResponse('false', $lang_["not_allow_to_do"], 400);
+  } else {
 
     $table = "tbl_book";
     $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $cancel_id, "cancel_by" => 'G');
-    $where = "where uid=" . '?' . " and id=" . '?' ."";
+    $where = "where uid=" . '?' . " and id=" . '?' . "";
     $table = "tbl_book";
     $h = new Estate();
-    $where_conditions = [$uid ,$booking_id];
+    $where_conditions = [$uid, $booking_id];
     $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
-    $returnArr = generateResponse( "true",  "Booking  Cancelled Successfully!" , 200);
+    $returnArr = generateResponse("true",  "Booking  Cancelled Successfully!", 200);
   }
   echo $returnArr;
 } catch (Exception $e) {
