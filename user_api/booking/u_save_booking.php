@@ -136,7 +136,12 @@ try {
 
             $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
+            $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
+            $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
+            $mobile = $user1["mobile"];
+            $ccode = $user1["ccode"];
+            
             if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
@@ -176,12 +181,11 @@ try {
 
                     $h = new Estate();
                     $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                    if(!$check) {
+                        throw new Exception("Insert failed");
+                    }
                     $fp['book_id'] = $check;
-                    $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
-
-                    $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
-                    $mobile = $user1["mobile"];
-                    $ccode = $user1["ccode"];
+                    
 
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);

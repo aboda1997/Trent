@@ -336,6 +336,8 @@ return [
     'booking_not_available' => 'هذا الحجز غير متاح',
     'property_booking_confirmed_success' => 'تم تأكيد حجز العقار بنجاح',
     'property_booking_canceled_success' => 'تم إلغاء حجز العقار بنجاح',
+    'property_booking_check_in_success' => 'تم تسجيل الوصول إلى العقار بنجاح',
+    'property_booking_check_out_success' => 'تم تسجيل المغادرة من العقار بنجاح',
     'Cancel_Reason_Management' => 'إدارة أسباب إلغاء الحجز',
     'Cancel_Reason_List_Management' => 'إدارة قائمة أسباب إلغاء الحجز',
     'Cancel_Reason' => 'سبب إلغاء الحجز',
@@ -374,7 +376,8 @@ return [
     'rating_not_available' => 'هذا التقييم غير متاح',
     'property_id_required' => 'يجب إدخال معرف العقار',
     'property_not_available' => 'هذا العقار غير متاح',
-    'invalid_notification_id' =>  'يجب إدخال معرف إشعار صحيح' ,
+    'invalid_notification_id' =>  'يجب إدخال معرف إشعار صحيح',
+    'not_allow_to_do' => 'غير مسموح بتنفيذ هذا الإجراء',
 
 
 ];
