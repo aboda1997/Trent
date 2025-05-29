@@ -39,9 +39,10 @@ try {
         }
         $sel = $rstate->query("
        SELECT 
-         ROUND(SUM(CASE WHEN PL.payout_status = 'Pending' THEN B.total ELSE 0 END) , 2)AS total_pending,
-         ROUND(SUM(CASE WHEN PL.payout_status = 'Completed' THEN B.total ELSE 0 END),2 )AS total_completed
-    FROM 
+         ROUND(SUM(CASE WHEN PL.payout_status = 'Pending' THEN CAST(B.total AS DECIMAL(65,30)) ELSE CAST(0 AS DECIMAL(65,30)) END) , 2)AS total_pending,
+         ROUND(SUM(CASE WHEN PL.payout_status = 'Completed' THEN CAST(B.total AS DECIMAL(65,30)) ELSE CAST(0 AS DECIMAL(65,30)) END),2 )AS total_completed
+      
+         FROM 
         tbl_payout_list PL
     INNER JOIN 
         tbl_book B ON PL.book_id = B.id
