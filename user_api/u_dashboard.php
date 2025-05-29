@@ -28,7 +28,7 @@ try {
 		$total_Booking = $rstate->query("select * from tbl_book where add_user_id=" . $uid . "")->num_rows;
 		$total_earn = $rstate->query("select sum(total) as total_amt from tbl_book where add_user_id=" . $uid . " and book_status='Completed' ")->fetch_assoc();
 		$earn = empty($total_earn['total_amt']) ? "0" : $total_earn['total_amt'];
-		$total_payout = $rstate->query("SELECT SUM(b.total) AS total_payout
+		$total_payout = $rstate->query("SELECT  ROUND(SUM(b.total) , 2)AS total_payout
 		FROM tbl_payout_list pl
 		INNER JOIN tbl_book b ON pl.book_id = b.id
 		WHERE pl.uid = " . $uid

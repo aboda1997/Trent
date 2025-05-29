@@ -39,8 +39,8 @@ try {
         }
         $sel = $rstate->query("
        SELECT 
-        SUM(CASE WHEN PL.payout_status = 'Pending' THEN B.total ELSE 0 END) AS total_pending,
-        SUM(CASE WHEN PL.payout_status = 'Completed' THEN B.total ELSE 0 END) AS total_completed
+         ROUND(SUM(CASE WHEN PL.payout_status = 'Pending' THEN B.total ELSE 0 END) , 2)AS total_pending,
+         ROUND(SUM(CASE WHEN PL.payout_status = 'Completed' THEN B.total ELSE 0 END),2 )AS total_completed
     FROM 
         tbl_payout_list PL
     INNER JOIN 
