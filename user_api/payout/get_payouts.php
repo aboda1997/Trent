@@ -21,29 +21,41 @@ try {
         $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
     } else {
         $pol = array();
+        $cc = array();
         $c = array();
-        $sel = $rstate->query("SELECT PL.payout_status , PL.requested_at , PL.cancel_reason  FROM tbl_payout_list PL  WHERE status=1 and uid =" . $uid . "");
+        $sel = $rstate->query("SELECT PL.book_id,PL.id, PL.payout_status , PL.requested_at , PL.cancel_reason  FROM tbl_payout_list PL  WHERE  uid =" . $uid . "");
         while ($row = $sel->fetch_assoc()) {
+            $book_id = $row['book_id'];
+            $bd = $rstate->query("select * from tbl_book where id=" . $book_id . "")->fetch_assoc();
 
             $pol['id'] = $row['id'];
             $pol['payout_status'] = $row['payout_status'];
             $pol['requested_at'] = $row['requested_at'];
             $pol['cancel_reason'] = $row['cancel_reason'];
-            
+            $pol['total'] = $bd['total'];
+            $pol['prop_title'] = json_decode($bd['prop_title'], true)[$lang_code] ?? '';
+
             $c[] = $pol;
         }
-        if (empty($c)) {
+        $sel = $rstate->query("
+       SELECT 
+        SUM(CASE WHEN PL.payout_status = 'Pending' THEN B.total ELSE 0 END) AS total_pending,
+        SUM(CASE WHEN PL.payout_status = 'Completed' THEN B.total ELSE 0 END) AS total_completed
+    FROM 
+        tbl_payout_list PL
+    INNER JOIN 
+        tbl_book B ON PL.book_id = B.id
+        WHERE 
+             PL.uid = " . $uid . "
+    ")->fetch_assoc();
+        $cc['total_pending'] = $sel['total_pending'];
+        $cc['total_completed'] = $sel['total_completed'];
 
-            $returnArr    = generateResponse('true', "Payout Request List Not Founded!", 200, array(
-                "payout_request_list" => $c,
-                "length" => count($c),
-            ));
-        } else {
-            $returnArr    = generateResponse('true', "Payout Request List Founded!", 200, array(
-                "payout_request_list" => $c,
-                "length" => count($c),
-            ));
-        }
+        $returnArr    = generateResponse('true', "Payout Request List Founded!", 200, array(
+            "payout_request_list" => $c,
+            "earning" => $cc,
+            "length" => count($c),
+        ));
     }
     echo $returnArr;
 } catch (Exception $e) {

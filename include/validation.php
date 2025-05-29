@@ -91,7 +91,7 @@ function validateFacilityIds($idString, $table = "tbl_facility", $uid = null)
 
     $query = "SELECT id FROM $table WHERE id IN ($idList)";
     if ($uid) {
-        $query .= " and add_user_id = $uid and book_status  IN ('Check_in', 'Completed') ";
+        $query .= " and add_user_id = $uid and book_status  IN ('Check_in', 'Completed' ,'Confirmed') ";
     }
     $result = $GLOBALS['rstate']->query($query);
     // Fetch valid IDs
