@@ -44,7 +44,7 @@ try {
 		$papi = array(
 			array("title" => $lang_["Dashboard_My_Property"], "report_data" => $total_property, "url" => 'images/dashboard/property.png'),
 			array("title" => $lang_["Dashboard_My_Booking"], "report_data" => intval($total_Booking), "url" => 'images/dashboard/my-booking.png'),
-			array("title" => $lang_["Dashboard_My_Payout"], "report_data" => floatval($payout), "url" => 'images/dashboard/my-payout.png'),
+			array("title" => $lang_["Dashboard_My_Payout"], "report_data" => $payout, "url" => 'images/dashboard/my-payout.png'),
 			array("title" => $lang_["Dashboard_My_Payout_Profiles"], "report_data" => intval($count_payout), "url" => 'images/dashboard/my-payout.png')
 		);
 		$returnArr = generateResponse('true', "Report List Get Successfully!!!", 200, array(
