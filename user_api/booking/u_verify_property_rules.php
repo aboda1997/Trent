@@ -115,7 +115,7 @@ try {
 
             $fp['taxes'] = ($trent_fess * $set['tax']) / 100;
             $fp['service_fees'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $fp['final_total'] = $fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess;
+            $fp['final_total'] = round($fp['sub_total'] + $fp['taxes'] + $fp['service_fees']+ $deposit_fees +$trent_fess,2);
             $fp['deposit_fees'] = $res_data['security_deposit'];
             $fp['trent_fees'] = $trent_fess;
             $postString = http_build_query($_POST);

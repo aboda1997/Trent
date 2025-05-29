@@ -49,8 +49,8 @@ try {
         WHERE 
              PL.uid = " . $uid . "
     ")->fetch_assoc();
-        $cc['total_pending'] = $sel['total_pending'];
-        $cc['total_completed'] = $sel['total_completed'];
+        $cc['total_pending'] = round((float)$sel['total_pending'], 2);;
+        $cc['total_completed'] = round((float)$sel['total_completed'], 2);
 
         $returnArr    = generateResponse('true', "Payout Request List Founded!", 200, array(
             "payout_request_list" => $c,
