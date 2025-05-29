@@ -134,7 +134,7 @@ try {
             $total_as_int = (int)$fp['final_total'];
             $total_as_int = (int)$fp['final_total'];
 
-            $fp['total_int'] = $total_as_int;
+           // $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
             $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
