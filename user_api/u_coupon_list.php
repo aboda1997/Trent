@@ -22,6 +22,7 @@ try {
 		$pol['coupon_code'] = $row['c_title'];
 		$pol['coupon_title'] = json_decode($row['ctitle'], true)[$lang];
 		$pol['min_amt'] = $row['min_amt'];
+		$pol['max_amt'] = $row['max_amt'];
 		$c[] = $pol;
 	}
 	if (empty($c)) {

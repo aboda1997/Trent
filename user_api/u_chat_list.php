@@ -73,7 +73,11 @@ try {
             $messageArray = json_decode($row["message"], true);
             $data['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
             $data['chat_id'] = (int)$row["chat_id"];
+            $pro_id =(int)$row["prop_id"];
+            $sel = $rstate->query("select title from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
+
             $data['prop_id'] = (int)$row["prop_id"];
+           // $data['prop_title'] = json_decode($sel['title']??'', true);
 
             $chat_list[]  = $data;
         }

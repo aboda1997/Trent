@@ -26,6 +26,7 @@ try {
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
     $guest_counts = isset($_POST['guest_counts']) ? $_POST['guest_counts'] : 0;
     $method_key = isset($_POST['method_key']) ? $_POST['method_key'] : '';
+    $coupon_code = isset($_POST['coupon_code']) ? $_POST['coupon_code'] : '';
     $methods  = AppConstants::getAllMethodKeys();
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
@@ -46,7 +47,8 @@ try {
         $returnArr    = generateResponse('false', "Payment method not valid", 400);
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false', 'you must enter the item id', 400);
-    }  else {
+    }
+      else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list);
@@ -118,13 +120,19 @@ try {
                 $vr[] = array('img' => trim($image));
             }
             $fp['image_list'] = $vr;
+            
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $sub_total =  $days * $price;
+            $coupon_value = 0 ;
+            $Coupon_data= validateCoupon($cid, $sub_total);
+            if ($Coupon_data['status'] === true) {
+                $coupon_value = $Coupon_data['value'];
+             }
             $deposit_fees = $res_data["security_deposit"];
             $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total ) /100  : ($set["owner_fees"] * $sub_total )/100; 
             $taxes = ($trent_fess * $set['tax']) / 100;
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess;
+            $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess-$coupon_value;
 
             $fp['sub_total'] = number_format($sub_total, 2, '.', '');
             $fp['tax_percent'] = $set['tax'];
@@ -134,13 +142,7 @@ try {
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
             $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
             
-            $fp['sub_total'] = $sub_total;
-            $fp['tax_percent'] = $set['tax'];
-            $fp['taxes'] = $taxes;
-            $fp['service_fees'] = $service_fees;
-            $fp['final_total'] = $final_total;
-            $fp['deposit_fees'] = $deposit_fees;
-            $fp['trent_fees'] =$trent_fess; 
+           
             $propertyName = $titleData["ar"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
@@ -154,7 +156,7 @@ try {
             $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
-            
+           
             if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
