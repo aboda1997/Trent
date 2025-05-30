@@ -96,7 +96,7 @@ try {
 
             move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
             $table = "tbl_coupon";
-            $field_values = array("c_img", "c_desc", "c_value", "c_title", "status", "cdate", "ctitle", "min_amt", "min_amt", "subtitle");
+            $field_values = array("c_img", "c_desc", "c_value", "c_title", "status", "cdate", "ctitle", "min_amt", "max_amt", "subtitle");
             $data_values = array("$url", "$cdesc_json", "$cvalue", "$ccode", "$cstatus", "$cdate", "$ctitle_json", "$minamt", "$maxamt", "$subtitle_json");
 
             $h = new Estate();
