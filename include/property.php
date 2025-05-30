@@ -383,6 +383,7 @@ try {
             $id = $_POST['id'];
 
             $nemail = $_POST['nemail'];
+            $tax = $_POST['tax'];
             $ofees = $_POST['ofees'];
             $pfees = $_POST['pfees'];
             $gmode = $_POST['gmode'];
@@ -434,6 +435,7 @@ try {
                     'alert_text' => $alert_json,
                     'merchant_code' => $mcode,
                     'secure_key' => $skey,
+                    'tax' => $tax,
                 );
                 $where = "where id=" . $id . "";
                 $h = new Estate();
@@ -458,6 +460,7 @@ try {
                     'alert_text' => $alert_json,
                     'merchant_code' => $mcode,
                     'secure_key' => $skey,
+                    'tax' => $tax,
 
                 );
                 $where = "where id=" . $id . "";
