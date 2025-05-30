@@ -124,7 +124,7 @@ try {
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $sub_total =  $days * $price;
             $coupon_value = 0 ;
-            $Coupon_data= validateCoupon($cid, $sub_total);
+            $Coupon_data= validateCoupon($coupon_code, $sub_total);
             if ($Coupon_data['status'] === true) {
                 $coupon_value = $Coupon_data['value'];
              }
