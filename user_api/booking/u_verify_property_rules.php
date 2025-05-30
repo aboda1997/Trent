@@ -116,7 +116,7 @@ try {
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
             $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess;
 
-            $fp['sub_total'] = number_format($sub_total, 2, '.', '');
+            $fp['sub_total'] = $sub_total;
             $fp['tax_percent'] = $set['tax'];
             $fp['taxes'] = $taxes;
             $fp['service_fees'] = $service_fees;
