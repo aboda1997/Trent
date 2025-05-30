@@ -133,7 +133,14 @@ try {
             $fp['final_total'] = number_format($final_total, 2, '.', ''); 
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
             $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
-
+            
+            $fp['sub_total'] = $sub_total;
+            $fp['tax_percent'] = $set['tax'];
+            $fp['taxes'] = $taxes;
+            $fp['service_fees'] = $service_fees;
+            $fp['final_total'] = $final_total;
+            $fp['deposit_fees'] = $deposit_fees;
+            $fp['trent_fees'] =$trent_fess; 
             $propertyName = $titleData["ar"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
