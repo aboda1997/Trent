@@ -121,7 +121,7 @@ try {
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $sub_total =  $days * $price;
             $deposit_fees = $res_data["security_deposit"];
-            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total'] ) /100  : ($set["owner_fees"] * $fp['sub_total'] )/100; 
+            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total ) /100  : ($set["owner_fees"] * $fp['sub_total'] )/100; 
             $taxes = ($trent_fess * $set['tax']) / 100;
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
             $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess;
