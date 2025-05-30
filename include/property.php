@@ -60,6 +60,7 @@ try {
 
             $cdate = $_POST['expire_date'];
             $minamt = $_POST['min_amt'];
+            $maxamt = $_POST['max_amt'];
             $cstatus = $_POST['status'];
             $cvalue = $_POST['coupon_val'];
             $cdesc_ar = $rstate->real_escape_string($_POST['description_ar']);
@@ -95,8 +96,8 @@ try {
 
             move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
             $table = "tbl_coupon";
-            $field_values = array("c_img", "c_desc", "c_value", "c_title", "status", "cdate", "ctitle", "min_amt", "subtitle");
-            $data_values = array("$url", "$cdesc_json", "$cvalue", "$ccode", "$cstatus", "$cdate", "$ctitle_json", "$minamt", "$subtitle_json");
+            $field_values = array("c_img", "c_desc", "c_value", "c_title", "status", "cdate", "ctitle", "min_amt", "min_amt", "subtitle");
+            $data_values = array("$url", "$cdesc_json", "$cvalue", "$ccode", "$cstatus", "$cdate", "$ctitle_json", "$minamt", "$maxamt", "$subtitle_json");
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -108,6 +109,7 @@ try {
             $id = $_POST['id'];
             $cdate = $_POST['expire_date'];
             $minamt = $_POST['min_amt'];
+            $maxamt = $_POST['max_amt'];
             $cstatus = $_POST['status'];
             $cvalue = $_POST['coupon_val'];
             $cdesc_ar = $rstate->real_escape_string($_POST['description_ar']);
@@ -144,7 +146,7 @@ try {
 
                 move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
                 $table = "tbl_coupon";
-                $field = array('c_img' => $url, 'c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
+                $field = array('c_img' => $url, 'c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt,'min_amt' => $minamt, 'subtitle' => $subtitle_json);
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
@@ -154,7 +156,7 @@ try {
                 }
             } else {
                 $table = "tbl_coupon";
-                $field = array('c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
+                $field = array('c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt,'min_amt' => $minamt, 'subtitle' => $subtitle_json);
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);

@@ -339,6 +339,46 @@ function getBookingStatus($booking_id)
 }
 
 
-function validateCoupon($cid , ){
+function validateCoupon($cid , $orderTotal){
+    $query = "SELECT min_amt,cdate,max_amt ,status,c_value
+    FROM tbl_coupon 
+    WHERE c_title = '" . $cid . "'";
+    $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
+    if (!$result) {
+        return ['status' => false, 'value' => 0];
 
+    }
+
+    $minAmt = (float)$result['min_amt'];
+    $maxAmt = (float)$result['max_amt'];
+    $expiryDate = $result['cdate'];
+    $status = $result['status'];
+    $value = $result['c_value'];
+
+    // 1. Check if coupon is expired
+    if ($status !=='1') {
+        return ['status' => false, 'value' => 0];
+    }
+
+    // 1. Check if coupon is expired
+    $currentDate = date('Y-m-d');
+    if ($expiryDate < $currentDate) {
+
+        return ['status' => false, 'value' => 0];
+    }
+
+    // 2. Check if order meets minimum amount requirement
+    
+    if ($orderTotal < $minAmt) {
+
+        return ['status' => false, 'value' => 0];
+    }
+
+    // 3. Check if order exceeds maximum allowed amount (if max_amt is set)
+    if ($maxAmt > 0 && $orderTotal > $maxAmt) {
+        return ['status' => false, 'value' => 0];
+    }
+
+    // All checks passed → coupon is valid
+    return ['status' => true, 'value' => $value];
 }
