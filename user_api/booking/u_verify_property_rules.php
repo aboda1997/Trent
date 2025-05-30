@@ -122,7 +122,7 @@ try {
             $fp['service_fees'] = $service_fees;
             $fp['final_total'] = $final_total;
             $fp['deposit_fees'] = $deposit_fees;
-            $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
+            $fp['trent_fees'] =$trent_fess; 
 
             $postString = http_build_query($_POST);
             $total_as_int = (int)$fp['final_total'];
