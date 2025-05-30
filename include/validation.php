@@ -337,3 +337,8 @@ function getBookingStatus($booking_id)
     $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
     return $result;
 }
+
+
+function validateCoupon($cid , ){
+
+}
