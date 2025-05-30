@@ -119,15 +119,21 @@ try {
             }
             $fp['image_list'] = $vr;
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
-            $fp['sub_total'] = $days * $price;
-            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total']) / 100  : ($set["owner_fees"] * $fp['sub_total']) / 100;
+            $sub_total =  $days * $price;
             $deposit_fees = $res_data["security_deposit"];
+            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $fp['sub_total'] ) /100  : ($set["owner_fees"] * $fp['sub_total'] )/100; 
+            $taxes = ($trent_fess * $set['tax']) / 100;
+            $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
+            $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess;
 
-            $fp['taxes'] = ($trent_fess * $set['tax']) / 100;
-            $fp['service_fees'] = (($days * $price) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $fp['final_total'] = round($fp['sub_total'] + $fp['taxes'] + $fp['service_fees'] + $deposit_fees + $trent_fess,2);
-            $fp['deposit_fees'] = $res_data['security_deposit'];
-            $fp['trent_fees'] = $trent_fess;
+            $fp['sub_total'] = number_format($sub_total, 2, '.', '');
+            $fp['tax_percent'] = $set['tax'];
+            $fp['taxes'] = number_format($taxes, 2, '.', '');
+            $fp['service_fees'] = number_format($service_fees, 2, '.', '');
+            $fp['final_total'] = number_format($final_total, 2, '.', ''); 
+            $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
+            $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
+
             $propertyName = $titleData["ar"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
