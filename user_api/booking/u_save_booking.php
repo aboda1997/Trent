@@ -7,6 +7,7 @@ require dirname(dirname(__FILE__), 2) . '/user_api/notifications/send_notificati
 require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 require  'get_pay_status.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try {
@@ -28,30 +29,36 @@ try {
     $method_key = isset($_POST['method_key']) ? $_POST['method_key'] : '';
     $coupon_code = isset($_POST['coupon_code']) ? $_POST['coupon_code'] : '';
     $methods  = AppConstants::getAllMethodKeys();
+    $lang_ = load_specific_langauage($lang);
+
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
-        $returnArr    = generateResponse('false', "Property id is required", 400);
+        $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
     } else if ($uid == null) {
-        $returnArr    = generateResponse('false', "User id is required", 400);
-    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user', ' status = 1 and verified =1 ') === false) {
-        $returnArr    = generateResponse('false', "User id is not exists", 400);
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
+    } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } else if (!in_array($lang, ['en', 'ar'])) {
+        $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
-        $returnArr    = generateResponse('false', "This property  is not Available", 400);
+        $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', '  add_user_id =' . $uid . '') === true) {
-        $returnArr    = generateResponse('false', "Not Allow to book Your Own Property", 400);
+        $returnArr    = generateResponse('false', $lang_["self_booking_not_allowed"], 400);
     } else if ($valid == false) {
         $returnArr    = generateResponse('false', $message, 400);
     } else if ($confirm_guest_rules  == 'false') {
-        $returnArr    = generateResponse('false', "You Must confirm Guest Rules", 400);
+        $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else if (!in_array($method_key, $methods)) {
-        $returnArr    = generateResponse('false', "Payment method not valid", 400);
+        $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
     } else if ($item_id == 0) {
-        $returnArr = generateResponse('false', 'you must enter the item id', 400);
+        $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     }
       else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
-        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list);
+        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
@@ -66,18 +73,18 @@ try {
             }
         }
         if ($non_completed_data == 0) {
-            $returnArr    = generateResponse('false', "Something Went Wrong Enure that sent data are correct", 400);
+            $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
         } elseif ($days == 0) {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
-            $returnArr    = generateResponse('false', "Guest count are exceed persons limits", 400);
+            $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
             (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
-            $returnArr    = generateResponse('false', "The selected dates are not  within the allowed limit [" . $res_data['min_days'] . ',' . $res_data['max_days'] . "] days", 400);
+            $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'] , $res_data['max_days'] ) , 400);
         } else {
 
             $table = "tbl_book";
@@ -158,7 +165,7 @@ try {
             $ccode = $user1["ccode"];
            
             if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
-                $returnArr    = generateResponse('false', "Wallet balance not sufficent", 400);
+                $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
 
                 $GLOBALS['rstate']->begin_transaction();
@@ -211,7 +218,7 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', "Payment validation failed!", 400 );
+                    $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400 );
                 }
             }
         }
@@ -328,7 +335,7 @@ function getDatesFromRange($start, $end)
 
     return $dates;
 }
-function validateDateRange($from_date, $to_date, $date_list)
+function validateDateRange($from_date, $to_date, $date_list, $lang_)
 {
 
 
@@ -339,7 +346,9 @@ function validateDateRange($from_date, $to_date, $date_list)
     while ($current <= $end) {
         $current_date = date('Y-m-d', $current);
         if (in_array($current_date, $date_list)) {
-            return [false, "Conflict from date and to date range with: $current_date"];
+            return [false, 
+            sprintf($lang_["date_range_conflict"], $current_date)
+            ];
         }
         $current = strtotime('+1 day', $current);
     }
