@@ -118,10 +118,10 @@ try {
 
             $fp['sub_total'] = number_format($sub_total, 2, '.', '');
             $fp['tax_percent'] = $set['tax'];
-            $fp['taxes'] = number_format($taxes, 2, '.', '');
-            $fp['service_fees'] = number_format($service_fees, 2, '.', '');
-            $fp['final_total'] = number_format($final_total, 2, '.', ''); 
-            $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
+            $fp['taxes'] = $taxes;
+            $fp['service_fees'] = $service_fees;
+            $fp['final_total'] = $final_total;
+            $fp['deposit_fees'] = $deposit_fees;
             $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
 
             $postString = http_build_query($_POST);
