@@ -424,5 +424,17 @@ return [
     'edit_admin_user' => 'Edit User',
     'not_allow_to_do' => 'This Action Not allowed',
 
-
+    'property_id_required' => 'Property id is required',
+    'property_not_available' => 'This property is not available',
+    'self_booking_not_allowed' => 'Not allowed to book your own property',
+    'guest_rules_unconfirmed' => 'You must confirm guest rules',
+    'invalid_payment_method' => 'Payment method not valid',
+    'item_id_required' => 'You must enter the item id',
+    'guest_limit_exceeded' => 'Guest count exceeds persons limits',
+    'general_validation_error' => 'Something went wrong. Ensure that sent data are correct',
+    'invalid_date_range' => 'The selected dates are not within the allowed limit [%d,%d] days',
+    'insufficient_wallet_balance' => 'Wallet balance not sufficient',
+    'payment_validation_failed' => 'Payment validation failed!',
+    'invalid_date_order' => 'From date must be earlier than to date',
+    'date_range_conflict' => 'Conflict from date and to date range with: %s'
 ];

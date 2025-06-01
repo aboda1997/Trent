@@ -381,5 +381,17 @@ return [
     'invalid_notification_id' =>  'يجب إدخال معرف إشعار صحيح',
     'not_allow_to_do' => 'غير مسموح بتنفيذ هذا الإجراء',
 
-
+    'property_id_required' => 'معرّف العقار مطلوب',
+    'property_not_available' => 'هذا العقار غير متاح',
+    'self_booking_not_allowed' => 'غير مسموح بحجز عقارك الخاص',
+    'guest_rules_unconfirmed' => 'يجب تأكيد قواعد الضيوف',
+    'invalid_payment_method' => 'طريقة الدفع غير صالحة',
+    'item_id_required' => 'يجب إدخال معرّف العنصر',
+    'guest_limit_exceeded' => 'تجاوز عدد الضيوف الحد المسموح',
+    'general_validation_error' => 'حدث خطأ ما. تأكد من صحة البيانات المرسلة',
+    'invalid_date_range' => 'التواريخ المحددة ليست ضمن الحد المسموح [%d,%d] يوم',
+    'insufficient_wallet_balance' => 'رصيد المحفظة غير كافٍ',
+    'payment_validation_failed' => 'فشل التحقق من الدفع!',
+    'invalid_date_order' => 'يجب أن يكون تاريخ البداية قبل تاريخ النهاية',
+    'date_range_conflict' => 'تعارض في نطاق التاريخ من وإلى مع: %s'
 ];

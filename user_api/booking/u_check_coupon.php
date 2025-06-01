@@ -7,8 +7,6 @@ require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
-
-	
 	$cid  =  isset($_GET['coupon_code']) ? $_GET['coupon_code'] : null;
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
 	$total  =  isset($_GET['total']) ? $_GET['total'] : 0;
