@@ -74,12 +74,11 @@ try {
             $data['message'] = isset($messageArray['message']) ? $messageArray['message'] : $messageArray;
             $data['chat_id'] = (int)$row["chat_id"];
             $pro_id =(int)$row["prop_id"];
-            $sel = $rstate->query("select title from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
+            $sel = $rstate->query("select title ,image from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
 
             $data['prop_id'] = (int)$row["prop_id"];
             $data['prop_title'] = json_decode($sel['title']??'', true)['en'] ?? '' ;
             $imageArray = array_filter( explode(',', $sel['image'] ?? '') );
-
             $data['prop_img'] =  array_pop($imageArray)??'';
 
 
