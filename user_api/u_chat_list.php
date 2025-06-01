@@ -78,6 +78,10 @@ try {
 
             $data['prop_id'] = (int)$row["prop_id"];
             $data['prop_title'] = json_decode($sel['title']??'', true)['en'] ?? '' ;
+            $imageArray = array_filter( explode(',', $sel['image'] ?? '') );
+
+            $data['prop_img'] =  array_pop($imageArray)??'';
+
 
             $chat_list[]  = $data;
         }
