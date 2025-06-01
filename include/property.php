@@ -146,7 +146,7 @@ try {
 
                 move_uploaded_file($_FILES["coupon_img"]["tmp_name"], $target_file);
                 $table = "tbl_coupon";
-                $field = array('c_img' => $url, 'c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt,'min_amt' => $minamt, 'subtitle' => $subtitle_json);
+                $field = array('c_img' => $url, 'c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
@@ -156,7 +156,7 @@ try {
                 }
             } else {
                 $table = "tbl_coupon";
-                $field = array('c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt,'min_amt' => $minamt, 'subtitle' => $subtitle_json);
+                $field = array('c_desc' => $cdesc_json, 'c_value' => $cvalue, 'c_title' => $ccode, 'status' => $cstatus, 'cdate' => $cdate, 'ctitle' => $ctitle_json, 'max_amt' => $maxamt, 'min_amt' => $minamt, 'subtitle' => $subtitle_json);
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateData($field, $table, $where);
@@ -170,7 +170,7 @@ try {
             $type = $_POST['user_type'];
             $table = "admin";
             $table1 = "role_permissions";
-            $field_values = array("username", "password", "type" , 'status');
+            $field_values = array("username", "password", "type", 'status');
             $field_values1 = array("role_id", "permissions");
             $h = new Estate();
             $permission_ids = [];
@@ -180,7 +180,7 @@ try {
                 $data_values = array("$username", "$password", "Staff");
                 $result = $rstate->query("select id from permissions   WHERE type IN ('Read', 'Create')  ");
             } else {
-                $data_values = array("$username", "$password", "Admin" , 1);
+                $data_values = array("$username", "$password", "Admin", 1);
                 $result = $rstate->query("select id from permissions ");
             }
             while ($row = $result->fetch_assoc()) {
@@ -592,7 +592,7 @@ try {
             $where = "where id=" . $id . "";
 
             $h = new Estate();
-            $check = $h->restateupdateData(["is_deleted" => "$status"] ,  $table, $where);
+            $check = $h->restateupdateData(["is_deleted" => "$status"],  $table, $where);
 
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Property Deleted Successfully!!", "message" => "Property  section!", "action" => "list_properties.php");
@@ -1185,8 +1185,8 @@ try {
 
                 $h = new Estate();
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-            } 
-            if ($check ) {
+            }
+            if ($check) {
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1428,9 +1428,8 @@ try {
                 $where_conditions  = [$id];
                 $h = new Estate();
                 $check = $h->restateupdateData_Api($field_values, $table, $where, $where_conditions);
-
-            } 
-            if ($check ) {
+            }
+            if ($check) {
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -2143,6 +2142,133 @@ WHERE
                     ];
                 }
             }
+        } elseif ($_POST["type"] == "Earning_report") {
+            $table = "tbl_book";
+            $status = $_POST["from_date"];
+            $status = $_POST["to_date"];
+            $query = "SELECT * FROM tbl_book WHERE book_status IN ('Check_in', 'Confirmed')";
+
+            // Add date filter if provided
+            if (isset($_POST['from_date']) && !empty($_POST['from_date'])) {
+                $from_date = $rstate->real_escape_string($_POST['from_date']);
+                $query .= " AND book_date >= '$from_date'";
+            }
+
+            if (isset($_POST['to_date']) && !empty($_POST['to_date'])) {
+                $to_date = $rstate->real_escape_string($_POST['to_date']);
+                $query .= " AND book_date <= '$to_date'";
+            }
+            $sel = $rstate->query($query);
+
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] =   [
+                    $row['id'],
+                    $row['trent_fees'],
+                    $row['book_date'],
+                ];
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Report Exported Successfully!!",
+                "message" => "APProval section!",
+                "action" => "pending_payout.php",
+            ];
+            downloadXLS(
+                $arabicHeaders = [
+                    'رقم الحجز',
+                    'القيمة',
+                    'تاريخ  الحجز',
+                ],
+                $data
+            );
+        } elseif ($_POST["type"] == "Active_User_report") {
+            $query = "SELECT 
+                u.*,
+                COUNT(b.id) AS booking_count
+            FROM 
+                tbl_user u
+            LEFT JOIN 
+                tbl_book b ON u.id = b.uid AND b.book_status IN ('Check_in', 'Confirmed')
+            GROUP BY 
+                u.id
+            ORDER BY 
+                booking_count DESC;";
+
+            $sel = $rstate->query($query);
+
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] =   [
+                    $row['id'],
+                     $row['name'],
+                    $row['ccode'] . $row['mobile'],
+                    $row['booking_count']
+                ];
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Report Exported Successfully!!",
+                "message" => "APProval section!",
+                "action" => "pending_payout.php",
+            ];
+            downloadXLS(
+                $arabicHeaders = [
+                    'معرف المستخدم',           // User ID
+                    'اسم المستخدم الكامل',     // User full name
+                    'جوال المستخدم',           // User mobile
+                    'عدد العقارات المحجوزة',   // Booking count (number of properties booked)
+
+                ],
+                $data
+            );
+        } elseif ($_POST["type"] == "Active_Prop_report") {
+            $query = "SELECT 
+            u.*,
+            COUNT(b.id) AS booking_count
+            ,b.prop_title AS title
+        FROM 
+            tbl_user u
+        LEFT JOIN 
+            tbl_book b ON u.id = b.add_user_id AND b.book_status IN ('Check_in', 'Confirmed')
+        GROUP BY 
+            u.id
+        ORDER BY 
+            booking_count DESC;";
+            $sel = $rstate->query($query);
+
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] =   [
+                    $row['id'],
+                    json_decode($row['title'], true)['en'] ?? '',
+                     $row['name'],
+                    $row['ccode'] . $row['mobile'],
+                    $row['booking_count']
+                ];
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Report Exported Successfully!!",
+                "message" => "APProval section!",
+                "action" => "pending_payout.php",
+            ];
+            downloadXLS(
+                $arabicHeaders = [
+                    'معرف العقار',     // Property ID
+                    'اسم العقار',      // Property name
+                    'اسم المالك',      // Owner name
+                    'جوال المالك',     // Owner mobile
+                    'عدد الحجوزات',    // Booking count
+                ],
+                $data
+            );
         } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];
@@ -2510,4 +2636,48 @@ function downloadCSV($headers, $data)
     fclose($output);
     ob_end_flush();
     exit; // Critical - prevents any additional output
+}
+function downloadXLS($headers, $data)
+{
+    // Start output buffering
+    ob_start();
+
+    // Set headers for Excel download
+    header('Content-Type: application/vnd.ms-excel; charset=utf-8');
+    header('Content-Disposition: attachment; filename="export_' . date('Y-m-d') . '.xls"');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    // Open output stream
+    $output = fopen('php://output', 'w');
+
+    // Add UTF-8 BOM for Excel compatibility
+    fputs($output, "\xEF\xBB\xBF");
+
+    // Start HTML table (Excel accepts HTML tables as XLS content)
+    fputs($output, "<table border='1'>\n");
+
+    // Add headers
+    fputs($output, "<tr>");
+    foreach ($headers as $header) {
+        fputs($output, "<th>" . htmlspecialchars($header) . "</th>");
+    }
+    fputs($output, "</tr>\n");
+
+    // Add data rows
+    foreach ($data as $row) {
+        fputs($output, "<tr>");
+        foreach ($row as $cell) {
+            fputs($output, "<td>" . htmlspecialchars($cell) . "</td>");
+        }
+        fputs($output, "</tr>\n");
+    }
+
+    // Close table
+    fputs($output, "</table>");
+
+    // Flush and exit
+    fclose($output);
+    ob_end_flush();
+    exit;
 }
