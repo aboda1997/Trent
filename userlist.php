@@ -46,147 +46,200 @@ if (!in_array('Read_User_List', $per)) {
 					</div>
 				</div>
 			</div>
+
 			<!-- Container-fluid starts-->
 			<div class="container-fluid">
 				<div class="row">
-
 					<div class="col-sm-12">
 						<div class="card">
 							<div class="card-body">
 								<div class="table-responsive">
-									<table class="display" id="basic-1">
+									<!-- Centered Search Form -->
+									<div class="row justify-content-center">
+										<div class="col-md-8">
+											<div class="search-container" style="margin-bottom: 20px;">
+												<form method="get" action="">
+													<div class="input-group">
+														<input type="text" name="search" class="form-control" placeholder="Search by name, email, or mobile..."
+															value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+														<div class="input-group-append">
+															<button class="btn btn-primary" type="submit">Search</button>
+															<?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+																<a href="?" class="btn btn-secondary">Clear</a>
+															<?php endif; ?>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+
+									<!-- User Table -->
+									<table class="table" id="users-table">
 										<thead>
 											<tr>
 												<th></th>
 												<th>Name</th>
 												<th>Email</th>
-												<th>mobile</th>
+												<th>Mobile</th>
 												<th>Join Date</th>
-
-
 												<th>Status</th>
-
-
 												<th>IsOwner</th>
 												<th>Property Count</th>
-												<?php
-												if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) {
-												?>
-
-													<th>
-														<?= $lang['Action'] ?></th>
-												<?php
-												}
-												?>
-
-
+												<?php if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)): ?>
+													<th><?= $lang['Action'] ?></th>
+												<?php endif; ?>
 											</tr>
 										</thead>
 										<tbody>
 											<?php
-											$stmt = $rstate->query("SELECT * FROM `tbl_user`");
-											$i = 0;
-											while ($row = $stmt->fetch_assoc()) {
-												$i = $i + 1;
+											// Pagination configuration
+											$records_per_page = 10;
+											$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+											$page = max($page, 1);
+
+											// Base query - start with status condition
+											$query = "SELECT * FROM `tbl_user`";
+
+											// Add search condition if search term exists
+											if (isset($_GET['search']) && !empty($_GET['search'])) {
+												$search_term = $rstate->real_escape_string($_GET['search']);
+
+												// Check if the search term looks like an email
+												if (filter_var($search_term, FILTER_VALIDATE_EMAIL)) {
+													// For emails, search exact match
+													$query .= " where email = '$search_term'";
+												} else {
+													// For other searches, use LIKE with wildcards
+													$query .= " where (name LIKE '%$search_term%' 
+                                                  OR email LIKE '%$search_term%' 
+                                                  OR mobile LIKE '%$search_term%')";
+												}
+											}
+
+											// Get total number of records
+											$count_query = str_replace("SELECT *", "SELECT COUNT(*) as total", $query);
+											$count_result = $rstate->query($count_query);
+											$total_records = $count_result->fetch_assoc()['total'];
+											$total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page) ;
+											$page = min($page, $total_pages);
+
+											// Add LIMIT to query for pagination
+											$offset = ($page - 1) * $records_per_page;
+											$query .= " LIMIT $offset, $records_per_page";
+
+											$stmt = $rstate->query($query);
+											$i = $offset + 1;
+
+											if ($total_records > 0) {
+												while ($row = $stmt->fetch_assoc()) {
 											?>
-												<tr>
-													<td>
-														<?php
-														if (empty($row['pro_pic'])) {
-														} else {
-														?>
-															<img class="rounded-circle" width="35" height="35" src="<?php echo $row['pro_pic']; ?>" alt="">
-														<?php } ?>
-													</td>
-													<td><?php echo $row['name']; ?></td>
-													<td><?php echo $row['email']; ?></td>
-													<td><?php echo $row['mobile']; ?></td>
-													<td><?php echo $row['reg_date']; ?></td>
+													<tr>
+														<td>
+															<?php if (!empty($row['pro_pic'])): ?>
+																<img class="rounded-circle" width="35" height="35" src="<?php echo htmlspecialchars($row['pro_pic']); ?>" alt="">
+															<?php endif; ?>
+														</td>
+														<td><?php echo htmlspecialchars($row['name']); ?></td>
+														<td><?php echo htmlspecialchars($row['email']); ?></td>
+														<td><?php echo htmlspecialchars($row['mobile']); ?></td>
+														<td><?php echo htmlspecialchars($row['reg_date']); ?></td>
 
-													<?php if ($row['status'] == 1) { ?>
-
-														<td><span data-id="<?php echo $row['id']; ?>" class=" badge badge-success">Active</span></td>
-													<?php } else { ?>
+														<td><span data-id="<?php echo $row['id']; ?>" class="badge badge-success">Active</span></td>
 
 														<td>
-															<span data-id="<?php echo $row['id']; ?>" class="badge  badge-danger">Not Active</span>
+															<?php echo ($row['is_owner'] == 1) ? 'Owner' : 'Property'; ?>
 														</td>
-													<?php } ?>
+														<td>
+															<?php
+															$check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
+															echo $check_owner;
+															?>
+														</td>
 
-
-
-
-													<td>
-
-
-														<?php if ($row['is_owner'] == 1) { ?>
-															Owner
-
-														<?php } else { ?>
-															Property
-
-														<?php } ?>
-
-													</td>
-													<td>
-														<?php
-														$check_owner = $rstate->query("select * from tbl_property where  add_user_id=" . $row['id'] . " and is_deleted = 0")->num_rows;
-
-														?>
-														<?php echo $check_owner ?>
-													</td>
-
-													<?php
-													if ((in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) &&  $row['status'] == '1') {
-													?>
-														<td style="white-space: nowrap; width: 15%;">
-															<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-																<div class="btn-group btn-group-sm" style="float: none;">
-
-																	<button type="button"
-																		style="background: none; border: none; padding: 0; cursor: pointer;"
-																		data-toggle="modal"
-																		data-target="#approveModal"
-																		data-id="<?php echo $row['id']; ?>"
-																		data-status="<?php echo $row['status']; ?>"
-																		title="Delete">
-																		<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-																			<rect width="30" height="30" rx="15" fill="#FF6B6B" />
-																			<path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
-																		</svg>
-																	</button>
+														<?php if ((in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) && $row['status'] == '1'): ?>
+															<td style="white-space: nowrap; width: 15%;">
+																<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+																	<div class="btn-group btn-group-sm" style="float: none;">
+																		<button type="button"
+																			style="background: none; border: none; padding: 0; cursor: pointer;"
+																			data-toggle="modal"
+																			data-target="#approveModal"
+																			data-id="<?php echo $row['id']; ?>"
+																			data-status="<?php echo $row['status']; ?>"
+																			title="Delete">
+																			<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+																				<rect width="30" height="30" rx="15" fill="#FF6B6B" />
+																				<path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+																			</svg>
+																		</button>
+																	</div>
 																</div>
-															</div>
-														</td>
-													<?php
-													} else {
-													?>
-														<td></td>
-													<?php
-													}
-													?>
-
-												</tr>
-											<?php } ?>
-
+															</td>
+														<?php else: ?>
+															<td></td>
+														<?php endif; ?>
+													</tr>
+											<?php
+													$i++;
+												}
+											} else {
+												echo '<tr><td colspan="9" class="text-center">No records found</td></tr>';
+											}
+											?>
 										</tbody>
 									</table>
+
+									<!-- Manual Pagination Links - Only show if we have records -->
+									<?php if ($total_records > 0 && $total_pages > 1): ?>
+										<div class="pagination">
+											<?php if ($page > 1): ?>
+												<a href="?page=1<?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+												<a href="?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
+											<?php else: ?>
+												<span class="disabled">First</span>
+												<span class="disabled">Previous</span>
+											<?php endif; ?>
+
+											<?php
+											$start_page = max(1, $page - 2);
+											$end_page = min($total_pages, $page + 2);
+
+											for ($p = $start_page; $p <= $end_page; $p++):
+											?>
+												<?php if ($p == $page): ?>
+													<span class="current"><?php echo $p; ?></span>
+												<?php else: ?>
+													<a href="?page=<?php echo $p; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+												<?php endif; ?>
+											<?php endfor; ?>
+
+											<?php if ($page < $total_pages): ?>
+												<a href="?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+												<a href="?page=<?php echo $total_pages; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+											<?php else: ?>
+												<span class="disabled">Next</span>
+												<span class="disabled">Last</span>
+											<?php endif; ?>
+										</div>
+									<?php endif; ?>
+
+									<!-- Results Count - Only show if we have records -->
+									<?php if ($total_records > 0): ?>
+										<div class="results-count">
+											Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $records_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+											<?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+												(filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
+											<?php endif; ?>
+										</div>
+									<?php endif; ?>
 								</div>
 							</div>
-
 						</div>
-
-
 					</div>
-
-
-
-
-
-
-
 				</div>
 			</div>
+
 			<!-- Container-fluid Ends-->
 		</div>
 		<!-- footer start-->
@@ -281,5 +334,124 @@ require 'include/footer.php';
 	});
 </script>
 
+
+<!-- Add this CSS -->
+<style>
+	.table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 20px;
+	}
+
+	.table th,
+	.table td {
+		padding: 8px;
+		border: 1px solid #ddd;
+	}
+
+	.search-container {
+		margin-bottom: 20px;
+	}
+
+	.input-group {
+		max-width: 500px;
+	}
+
+	.pagination {
+		margin-top: 15px;
+		display: flex;
+		justify-content: center;
+		gap: 5px;
+		flex-wrap: wrap;
+	}
+
+	.pagination a,
+	.pagination span {
+		padding: 5px 10px;
+		border: 1px solid #ddd;
+		text-decoration: none;
+	}
+
+	.pagination .current {
+		background: #007bff;
+		color: white;
+		border-color: #007bff;
+	}
+
+	.pagination .disabled {
+		color: #aaa;
+		cursor: not-allowed;
+	}
+
+	.badge-success {
+		background: #28a745;
+		color: white;
+		padding: 3px 6px;
+		border-radius: 4px;
+	}
+
+	.badge-danger {
+		background: #dc3545;
+		color: white;
+		padding: 3px 6px;
+		border-radius: 4px;
+	}
+
+	.results-count {
+		margin-top: 10px;
+		font-size: 0.9em;
+		color: #666;
+	}
+
+	.search-container .input-group {
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 5px;
+		margin: 20px 0;
+	}
+
+	.pagination a,
+	.pagination span {
+		padding: 5px 10px;
+		border: 1px solid #dee2e6;
+		text-decoration: none;
+	}
+
+	.pagination .current {
+		background-color: #007bff;
+		color: white;
+		border-color: #007bff;
+	}
+
+	.pagination .disabled {
+		color: #6c757d;
+		pointer-events: none;
+	}
+
+	.results-count {
+		text-align: center;
+		color: #6c757d;
+		margin-bottom: 20px;
+	}
+</style>
+
+<!-- Prevent DataTables initialization -->
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		if (typeof $.fn.DataTable === 'function') {
+			$('#users-table').DataTable({
+				paging: false,
+				searching: false,
+				info: false
+			});
+		}
+	});
+</script>
 
 </html>
