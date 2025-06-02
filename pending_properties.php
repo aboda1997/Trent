@@ -98,6 +98,7 @@ WHERE
                       $i = 0;
                       while ($row = $city->fetch_assoc()) {
                         $title = json_decode($row['title'], true);
+                        $address = json_decode($row['address'], true);
 
                         $i = $i + 1;
                       ?>
@@ -161,7 +162,7 @@ WHERE
                                   data-toggle="modal" data-target="#approveModal"
                                   data-id="<?php echo $row['id']; ?>"
                                   data-uid="<?php echo $row['add_user_id']; ?>"
-                                  data-title="<?php echo $title['ar']; ?>"
+                                  data-title="<?php echo $address['ar']; ?>"
 
                                   data-status="<?php echo "1"; ?>"
                                   title="Approve">
@@ -170,7 +171,7 @@ WHERE
                                 <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
                                   data-toggle="modal" data-target="#denyModal"
                                   data-id="<?php echo $row['id']; ?>"
-                                  data-title="<?php echo $title['ar']; ?>"
+                                  data-title="<?php echo $address['ar']; ?>"
                                   data-uid="<?php echo $row['add_user_id']; ?>">
                                   Deny
                                 </button>

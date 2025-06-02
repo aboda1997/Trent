@@ -17,7 +17,7 @@ try {
 		$current = strtotime($start);
 		$end = strtotime($end);
 
-		while ($current <= $end) {
+		while ($current < $end) {
 			$dates[] = date('Y-m-d', $current);
 			$current = strtotime('+1 day', $current);
 		}

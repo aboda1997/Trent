@@ -1242,7 +1242,7 @@ try {
             $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
 
             if ($is_approved == '0') {
-                deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
+                deny_property($cancel_reason,  $id, $propowner, $address_ar, $rstate);
                 $need_review = 1;
             }
             if ($is_approved == '1') {
@@ -2587,9 +2587,11 @@ function deny_property(string $reason,  $id, $uid, $title, $rstate)
     $check = $h->restateupdateData($field, $table, $where);
 
     // Create the message
-    $message = "عذراً تم رفض أضافة العقار ($title) للسبب الآتي : \n\n($reason)\n\nيرجى الدخول إلى موقع أو تطبيق ت-رينت وتعديل بيانات العقار ليتم أضافته\n\nمع تحيات فريق ت-رينت";
+    $message = "عزيزي المالك، لم نتمكن من نشر العقار الموجود في [$title] للسبب التالي[$reason]";
+    $title_ = 'يتطلب عقارك بعض التعديلات ';
+
     $result = sendMessage([$ccode . $new_mobile], $message);
-    $firebase_notification = sendFirebaseNotification($message, $message, $uid, "property_id", $id);
+    $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "property_id", $id);
 
     return $check;
 }
@@ -2601,10 +2603,13 @@ function approve_property($rstate, $uid, $title_ar, $id)
     $new_mobile   = $sel['mobile'];
     $ccode   = $sel['ccode'];
 
-    $message = "يسعدنا إعلامكم بأنه تم نشر العقار ($title_ar) الخاص بكم
-    مع تحيات فريق Trent";
+    $message = "هلاً وسهلاً!
+تم نشر عقارك الموجود في [$title_ar] بنجاح على منصة ت-رينت.
+ما يمكنك فعله الآن: • مشاركة رابط العقار مع الأصدقاء • متابعة عدد المشاهدات والاستفسارات • تحديث بيانات العقار عند الحاجة
+نتمنى لك تأجيراً سريعاً وموفقاً فريق ت-رينت 📈";
+    $title_ = 'تم نشر عقارك بنجاح! ';
     $result = sendMessage([$ccode . $new_mobile], $message);
-    $firebase_notification = sendFirebaseNotification($message, $message, $uid, "property_id", $id);
+    $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "property_id", $id);
 }
 function downloadCSV($headers, $data)
 {
