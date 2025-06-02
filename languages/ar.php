@@ -393,5 +393,7 @@ return [
     'insufficient_wallet_balance' => 'رصيد المحفظة غير كافٍ',
     'payment_validation_failed' => 'فشل التحقق من الدفع!',
     'invalid_date_order' => 'يجب أن يكون تاريخ البداية قبل تاريخ النهاية',
-    'date_range_conflict' => 'تعارض في نطاق التاريخ من وإلى مع: %s'
+    'date_range_conflict' => 'تعارض في نطاق التاريخ من وإلى مع: %s',
+    'DATE_VALIDATION_ERROR' => 'يجب أن يكون تاريخ البداية أقدم من تاريخ النهاية وليس مساوياً له',
+
 ];

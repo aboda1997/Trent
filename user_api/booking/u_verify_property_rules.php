@@ -43,7 +43,7 @@ try {
     } else if ($confirm_guest_rules  == 'false') {
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else {
-        [$days, $days_message] = processDates($from_date, $to_date);
+        [$days, $days_message] = processDates($from_date, $to_date, $lang_);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
@@ -208,18 +208,20 @@ function checkDateFormat(string $from_date, string $to_date): array
  * Process dates and calculate difference
  * Returns [int $days, string $message]
  */
-function processDates(string $from_date, string $to_date): array
+function processDates(string $from_date, string $to_date , $lang_): array
 {
     $date1 = new DateTime($from_date);
     $date2 = new DateTime($to_date);
 
     // Validate order
-    if ($date1 > $date2) {
-        return [0, "from_date must be earlier than to_date"];
+    if ($date1 >= $date2) {
+        return [0,
+        $lang_["DATE_VALIDATION_ERROR"]
+       ];
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days + 1;
+    $days = $interval->days ;
 
     return [
         $days,
@@ -249,7 +251,7 @@ function getDatesFromRange($start, $end)
     $current = strtotime($start);
     $end = strtotime($end);
 
-    while ($current <= $end) {
+    while ($current < $end) {
         $dates[] = date('Y-m-d', $current);
         $current = strtotime('+1 day', $current);
     }

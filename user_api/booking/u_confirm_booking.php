@@ -42,8 +42,7 @@ try {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
     } else if (getBookingStatus($booking_id)['book_status'] != 'Booked') {
         $returnArr    = generateResponse('false', $lang_["not_allow_to_do"], 400);
-    } 
-    else {
+    } else {
 
         $table = "tbl_book";
         $fp = array();
@@ -54,16 +53,22 @@ try {
         $booking_data = $rstate->query("select add_user_id , prop_id , book_date ,prop_title	, uid from tbl_book where  id= $booking_id  ")->fetch_assoc();
         $uid = $booking_data['uid'];
         $user = $rstate->query("select  mobile, ccode	 from tbl_user where  id= $uid ")->fetch_assoc();
-        $title = json_decode($booking_data['prop_title'], true)['ar'];
         $prop_id = $booking_data['prop_id'];
+        $property_data = $rstate->query("select address from tbl_property where  id= $prop_id  ")->fetch_assoc();
+        $address = json_decode($property_data['address'] ?? '', true)['ar'] ?? '';
+        $title = json_decode($booking_data['prop_title'] ?? '', true)['ar'] ?? "";
+
         $h = new Estate();
         if ($is_confirmed == 'true') {
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
-            $message = "تمت الموافقة على حجز العقار ($title) بنجاح!\n\nيمكنك مراجعة بيانات العقار عبر موقع أو تطبيق ت-رينت\n\nمع تحيات فريق ت-رينت";   
-            
+            $message = "مبروك!
+تم تأكيد حجز العقار الموجود في [$address] بنجاح.
+التفاصيل: • يمكنك مراجعة تفاصيل الحجز من خلال التطبيق • ستتلقى تفاصيل الاتصال بالمالك قريباً • في حالة وجود أي استفسار، لا تتردد في التواصل معنا
+نتمنى لك إقامة مريحة فريق ت-رينت 🎉";
+            $title_ = 'تهانينا! تم تأكيد حجز العقار ✅';
             $whatsapp = sendMessage([$ccode . $mobile], $message);
-            $firebase_notification = sendFirebaseNotification($message, $message, $uid , "booking_id" , $booking_id);
+            $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "booking_id", $booking_id);
             $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
 
 
@@ -76,14 +81,18 @@ try {
             ));
         } else {
             $cancel_data = $rstate->query("select  reason	 from tbl_cancel_reason where  id= $deny_id ")->fetch_assoc();
-            $cancel_text =  json_decode($cancel_data['reason'], true)[$lang];
+            $cancel_text =  json_decode($cancel_data['reason'], true)['ar'];
 
-            $message = "عذراً، تم إلغاء حجز العقار ($title) للأسباب التالية:\n\n($cancel_text)\n\nيمكنك مراجعة بيانات العقار وحجزه مرة أخرى عبر موقع أو تطبيق ت-رينت\n\nمع تحيات فريق ت-رينت";
+            $message = "عزيزي العميل،
+نأسف لإبلاغك بأنه تم إلغاء حجز العقار [$title]للسبب التالي: [$cancel_text]
+يمكنك: • مراجعة شروط الحجز والتأكد من استيفائها • إعادة حجز العقار مرة أخرى عبر تطبيق ت-رينت • التواصل معنا للحصول على المساعدة
+شكراً لثقتكم بنا فريق ت-رينت 🏠";
+            $title_ = ' تم إلغاء حجز العقار';
             $mobile = $user["mobile"];
             $ccode = $user["ccode"];
 
             $whatsapp = sendMessage([$ccode . $mobile], $message);
-            $firebase_notification = sendFirebaseNotification($message, $message, $uid ,  "booking_id" , $booking_id);
+            $firebase_notification = sendFirebaseNotification($title_, $message, $uid,  "booking_id", $booking_id);
             $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
 
 

@@ -55,7 +55,7 @@ try {
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
-        [$days, $days_message] = processDates($from_date, $to_date);
+        [$days, $days_message] = processDates($from_date, $to_date,$lang_);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
@@ -149,7 +149,7 @@ try {
             $fp['trent_fees'] = number_format($trent_fess, 2, '.', '');
 
 
-            $propertyName = $titleData["ar"];
+            $propertyAddress = json_decode($res_data['address'] ?? '', true)["ar"] ?? '';
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
@@ -159,7 +159,11 @@ try {
             $fp['book_status'] = 'Booked';
             $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
-            $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
+            $message = "عزيزي المالك،
+يسعدنا إخبارك بوجود حجز جديد لعقارك الموجود في [$propertyAddress].
+الخطوات التالية: • راجع تفاصيل المستأجر من خلال التطبيق • تواصل مع المستأجر لتنسيق المعاينة • أكد أو ارفض الحجز خلال 24 ساعة
+شكراً لاختيارك ت-رينت فريق ت-رينت 🏡";
+            $title_ = 'لديك حجز جديد! 🔔';
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
 
@@ -174,11 +178,11 @@ try {
 
                 $h = new Estate();
 
-                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-                if (!$check) {
+                $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                if (!$book_id) {
                     throw new Exception("Insert failed");
                 }
-                $fp['book_id'] = $check;
+                $fp['book_id'] = $book_id;
 
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
@@ -193,7 +197,7 @@ try {
                 }
                 $GLOBALS['rstate']->commit();
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
-                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
+                $firebase_notification = sendFirebaseNotification( $title_,$message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
@@ -217,12 +221,12 @@ try {
 
 
                     $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
-                       if (!$check) {
+                    if (!$check) {
                         throw new Exception("Insert failed");
                     }
                     $GLOBALS['rstate']->commit();
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
-                    $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
+                    $firebase_notification = sendFirebaseNotification( $title_,$message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
@@ -297,18 +301,18 @@ function checkDateFormat(string $from_date, string $to_date): array
  * Process dates and calculate difference
  * Returns [int $days, string $message]
  */
-function processDates(string $from_date, string $to_date): array
+function processDates(string $from_date, string $to_date, $lang_): array
 {
     $date1 = new DateTime($from_date);
     $date2 = new DateTime($to_date);
 
     // Validate order
-    if ($date1 > $date2) {
-        return [0, "from_date must be earlier than to_date"];
+    if ($date1 >= $date2) {
+        return [0,   $lang_["DATE_VALIDATION_ERROR"]];
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days + 1;
+    $days = $interval->days ;
 
     return [
         $days,

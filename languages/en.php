@@ -436,5 +436,6 @@ return [
     'insufficient_wallet_balance' => 'Wallet balance not sufficient',
     'payment_validation_failed' => 'Payment validation failed!',
     'invalid_date_order' => 'From date must be earlier than to date',
-    'date_range_conflict' => 'Conflict from date and to date range with: %s'
+    'date_range_conflict' => 'Conflict from date and to date range with: %s',
+    'DATE_VALIDATION_ERROR' => 'from_date must be earlier than and not equal to to_date',
 ];
