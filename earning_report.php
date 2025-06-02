@@ -122,7 +122,10 @@ if (!in_array('Read_Booking', $per)) {
                                             $city = $rstate->query($query);
                                             $i = 0;
 
+
+
                                             if ($city->num_rows > 0) {
+                                                $totalTrentFees = 0;
                                                 while ($row = $city->fetch_assoc()) {
                                                     $totalTrentFees += $row['trent_fees']; // Add to total
 
