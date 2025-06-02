@@ -14,7 +14,7 @@ try {
         http_response_code(200);
         exit();
     }
-    $lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
+    $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
     $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
@@ -23,7 +23,6 @@ try {
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
     $guest_counts = isset($_POST['guest_counts']) ? $_POST['guest_counts'] : 0;
     $lang_ = load_specific_langauage($lang);
-
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
         $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);

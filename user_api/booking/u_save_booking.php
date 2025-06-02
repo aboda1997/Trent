@@ -16,7 +16,7 @@ try {
         http_response_code(200);
         exit();
     }
-    $lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
+    $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
     $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
@@ -54,8 +54,7 @@ try {
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
-    }
-      else {
+    } else {
         [$days, $days_message] = processDates($from_date, $to_date);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
@@ -84,7 +83,7 @@ try {
             (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
-            $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'] , $res_data['max_days'] ) , 400);
+            $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
         } else {
 
             $table = "tbl_book";
@@ -127,43 +126,43 @@ try {
                 $vr[] = array('img' => trim($image));
             }
             $fp['image_list'] = $vr;
-            
+
             $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
             $sub_total =  $days * $price;
-            $coupon_value = 0 ;
-            $Coupon_data= validateCoupon($coupon_code, $sub_total);
+            $coupon_value = 0;
+            $Coupon_data = validateCoupon($coupon_code, $sub_total);
             if ($Coupon_data['status'] === true) {
                 $coupon_value = $Coupon_data['value'];
-             }
+            }
             $deposit_fees = $res_data["security_deposit"];
-            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total ) /100  : ($set["owner_fees"] * $sub_total )/100; 
+            $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total) / 100  : ($set["owner_fees"] * $sub_total) / 100;
             $taxes = ($trent_fess * $set['tax']) / 100;
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $final_total = $sub_total + $taxes + $service_fees+ $deposit_fees +$trent_fess-$coupon_value;
+            $final_total = $sub_total + $taxes + $service_fees + $deposit_fees + $trent_fess - $coupon_value;
 
             $fp['sub_total'] = number_format($sub_total, 2, '.', '');
             $fp['tax_percent'] = $set['tax'];
             $fp['taxes'] = number_format($taxes, 2, '.', '');
             $fp['service_fees'] = number_format($service_fees, 2, '.', '');
-            $fp['final_total'] = number_format($final_total, 2, '.', ''); 
+            $fp['final_total'] = number_format($final_total, 2, '.', '');
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
-            $fp['trent_fees'] =number_format($trent_fess, 2, '.', ''); 
-            
-           
+            $fp['trent_fees'] = number_format($trent_fess, 2, '.', '');
+
+
             $propertyName = $titleData["ar"];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
             $total_as_int = (int)$fp['final_total'];
 
-           // $fp['total_int'] = $total_as_int;
+            // $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
             $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
             $message = "لديك حجز جديد للعقار ($propertyName)\nمع تحيات فريق ت-رينت";
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
-           
+
             if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
@@ -174,25 +173,33 @@ try {
                 $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
+
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                if (!$check) {
+                    throw new Exception("Insert failed");
+                }
                 $fp['book_id'] = $check;
 
-                $whatsapp = sendMessage([$ccode . $mobile], $message);
-                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
                 $field_values1 = ["uid", 'status', 'amt', 'tdate'];
                 $data_values1  = [$uid, 'Withdraw', $fp['final_total'], $created_at1];
                 $table1 = 'wallet_report';
 
+
                 $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
+                if (!$check) {
+                    throw new Exception("Insert failed");
+                }
                 $GLOBALS['rstate']->commit();
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
                 ));
             } else {
-                
+
                 if (getPaymentStatus($merchant_ref_number, $item_id,  $total_as_int)) {
 
 
@@ -203,22 +210,25 @@ try {
 
                     $h = new Estate();
                     $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-                    if(!$check) {
+                    if (!$check) {
                         throw new Exception("Insert failed");
                     }
                     $fp['book_id'] = $check;
-                    
 
+
+                    $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
+                       if (!$check) {
+                        throw new Exception("Insert failed");
+                    }
+                    $GLOBALS['rstate']->commit();
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($message, $message, $add_user_id, 'booking_id', $check, $res_data['image']);
-                    $check =  $h->restateDeleteData_Api_fav( "where id=" . $item_id ."" , 'tbl_non_completed');
-                    $GLOBALS['rstate']->commit();
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
                     ));
                 } else {
-                    $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400 );
+                    $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
                 }
             }
         }
@@ -328,7 +338,7 @@ function getDatesFromRange($start, $end)
     $current = strtotime($start);
     $end = strtotime($end);
 
-    while ($current <= $end) {
+    while ($current < $end) {
         $dates[] = date('Y-m-d', $current);
         $current = strtotime('+1 day', $current);
     }
@@ -346,8 +356,9 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
     while ($current <= $end) {
         $current_date = date('Y-m-d', $current);
         if (in_array($current_date, $date_list)) {
-            return [false, 
-            sprintf($lang_["date_range_conflict"], $current_date)
+            return [
+                false,
+                sprintf($lang_["date_range_conflict"], $current_date)
             ];
         }
         $current = strtotime('+1 day', $current);
