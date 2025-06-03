@@ -49,12 +49,31 @@ if (!in_array('Read_Property', $per)) {
       <!-- Container-fluid starts-->
       <div class="container-fluid">
         <div class="row">
-
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
+                <!-- Search Form -->
+                <div class="row justify-content-center">
+                  <div class="col-md-8">
+                    <div class="search-container" style="margin-bottom: 20px;">
+                      <form method="get" action="">
+                        <div class="input-group">
+                          <input type="text" name="search" class="form-control" placeholder="Search by property title, ID, or type..."
+                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                          <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                            <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                              <a href="?" class="btn btn-secondary">Clear</a>
+                            <?php endif; ?>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="table-responsive">
-                  <table class="display" id="basic-1">
+                  <table class="table" id="properties-table">
                     <thead>
                       <tr>
                         <th>Sr No.</th>
@@ -62,204 +81,225 @@ if (!in_array('Read_Property', $per)) {
                         <th>Property Title</th>
                         <th>Property Type</th>
                         <th>Property Image</th>
-                        <th>Property Price(/Night)</th>
-                        <th>Total Beds</th>
-                        <th>Total Bathrooms</th>
-                        <th>Total SQFT.</th>
-                        <th>Property Facility</th>
-                        <th>Property Rent or Buy?</th>
-                        <th>Person Limit?</th>
-                        <th>Property Status</th>
-                        <th>Created at</th>
-                        <th>Updated at</th>
-                        <?php
-                        if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)) {
-                          ?>
-
-                          <th>
-                            <?= $lang['Action'] ?></th>
-                        <?php
-                        }
-                        ?>
-
+                        <th>Price (/Night)</th>
+                        <th>Beds</th>
+                        <th>Bathrooms</th>
+                        <th>SQFT</th>
+                        <th>Facility</th>
+                        <th>Rent/Buy</th>
+                        <th>Person Limit</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
+                          <th><?= $lang['Action'] ?></th>
+                        <?php endif; ?>
                       </tr>
                     </thead>
                     <tbody>
                       <?php
-                      $city = $rstate->query("
-SELECT tbl_property.*,
-       (SELECT GROUP_CONCAT(JSON_UNQUOTE(JSON_EXTRACT(`title`, '$.$lang_code')))
-        FROM `tbl_facility`
-        WHERE FIND_IN_SET(tbl_facility.id, tbl_property.facility)
-       ) AS facility_select
-FROM tbl_property
-where is_approved = 1 
-");
-                      $i = 0;
-                      while ($row = $city->fetch_assoc()) {
-                        $title = json_decode($row['title'], true);
+                      // Pagination configuration
+                      $records_per_page = 10;
+                      $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                      $page = max($page, 1);
 
-                        $i = $i + 1;
+                      // Base query
+                      $query = "SELECT tbl_property.*,
+                                          (SELECT GROUP_CONCAT(JSON_UNQUOTE(JSON_EXTRACT(`title`, '$.$lang_code')))
+                                           FROM `tbl_facility`
+                                           WHERE FIND_IN_SET(tbl_facility.id, tbl_property.facility)
+                                          ) AS facility_select
+                                          FROM tbl_property
+                                          WHERE is_approved = 1";
+
+                      // Add search condition if search term exists
+                      if (isset($_GET['search']) && !empty($_GET['search'])) {
+                        $search_term = $rstate->real_escape_string($_GET['search']);
+                        if (is_numeric($search_term)) {
+                          $query .= " AND tbl_property.id = " . (int)$search_term;
+                        } else {
+                          $query .= " AND (JSON_EXTRACT(tbl_property.title, '$.$lang_code') LIKE '%$search_term%' 
+                                                  OR EXISTS (
+                                                      SELECT 1 FROM tbl_category 
+                                                      WHERE tbl_category.id = tbl_property.ptype 
+                                                      AND JSON_EXTRACT(tbl_category.title, '$.$lang_code') LIKE '%$search_term%'
+                                                  ))";
+                        }
+                      }
+
+                      // Get total number of records
+                      $count_query = "SELECT COUNT(*) as total FROM ($query) as count_table";
+                      $count_result = $rstate->query($count_query);
+                      $total_records = $count_result->fetch_assoc()['total'];
+											$total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page) ;
+                      $page = min($page, $total_pages);
+
+                      // Add LIMIT to query for pagination
+                      $offset = ($page - 1) * $records_per_page;
+                      $query .= " LIMIT $offset, $records_per_page";
+
+                      $result = $rstate->query($query);
+                      $i = $offset + 1;
+                      $has_records = false;
+
+                      if ($result->num_rows > 0) {
+                        $has_records = true;
+                        while ($row = $result->fetch_assoc()) {
+                          $title = json_decode($row['title'], true);
                       ?>
-                        <tr>
-                          <td>
-                            <?php echo $i; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo $row["id"] ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $title[$lang_code]; ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php $type = $rstate->query("select * from tbl_category where id=" . $row['ptype'] . "")->fetch_assoc();
-                            $type = json_decode($type['title'], true);
-
-                            echo $type[$lang_code]; ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <img src="<?php
-                                      $imageArray = explode(',', $row['image']);
-
-                                      if (!empty($imageArray[0])) {
-                                        echo $imageArray[0];
-                                      } else {
-                                        echo 'default_image.jpg';
-                                      }
-                                      ?>" width="70" height="80" />
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $row['price'] . " EGP" ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $row['beds']; ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $row['bathroom']; ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $row['sqrft']; ?>
-                          </td>
-                          <td class="align-middle">
-                            <?php echo '<span class="badge badge-dark tag-pills-sm-mb">' . str_replace(',', '</span><span class="badge badge-dark tag-pills-sm-mb">', $row['facility_select']); ?>
-                          </td>
-                          <?php if ($row['pbuysell'] == 1) { ?>
-
-                            <td><span class="badge badge-success">Rent</span></td>
-                          <?php } else { ?>
-
+                          <tr>
+                            <td><?php echo $i; ?></td>
+                            <td><?php echo $row["id"]; ?></td>
+                            <td><?php echo htmlspecialchars($title[$lang_code] ?? ''); ?></td>
                             <td>
-                              <span class="badge badge-danger">Buy</span>
-                              <?php if ($row['is_sell'] == 1) { ?><span class="badge badge-info">Property Selled</span>
-                              <?php }
+                              <?php
+                              $type = $rstate->query("SELECT * FROM tbl_category WHERE id=" . (int)$row['ptype'])->fetch_assoc();
+                              $typeTitle = json_decode($type['title'] ?? '', true);
+                              echo htmlspecialchars($typeTitle[$lang_code] ?? '');
                               ?>
                             </td>
-                          <?php } ?>
+                            <td>
+                              <?php
+                              $imageArray = explode(',', $row['image']);
+                              $imageSrc = !empty($imageArray[0]) ? $imageArray[0] : 'default_image.jpg';
+                              ?>
+                              <img src="<?php echo htmlspecialchars($imageSrc); ?>" width="70" height="80" />
+                            </td>
+                            <td><?php echo htmlspecialchars($row['price']) . " EGP"; ?></td>
+                            <td><?php echo htmlspecialchars($row['beds']); ?></td>
+                            <td><?php echo htmlspecialchars($row['bathroom']); ?></td>
+                            <td><?php echo htmlspecialchars($row['sqrft']); ?></td>
+                            <td>
+                              <?php if (!empty($row['facility_select'])): ?>
+                                <span class="badge badge-dark tag-pills-sm-mb"><?php
+                                                                                echo str_replace(
+                                                                                  ',',
+                                                                                  '</span><span class="badge badge-dark tag-pills-sm-mb">',
+                                                                                  htmlspecialchars($row['facility_select'])
+                                                                                );
+                                                                                ?></span>
+                              <?php endif; ?>
+                            </td>
+                            <td>
+                              <?php if ($row['pbuysell'] == 1): ?>
+                                <span class="badge badge-success">Rent</span>
+                              <?php else: ?>
+                                <span class="badge badge-danger">Buy</span>
+                                <?php if ($row['is_sell'] == 1): ?>
+                                  <span class="badge badge-info">Property Selled</span>
+                                <?php endif; ?>
+                              <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($row['plimit']); ?></td>
+                            <td>
+                              <?php if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0'): ?>
+                                <span class="badge status-toggle <?php echo $row['status'] ? 'badge-danger' : 'badge-success'; ?>"
+                                  data-id="<?php echo $row['id']; ?>"
+                                  data-status="<?php echo $row['status']; ?>"
+                                  style="cursor: pointer;">
+                                  <?php echo $row['status'] ? "make unpublish" : "make publish"; ?>
+                                </span>
+                              <?php else: ?>
+                                <!-- Empty cell if no permissions -->
+                              <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($row['created_at']); ?></td>
+                            <td><?php echo htmlspecialchars($row['updated_at']); ?></td>
 
-                          <td class="align-middle">
-                            <?php echo $row['plimit']; ?>
-                          </td>
-                          <?php
-                        if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0' ) {
-                          ?>
-                          <td>
-                            <span class="badge status-toggle <?php echo $row['status'] ?   'badge-danger' : 'badge-success'; ?>"
-                              data-id="<?php echo $row['id']; ?>"
-                              data-status="<?php echo $row['status']; ?>"
-                              style="cursor: pointer;">
-                              <?php echo $row['status']  ? "make unpublish" : "make publish"; ?>
-                            </span>
-
-                          </td>
-                          <?php
-                        }else{
-                          ?>
-                          <td></td>
-                          <?php
-                          }
-                          ?>
-                          <td class="align-middle">
-                            <?php echo $row['created_at']; ?>
-                          </td>
-
-                          <td class="align-middle">
-                            <?php echo $row['updated_at']; ?>
-                          </td>
-                          <?php
-                        if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0' ) {
-                          ?>
-
+                            <?php if ((in_array('Update_Property', $per) || in_array('Delete_Property', $per)) && $row['is_deleted'] == '0'): ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                   <div class="btn-group btn-group-sm" style="float: none;">
-                                  <?php
-                        if (in_array('Update_Property', $per) ) {
-                          ?> 
-                                  <a href="add_properties.php?id=<?php echo $row['id']; ?>" data-toggle="tooltip" title="edit property" class="tabledit-edit-button" style="float: none; margin: 5px;">
-                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="30" height="30" rx="15" fill="#79F9B4" />
-                                        <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
-                                      </svg></a>
+                                    <?php if (in_array('Update_Property', $per)): ?>
+                                      <a href="add_properties.php?id=<?php echo $row['id']; ?>" data-toggle="tooltip" title="edit property" class="tabledit-edit-button" style="float: none; margin: 5px;">
+                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <rect width="30" height="30" rx="15" fill="#79F9B4" />
+                                          <path d="M22.5168 9.34109L20.6589 7.48324C20.0011 6.83703 18.951 6.837 18.2933 7.49476L16.7355 9.06416L20.9359 13.2645L22.5052 11.7067C23.163 11.0489 23.163 9.99885 22.5168 9.34109ZM15.5123 10.2873L8 17.8342V22H12.1658L19.7127 14.4877L15.5123 10.2873Z" fill="#25314C" />
+                                        </svg>
+                                      </a>
+                                    <?php endif; ?>
 
-                                      <?php
-                          }
-                          ?>
-                                     <?php
-                        if ( in_array('Delete_Property', $per)) {
-                          ?> 
-                                    <button type="button"
-                                      style="background: none; border: none; padding: 0; cursor: pointer;"
-                                      data-toggle="modal"
-                                      data-target="#approveModal"
-                                      data-id="<?php echo $row['id']; ?>"
-                                      data-status="<?php echo '1'; ?>"
-                                      title="Delete">
-                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="30" height="30" rx="15" fill="#FF6B6B" />
-                                        <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
-                                      </svg>
-                                    </button>
-
-                                    <?php
-                          }
-                          ?>
+                                    <?php if (in_array('Delete_Property', $per)): ?>
+                                      <button type="button"
+                                        style="background: none; border: none; padding: 0; cursor: pointer;"
+                                        data-toggle="modal"
+                                        data-target="#approveModal"
+                                        data-id="<?php echo $row['id']; ?>"
+                                        data-status="1"
+                                        title="Delete">
+                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                          <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                        </svg>
+                                      </button>
+                                    <?php endif; ?>
                                   </div>
-
                                 </div>
                               </td>
-                         
-                              <?php
-                        }else{
-                          ?>
-                          <td></td>
-                          <?php
-                          }
-                          ?>
-                        </tr>
+                            <?php else: ?>
+                              <td></td>
+                            <?php endif; ?>
+                          </tr>
                       <?php
+                          $i++;
+                        }
+                      }
+
+                      if (!$has_records) {
+                        $colspan = in_array('Update_Property', $per) || in_array('Delete_Property', $per) ? 16 : 15;
+                        echo '<tr><td colspan="' . $colspan . '" class="text-center">No records found</td></tr>';
                       }
                       ?>
-
                     </tbody>
                   </table>
+
+                  <!-- Manual Pagination Links -->
+                  <?php if ($total_records > 0 && $total_pages > 1): ?>
+                    <div class="pagination">
+                      <?php if ($page > 1): ?>
+                        <a href="?page=1<?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+                        <a href="?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
+                      <?php else: ?>
+                        <span class="disabled">First</span>
+                        <span class="disabled">Previous</span>
+                      <?php endif; ?>
+
+                      <?php
+                      $start_page = max(1, $page - 2);
+                      $end_page = min($total_pages, $page + 2);
+
+                      for ($p = $start_page; $p <= $end_page; $p++):
+                      ?>
+                        <?php if ($p == $page): ?>
+                          <span class="current"><?php echo $p; ?></span>
+                        <?php else: ?>
+                          <a href="?page=<?php echo $p; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                        <?php endif; ?>
+                      <?php endfor; ?>
+
+                      <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+                        <a href="?page=<?php echo $total_pages; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+                      <?php else: ?>
+                        <span class="disabled">Next</span>
+                        <span class="disabled">Last</span>
+                      <?php endif; ?>
+                    </div>
+                  <?php endif; ?>
+
+                  <!-- Results Count -->
+                  <?php if ($total_records > 0): ?>
+                    <div class="results-count">
+                      Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $records_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                      <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                        (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
+                      <?php endif; ?>
+                    </div>
+                  <?php endif; ?>
                 </div>
               </div>
-
             </div>
-
-
           </div>
-
-
-
-
         </div>
       </div>
       <!-- Container-fluid Ends-->
@@ -280,9 +320,9 @@ where is_approved = 1
       </div>
       <form id="approveForm">
 
-      <input type="hidden" id="approveId" name="id">
-      <input type="hidden" id="status" name="status">
-      <input type="hidden" name="type" value="delete_property" />
+        <input type="hidden" id="approveId" name="id">
+        <input type="hidden" id="status" name="status">
+        <input type="hidden" name="type" value="delete_property" />
       </form>
       <div class="modal-body">
         Are you sure you want to delete this property?
@@ -409,6 +449,80 @@ where is_approved = 1
     });
   });
 </script>
+
+<!-- CSS Styles -->
+<style>
+    .search-container .input-group {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 20px 0;
+    }
+    .pagination a, .pagination span {
+        padding: 5px 10px;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+    }
+    .pagination .current {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .pagination .disabled {
+        color: #6c757d;
+        pointer-events: none;
+    }
+    .results-count {
+        text-align: center;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    .text-center {
+        text-align: center;
+        padding: 20px;
+        font-size: 1.1em;
+        color: #6c757d;
+        font-style: italic;
+    }
+    .badge-success {
+        background-color: #28a745;
+    }
+    .badge-danger {
+        background-color: #dc3545;
+    }
+    .badge-info {
+        background-color: #17a2b8;
+    }
+    .badge-dark {
+        background-color: #343a40;
+    }
+    .tag-pills-sm-mb {
+        display: inline-block;
+        margin-bottom: 5px;
+        margin-right: 3px;
+        padding: 3px 7px;
+        font-size: 12px;
+    }
+</style>
+
+<!-- Prevent DataTables initialization -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof $.fn.DataTable === 'function') {
+        $('#properties-table').DataTable({
+            paging: false,
+            searching: false,
+            info: false
+        });
+    }
+});
+</script>
+
 <?php
 require 'include/footer.php';
 ?>
