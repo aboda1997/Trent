@@ -213,11 +213,11 @@ try {
                     $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
-                    $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-                    if (!$check) {
+                    $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                    if (!$book_id) {
                         throw new Exception("Insert failed");
                     }
-                    $fp['book_id'] = $check;
+                    $fp['book_id'] = $book_id;
 
 
                     $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');

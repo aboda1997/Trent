@@ -39,7 +39,7 @@ if (!in_array('Read_Booking', $per)) {
                     <div class="row">
                         <div class="col-6">
                             <h3>
-                                Earning Report</h3>
+                                Active Users Report</h3>
                         </div>
                         <div class="col-6">
 
@@ -47,37 +47,52 @@ if (!in_array('Read_Booking', $per)) {
                     </div>
                 </div>
             </div>
+
             <!-- Container-fluid starts-->
             <div class="container-fluid">
                 <div class="row">
-
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
+                                <!-- Date Filter Form and Export Button -->
+                                <div class="mb-3 row">
+                                    <form id="exportForm" method="get" class="col-sm-12">
+                                        <div class="row align-items-end">
+                                            <input type="hidden" name="type" value="Active_User_report" />
+
+                                            <!-- Export Button (always visible) -->
+                                            <div class="col-md-2">
+                                                <button type="button" id="exportExcel" class="btn btn-success w-100">
+                                                    <i class="fa fa-file-excel-o"></i> Export Excel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
 
                                 <div class="table-responsive">
-
-                                    <!-- Date Filter Form and Export Button -->
-                                    <div class="mb-3 row">
-                                        <form id="exportForm" method="get" class="col-sm-12">
-                                            <div class="row align-items-end"> <!-- Added align-items-end for vertical alignment -->
-
-                                                <input type="hidden" name="type" value="Active_User_report" />
-
- <!-- Export Button (always visible) -->
-                                                <div class="col-md-2">
-                                                    <button type="button" id="exportExcel" class="btn btn-success w-100">
-                                                        <i class="fa fa-file-excel-o"></i> Export Excel
-                                                    </button>
-                                                </div>
-
+                                    <!-- Search Form -->
+                                    <div class="row justify-content-center mb-3">
+                                        <div class="col-md-8">
+                                            <div class="search-container">
+                                                <form method="get" action="">
+                                                    <input type="hidden" name="type" value="Active_User_report" />
+                                                    <div class="input-group">
+                                                        <input type="text" name="search" class="form-control" placeholder="Search by name or mobile..."
+                                                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-primary" type="submit">Search</button>
+                                                            <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                                                                <a href="?type=Active_User_report" class="btn btn-secondary">Clear</a>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
 
-                                    <!-- Rest of your table code remains the same -->
-
-                                    <table class="display" id="basic-1">
+                                    <table class="table" id="active-users-table">
                                         <thead>
                                             <tr>
                                                 <th>Sr No.</th>
@@ -89,58 +104,119 @@ if (!in_array('Read_Booking', $per)) {
                                         </thead>
                                         <tbody>
                                             <?php
-                                            // Build the base query
+                                            // Pagination configuration
+                                            $records_per_page = 10;
+                                            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                                            $page = max($page, 1);
+
+                                            // Base query
                                             $query = "SELECT 
                                             u.*,
                                             COUNT(b.id) AS booking_count
                                         FROM 
                                             tbl_user u
                                         LEFT JOIN 
-                                            tbl_book b ON u.id = b.uid AND b.book_status IN ('Check_in', 'Confirmed')
-                                        GROUP BY 
-                                            u.id
-                                        ORDER BY 
-                                            booking_count DESC;";
+                                            tbl_book b ON u.id = b.uid AND b.book_status IN ('Check_in', 'Confirmed')";
 
+                                            // Add search condition if search term exists
+                                            if (isset($_GET['search']) && !empty($_GET['search'])) {
+                                                $search_term = $rstate->real_escape_string($_GET['search']);
+                                                $query .= " WHERE (u.name LIKE '%$search_term%' OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%')";
+                                            }
 
+                                            $query .= " GROUP BY u.id ORDER BY booking_count DESC";
+                                            // Get total number of records
+                                            $count_query = "SELECT COUNT(*) as total FROM (SELECT u.id FROM tbl_user u";
+                                            if (isset($_GET['search']) && !empty($_GET['search'])) {
+                                                $count_query .= " WHERE (u.name LIKE '%$search_term%' OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%')";
+                                            }
+                                            $count_query .= " GROUP BY u.id) as count_table";
+                                            $count_result = $rstate->query($count_query);
+                                            $total_records = $count_result->fetch_assoc()['total'];
+                                            $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
+                                            $page = min($page, $total_pages);
 
-                                            $city = $rstate->query($query);
-                                            $i = 0;
+                                            // Add LIMIT to query for pagination
+                                            $offset = ($page - 1) * $records_per_page;
+                                            $query .= " LIMIT $offset, $records_per_page";
 
-                                            if ($city->num_rows > 0) {
-                                                while ($row = $city->fetch_assoc()) {
+                                            $result = $rstate->query($query);
+                                            $i = $offset + 1;
+                                            $has_records = false;
 
-                                                    $i = $i + 1;
+                                            if ($result->num_rows > 0) {
+                                                $has_records = true;
+                                                while ($row = $result->fetch_assoc()) {
                                             ?>
                                                     <tr>
                                                         <td><?php echo $i; ?></td>
-                                                        <td class="align-middle"><?php echo json_decode($row['id']); ?></td>
-                                                        <td class="align-middle"><?php echo $row['name']; ?></td>
-                                                        <td class="align-middle"><?php echo $row['ccode'].$row['mobile']; ?></td>
-                                                        <td class="align-middle"><?php echo $row['booking_count']; ?></td>
+                                                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['name']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['ccode'] . htmlspecialchars($row['mobile'])); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['booking_count']); ?></td>
                                                     </tr>
                                             <?php
+                                                    $i++;
                                                 }
-                                            } else {
-                                                echo '<tr><td colspan="4" class="text-center">No records found</td></tr>';
+                                            }
+
+                                            if (!$has_records) {
+                                                echo '<tr><td colspan="5" class="text-center">No records found</td></tr>';
                                             }
                                             ?>
                                         </tbody>
                                     </table>
+
+                                    <!-- Manual Pagination Links -->
+                                    <?php if ($total_records > 0 && $total_pages > 1): ?>
+                                        <div class="pagination">
+                                            <?php if ($page > 1): ?>
+                                                <a href="?type=Active_User_report&page=1<?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+                                                <a href="?type=Active_User_report&page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
+                                            <?php else: ?>
+                                                <span class="disabled">First</span>
+                                                <span class="disabled">Previous</span>
+                                            <?php endif; ?>
+
+                                            <?php
+                                            $start_page = max(1, $page - 2);
+                                            $end_page = min($total_pages, $page + 2);
+
+                                            for ($p = $start_page; $p <= $end_page; $p++):
+                                            ?>
+                                                <?php if ($p == $page): ?>
+                                                    <span class="current"><?php echo $p; ?></span>
+                                                <?php else: ?>
+                                                    <a href="?type=Active_User_report&page=<?php echo $p; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                                                <?php endif; ?>
+                                            <?php endfor; ?>
+
+                                            <?php if ($page < $total_pages): ?>
+                                                <a href="?type=Active_User_report&page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+                                                <a href="?type=Active_User_report&page=<?php echo $total_pages; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+                                            <?php else: ?>
+                                                <span class="disabled">Next</span>
+                                                <span class="disabled">Last</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Results Count -->
+                                    <?php if ($total_records > 0): ?>
+                                        <div class="results-count">
+                                            Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $records_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                                            <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                                                (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-
                             </div>
-
                         </div>
-
-
                     </div>
-
-
-
-
                 </div>
             </div>
+
             <!-- Container-fluid Ends-->
         </div>
         <!-- footer start-->
@@ -210,7 +286,75 @@ if (!in_array('Read_Booking', $per)) {
         });
     });
 </script>
+<!-- CSS Styles -->
+<style>
+    .search-container .input-group {
+        max-width: 600px;
+        margin: 0 auto;
+    }
 
+    .pagination {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 20px 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 5px 10px;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+    }
+
+    .pagination .current {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination .disabled {
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .results-count {
+        text-align: center;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+        padding: 20px;
+        font-size: 1.1em;
+        color: #6c757d;
+        font-style: italic;
+    }
+</style>
+
+<!-- JavaScript for Excel Export -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevent DataTables initialization
+        if (typeof $.fn.DataTable === 'function') {
+            $('#active-users-table').DataTable({
+                paging: false,
+                searching: false,
+                info: false
+            });
+        }
+
+        // Excel Export functionality
+        document.getElementById('exportExcel').addEventListener('click', function() {
+            let params = 'type=Active_User_report';
+            <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                params += '&search=<?php echo urlencode($_GET['search']); ?>';
+            <?php endif; ?>
+        });
+    });
+</script>
 <!-- latest jquery-->
 <?php
 require 'include/footer.php';
