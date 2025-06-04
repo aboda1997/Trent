@@ -35,8 +35,7 @@ try {
             $pol['total'] = $bd['total'];
             $pol['prop_title'] = json_decode($bd['prop_title'], true)[$lang_code] ?? '';
             $imageArray = array_filter( explode(',', $bd['image'] ?? '') );
-
-            $data['prop_img'] = array_pop($imageArray)??'';
+            $pol['prop_img'] = array_pop($imageArray)??'';
 
             $c[] = $pol;
         }
