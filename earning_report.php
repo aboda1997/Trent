@@ -46,126 +46,226 @@ if (!in_array('Read_Booking', $per)) {
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- Container-fluid starts-->
-            <div class="container-fluid">
-                <div class="row">
+            </div><!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Date Filter Form and Export Button -->
+                    <div class="mb-3 row">
+                        <form id="exportForm" method="get" class="col-sm-12">
+                            <div class="row align-items-end">
+                                <!-- Date Filters -->
+                                <div class="col-md-3">
+                                    <label>From Date</label>
+                                    <input type="date" name="from_date" class="form-control" value="<?php echo isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>To Date</label>
+                                    <input type="date" name="to_date" class="form-control" value="<?php echo isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>">
+                                </div>
+                                <input type="hidden" name="type" value="Earning_report" />
 
-                    <div class="col-sm-12">
-                        <div class="card">
-                            <div class="card-body">
-
-                                <div class="table-responsive">
-
-                                    <!-- Date Filter Form and Export Button -->
-                                    <div class="mb-3 row">
-                                        <form id="exportForm" method="get" class="col-sm-12">
-                                            <div class="row align-items-end"> <!-- Added align-items-end for vertical alignment -->
-                                                <!-- Date Filters -->
-                                                <div class="col-md-3">
-                                                    <label>From Date</label>
-                                                    <input type="date" name="from_date" class="form-control" value="<?php echo isset($_GET['from_date']) ? $_GET['from_date'] : '' ?>">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label>To Date</label>
-                                                    <input type="date" name="to_date" class="form-control" value="<?php echo isset($_GET['to_date']) ? $_GET['to_date'] : '' ?>">
-                                                </div>
-                                                <input type="hidden" name="type" value="Earning_report" />
-
-                                                <!-- Filter and Clear Buttons -->
-                                                <div class="col-md-2">
-                                                    <button type="submit" class="btn btn-primary w-100">Filter</button>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
-                                                        <a href="?" class="btn btn-secondary w-100">Clear</a>
-                                                    <?php endif; ?>
-                                                </div>
-
-                                                <!-- Export Button (always visible) -->
-                                                <div class="col-md-2">
-                                                    <button type="button" id="exportExcel" class="btn btn-success w-100">
-                                                        <i class="fa fa-file-excel-o"></i> Export Excel
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    <!-- Rest of your table code remains the same -->
-
-                                    <table class="display" id="basic-1">
-                                        <thead>
-                                            <tr>
-                                                <th>Sr No.</th>
-                                                <th>Book ID</th>
-                                                <th>Trent Fees (EGP)</th>
-                                                <th>Booking Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            // Build the base query
-                                            $query = "SELECT * FROM tbl_book WHERE book_status IN ('Check_in', 'Confirmed')";
-
-                                            // Add date filter if provided
-                                            if (isset($_GET['from_date']) && !empty($_GET['from_date'])) {
-                                                $from_date = $rstate->real_escape_string($_GET['from_date']);
-                                                $query .= " AND book_date >= '$from_date'";
-                                            }
-
-                                            if (isset($_GET['to_date']) && !empty($_GET['to_date'])) {
-                                                $to_date = $rstate->real_escape_string($_GET['to_date']);
-                                                $query .= " AND book_date <= '$to_date'";
-                                            }
-
-                                            $city = $rstate->query($query);
-                                            $i = 0;
-
-
-
-                                            if ($city->num_rows > 0) {
-                                                $totalTrentFees = 0;
-                                                while ($row = $city->fetch_assoc()) {
-                                                    $totalTrentFees += $row['trent_fees']; // Add to total
-
-                                                    $i = $i + 1;
-                                            ?>
-                                                    <tr>
-                                                        <td><?php echo $i; ?></td>
-                                                        <td class="align-middle"><?php echo json_decode($row['id']); ?></td>
-                                                        <td class="align-middle"><?php echo number_format($row['trent_fees'], 2) . ' EGP'; ?></td>
-                                                        <td class="align-middle"><?php echo $row['book_date']; ?></td>
-                                                    </tr>
-                                            <?php
-                                                }
-                                                // Display total row
-                                                echo '<tr class="fw-bold" style="background-color: #f8f9fa;">
-              <td colspan="2" class="text-end">Total:</td>
-              <td class="align-middle">' . number_format($totalTrentFees, 2) . ' EGP</td>
-              <td></td>
-            </tr>';
-                                            } else {
-                                                echo '<tr><td colspan="4" class="text-center">No records found</td></tr>';
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
+                                <!-- Filter and Clear Buttons -->
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                                </div>
+                                <div class="col-md-2">
+                                    <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
+                                        <a href="?" class="btn btn-secondary w-100">Clear</a>
+                                    <?php endif; ?>
                                 </div>
 
+                                <!-- Export Button (always visible) -->
+                                <div class="col-md-2">
+                                    <button type="button" id="exportExcel" class="btn btn-success w-100">
+                                        <i class="fa fa-file-excel-o"></i> Export Excel
+                                    </button>
+                                </div>
                             </div>
-
-                        </div>
-
-
+                        </form>
                     </div>
 
+                    <div class="table-responsive">
+                        <!-- Search Form -->
+                        <div class="row justify-content-center mb-3">
+                            <div class="col-md-8">
+                                <div class="search-container">
+                                    <form method="get" action="">
+                                        <input type="hidden" name="type" value="Earning_report" />
+                                        <div class="input-group">
+                                            <input type="text" name="search" class="form-control" placeholder="Search by book ID..."
+                                                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">Search</button>
+                                                <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                                                    <a href="?type=Earning_report" class="btn btn-secondary">Clear</a>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
+                        <table class="table" id="earning-report-table">
+                            <thead>
+                                <tr>
+                                    <th>Sr No.</th>
+                                    <th>Book ID</th>
+                                    <th>Trent Fees (EGP)</th>
+                                    <th>Booking Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                // Pagination configuration
+                                $records_per_page = 10;
+                                $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                                $page = max($page, 1);
 
+                                // Build the base query
+                                $query = "SELECT * FROM tbl_book WHERE book_status IN ('Check_in', 'Confirmed')";
 
+                                // Add date filter if provided
+                                if (isset($_GET['from_date']) && !empty($_GET['from_date'])) {
+                                    $from_date = $rstate->real_escape_string($_GET['from_date']);
+                                    $query .= " AND book_date >= '$from_date'";
+                                }
+
+                                if (isset($_GET['to_date']) && !empty($_GET['to_date'])) {
+                                    $to_date = $rstate->real_escape_string($_GET['to_date']);
+                                    $query .= " AND book_date <= '$to_date'";
+                                }
+
+                                // Add search condition if search term exists
+                                if (isset($_GET['search']) && !empty($_GET['search'])) {
+                                    $search_term = $rstate->real_escape_string($_GET['search']);
+                                    $query .= " AND (id LIKE '%$search_term%')";
+                                }
+
+                                // Get total number of records
+                                $count_query = "SELECT COUNT(*) as total FROM ($query) as count_table";
+                                $count_result = $rstate->query($count_query);
+                                $total_records = $count_result->fetch_assoc()['total'];
+                                $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
+                                $page = min($page, $total_pages);
+
+                                // Add LIMIT to query for pagination
+                                $offset = ($page - 1) * $records_per_page;
+                                $query .= " LIMIT $offset, $records_per_page";
+
+                                $result = $rstate->query($query);
+                                $i = $offset + 1;
+                                $has_records = false;
+                                $totalTrentFees = 0;
+
+                                if ($result->num_rows > 0) {
+                                    $has_records = true;
+                                    while ($row = $result->fetch_assoc()) {
+                                        $totalTrentFees += $row['trent_fees'];
+                                ?>
+                                        <tr>
+                                            <td><?php echo $i; ?></td>
+                                            <td><?php echo htmlspecialchars(json_decode($row['id'])); ?></td>
+                                            <td><?php echo number_format($row['trent_fees'], 2) . ' EGP'; ?></td>
+                                            <td><?php echo htmlspecialchars($row['book_date']); ?></td>
+                                        </tr>
+                                <?php
+                                        $i++;
+                                    }
+                                }
+
+                                if (!$has_records) {
+                                    echo '<tr><td colspan="4" class="text-center">No records found</td></tr>';
+                                }
+                                ?>
+                            </tbody>
+                            <?php if ($has_records): ?>
+                                <tfoot>
+                                    <tr class="fw-bold" style="background-color: #f8f9fa;">
+                                        <td colspan="2" class="text-end">Total:</td>
+                                        <td class="align-middle"><?php echo number_format($totalTrentFees, 2) . ' EGP'; ?></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            <?php endif; ?>
+                        </table>
+
+                        <!-- Manual Pagination Links -->
+                        <?php if ($total_records > 0 && $total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php if ($page > 1): ?>
+                                    <a href="?type=Earning_report&page=1<?php 
+                                        echo isset($_GET['from_date']) ? '&from_date=' . urlencode($_GET['from_date']) : '';
+                                        echo isset($_GET['to_date']) ? '&to_date=' . urlencode($_GET['to_date']) : '';
+                                        echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">First</a>
+                                    <a href="?type=Earning_report&page=<?php echo $page - 1; ?><?php 
+                                        echo isset($_GET['from_date']) ? '&from_date=' . urlencode($_GET['from_date']) : '';
+                                        echo isset($_GET['to_date']) ? '&to_date=' . urlencode($_GET['to_date']) : '';
+                                        echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">Previous</a>
+                                <?php else: ?>
+                                    <span class="disabled">First</span>
+                                    <span class="disabled">Previous</span>
+                                <?php endif; ?>
+
+                                <?php
+                                $start_page = max(1, $page - 2);
+                                $end_page = min($total_pages, $page + 2);
+
+                                for ($p = $start_page; $p <= $end_page; $p++):
+                                ?>
+                                    <?php if ($p == $page): ?>
+                                        <span class="current"><?php echo $p; ?></span>
+                                    <?php else: ?>
+                                        <a href="?type=Earning_report&page=<?php echo $p; ?><?php 
+                                            echo isset($_GET['from_date']) ? '&from_date=' . urlencode($_GET['from_date']) : '';
+                                            echo isset($_GET['to_date']) ? '&to_date=' . urlencode($_GET['to_date']) : '';
+                                            echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                        ?>"><?php echo $p; ?></a>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?type=Earning_report&page=<?php echo $page + 1; ?><?php 
+                                        echo isset($_GET['from_date']) ? '&from_date=' . urlencode($_GET['from_date']) : '';
+                                        echo isset($_GET['to_date']) ? '&to_date=' . urlencode($_GET['to_date']) : '';
+                                        echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">Next</a>
+                                    <a href="?type=Earning_report&page=<?php echo $total_pages; ?><?php 
+                                        echo isset($_GET['from_date']) ? '&from_date=' . urlencode($_GET['from_date']) : '';
+                                        echo isset($_GET['to_date']) ? '&to_date=' . urlencode($_GET['to_date']) : '';
+                                        echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : '';
+                                    ?>">Last</a>
+                                <?php else: ?>
+                                    <span class="disabled">Next</span>
+                                    <span class="disabled">Last</span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Results Count -->
+                        <?php if ($total_records > 0): ?>
+                            <div class="results-count">
+                                Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $records_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                                <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                                    (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
+                                <?php endif; ?>
+                                <?php if (isset($_GET['from_date']) || isset($_GET['to_date'])): ?>
+                                    (date range: <?php echo isset($_GET['from_date']) ? htmlspecialchars($_GET['from_date']) : 'start'; ?> to <?php echo isset($_GET['to_date']) ? htmlspecialchars($_GET['to_date']) : 'end'; ?>)
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-            <!-- Container-fluid Ends-->
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
         </div>
         <!-- footer start-->
 

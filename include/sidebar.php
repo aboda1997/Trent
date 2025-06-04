@@ -699,6 +699,7 @@ if (isset($_SESSION['restatename'])) {
             </a>
             <ul class="sidebar-submenu">
               <li><a href="add_whatsapp_qr.php">Add WhatsApp QR</a></li>
+              <li><a href="campings.php">Campings</a></li>
             </ul>
           </li>
           <?php

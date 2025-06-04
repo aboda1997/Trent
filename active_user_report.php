@@ -116,7 +116,7 @@ if (!in_array('Read_Booking', $per)) {
                                         FROM 
                                             tbl_user u
                                         LEFT JOIN 
-                                            tbl_book b ON u.id = b.uid AND b.book_status IN ('Check_in', 'Confirmed')";
+                                            tbl_book b ON u.id = b.uid AND b.book_status IN ('Check_in', 'Confirmed' , 'Completed')";
 
                                             // Add search condition if search term exists
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
