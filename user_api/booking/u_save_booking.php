@@ -150,6 +150,7 @@ try {
 
 
             $propertyAddress = json_decode($res_data['address'] ?? '', true)["ar"] ?? '';
+            $propertytitle = json_decode($res_data['title'] ?? '', true)["ar"] ?? '';
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d');
             $total_as_int = (int)$fp['final_total'];
@@ -160,7 +161,7 @@ try {
             $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
 
             $message = "عزيزي المالك،
-يسعدنا إخبارك بوجود حجز جديد لعقارك الموجود في [$propertyAddress].
+يسعدنا إخبارك بوجود حجز جديد لعقارك  [$propertytitle].
 الخطوات التالية: • راجع تفاصيل المستأجر من خلال التطبيق • تواصل مع المستأجر لتنسيق المعاينة • أكد أو ارفض الحجز خلال 24 ساعة
 شكراً لاختيارك ت-رينت فريق ت-رينت 🏡";
             $title_ = 'لديك حجز جديد! 🔔';
