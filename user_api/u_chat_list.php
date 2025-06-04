@@ -66,7 +66,6 @@ try {
                 $receiver_id = $row['sender_id'];
             }
             $user_data = $rstate->query("select * from tbl_user where id=" . $receiver_id . "")->fetch_assoc();
-
             $data['receiver_name'] = $user_data['name'];
             $data['receiver_id'] = $receiver_id;
             $data['receiver_image'] = $user_data['pro_pic'];

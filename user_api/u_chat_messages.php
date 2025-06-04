@@ -76,7 +76,10 @@ try {
 	    $data[] = $message ;
 	}
 	$user_data = $rstate->query("select * from tbl_user where id=" . $user2 . "")->fetch_assoc();
-
+	$sel = $rstate->query("select * from tbl_property where id=" .$chat_row["prop_id"] . "")->fetch_assoc();
+     $imageArray = array_filter( explode(',', $sel['image'] ?? '') );
+		
+		$titleData = json_decode($sel['title']??'', true);
 		$returnArr = generateResponse(
 			'true',
 			"Chat Messages Founded!",
@@ -84,6 +87,8 @@ try {
 			array(
 				"chat_messages" => $data,
 				"prop_id" =>  (int)$chat_row["prop_id"], 
+				"prop_img" =>  array_pop($imageArray)??'', 
+				"prop_title" =>  $titleData['en']??'', 
 				"receiver_name" =>  $user_data["name"], 
 				"receiver_image" =>  $user_data["pro_pic"], 
 				"length" =>  $sel_length

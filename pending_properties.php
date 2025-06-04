@@ -168,7 +168,7 @@ if (!in_array('Read_Property', $per)) {
                                       data-toggle="modal" data-target="#approveModal"
                                       data-id="<?php echo $row['id']; ?>"
                                       data-uid="<?php echo $row['add_user_id']; ?>"
-                                      data-title="<?php echo htmlspecialchars($address['ar'] ?? ''); ?>"
+                                      data-title="<?php echo htmlspecialchars($title['ar'] ?? ''); ?>"
                                       data-status="1"
                                       title="Approve">
                                       Approve
@@ -176,7 +176,7 @@ if (!in_array('Read_Property', $per)) {
                                     <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
                                       data-toggle="modal" data-target="#denyModal"
                                       data-id="<?php echo $row['id']; ?>"
-                                      data-title="<?php echo htmlspecialchars($address['ar'] ?? ''); ?>"
+                                      data-title="<?php echo htmlspecialchars($title['ar'] ?? ''); ?>"
                                       data-uid="<?php echo $row['add_user_id']; ?>">
                                       Deny
                                     </button>

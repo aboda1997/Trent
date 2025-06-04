@@ -39,10 +39,17 @@ try {
             $pol['created_at'] = $row['created_at'];
             $pol['body'] = $row['body'];
             $pol['key'] = $row['name'];
+            if ($row['name'] == "booking_id") {
+                $data = $rstate->query("SELECT id, book_status FROM tbl_book WHERE id=" . $row['value'])->fetch_assoc();
+                $book_status =  $data['book_status'] ?? '';
+                $pol['book_status'] = $book_status;
+            } else {
+                unset($pol['book_status']);
+            }
             $pol['value'] = $row['value'];
             $pol['is_seen'] = (bool)$row['is_seen'];
-            $imageArray = array_filter( explode(',', $row['img'] ?? '' ));
-            $vr =array();
+            $imageArray = array_filter(explode(',', $row['img'] ?? ''));
+            $vr = array();
             // Loop through each image URL and push to $vr array
             foreach ($imageArray as $image) {
                 $vr[] = array('img' => trim($image));
