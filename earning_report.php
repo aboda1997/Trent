@@ -109,7 +109,7 @@ if (!in_array('Read_Booking', $per)) {
                             </div>
                         </div>
 
-                        <table class="table" id="earning-report-table">
+                        <table class="table" id="active-users-table">
                             <thead>
                                 <tr>
                                     <th>Sr No.</th>
@@ -332,6 +332,66 @@ if (!in_array('Read_Booking', $per)) {
 
             }
         });
+    });
+</script>
+<style>
+    .search-container .input-group {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 20px 0;
+    }
+
+    .pagination a,
+    .pagination span {
+        padding: 5px 10px;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+    }
+
+    .pagination .current {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination .disabled {
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .results-count {
+        text-align: center;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .text-center {
+        text-align: center;
+        padding: 20px;
+        font-size: 1.1em;
+        color: #6c757d;
+        font-style: italic;
+    }
+</style>
+
+<!-- JavaScript for Excel Export -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevent DataTables initialization
+        if (typeof $.fn.DataTable === 'function') {
+            $('#active-users-table').DataTable({
+                paging: false,
+                searching: false,
+                info: false
+            });
+        }
     });
 </script>
 

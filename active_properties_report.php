@@ -112,7 +112,7 @@ if (!in_array('Read_Booking', $per)) {
 
                                             // Base query - changed to start from tbl_book and LEFT JOIN tbl_user
                                             $query = "SELECT 
-                                        b.id AS property_id,
+                                        b.prop_id AS property_id,
                                         b.prop_title AS title,
                                         b.add_user_id,
                                         u.name,
