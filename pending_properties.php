@@ -106,7 +106,7 @@ if (!in_array('Read_Property', $per)) {
                         if (is_numeric($search_term)) {
                           $query .= " AND p.id = " . (int)$search_term;
                         } else {
-                          $query .= " AND (p.title LIKE '%$search_term%' OR p.address LIKE '%$search_term%')";
+                          $query .= " AND (p.title LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci  OR p.address LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
                         }
                       }
 

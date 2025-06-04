@@ -111,9 +111,9 @@ if (!in_array('Read_User_List', $per)) {
 													$query .= " where email = '$search_term'";
 												} else {
 													// For other searches, use LIKE with wildcards
-													$query .= " where (name LIKE '%$search_term%' 
-                                                  OR email LIKE '%$search_term%' 
-                                                  OR mobile LIKE '%$search_term%')";
+													$query .= " where (name LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci 
+                                                  OR email LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci 
+                                                  OR mobile LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
 												}
 											}
 
@@ -127,7 +127,6 @@ if (!in_array('Read_User_List', $per)) {
 											// Add LIMIT to query for pagination
 											$offset = ($page - 1) * $records_per_page;
 											$query .= " LIMIT $offset, $records_per_page";
-
 											$stmt = $rstate->query($query);
 											$i = $offset + 1;
 
@@ -142,7 +141,7 @@ if (!in_array('Read_User_List', $per)) {
 														</td>
 														<td><?php echo htmlspecialchars($row['name']); ?></td>
 														<td><?php echo htmlspecialchars($row['email']); ?></td>
-														<td><?php echo htmlspecialchars($row['mobile']); ?></td>
+														<td><?php echo htmlspecialchars($row['ccode'].$row['mobile']); ?></td>
 														<td><?php echo htmlspecialchars($row['reg_date']); ?></td>
 
 														<td><span data-id="<?php echo $row['id']; ?>" class="badge badge-success">Active</span></td>

@@ -40,11 +40,19 @@ try {
             $pol['body'] = $row['body'];
             $pol['key'] = $row['name'];
             if ($row['name'] == "booking_id") {
-                $data = $rstate->query("SELECT id, book_status FROM tbl_book WHERE id=" . $row['value'])->fetch_assoc();
+                $data = $rstate->query("SELECT id, book_status , uid , add_user_id FROM tbl_book WHERE id=" . $row['value'])->fetch_assoc();
                 $book_status =  $data['book_status'] ?? '';
+                if ($data['uid'] == $uid){
+                $pol['is_owner'] = false;
+ 
+                }else{
+                 $pol['is_owner'] = true;
+  
+                }
                 $pol['book_status'] = $book_status;
             } else {
                 unset($pol['book_status']);
+                unset($pol['is_owner']);
             }
             $pol['value'] = $row['value'];
             $pol['is_seen'] = (bool)$row['is_seen'];

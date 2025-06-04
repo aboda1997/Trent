@@ -121,14 +121,14 @@ if (!in_array('Read_Booking', $per)) {
                                             // Add search condition if search term exists
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
                                                 $search_term = $rstate->real_escape_string($_GET['search']);
-                                                $query .= " WHERE (u.name LIKE '%$search_term%' OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%')";
+                                                $query .= " WHERE (u.name LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
                                             }
 
                                             $query .= " GROUP BY u.id ORDER BY booking_count DESC";
                                             // Get total number of records
                                             $count_query = "SELECT COUNT(*) as total FROM (SELECT u.id FROM tbl_user u";
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
-                                                $count_query .= " WHERE (u.name LIKE '%$search_term%' OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%')";
+                                                $count_query .= " WHERE (u.name LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
                                             }
                                             $count_query .= " GROUP BY u.id) as count_table";
                                             $count_result = $rstate->query($count_query);
