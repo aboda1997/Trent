@@ -118,11 +118,11 @@ if (!in_array('Read_Property', $per)) {
                         if (is_numeric($search_term)) {
                           $query .= " AND tbl_property.id = " . (int)$search_term;
                         } else {
-                          $query .= " AND (JSON_EXTRACT(tbl_property.title, '$.$lang_code') LIKE '%$search_term%' 
+                          $query .= " AND (JSON_EXTRACT(tbl_property.title, '$.$lang_code') LIKE '%$search_term%'  COLLATE utf8mb4_unicode_ci
                                                   OR EXISTS (
                                                       SELECT 1 FROM tbl_category 
                                                       WHERE tbl_category.id = tbl_property.ptype 
-                                                      AND JSON_EXTRACT(tbl_category.title, '$.$lang_code') LIKE '%$search_term%'
+                                                      AND JSON_EXTRACT(tbl_category.title, '$.$lang_code') LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
                                                   ))";
                         }
                       }
