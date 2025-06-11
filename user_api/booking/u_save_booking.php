@@ -138,7 +138,7 @@ try {
             $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total) / 100  : ($set["owner_fees"] * $sub_total) / 100;
             $taxes = ($trent_fess * $set['tax']) / 100;
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $final_total = $sub_total + $taxes + $service_fees + $deposit_fees + $trent_fess - $coupon_value;
+            $final_total = $sub_total + $taxes + $service_fees + $deposit_fees - $coupon_value;
 
             $fp['sub_total'] = number_format($sub_total, 2, '.', '');
             $fp['tax_percent'] = $set['tax'];
