@@ -121,7 +121,7 @@ try {
             $fp['service_fees'] = number_format($service_fees, 2, '.', '');
             $fp['final_total'] = number_format($final_total, 2, '.', '');
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
-            $fp['trent_fees'] = number_format($trent_fess, 2, '.', '');
+            $fp['trent_fees'] = number_format(0, 2, '.', '');
 
 
             $postString = http_build_query($_POST);
