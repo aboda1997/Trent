@@ -217,7 +217,7 @@ if ($_SESSION['restatename'] == 'Staff') {
                         <form id="excelUploadForm" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="excelFile" class="form-label">Select Excel File</label>
-                                <input class="form-control" type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls">
+                                <input class="form-control" type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls, .csv">
                             </div>
                         </form>
                     </div>
