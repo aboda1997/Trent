@@ -1,6 +1,10 @@
 <?php
 require "reconfig.php";
 require "estate.php";
+require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+
+use Shuchkin\SimpleXLSX;
+
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/user_api/notifications/send_notification.php';
@@ -2204,7 +2208,7 @@ WHERE
             while ($row = $sel->fetch_assoc()) {
                 $data[] =   [
                     $row['id'],
-                     $row['name'],
+                    $row['name'],
                     $row['ccode'] . $row['mobile'],
                     $row['booking_count']
                 ];
@@ -2247,7 +2251,7 @@ WHERE
                 $data[] =   [
                     $row['id'],
                     json_decode($row['title'], true)['en'] ?? '',
-                     $row['name'],
+                    $row['name'],
                     $row['ccode'] . $row['mobile'],
                     $row['booking_count']
                 ];
@@ -2269,6 +2273,101 @@ WHERE
                 ],
                 $data
             );
+        } elseif ($_POST["type"] == "download_excel-template") {
+            $query = "SELECT 
+            u.name,u.ccode,u.mobile
+        FROM 
+            tbl_user u
+            where u.status = 1 and u.verified = 1 
+            ";
+            $sel = $rstate->query($query);
+
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] =   [
+
+                    $row['ccode'] . $row['mobile'],
+                    ''
+                ];
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "template Exported Successfully!!",
+                "message" => "APProval section!",
+                "action" => "campings.php",
+            ];
+            downloadXLS(
+                $arabicHeaders = [
+                    'رقم الجوال',
+                    'الرساله'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "upload_whats-up-campings") {
+            $h = new Estate();
+            $xlsx = SimpleXLSX::parse($_FILES['excelFile']['tmp_name']);
+            // Get all rows and remove header (first row)
+            $rows = $xlsx->rows();
+            $header = array_shift($rows); // Remove and discard header row
+
+            foreach ($rows as $row) {
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    continue;
+                }
+
+                // Process each row (adjust according to your Excel structure)
+                $phone = $row[0] ?? null;
+                $message = $row[1] ?? null;
+
+                $table = "tbl_uploaded_excel_data";
+                $field_values = array("f1", "f2", "item_id");
+                $data_values = array("$phone", "$message", '65665');
+
+                $h = new Estate();
+                $h->restateinsertdata_Api($field_values, $data_values, $table);
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "file Uploaded successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "campings.php",
+            ];
+        } elseif ($_POST["type"] == "Send_whatsup_message") {
+            $query = "SELECT 
+            u.f1,u.f2  , u.id
+        FROM 
+            tbl_uploaded_excel_data u
+            where u.item_id = 65665 
+            ";
+            $sel = $rstate->query($query);
+            while ($row = $sel->fetch_assoc()) {
+
+                $message = $row['f2'];
+                $mobile = $row['f1'];
+                $id = $row['id'];
+                $result = sendMessage([$mobile], $message);
+                if ($result) {
+                    $query2 = "Delete 
+                      FROM 
+            tbl_uploaded_excel_data 
+            where id = $id 
+            ";
+                    $rstate->query($query2);
+                    sleep(5);
+                }
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Messages sent successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "campings.php",
+            ];
         } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];
