@@ -2,6 +2,6 @@
     "require": {
         "google/auth": "^1.47",
         "giggsey/libphonenumber-for-php": "^9.0",
-        "shuchkin/simplexlsx": "^1.1"
+        "phpoffice/phpspreadsheet": "^4.3"
     }
 }

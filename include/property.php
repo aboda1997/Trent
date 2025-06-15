@@ -4,6 +4,7 @@ require "estate.php";
 require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 use Shuchkin\SimpleXLSX;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
@@ -2307,9 +2308,8 @@ WHERE
             );
         } else if ($_POST["type"] == "upload_whats-up-campings") {
             $h = new Estate();
-            $xlsx = SimpleXLSX::parse($_FILES['excelFile']['tmp_name']);
+            $rows = parseExcelFile();
             // Get all rows and remove header (first row)
-            $rows = $xlsx->rows();
             $header = array_shift($rows); // Remove and discard header row
 
             foreach ($rows as $row) {
@@ -2785,3 +2785,20 @@ function downloadXLS($headers, $data)
     ob_end_flush();
     exit;
 }
+function parseExcelFile() {
+    $name = $_FILES['excelFile']['name'];
+    $filePath = $_FILES['excelFile']['tmp_name'];
+    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+    try {
+        // Identify file type and create appropriate reader
+        $reader = IOFactory::createReaderForFile($filePath);
+        $spreadsheet = $reader->load($filePath);
+        
+        return $spreadsheet->getActiveSheet()->toArray();
+        
+    } catch (Exception $e) {
+        throw new Exception("Error reading file: " . $e->getMessage());
+    }
+}
+
