@@ -30,7 +30,7 @@ try {
             $pol['Event'] = $row['message'];
             $pol['status'] = $row['status'];
             $pol['amt'] = $row['amt'];
-            $pol['Employee_Name'] = $data['username'];
+            $pol['Employee_Name'] = $data['username']??'';
             $pol['Created_at'] = $row['tdate'];
             $c[] = $pol;
         }
