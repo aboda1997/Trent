@@ -661,7 +661,7 @@ if (isset($_SESSION['restatename'])) {
             </ul>
           </li>
           <?php
-          if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per) || in_array('Read_Why_Choose_Us', $per) || in_array('Create_Why_Choose_Us', $per)) {
+          if (in_array('Update_Wallet', $per) || in_array('Delete_Wallet', $per) || in_array('Read_Wallet', $per) || in_array('Create_Wallet', $per)) {
           ?>
             <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -673,14 +673,14 @@ if (isset($_SESSION['restatename'])) {
               </a>
               <ul class="sidebar-submenu">
                 <?php
-                if (in_array('Create_Why_Choose_Us', $per)) {
+                if (in_array('Create_Wallet', $per)) {
                 ?>
                   <li><a href="add_money.php">Add Money</a></li>
                 <?php
                 }
                 ?>
                 <?php
-                if (in_array('Read_Why_Choose_Us', $per)) {
+                if (in_array('Read_Wallet', $per)) {
                 ?>
                   <li><a href="wallet_history.php">Wallet History</a></li>
                 <?php

@@ -25,6 +25,7 @@ try {
             if (isset($data['id'])) {
                 $_SESSION['restatename'] = $username;
                 $_SESSION['permissions'] = get_user_permissions($data['id'], $rstate);
+                $_SESSION['id'] = $data['id'];
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Login Successfully!", "message" => "welcome admin!!", "action" => "dashboard.php");
             } else {
                 $returnArr = array("ResponseCode" => "200", "Result" => "false", "title" => "Please Use Valid Data!!", "message" => "welcome admin!!", "action" => "index.php");
@@ -172,6 +173,11 @@ try {
         } else if ($_POST['type'] == 'add_admin_user') {
             $username = $_POST['username'];
             $password = $_POST['password'];
+            $check = $rstate->query("select id from admin   WHERE username = " .  "'$username'" . ""  )->fetch_assoc();
+            if (isset($check['id'])) {
+                throw new Exception("THis Username is already used ");
+            }
+
             $type = $_POST['user_type'];
             $table = "admin";
             $table1 = "role_permissions";
@@ -212,6 +218,11 @@ try {
         } else if ($_POST['type'] == 'edit_admin_user') {
             $username = $_POST['username'];
             $password = $_POST['password'];
+            $check = $rstate->query("select id from admin   WHERE username = " .  "$username"  )->fetch_assoc();
+            if (isset($check['id'])) {
+                throw new Exception("THis Username is already used ");
+            }
+
             $type = $_POST['user_type'];
             $id = $_POST['id'];
             $table1 = "role_permissions";
@@ -225,7 +236,13 @@ try {
 
             if ($type == '1') {
                 $data_values = array("$username", "$password", "Staff");
-                $result = $rstate->query("select id from permissions   WHERE type IN ('Read', 'Create')  ");
+                $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
+                 'Read_Property','Create_Slider','Update_Slider','Read_Slider',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
+                'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
+                'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
+                'Read_Setting' , 'Update_Setting' 'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin");
                 $result = $rstate->query("select id from permissions ");
@@ -2378,7 +2395,7 @@ WHERE
             $ids = implode(',', $_POST['user_ids']);
             $message =  $_POST['message'];
 
-         $query = "SELECT 
+            $query = "SELECT 
                 u.ccode, u.mobile
             FROM 
                 tbl_user u
@@ -2405,7 +2422,7 @@ WHERE
             $ids = implode(',', $_POST['user_ids']);
             $message =  $_POST['message'];
 
-         $query = "SELECT 
+            $query = "SELECT 
                 u.ccode, u.mobile
             FROM 
                 tbl_user u
@@ -2427,6 +2444,36 @@ WHERE
                 "title" => "Messages sent successfully!!",
                 "message" => "Whatsup section!",
                 "action" => "owners.php",
+            ];
+        } elseif ($_POST["type"] == "add_money") {
+            $table = 'wallet_report';
+            $owner = $_POST["propowner"];
+            $notes = $_POST["notes"];
+            $money = $_POST["money"];
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $updated_at = $date->format('Y-m-d H:i:s');
+
+            $title = "Money Added successfully!!";
+            $status = 'Adding';
+            if ($money < 0) {
+                $title =  "Money withdrawed successfully!!";
+                $status = 'Withdraw';
+            }
+            $field_values = array("uid", "EmployeeId", "message", "status", "amt", "tdate");
+
+            $added_by = $_SESSION['id'];
+            if (!$added_by) {
+                throw new Exception("unauthorized Operation");
+            }
+            $h = new Estate();
+            $data_values = array("$owner", "$added_by", "$notes", "$status", "$money", "$updated_at");
+            $h->restateinsertdata_Api($field_values, $data_values, $table);
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => $title,
+                "message" => "Whatsup section!",
+                "action" => "add_money.php",
             ];
         } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
