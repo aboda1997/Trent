@@ -2,7 +2,7 @@
 require 'include/main_head.php';
 $per = $_SESSION['permissions'];
 
-if (!in_array('Read_Setting', $per)) {
+if (!(in_array('Read_Setting', $per) && in_array('Delete_Setting', $per))) {
 
 
 ?>

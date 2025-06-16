@@ -182,8 +182,14 @@ try {
             $GLOBALS['rstate']->begin_transaction();
 
             if ($type == '1') {
-                $data_values = array("$username", "$password", "Staff");
-                $result = $rstate->query("select id from permissions   WHERE type IN ('Read', 'Create')  ");
+                $data_values = array("$username", "$password", "Staff", 1);
+                $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
+                 'Read_Property','Create_Slider','Update_Slider','Read_Slider',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
+                'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
+                'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
+                'Read_Setting' , 'Update_Setting' 'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin", 1);
                 $result = $rstate->query("select id from permissions ");
@@ -2368,6 +2374,60 @@ WHERE
                 "message" => "Whatsup section!",
                 "action" => "campings.php",
             ];
+        } elseif ($_POST["type"] == "send_user_whatsup_message") {
+            $ids = implode(',', $_POST['user_ids']);
+            $message =  $_POST['message'];
+
+         $query = "SELECT 
+                u.ccode, u.mobile
+            FROM 
+                tbl_user u
+            WHERE 
+             u.id IN ($ids)";
+            $sel = $rstate->query($query);
+            while ($row = $sel->fetch_assoc()) {
+
+                $mobile = $row['ccode'] . $row['mobile'];
+                $result = sendMessage([$mobile], $message);
+                if ($result) {
+                    sleep(5);
+                }
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Messages sent successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "users.php",
+            ];
+        } elseif ($_POST["type"] == "send_owner_whatsup_message") {
+            $ids = implode(',', $_POST['user_ids']);
+            $message =  $_POST['message'];
+
+         $query = "SELECT 
+                u.ccode, u.mobile
+            FROM 
+                tbl_user u
+            WHERE 
+             u.id IN ($ids)";
+            $sel = $rstate->query($query);
+            while ($row = $sel->fetch_assoc()) {
+
+                $mobile = $row['ccode'] . $row['mobile'];
+                $result = sendMessage([$mobile], $message);
+                if ($result) {
+                    sleep(5);
+                }
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Messages sent successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "owners.php",
+            ];
         } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];
@@ -2785,7 +2845,8 @@ function downloadXLS($headers, $data)
     ob_end_flush();
     exit;
 }
-function parseExcelFile() {
+function parseExcelFile()
+{
     $name = $_FILES['excelFile']['name'];
     $filePath = $_FILES['excelFile']['tmp_name'];
     $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
@@ -2794,11 +2855,9 @@ function parseExcelFile() {
         // Identify file type and create appropriate reader
         $reader = IOFactory::createReaderForFile($filePath);
         $spreadsheet = $reader->load($filePath);
-        
+
         return $spreadsheet->getActiveSheet()->toArray();
-        
     } catch (Exception $e) {
         throw new Exception("Error reading file: " . $e->getMessage());
     }
 }
-
