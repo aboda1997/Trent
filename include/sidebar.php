@@ -111,21 +111,7 @@ if (isset($_SESSION['restatename'])) {
           <?php
           }
           ?>
-          <?php
-          if (in_array('Update_Enquiry', $per) || in_array('Delete_Enquiry', $per) || in_array('Read_Enquiry', $per) || in_array('Create_Enquiry', $per)) {
-          ?>
-            <li class="sidebar-list"> <a class="sidebar-link sidebar-title link-nav" href="list_enquiry.php"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g>
-                    <g>
-                      <path d="M6.91699 14.854L9.90999 10.965L13.324 13.645L16.253 9.86499" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M19.6671 2.3501C20.7291 2.3501 21.5891 3.2101 21.5891 4.2721C21.5891 5.3331 20.7291 6.1941 19.6671 6.1941C18.6051 6.1941 17.7451 5.3331 17.7451 4.2721C17.7451 3.2101 18.6051 2.3501 19.6671 2.3501Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path d="M20.7555 9.26898C20.8885 10.164 20.9495 11.172 20.9495 12.303C20.9495 19.241 18.6375 21.553 11.6995 21.553C4.76246 21.553 2.44946 19.241 2.44946 12.303C2.44946 5.36598 4.76246 3.05298 11.6995 3.05298C12.8095 3.05298 13.8005 3.11198 14.6825 3.23998" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </g>
-                  </g>
-                </svg><span>Enquiry List</span></a></li>
-          <?php
-          }
-          ?>
+         
           <?php
           if (in_array('Update_Payout', $per) || in_array('Delete_Payout', $per) || in_array('Read_Payout', $per) || in_array('Create_Payout', $per)) {
           ?>
@@ -230,41 +216,7 @@ if (isset($_SESSION['restatename'])) {
           }
           ?>
 
-          <?php
-          if (in_array('Update_Extra_Imagey', $per) || in_array('Delete_Extra_Image', $per) || in_array('Read_Extra_Image', $per) || in_array('Create_Extra_Image', $per)) {
-          ?>
-            <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g>
-                    <g>
-                      <path d="M6.07056 16.4588C6.07056 16.4588 6.88256 14.8218 8.06456 14.8218C9.24656 14.8218 9.85056 16.1968 11.1606 16.1968C12.4696 16.1968 13.9386 12.7488 15.4226 12.7488C16.9046 12.7488 17.9706 15.1398 17.9706 15.1398" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.1393 9.10487C10.1393 9.96487 9.44229 10.6629 8.58129 10.6629C7.72129 10.6629 7.02429 9.96487 7.02429 9.10487C7.02429 8.24487 7.72129 7.54688 8.58129 7.54688C9.44229 7.54788 10.1393 8.24487 10.1393 9.10487Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2.75024 12C2.75024 18.937 5.06324 21.25 12.0002 21.25C18.9372 21.25 21.2502 18.937 21.2502 12C21.2502 5.063 18.9372 2.75 12.0002 2.75C5.06324 2.75 2.75024 5.063 2.75024 12Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </g>
-                  </g>
-                </svg><span>Extra Image </span></a>
-              <ul class="sidebar-submenu">
-                <?php
-
-                if (in_array('Create_Extra_Image', $per)) {
-                ?>
-                  <li><a href="add_extra.php">Add Extra Image</a></li>
-                <?php
-                }
-                ?>
-                <?php
-
-                if (in_array('Read_Extra_Image', $per)) {
-                ?>
-
-                  <li><a href="list_extra.php">List Extra Image</a></li>
-                <?php
-                }
-                ?>
-              </ul>
-            </li>
-          <?php
-          }
-          ?>
+          
           <?php
           if (in_array('Update_Facility', $per) || in_array('Delete_Facility', $per) || in_array('Read_Facility', $per) || in_array('Create_Facility', $per)) {
           ?>
@@ -467,7 +419,7 @@ if (isset($_SESSION['restatename'])) {
           }
           ?>
           <?php
-          if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per) || in_array('Read_Booking', $per) || in_array('Create_Booking', $per)) {
+          if (in_array('Update_Report', $per) || in_array('Delete_Report', $per) || in_array('Read_Report', $per) || in_array('Create_Report', $per)) {
           ?>
 
             <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="javascript:void(0)">
@@ -483,7 +435,7 @@ if (isset($_SESSION['restatename'])) {
               </a>
               <ul class="sidebar-submenu">
                 <?php
-                if (in_array('Read_Booking', $per)) {
+                if (in_array('Read_Report', $per)) {
                 ?>
                   <li><a href="earning_report.php">Earning Report</a></li>
                   <li><a href="active_user_report.php">Most Active Users Report</a></li>
@@ -671,7 +623,11 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </svg><span>Setting</span></a>
               <ul class="sidebar-submenu">
+                                <?php if ((in_array('Read_Setting', $per) && in_array('Delete_Setting', $per))): ?>
+
                 <li><a href="setting.php">Edit Setting</a></li>
+                                <?php endif; ?>
+
                 <li><a href="add_privacy_policy.php">Edit Privacy Policy</a></li>
                 <li><a href="add_terms_and_conditions.php">Edit Guest Terms And Conditions</a></li>
                 <li><a href="add_host_terms_and_conditions.php">Edit Host Terms And Conditions</a></li>
@@ -700,8 +656,41 @@ if (isset($_SESSION['restatename'])) {
             <ul class="sidebar-submenu">
               <li><a href="add_whatsapp_qr.php">Add WhatsApp QR</a></li>
               <li><a href="campings.php">Campings</a></li>
+              <li><a href="users.php">Users</a></li>
+              <li><a href="owners.php">Owners</a></li>
             </ul>
           </li>
+          <?php
+          if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per) || in_array('Read_Why_Choose_Us', $per) || in_array('Create_Why_Choose_Us', $per)) {
+          ?>
+            <li class="sidebar-list"><a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 7H5C3.89543 7 3 7.89543 3 9V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V9C21 7.89543 20.1046 7 19 7Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M16 7V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V7" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M16 15H16.01" stroke="#130F26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <span>Wallet</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Why_Choose_Us', $per)) {
+                ?>
+                  <li><a href="add_money.php">Add Money</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Why_Choose_Us', $per)) {
+                ?>
+                  <li><a href="wallet_history.php">Wallet History</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
+          <?php
+          }
+          ?>
           <?php
           if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per) || in_array('Read_Why_Choose_Us', $per) || in_array('Create_Why_Choose_Us', $per)) {
           ?>

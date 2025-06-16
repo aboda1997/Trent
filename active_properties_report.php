@@ -3,7 +3,7 @@ require 'include/main_head.php';
 $lang_code = load_language_code()["language_code"];
 $per = $_SESSION['permissions'];
 
-if (!in_array('Read_Booking', $per)) {
+if (!in_array('Read_Report', $per)) {
 
 
 
