@@ -23,23 +23,20 @@ try {
         $pol = array();
         $c = array();
         $balance = '0.00';
-        $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
+        $sel = $rstate->query("select *  from wallet_report where uid=" . $uid . " order by id desc");
         while ($row = $sel->fetch_assoc()) {
-
-            if ($row['status'] == 'Adding') {
-                $balance = bcadd($balance, $row['amt'], 2);
-            } else if ($row['status'] == 'Withdraw') {
-                $balance = bcsub($balance, $row['amt'], 2);
-            }
+            $data = $rstate->query("select username  from admin where id=" . $row['EmployeeId'] . "")->fetch_assoc();
+            $pol['id'] = $row['id'];
             $pol['Event'] = $row['message'];
             $pol['status'] = $row['status'];
             $pol['amt'] = $row['amt'];
-            $pol['Created_at'] = date("jS F, h:i A", strtotime($row['tdate']));
+            $pol['Employee_Name'] = $data['username'];
+            $pol['Created_at'] = $row['tdate'];
             $c[] = $pol;
         }
 
-        $returnArr    = generateResponse('true', "Wallet balance Founded!", 200, array(
-            "Wallet_balance" => $balance,
+        $returnArr    = generateResponse('true', "Wallet History Founded!", 200, array(
+            "Wallet_history" => $c,
         ));
     }
     echo $returnArr;
