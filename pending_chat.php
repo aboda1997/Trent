@@ -99,12 +99,15 @@ if (!in_array('Read_Chat', $per)) {
                                             $query = "SELECT p.*, sender.name AS sender_name, receiver.name AS receiver_name 
                           FROM tbl_messages p
                           INNER JOIN tbl_user sender ON p.sender_id = sender.id
-                          INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id";
+                          INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
+                          where p.is_approved = 9
+                          "
+                          ;
 
                                             // Add search condition if search term exists
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
                                                 $search_term = $rstate->real_escape_string($_GET['search']);
-                                                $query .= " WHERE (sender.name LIKE '%$search_term%' 
+                                                $query .= " and (sender.name LIKE '%$search_term%' 
                               OR receiver.name LIKE '%$search_term%'
                               OR p.message LIKE '%$search_term%')";
                                             }
@@ -112,9 +115,11 @@ if (!in_array('Read_Chat', $per)) {
                                             // Get total number of records
                                             $count_query = "SELECT COUNT(*) as total FROM tbl_messages p
                                 INNER JOIN tbl_user sender ON p.sender_id = sender.id
-                                INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id";
+                                INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
+                                                          where p.is_approved = 9
+                                ";
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
-                                                $count_query .= " WHERE (sender.name LIKE '%$search_term%' 
+                                                $count_query .= " and (sender.name LIKE '%$search_term%' 
                                       OR receiver.name LIKE '%$search_term%'
                                       OR p.message LIKE '%$search_term%')";
                                             }
@@ -136,12 +141,14 @@ if (!in_array('Read_Chat', $per)) {
                                                 $has_records = true;
                                                 while ($row = $city->fetch_assoc()) {
                                                     $i++;
+                                                    $message =json_decode($row['message'], true);
+
                                             ?>
                                                     <tr>
                                                         <td><?php echo $i; ?></td>
                                                         <td class="align-middle"><?php echo $row["sender_name"] ?></td>
                                                         <td class="align-middle"><?php echo $row["receiver_name"] ?></td>
-                                                        <td class="align-middle"><?php echo $row["message"] ?></td>
+                                                        <td class="align-middle"><?php echo $message["message"] ?></td>
                                                         <td class="align-middle"><?php echo $row["updated_at"] ?></td>
                                                         <td class="align-middle"><?php echo $row["created_at"] ?></td>
                                                         <?php if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per)): ?>
