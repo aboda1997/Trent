@@ -256,7 +256,6 @@ require 'include/footer.php';
         // Send Message button click
         $('#sendMessageBtn').click(function() {
             var userIdsToSubmit = isSelectAll ? allUserIds : selectedUserIds;
-
             // For form submission
             $('#selectedUserIds').val(JSON.stringify(userIdsToSubmit));
 
@@ -264,6 +263,9 @@ require 'include/footer.php';
             $('#messageModal').modal('show');
         });
         $('#confirmSendBtn').click(function() {
+            // Disable the button to prevent multiple clicks
+            var saveButton = $(this);
+            saveButton.prop('disabled', true);
             var reasonInput = $('#messageText');
             var message = $('#messageText').val();
             var selectedUserIds = [];
@@ -271,7 +273,6 @@ require 'include/footer.php';
             if ($('#selectAllCheckbox').prop('checked')) {
                 // If "Select All" is checked, use all user IDs
                 selectedUserIds = allUserIds;
-                debugger;
             } else {
 
                 // Otherwise use only the checked checkboxes
