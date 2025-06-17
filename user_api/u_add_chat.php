@@ -97,8 +97,8 @@ try {
                 "message" => $message,
 
             ], JSON_UNESCAPED_UNICODE);
-            $field_values = ["sender_id", "receiver_id", "message", "img", "created_at", "chat_id"];
-            $data_values = [$sender_id, $receiver_id, $encoded_message, $imageUrl, $created_at, $chat_id];
+            $field_values = ["sender_id", "receiver_id","is_approved" ,  "message", "img", "created_at", "chat_id"];
+            $data_values = [$sender_id, $receiver_id, 9,$encoded_message, $imageUrl, $created_at, $chat_id];
             $table = "tbl_messages";
             $message_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
             $GLOBALS['rstate']->commit();
