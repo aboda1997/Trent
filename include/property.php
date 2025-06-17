@@ -195,7 +195,7 @@ try {
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
-                'Read_Setting' , 'Update_Setting' 'Read_Wallet')  ");
+                'Read_Setting' , 'Update_Setting' ,'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin", 1);
                 $result = $rstate->query("select id from permissions ");
@@ -242,7 +242,7 @@ try {
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
-                'Read_Setting' , 'Update_Setting' 'Read_Wallet')  ");
+                'Read_Setting' , 'Update_Setting' ,'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin");
                 $result = $rstate->query("select id from permissions ");

@@ -248,7 +248,8 @@ require 'include/footer.php';
         // Send Message button click
         $('#sendMessageBtn').click(function() {
             var userIdsToSubmit = isSelectAll ? allUserIds : selectedUserIds;
-
+            // Disable the button to prevent multiple clicks
+         
             // For form submission
             $('#selectedUserIds').val(JSON.stringify(userIdsToSubmit));
 
@@ -257,6 +258,9 @@ require 'include/footer.php';
         });
         $('#confirmSendBtn').click(function() {
             var reasonInput = $('#messageText');
+            // Disable the button to prevent multiple clicks
+            var saveButton = $(this);
+            saveButton.prop('disabled', true);
             var message = $('#messageText').val();
             var selectedUserIds = [];
 
