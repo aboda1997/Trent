@@ -82,6 +82,9 @@ if (!in_array('Read_Property', $per)) {
                         <th>Property Image</th>
                         <th>Property Type</th>
                         <th>Status</th>
+                        <th>Government</th>
+                        <th>City</th>
+                        <th>Compound</th>
                         <th>Cancel Reason</th>
                         <th>Updated At</th>
                         <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
@@ -114,7 +117,7 @@ if (!in_array('Read_Property', $per)) {
                       $count_query = "SELECT COUNT(*) as total FROM ($query) as count_table";
                       $count_result = $rstate->query($count_query);
                       $total_records = $count_result->fetch_assoc()['total'];
-											$total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page) ;
+                      $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
                       $page = min($page, $total_pages);
 
                       // Add LIMIT to query for pagination
@@ -130,6 +133,9 @@ if (!in_array('Read_Property', $per)) {
                         while ($row = $result->fetch_assoc()) {
                           $title = json_decode($row['title'], true);
                           $address = json_decode($row['address'], true);
+                          $government = $row['government'];
+                          $city = json_decode($row['city'], true);
+                          $compound_name = json_decode($row['compound_name'], true);
                       ?>
                           <tr>
                             <td><?php echo $i; ?></td>
@@ -154,6 +160,16 @@ if (!in_array('Read_Property', $per)) {
                                 <?php echo $row['is_need_review'] == 1 ? 'Need Review' : 'Pending'; ?>
                               </span>
                             </td>
+                            <td>
+                              <?php
+                              $type = $rstate->query("SELECT * FROM tbl_government WHERE id=" . (int)$government)->fetch_assoc();
+                              $typeTitle = json_decode($type['name'] ?? '', true);
+                              echo htmlspecialchars($typeTitle[$lang_code] ?? '');
+                              ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($city[$lang_code] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($compound_name[$lang_code] ?? ''); ?></td>
+
                             <td>
                               <?php echo htmlspecialchars(strlen($row["cancel_reason"]) > 100 ? substr($row["cancel_reason"], 0, 100) . '...' : $row["cancel_reason"]); ?>
                             </td>
@@ -477,64 +493,73 @@ require 'include/footer.php';
 
 <!-- Same CSS as users table -->
 <style>
-    .search-container .input-group {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin: 20px 0;
-    }
-    .pagination a, .pagination span {
-        padding: 5px 10px;
-        border: 1px solid #dee2e6;
-        text-decoration: none;
-    }
-    .pagination .current {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-    .pagination .disabled {
-        color: #6c757d;
-        pointer-events: none;
-    }
-    .results-count {
-        text-align: center;
-        color: #6c757d;
-        margin-bottom: 20px;
-    }
-    .text-center {
-        text-align: center;
-        padding: 20px;
-        font-size: 1.1em;
-        color: #6c757d;
-        font-style: italic;
-    }
-    .badge-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
-    .badge-danger {
-        background-color: #dc3545;
-        color: white;
-    }
+  .search-container .input-group {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 20px 0;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+  }
+
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .pagination .disabled {
+    color: #6c757d;
+    pointer-events: none;
+  }
+
+  .results-count {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+
+  .text-center {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1em;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+  }
+
+  .badge-danger {
+    background-color: #dc3545;
+    color: white;
+  }
 </style>
 
 <!-- Prevent DataTables initialization -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     if (typeof $.fn.DataTable === 'function') {
-        $('#properties-table').DataTable({
-            paging: false,
-            searching: false,
-            info: false
-        });
+      $('#properties-table').DataTable({
+        paging: false,
+        searching: false,
+        info: false
+      });
     }
-});
+  });
 </script>
 
 </html>

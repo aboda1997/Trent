@@ -89,6 +89,9 @@ if (!in_array('Read_Property', $per)) {
                         <th>Rent/Buy</th>
                         <th>Person Limit</th>
                         <th>Status</th>
+                        <th>Government</th>
+                        <th>City</th>
+                        <th>Compound</th>
                         <th>Created At</th>
                         <th>Updated At</th>
                         <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
@@ -131,7 +134,7 @@ if (!in_array('Read_Property', $per)) {
                       $count_query = "SELECT COUNT(*) as total FROM ($query) as count_table";
                       $count_result = $rstate->query($count_query);
                       $total_records = $count_result->fetch_assoc()['total'];
-											$total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page) ;
+                      $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
                       $page = min($page, $total_pages);
 
                       // Add LIMIT to query for pagination
@@ -146,6 +149,9 @@ if (!in_array('Read_Property', $per)) {
                         $has_records = true;
                         while ($row = $result->fetch_assoc()) {
                           $title = json_decode($row['title'], true);
+                          $government = $row['government'];
+                          $city = json_decode($row['city'], true);
+                          $compound_name = json_decode($row['compound_name'], true);
                       ?>
                           <tr>
                             <td><?php echo $i; ?></td>
@@ -203,6 +209,16 @@ if (!in_array('Read_Property', $per)) {
                                 <!-- Empty cell if no permissions -->
                               <?php endif; ?>
                             </td>
+                            <td>
+                              <?php
+                              $type = $rstate->query("SELECT * FROM tbl_government WHERE id=" . (int)$government)->fetch_assoc();
+                              $typeTitle = json_decode($type['name'] ?? '', true);
+                              echo htmlspecialchars($typeTitle[$lang_code] ?? '');
+                              ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($city[$lang_code] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($compound_name[$lang_code] ?? ''); ?></td>
+
                             <td><?php echo htmlspecialchars($row['created_at']); ?></td>
                             <td><?php echo htmlspecialchars($row['updated_at']); ?></td>
 
@@ -452,75 +468,87 @@ if (!in_array('Read_Property', $per)) {
 
 <!-- CSS Styles -->
 <style>
-    .search-container .input-group {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin: 20px 0;
-    }
-    .pagination a, .pagination span {
-        padding: 5px 10px;
-        border: 1px solid #dee2e6;
-        text-decoration: none;
-    }
-    .pagination .current {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-    .pagination .disabled {
-        color: #6c757d;
-        pointer-events: none;
-    }
-    .results-count {
-        text-align: center;
-        color: #6c757d;
-        margin-bottom: 20px;
-    }
-    .text-center {
-        text-align: center;
-        padding: 20px;
-        font-size: 1.1em;
-        color: #6c757d;
-        font-style: italic;
-    }
-    .badge-success {
-        background-color: #28a745;
-    }
-    .badge-danger {
-        background-color: #dc3545;
-    }
-    .badge-info {
-        background-color: #17a2b8;
-    }
-    .badge-dark {
-        background-color: #343a40;
-    }
-    .tag-pills-sm-mb {
-        display: inline-block;
-        margin-bottom: 5px;
-        margin-right: 3px;
-        padding: 3px 7px;
-        font-size: 12px;
-    }
+  .search-container .input-group {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 20px 0;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+  }
+
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+
+  .pagination .disabled {
+    color: #6c757d;
+    pointer-events: none;
+  }
+
+  .results-count {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
+
+  .text-center {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1em;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .badge-success {
+    background-color: #28a745;
+  }
+
+  .badge-danger {
+    background-color: #dc3545;
+  }
+
+  .badge-info {
+    background-color: #17a2b8;
+  }
+
+  .badge-dark {
+    background-color: #343a40;
+  }
+
+  .tag-pills-sm-mb {
+    display: inline-block;
+    margin-bottom: 5px;
+    margin-right: 3px;
+    padding: 3px 7px;
+    font-size: 12px;
+  }
 </style>
 
 <!-- Prevent DataTables initialization -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     if (typeof $.fn.DataTable === 'function') {
-        $('#properties-table').DataTable({
-            paging: false,
-            searching: false,
-            info: false
-        });
+      $('#properties-table').DataTable({
+        paging: false,
+        searching: false,
+        info: false
+      });
     }
-});
+  });
 </script>
 
 <?php

@@ -5,7 +5,7 @@ $per = $_SESSION['permissions'];
 $lang_code = load_language_code()["language_code"];
 
 if (isset($_GET['id'])) {
-	if ( !in_array('Update_Property', $per)) {
+	if (!in_array('Update_Property', $per)) {
 
 
 
@@ -20,7 +20,7 @@ if (isset($_GET['id'])) {
 		exit();
 	}
 } else {
-	if ( !in_array('Create_Property', $per)) {
+	if (!in_array('Create_Property', $per)) {
 
 
 	?>
@@ -346,7 +346,7 @@ if (isset($_GET['id'])) {
 												<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 													<!-- Edit Property Images Section -->
 													<div class="form-group mb-3" id="edit-property-images" style="<?= isset($_GET['id']) ? '' : 'display:none;' ?>">
-														<label id="prop_image_edit">
+														<label id="prop_image">
 															<?= $lang_en['Property_Image'] ?>
 														</label>
 														<input type="file" class="form-control" id="prop_img_upload_edit" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
@@ -797,27 +797,7 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
-															<div class="form-group mb-3">
-																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
-																<select id="approval-select" class="form-control" name="approved" required>
-																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
-																	<option value="1"
-																		<?php if ($data['is_approved'] == 1) {
-																			echo 'selected';
-																		} ?>><?= $lang_en['Yes'] ?></option>
-																	<option value="0"
-																		<?php if ($data['is_approved'] == 0) {
-																			echo 'selected';
-																		} ?>><?= $lang_en['No'] ?></option>
-																</select>
-																<div class="invalid-feedback" id="approval_feedback" style="display: none;">
-																	<?= $lang_en['property_approval'] ?>
-
-																</div>
-															</div>
-														</div>
 														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
 															id="cancel-reason-container" style="display:none;">
 															<div class="form-group mb-3">
@@ -842,8 +822,18 @@ if (isset($_GET['id'])) {
 										<div class="card-footer text-left">
 											<button onclick="return validateForm(true)" type="submit" class="btn btn-primary">
 												<?= $lang_en['Edit_Property'] ?>
-
 											</button>
+
+												<!-- Show Approve button if not approved (status = 0) -->
+												<button type="submit" onclick="handleApprove()" id = 'approve_property' name="approve_property" class="btn btn-success ml-2">
+													<?= $lang_en['Approve'] ?>
+												</button>
+												<!-- Show Reject button if already approved (status = 1) -->
+												<button type="submit" onclick="return handleReject();" id = 'reject_property' name="reject_property" class="btn btn-danger ml-2">
+													<?= $lang_en['Reject'] ?>
+												</button>
+											<input type="hidden" name="approved" id="approvedInput" value="">
+
 										</div>
 								</form>
 							<?php
@@ -1447,37 +1437,7 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 
-															<div class="form-group mb-3">
-																<label id="property-approval" for="inputGroupSelect04"><?= $lang_en['Property_Approval'] ?></label>
-																<select id="approval-select" class="form-control" name="approved" required>
-																	<option value=""><?= $lang_en['Select_property_Approval'] ?>...</option>
-																	<option value="1"><?= $lang_en['Yes'] ?></option>
-																	<option value="0"><?= $lang_en['No'] ?></option>
-																</select>
-																<div class="invalid-feedback" id="approval_feedback" style="display: none;">
-																	<?= $lang_en['property_approval'] ?>
-
-																</div>
-															</div>
-														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
-															id="cancel-reason-container" style="display:none;">
-															<div class="form-group mb-3">
-																<label id="cancel_reason">
-																	<?= $lang_en['cancel_reason'] ?>
-
-																</label>
-																<input
-
-																	type="text" class="form-control " name="cancel_reason">
-																<div class="invalid-feedback" id="cancel_reason_feedback" style="display: none;">
-																	<?= $lang_en['prop_cancel_reason'] ?>
-
-																</div>
-															</div>
-														</div>
 													</div>
 												</div>
 											</div>
@@ -1601,7 +1561,6 @@ if (isset($_GET['id'])) {
 		const status = document.querySelector('select[name="status"]').value;
 		const period = document.querySelector('select[name="period"]').value;
 		const featured = document.querySelector('select[name="featured"]').value;
-		const approved = document.querySelector('select[name="approved"]').value;
 		const facility = document.querySelector('select[name="facility[]"]').value;
 		const ptype = document.querySelector('select[name="ptype"]').value;
 		const pgov = document.querySelector('select[name="pgov"]').value;
@@ -1713,18 +1672,7 @@ if (isset($_GET['id'])) {
 			isValid = false;
 
 		}
-		if (!approved) {
-			document.getElementById('approval_feedback').style.display = 'block';
-			isValid = false;
-		}
-		if (approved == '0') {
-			const cancel_reason = document.querySelector('input[name="cancel_reason"]').value;
-			if (!cancel_reason) {
-				document.getElementById('cancel_reason_feedback').style.display = 'block';
-				isValid = false;
-			}
 
-		}
 		if (!facility) {
 			document.getElementById('facility_feedback').style.display = 'block';
 			isValid = false;
@@ -1746,7 +1694,7 @@ if (isset($_GET['id'])) {
 			isValid = false;
 		}
 
-
+	
 
 		if (!plimit) {
 			document.getElementById('limit_feedback').style.display = 'block';
@@ -1815,11 +1763,9 @@ if (isset($_GET['id'])) {
 
 	function changeLanguage(lang) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
-		const approved = document.querySelector('select[name="approved"]').value;
-		if (approved == '0') {
-			document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
-			document.getElementById('cancel_reason').textContent = langData.cancel_reason;
-		}
+		document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
+		document.getElementById('cancel_reason').textContent = langData.cancel_reason;
+		
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
 		document.getElementById('status_feedback').textContent = langData.property_status;
@@ -1844,7 +1790,6 @@ if (isset($_GET['id'])) {
 		document.getElementById('property-status').textContent = langData.Property_Status;
 		document.getElementById('property-period').textContent = langData.Property_Period;
 		document.getElementById('property-featured').textContent = langData.Property_Featured;
-		document.getElementById('property-approval').textContent = langData.Property_Approval;
 		document.getElementById('prop_facility').textContent = langData.Select_Property_Facility;
 		document.getElementById('prop_governemnt').textContent = langData.Select_Government;
 		document.getElementById('prop_owner').textContent = langData.Select_Owner;
@@ -1863,14 +1808,12 @@ if (isset($_GET['id'])) {
 
 		} else {
 			document.querySelector('button[type="submit"]').textContent = langData.Edit_Property;
+		document.getElementById('approve_property').textContent = langData.Approve;
+		document.getElementById('reject_property').textContent = langData.Reject;
 
 		}
 
-		const approvedSelect = document.getElementById('approval-select');
-		approvedSelect.querySelector('option[value=""]').textContent = langData.Select_property_Approval;
-		approvedSelect.querySelector('option[value="1"]').textContent = langData.Yes;
-		approvedSelect.querySelector('option[value="0"]').textContent = langData.No;
-
+		
 		const statusSelect = document.getElementById('inputGroupSelect01');
 		statusSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
 		statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
@@ -2391,24 +2334,47 @@ if (isset($_GET['id'])) {
 		});
 	});
 </script>
+
 <script>
-	document.addEventListener('DOMContentLoaded', function() {
-		const approvalSelect = document.getElementById('approval-select');
-		const cancelReasonContainer = document.getElementById('cancel-reason-container');
-
-		approvalSelect.addEventListener('change', function() {
-			if (this.value === '0') {
-				cancelReasonContainer.style.display = 'block';
-			} else {
-				cancelReasonContainer.style.display = 'none';
-			}
-		});
-
-		// Trigger change event in case there's a selected value on page load
-		approvalSelect.dispatchEvent(new Event('change'));
-	});
+function handleApprove() {
+    // 1. First validate the form
+    if (validateForm(true)) {
+        // 2. If validation passes, set approval value
+        document.getElementById('approvedInput').value = '1';
+        // 3. Submit the form
+        document.querySelector('form').submit();
+        return true;
+    }
+    // If validation fails, block submission
+    return false;
+}
+function handleReject() {
+    // First show the cancel reason if it's not visible
+    const cancelReasonContainer = document.getElementById('cancel-reason-container');
+    if (cancelReasonContainer.style.display === 'none') {
+        cancelReasonContainer.style.display = 'block';
+        return false; // Don't submit yet
+    }
+    
+    // Validate the form including the cancel reason
+    if (validateForm(true)) {
+        // Check if cancel reason is filled
+        const cancelReason = document.querySelector('input[name="cancel_reason"]').value;
+        if (!cancelReason.trim()) {
+            document.getElementById('cancel_reason_feedback').style.display = 'block';
+            return false;
+        }
+        
+        // Set approval value to 0 or whatever indicates rejection
+        document.getElementById('approvedInput').value = '0';
+        
+        // Submit the form
+        document.querySelector('form').submit();
+        return true;
+    }
+    return false;
+}
 </script>
-
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		// Map Arabic input names to their English counterparts
