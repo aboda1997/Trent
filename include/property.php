@@ -194,7 +194,7 @@ try {
                 'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
-                'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
+                'Create_Cancel_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',
                 'Read_Setting' , 'Update_Setting' ,'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin", 1);
@@ -241,7 +241,7 @@ try {
                 'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
-                'Create_Cancel_Reason','Update_Create_Cancel_Reason','Read_Create_Cancel_Reason','Delete_Create_Cancel_Reason',
+                'Create_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',
                 'Read_Setting' , 'Update_Setting' ,'Read_Wallet')  ");
             } else {
                 $data_values = array("$username", "$password", "Admin");
