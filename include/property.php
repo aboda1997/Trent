@@ -173,7 +173,7 @@ try {
         } else if ($_POST['type'] == 'add_admin_user') {
             $username = $_POST['username'];
             $password = $_POST['password'];
-            $check = $rstate->query("select id from admin   WHERE username = " .  "'$username'" . ""  )->fetch_assoc();
+            $check = $rstate->query("select id from admin   WHERE username = " .  "'$username'" . "")->fetch_assoc();
             if (isset($check['id'])) {
                 throw new Exception("THis Username is already used ");
             }
@@ -218,7 +218,7 @@ try {
         } else if ($_POST['type'] == 'edit_admin_user') {
             $username = $_POST['username'];
             $password = $_POST['password'];
-            $check = $rstate->query("select id from admin   WHERE username = " .  "$username"  )->fetch_assoc();
+            $check = $rstate->query("select id from admin   WHERE username = " .  "$username")->fetch_assoc();
             if (isset($check['id'])) {
                 throw new Exception("THis Username is already used ");
             }
@@ -1032,7 +1032,6 @@ try {
             $sqft = $_POST['sqft'];
             $user_id = '0';
             $policy = $_POST['propPrivacy'];
-            $is_approved = $_POST['approved'];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
 
@@ -1063,17 +1062,7 @@ try {
             $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
             $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
             $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
-            $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
 
-            if ($is_approved == '0') {
-                //deny_property($cancel_reason,  $id, $propowner, $title_ar, $rstate);
-                $need_review = 1;
-            }
-
-            if ($is_approved == '1') {
-                //   approve_property($rstate, $propowner, $title_ar);
-                $need_review = 0;
-            }
 
             $guest_rules_json = json_encode([
                 "en" => $guest_rules_en,
@@ -1209,7 +1198,7 @@ try {
 
                 $table = "tbl_property";
                 $field_values = ["created_at", "is_need_review", "updated_at", "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$updated_at", "$need_review", "$updated_at", "$imageUrlsString", "$cancel_reason",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", $is_approved, "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+                $data_values = ["$updated_at", "0", "$updated_at", "$imageUrlsString", "",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "0", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
                 $h = new Estate();
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -1267,17 +1256,22 @@ try {
             $compound_name_ar = $rstate->real_escape_string($_POST["compound_name_ar"]);
             $floor_ar = $rstate->real_escape_string($_POST["floor_ar"]);
             $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
-            $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]);
+            $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]) ?? '';
+            $need_review = 0;
 
-            if ($is_approved == '0') {
+            if ($is_approved == '0' && $cancel_reason != '') {
                 deny_property($cancel_reason,  $id, $propowner, $address_ar, $rstate);
                 $need_review = 1;
             }
             if ($is_approved == '1') {
-                //approve_property($rstate, $propowner, $title_ar);
-                $need_review = 0;
+                approve_property($rstate, $propowner, $title_ar, $id);
             }
-
+            if ($is_approved == '') {
+                $result =  $rstate->query("select is_approved , is_need_review , cancel_reason from tbl_property where id = $id ")->fetch_assoc();
+                $is_approved = $result['is_approved'];
+                $cancel_reason = $result['cancel_reason'];
+                $need_review = $result['is_need_review'];
+            }
             $guest_rules_json = json_encode([
                 "en" => $guest_rules_en,
                 "ar" => $guest_rules_ar

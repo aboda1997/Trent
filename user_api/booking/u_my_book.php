@@ -27,9 +27,9 @@ try {
 		$wow = array();
 		if ($status == 'active') {
 			if ($is_owner == 'true') {
-				$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
+				$bd = $rstate->query("select * from tbl_book where add_user_id=" . $uid . "  and book_status!='Excluded' and book_status!='Completed' and book_status!='Cancelled' order by id desc");
 			} else {
-				$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and book_status!='Completed' and book_status!='Cancelled' order by id desc");
+				$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and book_status!='Excluded' and book_status!='Completed' and book_status!='Cancelled' order by id desc");
 			}
 		} else {
 			if ($is_owner == 'true') {
