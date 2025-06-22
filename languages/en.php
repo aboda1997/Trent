@@ -441,5 +441,6 @@ return [
     'Approve' => 'Approve',
     'Reject' => 'Reject',
     'booked_already_excluded' => 'This period are booked or already excluded',
+    'date_ranges_required' => 'Date ranges array are required ',
 
 ];

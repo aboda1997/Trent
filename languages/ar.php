@@ -398,4 +398,5 @@ return [
     'Approve' => 'موافقة',
     'Reject' => 'رفض',
     'booked_already_excluded' => 'هذه الفترة محجوزة أو مستبعدة مسبقاً',
+    'date_ranges_required' => 'مطلوب مصفوفة نطاقات التاريخ',
 ];

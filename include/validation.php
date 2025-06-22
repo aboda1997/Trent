@@ -325,7 +325,7 @@ function validateCheckInDate($booking_id, $timestamp)
 
     // Convert to timestamps if they're strings
     $check_in =  $data['check_in'];
-    $check_out =  $data['check_out']; 
+    $check_out =  $data['check_out'];
     return ($timestamp >= $check_in && $timestamp <= $check_out);
 }
 
@@ -339,14 +339,14 @@ function getBookingStatus($booking_id)
 }
 
 
-function validateCoupon($cid , $orderTotal){
+function validateCoupon($cid, $orderTotal)
+{
     $query = "SELECT min_amt,cdate,max_amt ,status,c_value
     FROM tbl_coupon 
     WHERE c_title = '" . $cid . "'";
     $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
     if (!$result) {
         return ['status' => false, 'value' => 0];
-
     }
 
     $minAmt = (float)$result['min_amt'];
@@ -356,7 +356,7 @@ function validateCoupon($cid , $orderTotal){
     $value = $result['c_value'];
 
     // 1. Check if coupon is expired
-    if ($status !=='1') {
+    if ($status !== '1') {
         return ['status' => false, 'value' => 0];
     }
 
@@ -368,7 +368,7 @@ function validateCoupon($cid , $orderTotal){
     }
 
     // 2. Check if order meets minimum amount requirement
-    
+
     if ($orderTotal < $minAmt) {
 
         return ['status' => false, 'value' => 0];
@@ -381,4 +381,164 @@ function validateCoupon($cid , $orderTotal){
 
     // All checks passed → coupon is valid
     return ['status' => true, 'value' => $value];
+}
+
+function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
+{
+    $lang_ = load_specific_langauage($lang);
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $timestamp = $date->format('Y-m-d');
+
+    if ($uid == '') {
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
+    } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } else if (!in_array($lang, ['en', 'ar'])) {
+        $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
+    } else if ($prop_id  == null) {
+        $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', 'is_deleted =0') === false) {
+        $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
+    } else if ($date_ranges === null || !is_array($date_ranges) || empty($date_ranges)) {
+        $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
+    } else {
+        // Validate each date range in the array
+        [$valid, $message] = validateDateRanges($date_ranges);
+        if (!$valid) {
+            $returnArr = generateResponse('false', $message, 400);
+        } else {
+            $date_list = get_dates($prop_id, $GLOBALS['rstate']);
+            [$status, $status_message] = validateDateRangesAgainstBookings($date_ranges, $date_list, $lang_);
+
+            if ($status  == false) {
+                $returnArr    = generateResponse('false', $status_message, 400);
+            } else {
+                // Insert each date range separately
+                $success_count = 0;
+                $h = new Estate();
+
+                foreach ($date_ranges as $range) {
+                    $from_date = $range[0];
+                    $to_date = $range[1];
+
+                    $field_values = ["prop_id", "check_in", "check_out", "uid", "book_date", "book_status", "add_user_id"];
+                    $data_values = [$prop_id, $from_date, $to_date, '0', $timestamp, "Excluded", '0'];
+                    $table = "tbl_book";
+
+                    $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                    if ($book_id) {
+                        $success_count++;
+                    }
+                }
+
+                if ($success_count == 0) {
+                    throw new Exception("Insert failed for all date ranges");
+                }
+
+                $returnArr = generateResponse('true', "Date Ranges Excluded Successfully", 200, array(
+                    "date_ranges_excluded" => $date_ranges,
+                    "count" => $success_count
+                ));
+            }
+        }
+    }
+    return   $returnArr;
+}
+
+
+
+/**
+ * Validate an array of date ranges (each range is [from_date, to_date])
+ * Returns [bool $success, string $message]
+ */
+function validateDateRanges(array $date_ranges): array
+{
+    if (empty($date_ranges)) {
+        return [false, "At least one date range is required"];
+    }
+
+    foreach ($date_ranges as $range) {
+        // Check if range has exactly 2 elements
+        if (!is_array($range) || count($range) != 2) {
+            return [false, "Each date range must be an array with exactly 2 dates [from_date, to_date]"];
+        }
+
+        [$from_date, $to_date] = $range;
+
+        // Check presence
+        if (empty($from_date) || empty($to_date)) {
+            return [false, "Both from_date and to_date are required in each range"];
+        }
+
+        // Check format
+        if (!strtotime($from_date) || !strtotime($to_date)) {
+            return [false, "Invalid date format in range. Use YYYY-MM-DD for all dates"];
+        }
+
+        // Validate date order
+        if (strtotime($from_date) >= strtotime($to_date)) {
+            return [false, "from_date must be before  to to_date in each range"];
+        }
+    }
+
+    return [true, "All date ranges are valid"];
+}
+
+/**
+ * Validate date ranges against existing bookings
+ */
+function validateDateRangesAgainstBookings(array $date_ranges, array $booked_dates, $lang_): array
+{
+    foreach ($date_ranges as $range) {
+        [$from_date, $to_date] = $range;
+
+        $current = strtotime($from_date);
+        $end = strtotime($to_date);
+
+        while ($current <= $end) {
+            $current_date = date('Y-m-d', $current);
+            if (in_array($current_date, $booked_dates)) {
+                return [
+                    false,
+                    sprintf($lang_["booked_already_excluded"], $current_date)
+                ];
+            }
+            $current = strtotime('+1 day', $current);
+        }
+    }
+
+    return [true, "All date ranges are available"];
+}
+
+function get_dates(string $pro_id, $rstate)
+{
+    $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
+    $result = $rstate->query($sql);
+    $date_list = [];
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
+    }
+
+    // Remove duplicate dates
+    $date_list = array_unique($date_list);
+    // Sort the dates
+    sort($date_list);
+    return $date_list;
+}
+
+function getDatesFromRange($start, $end)
+{
+    $dates = [];
+    $current = strtotime($start);
+    $end = strtotime($end);
+
+    while ($current < $end) {
+        $dates[] = date('Y-m-d', $current);
+        $current = strtotime('+1 day', $current);
+    }
+
+    return $dates;
 }

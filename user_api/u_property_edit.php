@@ -3,8 +3,8 @@ require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
-require dirname( dirname(__FILE__) ).'/include/constants.php';
-require_once dirname(dirname(__FILE__) ) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__)) . '/include/constants.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
@@ -47,6 +47,7 @@ try {
 	$floor_ar = $rstate->real_escape_string(isset($_POST['floor_ar']) ? $_POST['floor_ar'] : '');
 	$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 	$compound_ar = $rstate->real_escape_string(isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
+	$date_ranges = isset($_POST['date_ranges']) ? json_decode($_POST['date_ranges'], true) : null;
 
 
 	$floor_json = json_encode([
@@ -93,21 +94,18 @@ try {
 		$returnArr    = generateResponse('false', "Category Id must be valid!", 400);
 	} else if (validateIdAndDatabaseExistance($government, 'tbl_government') === false) {
 		$returnArr    = generateResponse('false', "Government Id must be valid!", 400);
-	}else if (validateIdAndDatabaseExistance($cancellation_policy_id, 'tbl_cancellation_policy') === false) {
+	} else if (validateIdAndDatabaseExistance($cancellation_policy_id, 'tbl_cancellation_policy') === false) {
 		$returnArr = generateResponse('false', "Cancellation Policy Id must be valid!", 400);
-	}
-	else if (checkPropertyBookingStatus($prop_id) === false) {
+	} else if (checkPropertyBookingStatus($prop_id) === false) {
 		$returnArr = generateResponse('false', "You cannot edit this property because it has already been booked. Please cancel the booking first to make changes.", 400);
-	}
-	
-	else if (!in_array($period, ['d', 'm'])) {
+	} else if (!in_array($period, ['d', 'm'])) {
 		$returnArr    = generateResponse('false', "Period Id not valid!", 400);
 	} else {
 
 		$decodedIds = json_decode($facility, true);
 		$ids = array_filter(array_map('trim', $decodedIds));
 		$idList = implode(',', $ids);
-		$existing_images_paths = implode(',' ,json_decode($existing_images , true));
+		$existing_images_paths = implode(',', json_decode($existing_images, true));
 
 		$check_owner = $rstate->query("select * from tbl_property where  id=" . $prop_id . " and add_user_id=" . $user_id . " and is_deleted = 0")->num_rows;
 		if ($check_owner != 0) {
@@ -159,8 +157,8 @@ try {
 				"city" => $ccount_json,
 				"latitude" => $latitude,
 				"longitude" => $longitude,
-				'is_need_review'=>0,
-				'updated_at' =>$updated_at
+				'is_need_review' => 0,
+				'updated_at' => $updated_at
 			];
 
 			// Allowed file types for images and videos
@@ -180,7 +178,7 @@ try {
 			// Handle image upload
 			if (isset($_FILES['images'])) {
 				// Check if it's multiple images or a single image
-				if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3-count(json_decode($existing_images , true))) {
+				if (is_array($_FILES['images']['name']) && count($_FILES['images']['name']) >= 3 - count(json_decode($existing_images, true))) {
 					// Multiple images
 					foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 						if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
@@ -207,10 +205,9 @@ try {
 				} else {
 					$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
 				}
-			}else{
-				if(count(json_decode($existing_images , true))< 3){
+			} else {
+				if (count(json_decode($existing_images, true)) < 3) {
 					$returnArr =  generateResponse("false", "Please upload more than two images.", 400);
-
 				}
 			}
 
@@ -244,10 +241,9 @@ try {
 
 			if (!empty($imageUrls)) {
 				$imageUrlsString = implode(',', $imageUrls);
-				$field["image"] =  $imageUrlsString .','. $existing_images_paths;
-			}else {
+				$field["image"] =  $imageUrlsString . ',' . $existing_images_paths;
+			} else {
 				$field["image"] = $existing_images_paths;
-
 			}
 
 			if (!empty($videoUrls)) {
@@ -259,8 +255,11 @@ try {
 
 			if ($check_owner_  >= AppConstants::Property_Count) {
 				$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
+			} 
+			
+			if (is_array($date_ranges) && !empty($date_ranges)) {
+				$returnArr    =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
 			}
-
 			if (!isset($returnArr)) {
 
 				$table = "tbl_property";

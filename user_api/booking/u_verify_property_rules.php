@@ -123,6 +123,12 @@ try {
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
             $fp['trent_fees'] = number_format(0, 2, '.', '');
 
+            $partial_value = ($fp['final_total']*10)/100;
+            $reminder_value = $fp['final_total'] -  $partial_value;
+
+            $fp['partial_value'] = number_format($partial_value, 2, '.', '');
+            $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
+
 
             $postString = http_build_query($_POST);
             $total_as_int = (int)$fp['final_total'];
