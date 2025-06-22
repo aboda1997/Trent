@@ -2325,6 +2325,7 @@ WHERE
             );
         } else if ($_POST["type"] == "upload_whats-up-campings") {
             $h = new Estate();
+            $h->restateDeleteData_Api('' , 'tbl_uploaded_excel_data');
             $rows = parseExcelFile();
             // Get all rows and remove header (first row)
             $header = array_shift($rows); // Remove and discard header row

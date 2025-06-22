@@ -55,7 +55,7 @@ try {
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
-        [$days, $days_message] = processDates($from_date, $to_date,$lang_);
+        [$days, $days_message] = processDates($from_date, $to_date, $lang_);
         $date_list = get_dates($prop_id, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
@@ -152,9 +152,14 @@ try {
             $propertyAddress = json_decode($res_data['address'] ?? '', true)["ar"] ?? '';
             $propertytitle = json_decode($res_data['title'] ?? '', true)["ar"] ?? '';
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
-            $created_at = $date->format('Y-m-d');
-            $total_as_int = (int)$fp['final_total'];
-            $total_as_int = (int)$fp['final_total'];
+            $created_at = $date->format('Y-m-d H:i:s');
+            $partial_value = ($fp['final_total'] * 10) / 100;
+            $reminder_value = $fp['final_total'] -  $partial_value;
+
+            $fp['partial_value'] = number_format($partial_value, 2, '.', '');
+            $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
+
+            $total_10_percent_int = (int)$partial_value;
 
             // $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
@@ -167,15 +172,18 @@ try {
             $title_ = 'لديك حجز جديد! 🔔';
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
+            $field_values1 = ["data"];
+            $data_values1 = ['partial'];
+            $item_i = $h->restateinsertdata_Api($field_values1, $data_values1, 'tbl_non_completed');
 
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
+            if ($method_key == 'TRENT_BALANCE' && $balance <  $partial_value) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
-            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
+            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $partial_value) {
 
                 $GLOBALS['rstate']->begin_transaction();
 
-                $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $field_values = ["prop_id", 'item_id', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = [$res_data['id'],   $item_i , $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -188,7 +196,7 @@ try {
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
                 $field_values1 = ["uid", 'status', 'amt', 'tdate'];
-                $data_values1  = [$uid, 'Withdraw', $fp['final_total'], $created_at1];
+                $data_values1  = [$uid, 'Withdraw', $partial_value, $created_at1];
                 $table1 = 'wallet_report';
 
 
@@ -198,20 +206,20 @@ try {
                 }
                 $GLOBALS['rstate']->commit();
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
-                $firebase_notification = sendFirebaseNotification( $title_,$message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
+                $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
                 ));
             } else {
 
-                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_as_int)) {
+                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)) {
 
 
                     $GLOBALS['rstate']->begin_transaction();
 
-                    $field_values = ["prop_id", 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                    $data_values = [$res_data['id'], $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                    $field_values = ["prop_id", 'item_id', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                    $data_values = [$res_data['id'], $item_i,  $reminder_value, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
                     $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -227,7 +235,7 @@ try {
                     }
                     $GLOBALS['rstate']->commit();
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
-                    $firebase_notification = sendFirebaseNotification( $title_,$message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
+                    $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
@@ -313,7 +321,7 @@ function processDates(string $from_date, string $to_date, $lang_): array
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days ;
+    $days = $interval->days;
 
     return [
         $days,

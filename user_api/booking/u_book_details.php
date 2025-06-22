@@ -29,7 +29,7 @@ try {
 		$po = array();
 		$sel = $rstate->query("select * from tbl_book where id=" . $book_id . " and (uid = " . $uid . " or add_user_id=" . $uid . ")")->fetch_assoc();
 		$prop_data = $rstate->query("select * from tbl_property where id=" . $sel['prop_id'] . "")->fetch_assoc();
-		$imageArray = array_filter( explode(',', $prop_data['image'] ?? ''));
+		$imageArray = array_filter(explode(',', $prop_data['image'] ?? ''));
 
 		// Loop through each image URL and push to $vr array
 		foreach ($imageArray as $image) {
@@ -37,8 +37,8 @@ try {
 		}
 		$fp['book_id'] = $book_id;
 		$fp['prop_id'] = $sel['prop_id'];
-		$fp['address'] = json_decode($prop_data['address'], true)[$lang]??'';
-		$fp['city'] = json_decode($prop_data['city'], true)[$lang]??'';
+		$fp['address'] = json_decode($prop_data['address'], true)[$lang] ?? '';
+		$fp['city'] = json_decode($prop_data['city'], true)[$lang] ?? '';
 		if (is_null($prop_data['government'])) {
 			$fp['government'] = null;
 		} else {
@@ -47,10 +47,10 @@ try {
 			FROM tbl_government 
 			WHERE id=" . intval($prop_data['government']) . "
 		");
-	
+
 			if ($gov->num_rows > 0) {
 				$fp['government'] = [];
-	
+
 				while ($tit = $gov->fetch_assoc()) {
 					// Combine the id and name into a single associative array
 					$fp['government'] = [
@@ -70,7 +70,7 @@ try {
 			$fp['category'] = null;
 		} else {
 			$title = $rstate->query("SELECT id, title FROM tbl_category WHERE id=" . $prop_data['ptype']);
-	
+
 			if ($title->num_rows > 0) {
 				while ($tit = $title->fetch_assoc()) {
 					// Combine the id and name into a single associative array
@@ -86,18 +86,21 @@ try {
 		}
 		$fp['prop_img_list'] = $vr;
 		$fp['book_date'] = $sel['book_date'];
+		$fp['reminder'] = $sel['partial_value'];
 		$fp['check_in'] = $sel['check_in'];
 		$fp['check_out'] = $sel['check_out'];
 		$fp['subtotal'] = $sel['subtotal'];
 		$fp['total'] = $sel['total'];
-		$fp['prop_title'] = json_decode($sel['prop_title'], true)[$lang]??'';
-		$fp['pay_method'] = AppConstants::getPaymentMethod($sel['method_key'] ,$lang );
+		$fp['prop_title'] = json_decode($sel['prop_title'], true)[$lang] ?? '';
+		$fp['pay_method'] = AppConstants::getPaymentMethod($sel['method_key'], $lang);
 		$fp['check_intime'] = $sel['check_intime'];
 		$fp['check_outtime'] = $sel['check_outtime'];
 		$fp['total_day'] = $sel['total_day'];
-		
+
 		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['prop_id'] . "")->fetch_assoc();
 		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+		$fp['is_full_paid'] = ($sel['pay_status'] === 'Completed');
+		$fp['item_id'] = $sel['item_id'];
 
 		$fp['book_status'] = $sel['book_status'];
 		$fp['noguest'] = $sel['noguest'];
