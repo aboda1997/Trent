@@ -86,7 +86,7 @@ try {
 		}
 		$fp['prop_img_list'] = $vr;
 		$fp['book_date'] = $sel['book_date'];
-		$fp['reminder'] = $sel['partial_value'];
+		$fp['reminder_value'] = $sel['reminder_value'];
 		$fp['check_in'] = $sel['check_in'];
 		$fp['check_out'] = $sel['check_out'];
 		$fp['subtotal'] = $sel['subtotal'];
