@@ -258,7 +258,7 @@ try {
 			} 
 			
 			if (is_array($date_ranges) && !empty($date_ranges)) {
-				$returnArr    =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
+				$res   =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
 			}
 			if (!isset($returnArr)) {
 
