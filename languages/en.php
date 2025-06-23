@@ -442,5 +442,6 @@ return [
     'Reject' => 'Reject',
     'booked_already_excluded' => 'This period are booked or already excluded',
     'date_ranges_required' => 'Date ranges array are required ',
+    'booking_expired' => 'The time allowed for complete payment has expired'
 
 ];

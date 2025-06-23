@@ -19,6 +19,7 @@ function validateIdAndDatabaseExistance($id, $table,  $additionalCondition = '')
         }
         // Build and execute the query
         $query = "SELECT id FROM " . $table . " WHERE " . $condition;
+        
         //var_dump($query);
         $result = $GLOBALS['rstate']->query($query)->num_rows;
         return $result === 1;
@@ -542,3 +543,54 @@ function getDatesFromRange($start, $end)
 
     return $dates;
 }
+
+function validatePeriod($booking_id) {
+    // Set the timezone to Cairo, Egypt
+    $cairoTimezone = new DateTimeZone('Africa/Cairo');
+    
+    // Database query to get booking information
+    $sql = "SELECT confirmed_at, check_in FROM tbl_book WHERE id = " . $booking_id;
+    $booking = $GLOBALS['rstate']->query($sql)->fetch_assoc();
+
+    if (!$booking) {
+        return false; // Booking not found
+    }
+
+    $confirmed_at = new DateTime($booking['confirmed_at'], $cairoTimezone);
+    $check_in_str = $booking['check_in'];
+    if (strlen($check_in_str) <= 10) {
+        $check_in_str .= ' 12:00:00'; // Add default time
+    }
+    $check_in = new DateTime($check_in_str, $cairoTimezone);
+    
+    // Current time in Cairo
+    $current_time = new DateTime('now', $cairoTimezone);
+
+    // Calculate difference between confirmed_at and check_in (days)
+    $confirmation_to_checkin = $confirmed_at->diff($check_in);
+    $confirmation_to_checkin_days = $confirmation_to_checkin->days;
+
+    if ($confirmation_to_checkin_days > 14) {
+        // Case 1: Booking made more than 14 days before check-in
+        // Must validate at least 14 days remaining before check-in
+        $current_to_checkin = $current_time->diff($check_in);
+        $valid_cancel = ($current_to_checkin->days > 14 && !$current_to_checkin->invert);
+    } else {
+        // Case 2: Booking made ≤14 days before check-in
+        // Must validate within 24 hours of confirmation
+        $current_to_confirmation = $current_time->diff($confirmed_at);
+        $current_to_confirmation_hours = $current_to_confirmation->h + ($current_to_confirmation->days * 24);
+        $valid_cancel = ($current_to_confirmation_hours < 24 && !$current_to_confirmation->invert);
+    }
+
+
+    if (!$valid_cancel) {
+        $updateSql = "UPDATE tbl_book 
+                      SET book_status = 'Cancelled',
+                      cancel_by = 'H'
+                      WHERE id = $booking_id";
+                      $GLOBALS['rstate']->query($updateSql);
+    }
+    return $valid_cancel;
+}
+

@@ -10,9 +10,6 @@ try {
 	$pol = array();
 	$c = array();
 
-
-	
-
 	$pro_id  = $_GET['prop_id'] ?? '';
 	if ($pro_id == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
