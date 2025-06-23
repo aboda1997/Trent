@@ -39,9 +39,9 @@ try {
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
     } else if ($item_id == null) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
-    } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "") === false) {
+    } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "  and book_status =  'Confirmed'") === false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
-    } else if (validatePeriod($booking_id)=== false) {
+    } else if (validatePeriod($booking_id) === false) {
         $returnArr    = generateResponse('false', $lang_["booking_expired"], 400);
     } else {
 
@@ -75,6 +75,10 @@ try {
             $fp['id'] = $res_data['id'];
             $add_user_id = $res_data['add_user_id'];
             $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
+            $fp['from_date'] = $book_data['check_in'];
+            $fp['to_date'] = $book_data['check_out'];
+            $fp['days'] = $book_data['total_day'];
+            $fp['book_id'] = $booking_id;
 
             $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
 
@@ -87,7 +91,20 @@ try {
             $fp['price'] = $res_data['price'];
 
             $fp['wallet_balance'] = $balance;
+            $periods = [
+                "d" => ["ar" => "يومي", "en" => "daily"],
+                "m" => ["ar" => "شهري", "en" => "monthly"]
+            ];
 
+            $fp['period_type'] =  $periods[$res_data['period']][$lang];
+
+            $imageArray = array_filter(explode(',', $res_data['image'] ?? ''));
+
+            // Loop through each image URL and push to $vr array
+            foreach ($imageArray as $image) {
+                $vr[] = array('img' => trim($image));
+            }
+            $fp['image_list'] = $vr;
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d H:i:s');
             $partial_value = ($book_data['total'] * 10) / 100;
