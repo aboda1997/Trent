@@ -235,35 +235,6 @@ function processDates(string $from_date, string $to_date , $lang_): array
     ];
 }
 
-function get_dates(string $pro_id, $rstate)
-{
-    $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
-    $result = $rstate->query($sql);
-    $date_list = [];
-    // Output data of each row
-    while ($row = $result->fetch_assoc()) {
-        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
-    }
-
-    // Remove duplicate dates
-    $date_list = array_unique($date_list);
-    // Sort the dates
-    sort($date_list);
-    return $date_list;
-}
-function getDatesFromRange($start, $end)
-{
-    $dates = [];
-    $current = strtotime($start);
-    $end = strtotime($end);
-
-    while ($current < $end) {
-        $dates[] = date('Y-m-d', $current);
-        $current = strtotime('+1 day', $current);
-    }
-
-    return $dates;
-}
 function validateDateRange($from_date, $to_date, $date_list, $lang_)
 {
 
