@@ -11,19 +11,7 @@ try {
 	$c = array();
 
 
-	function getDatesFromRange($start, $end)
-	{
-		$dates = [];
-		$current = strtotime($start);
-		$end = strtotime($end);
-
-		while ($current < $end) {
-			$dates[] = date('Y-m-d', $current);
-			$current = strtotime('+1 day', $current);
-		}
-
-		return $dates;
-	}
+	
 
 	$pro_id  = $_GET['prop_id'] ?? '';
 	if ($pro_id == '') {
