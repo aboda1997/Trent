@@ -42,7 +42,7 @@ try {
     } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "") === false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
     } else if (validatePeriod($booking_id)=== false) {
-        $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
+        $returnArr    = generateResponse('false', $lang_["booking_expired"], 400);
     } else {
 
 
