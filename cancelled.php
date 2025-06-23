@@ -129,7 +129,7 @@ if (!in_array('Read_Booking', $per)) {
                         while ($row = $result->fetch_assoc()) {
                           $host_id = $row['uid'];
                           $guest_id = $row['add_user_id'];
-                          $cancel_id = $row['cancle_reason'];
+                          $cancel_id = $row['cancle_reason']??0;
                           $cancel_by = $row['cancel_by'] == "H" ? "Host" : "Guest";
                           $host = $rstate->query("SELECT name, mobile FROM tbl_user WHERE id = $host_id")->fetch_assoc();
                           $guest = $rstate->query("SELECT name, mobile FROM tbl_user WHERE id = $guest_id")->fetch_assoc();

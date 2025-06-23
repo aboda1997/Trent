@@ -43,10 +43,11 @@ try {
     } else if (getBookingStatus($booking_id)['book_status'] != 'Booked') {
         $returnArr    = generateResponse('false', $lang_["not_allow_to_do"], 400);
     } else {
-
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d H:i:s');
         $table = "tbl_book";
         $fp = array();
-        $field = array('book_status' => 'Confirmed');
+        $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at);
         $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $deny_id, "cancel_by" => 'H');
         $where = "where id=" . '?' . "";
         $where_conditions = [$booking_id];

@@ -174,6 +174,8 @@ try {
             $ccode = $user1["ccode"];
             $field_values1 = ["data"];
             $data_values1 = ['partial'];
+            $h = new Estate();
+
             $item_i = $h->restateinsertdata_Api($field_values1, $data_values1, 'tbl_non_completed');
 
             if ($method_key == 'TRENT_BALANCE' && $balance <  $partial_value) {

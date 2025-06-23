@@ -39,14 +39,18 @@ try {
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
     } else if ($item_id == null) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
-    } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . '') === false) {
+    } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "") === false) {
+        $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
+    } else if (validatePeriod($booking_id)=== false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
     } else {
 
+
         $checkQuery1 = "SELECT *  FROM tbl_book WHERE id=  " . $booking_id .  "";
+        $book_data = $rstate->query($checkQuery1)->fetch_assoc();
+        $prop_id = $book_data['prop_id'];
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
-        $book_data = $rstate->query($checkQuery1)->fetch_assoc();
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
         $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
@@ -102,6 +106,8 @@ try {
                 $field_ = array('pay_status' => 'Completed');
                 $where = "where uid=" . '?' . " and id=" . '?' . "";
                 $table = "tbl_book";
+                $created_at1 = $date->format('Y-m-d H:i:s');
+
                 $h = new Estate();
                 $where_conditions = [$uid, $booking_id];
                 $check = $h->restateupdateData_Api($field_, $table, $where, $where_conditions);
