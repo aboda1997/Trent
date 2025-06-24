@@ -25,8 +25,15 @@ try {
 	} else if (validateCoupon($cid, $total)['status'] === false) {
 		$returnArr    = generateResponse('false', $lang_["coupon_not_available"], 400);
 	} else {
+		$value  = validateCoupon($cid, $total)['value'];
+		$final_total =  $total - $value ; 
+		$partial_value =  ($final_total*10 )/ 100 ; 
+		$reminder_value =  $final_total - $partial_value ; 
 		$returnArr    = generateResponse('true', "Valid Coupon", 200, array(
-			'value' => validateCoupon($cid, $total)['value']
+			'coupon_value' => $value ,
+			'partial_value' =>number_format($partial_value, 2, '.', '') ,
+			'reminder_value' => number_format($reminder_value, 2, '.', ''),
+			'final_total' => number_format($final_total, 2, '.', '')
 		));
 	}
 	echo $returnArr;
