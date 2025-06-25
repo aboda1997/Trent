@@ -38,20 +38,35 @@ try {
 				$bd = $rstate->query("select * from tbl_book where uid=" . $uid . " and (book_status='Completed' or book_status='Cancelled') order by id desc");
 			}
 		}
+		$balance = '0.00';
+		$sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
+		while ($row = $sel->fetch_assoc()) {
+
+			if ($row['status'] == 'Adding') {
+				$balance = bcadd($balance, $row['amt'], 2);
+			} else if ($row['status'] == 'Withdraw') {
+				$balance = bcsub($balance, $row['amt'], 2);
+			}
+		}
+		$fp['wallet_balance'] = $balance;
+
 		while ($row = $bd->fetch_assoc()) {
 			$fp['book_id'] = $row['id'];
 			$fp['prop_id'] = $row['prop_id'];
-			
-            $imageArray = array_filter(explode(',', $row['prop_img'] ?? ''));
+			$checkQuery = "SELECT plimit  FROM tbl_property WHERE id=  " . $row['prop_id'] .  "";
+			$res_data = $rstate->query($checkQuery)->fetch_assoc();
+			$fp['guest_count'] = $res_data['plimit'];
 
-            // Loop through each image URL and push to $vr array
-            foreach ($imageArray as $image) {
-                $vr[] = array('img' => trim($image));
-            }
-            $fp['image_list'] = $vr;
+			$imageArray = array_filter(explode(',', $row['prop_img'] ?? ''));
+
+			// Loop through each image URL and push to $vr array
+			foreach ($imageArray as $image) {
+				$vr[] = array('img' => trim($image));
+			}
+			$fp['image_list'] = $vr;
 			$fp['prop_title'] = json_decode($row['prop_title'], true)[$lang];
 
-			$fp['pay_method'] = AppConstants::getPaymentMethod($row['method_key'] ,$lang );
+			$fp['pay_method'] = AppConstants::getPaymentMethod($row['method_key'], $lang);
 			$fp['prop_price'] = $row['prop_price'];
 			$fp['total_day'] = $row['total_day'];
 			$fp['total_paid'] = $row['total'];
@@ -65,18 +80,19 @@ try {
 			if ($status != 'active') {
 
 				$fp['individual_rate'] = [
-					'id' => $individual_data['id']?? null,
-					'rate' =>  isset($individual_data['rating']) 
-					? number_format((float)$individual_data['rating'], 1, '.', '') 
-					: null ,
-					'comment' => $individual_data['comment'] ?? null ,
+					'id' => $individual_data['id'] ?? null,
+					'rate' =>  isset($individual_data['rating'])
+						? number_format((float)$individual_data['rating'], 1, '.', '')
+						: null,
+					'comment' => $individual_data['comment'] ?? null,
 					'created_at' => $individual_data['created_at'] ?? null
 
 				];
 			}
-		    $fp['reminder_value'] = $row['reminder_value'];
-		    $fp['is_full_paid'] = ($row['pay_status'] === 'Completed');
-	        $fp['item_id'] = $row['id'];
+			$fp['reminder_value'] = number_format($row['reminder_value'], 2, '.', '');
+			$fp['partial_value'] =  number_format($row['total'] - $row['reminder_value'], 2, '.', ''); 
+			$fp['is_full_paid'] = ($row['pay_status'] === 'Completed');
+			$fp['item_id'] = $row['id'];
 
 			$fp['book_status'] = $row['book_status'];
 
