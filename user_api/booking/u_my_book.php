@@ -76,7 +76,7 @@ try {
 			}
 		    $fp['reminder_value'] = $row['reminder_value'];
 		    $fp['is_full_paid'] = ($row['pay_status'] === 'Completed');
-	        $fp['item_id'] = $row['item_id'];
+	        $fp['item_id'] = $row['id'];
 
 			$fp['book_status'] = $row['book_status'];
 

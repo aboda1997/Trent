@@ -594,3 +594,49 @@ function validatePeriod($booking_id) {
     return $valid_cancel;
 }
 
+function validateBookingConflict($from_date, $to_date, $prop_id) {
+    // Connect to database (assuming you have a connection already)
+    // $db = your database connection;
+    
+    // Set timezone to Cairo
+    date_default_timezone_set('Africa/Cairo');
+    
+    // Convert input dates to proper format for comparison
+    $from_date = date('Y-m-d H:i:s', strtotime($from_date));
+    $to_date = date('Y-m-d H:i:s', strtotime($to_date));
+    
+    // Calculate the timestamp 30 minutes ago in Cairo time
+    $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
+    
+    // Build the SQL query (using mysqli for modern PHP)
+    $sql = "SELECT COUNT(*) as conflict_count 
+            FROM tbl_non_completed 
+            WHERE prop_id = " . (int)$prop_id . " 
+            AND (
+                ('" . $GLOBALS['rstate']->real_escape_string($from_date) . "' BETWEEN f1 AND f2) OR
+                ('" . $GLOBALS['rstate']->real_escape_string($to_date) . "' BETWEEN f1 AND f2) OR
+                (f1 BETWEEN '" . $GLOBALS['rstate']->real_escape_string($from_date) . "' AND '" . $GLOBALS['rstate']->real_escape_string($to_date) . "') OR
+                (f2 BETWEEN '" . $GLOBALS['rstate']->real_escape_string($from_date) . "' AND '" . $GLOBALS['rstate']->real_escape_string($to_date) . "')
+            )
+            AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
+    
+    try {
+        // Execute the query
+        $result = $GLOBALS['rstate']->query($sql);
+        
+        if (!$result) {
+            throw new Exception("Query failed: " . $GLOBALS['rstate']->error);
+        }
+        
+        // Fetch the result
+        $row = $result->fetch_assoc();
+
+        // If conflict_count > 0, there's a conflict
+        return ($row['conflict_count'] == 0);
+        
+    } catch (Exception $e) {
+        // Handle errors
+        error_log("Error in validateBookingConflict: " . $e->getMessage());
+        return false; // Assume conflict exists if there's an error
+    }
+}

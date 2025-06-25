@@ -37,8 +37,6 @@ try {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (!in_array($method_key, $methods)) {
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
-    } else if ($item_id == null) {
-        $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "  and book_status =  'Confirmed'") === false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
     } else if (validatePeriod($booking_id) === false) {
@@ -53,7 +51,6 @@ try {
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
-        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
         while ($row = $sel->fetch_assoc()) {
 
             if ($row['status'] == 'Adding') {
@@ -62,11 +59,7 @@ try {
                 $balance = bcsub($balance, $row['amt'], 2);
             }
         }
-        if ($non_completed_data == 0) {
-            $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
-        } else if ($item_id != $book_data['item_id']) {
-            $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
-        } else {
+       
 
             $table = "tbl_book";
 
@@ -135,15 +128,11 @@ try {
                 $data_values1  = [$uid, 'Withdraw', $reminder_value, $created_at1];
                 $table1 = 'wallet_report';
 
-
                 $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
                 if (!$check) {
                     throw new Exception("Insert failed");
                 }
-                $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
-                if (!$check) {
-                    throw new Exception("Insert failed");
-                }
+               
                 $GLOBALS['rstate']->commit();
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
@@ -151,7 +140,7 @@ try {
                 ));
             } else {
 
-                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_90_percent_int)) {
+                if (getPaymentStatus($merchant_ref_number, $booking_id,  $total_90_percent_int)) {
 
 
                     $GLOBALS['rstate']->begin_transaction();
@@ -165,10 +154,7 @@ try {
                         throw new Exception("Insert failed");
                     }
 
-                    $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
-                    if (!$check) {
-                        throw new Exception("Insert failed");
-                    }
+                   
                     $GLOBALS['rstate']->commit();
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
@@ -178,7 +164,7 @@ try {
                     $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
                 }
             }
-        }
+        
     }
     echo $returnArr;
 } catch (Exception $e) {

@@ -100,7 +100,7 @@ try {
 		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['prop_id'] . "")->fetch_assoc();
 		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
 		$fp['is_full_paid'] = ($sel['pay_status'] === 'Completed');
-		$fp['item_id'] = $sel['item_id'];
+		$fp['item_id'] = $book_id;
 
 		$fp['book_status'] = $sel['book_status'];
 		$fp['noguest'] = $sel['noguest'];
