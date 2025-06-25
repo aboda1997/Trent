@@ -138,8 +138,8 @@ try {
 
             // $fp['total_int'] = $total_as_int;
 
-            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total"];
-            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total']];
+            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total" , "sub_total"];
+            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'] ,  $fp['sub_total']];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
