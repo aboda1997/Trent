@@ -355,7 +355,7 @@ return [
     'prop_not_available' => "This property  is not Available",
     'booking_id_required' => 'You must enter a booking ID',
     'booking_not_available' => "This booking  is not Available",
-    'coupon_id_required' => 'You must enter a Coupon ID',
+    'coupon_id_required' => 'You must enter a Coupon Code',
     'coupon_not_available' => "This Coupon is not Available",
     'property_booking_confirmed_success' => 'Property booking confirmed successfully',
     'property_booking_canceled_success' => 'Property booking canceled successfully',
@@ -442,6 +442,7 @@ return [
     'Reject' => 'Reject',
     'booked_already_excluded' => 'This period are booked or already excluded',
     'date_ranges_required' => 'Date ranges array are required ',
-    'booking_expired' => 'The time allowed for complete payment has expired'
+    'booking_expired' => 'The time allowed for complete payment has expired',
+    'Not_allow_book_range' => 'Not allow to book this range. try again after some period.'
 
 ];

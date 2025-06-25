@@ -10,8 +10,10 @@ try {
 	$cid  =  isset($_GET['coupon_code']) ? $_GET['coupon_code'] : null;
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
 	$total  =  isset($_GET['total']) ? $_GET['total'] : 0;
+	$item_id  =  isset($_GET['item_id']) ? $_GET['item_id'] : 0;
 	$lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
 	$lang_ = load_specific_langauage($lang);
+	$non_completed_data = $rstate->query("select total from tbl_non_completed where id=" . $item_id)->fetch_assoc();
 	if ($uid == '') {
 		$returnArr = generateResponse('false', $lang_["user_id_required"], 400);
 	} else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
@@ -22,11 +24,17 @@ try {
 		$returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
 	} else  if ($cid  == null) {
 		$returnArr    = generateResponse('false', $lang_["coupon_id_required"], 400);
-	} else if (validateCoupon($cid, $total)['status'] === false) {
+	}  else if ($item_id == 0) {
+        $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
+    } else if ($non_completed_data == 0) {
+      $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
+    }
+	else if (validateCoupon($cid, $non_completed_data['total'])['status'] === false) {
 		$returnArr    = generateResponse('false', $lang_["coupon_not_available"], 400);
-	} else {
-		$value  = validateCoupon($cid, $total)['value'];
-		$final_total =  $total - $value ; 
+	}
+	 else {
+		$value  = validateCoupon($cid, $non_completed_data['total'])['value'];
+		$final_total =  $non_completed_data['total'] - $value ; 
 		$partial_value =  ($final_total*10 )/ 100 ; 
 		$reminder_value =  $final_total - $partial_value ; 
 		$returnArr    = generateResponse('true', "Valid Coupon", 200, array(

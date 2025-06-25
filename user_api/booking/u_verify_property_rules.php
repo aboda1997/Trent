@@ -48,7 +48,8 @@ try {
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
-
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d H:i:s');
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
         while ($row = $sel->fetch_assoc()) {
@@ -70,6 +71,8 @@ try {
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
             $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
+        } else if (validateBookingConflict($from_date, $to_date, $prop_id) == false) {
+            $returnArr    = generateResponse('false', $lang_["Not_allow_book_range"], 400);
         } else {
             $fp = array();
             $vr = array();
@@ -113,7 +116,7 @@ try {
             $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total) / 100  : ($set["owner_fees"] * $sub_total) / 100;
             $taxes = ($trent_fess * $set['tax']) / 100;
             $service_fees = (($sub_total) * $set['gateway_percent_fees']) / 100 + $set['gateway_money_fees'];
-            $final_total = $sub_total + $taxes + $service_fees + $deposit_fees ;
+            $final_total = $sub_total + $taxes + $service_fees + $deposit_fees;
 
             $fp['sub_total'] = number_format($sub_total, 2, '.', '');
             $fp['tax_percent'] = $set['tax'];
@@ -123,7 +126,7 @@ try {
             $fp['deposit_fees'] = number_format($deposit_fees, 2, '.', '');
             $fp['trent_fees'] = number_format(0, 2, '.', '');
 
-            $partial_value = ($fp['final_total']*10)/100;
+            $partial_value = ($fp['final_total'] * 10) / 100;
             $reminder_value = $fp['final_total'] -  $partial_value;
 
             $fp['partial_value'] = number_format($partial_value, 2, '.', '');
@@ -135,8 +138,8 @@ try {
 
             // $fp['total_int'] = $total_as_int;
 
-            $field_values = ["data"];
-            $data_values = [$postString];
+            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total"];
+            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total']];
 
             $h = new Estate();
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
@@ -214,20 +217,21 @@ function checkDateFormat(string $from_date, string $to_date): array
  * Process dates and calculate difference
  * Returns [int $days, string $message]
  */
-function processDates(string $from_date, string $to_date , $lang_): array
+function processDates(string $from_date, string $to_date, $lang_): array
 {
     $date1 = new DateTime($from_date);
     $date2 = new DateTime($to_date);
 
     // Validate order
     if ($date1 >= $date2) {
-        return [0,
-        $lang_["DATE_VALIDATION_ERROR"]
-       ];
+        return [
+            0,
+            $lang_["DATE_VALIDATION_ERROR"]
+        ];
     }
 
     $interval = $date1->diff($date2);
-    $days = $interval->days ;
+    $days = $interval->days;
 
     return [
         $days,
