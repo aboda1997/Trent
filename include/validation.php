@@ -617,16 +617,20 @@ function validateBookingConflict($from_date, $to_date, $prop_id) {
     
     // Build the SQL query (using mysqli for modern PHP)
     $sql = "SELECT COUNT(*) as conflict_count 
-            FROM tbl_non_completed 
-            WHERE prop_id = " . (int)$prop_id . " 
-            AND (
-                ('" . $GLOBALS['rstate']->real_escape_string($from_date) . "' BETWEEN f1 AND f2) OR
-                ('" . $GLOBALS['rstate']->real_escape_string($to_date) . "' BETWEEN f1 AND f2) OR
-                (f1 BETWEEN '" . $GLOBALS['rstate']->real_escape_string($from_date) . "' AND '" . $GLOBALS['rstate']->real_escape_string($to_date) . "') OR
-                (f2 BETWEEN '" . $GLOBALS['rstate']->real_escape_string($from_date) . "' AND '" . $GLOBALS['rstate']->real_escape_string($to_date) . "')
+        FROM tbl_non_completed 
+        WHERE prop_id = " . (int)$prop_id . " 
+        AND (
+            (
+                -- Standard overlap conditions (modified to exclude the f2=from_date case)
+                ('" . $GLOBALS['rstate']->real_escape_string($from_date) . "' < f2 AND 
+                 '" . $GLOBALS['rstate']->real_escape_string($to_date) . "' > f1)
             )
-            AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
-    
+            AND NOT (
+                -- Explicitly allow the case where new starts exactly when old ends
+                '" . $GLOBALS['rstate']->real_escape_string($from_date) . "' = f2
+            )
+        )
+        AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
     try {
         // Execute the query
         $result = $GLOBALS['rstate']->query($sql);
