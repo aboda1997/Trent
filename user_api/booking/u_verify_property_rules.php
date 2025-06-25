@@ -138,14 +138,18 @@ try {
 
             // $fp['total_int'] = $total_as_int;
 
-            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total" , "sub_total"];
-            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'] ,  $fp['sub_total']];
+            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total"];
+            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'],  $fp['sub_total']];
 
             $h = new Estate();
+            $GLOBALS['rstate']->begin_transaction();
+
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
                 throw new Exception("Insert failed");
             }
+            $GLOBALS['rstate']->commit();
+
             $fp['item_id'] = $check;
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                 "booking_details" => $fp,
