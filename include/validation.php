@@ -323,10 +323,18 @@ function validateEgyptianPhoneNumber($phone, $ccode = null)
 function validateCheckInDate($booking_id, $timestamp)
 {
     $data = getBookingStatus($booking_id);
-
+    $cairoTimezone = new DateTimeZone('Africa/Cairo');
     // Convert to timestamps if they're strings
-    $check_in =  $data['check_in'];
-    $check_out =  $data['check_out'];
+    $check_in_str =  $data['check_in'];
+    if (strlen($check_in_str) <= 10) {
+        $check_in_str .= ' 12:00:00'; // Add default time
+    }
+        $check_out_str =  $data['check_out'];
+
+    $check_in = new DateTime($check_in_str, $cairoTimezone);
+    $check_out = new DateTime($check_out_str, $cairoTimezone);
+    $timestamp = new DateTime($timestamp, $cairoTimezone);
+    
     return ($timestamp >= $check_in && $timestamp <= $check_out);
 }
 
@@ -562,7 +570,6 @@ function validatePeriod($booking_id) {
         $check_in_str .= ' 12:00:00'; // Add default time
     }
     $check_in = new DateTime($check_in_str, $cairoTimezone);
-    
     // Current time in Cairo
     $current_time = new DateTime('now', $cairoTimezone);
 
@@ -580,6 +587,7 @@ function validatePeriod($booking_id) {
         // Must validate within 24 hours of confirmation
         $current_to_confirmation = $current_time->diff($confirmed_at);
         $current_to_confirmation_hours = $current_to_confirmation->h + ($current_to_confirmation->days * 24);
+        var_dump($current_to_confirmation_hours);
         $valid_cancel = ($current_to_confirmation_hours < 24 && !$current_to_confirmation->invert);
     }
 

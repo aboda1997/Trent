@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   $lang_ = load_specific_langauage($lang);
 
   $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
-  $timestamp = $date->format('Y-m-d');
+  $timestamp =$date->format('Y-m-d H:i:s');
   if ($uid == '') {
     $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
   } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
