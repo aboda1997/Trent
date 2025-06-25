@@ -59,112 +59,112 @@ try {
                 $balance = bcsub($balance, $row['amt'], 2);
             }
         }
-       
 
+
+        $table = "tbl_book";
+
+        $fp = array();
+        $vr = array();
+        $fp['id'] = $res_data['id'];
+        $add_user_id = $res_data['add_user_id'];
+        $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
+        $fp['from_date'] = $book_data['check_in'];
+        $fp['to_date'] = $book_data['check_out'];
+        $fp['days'] = $book_data['total_day'];
+        $fp['book_id'] = $booking_id;
+
+        $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
+
+        $titleData = json_decode($res_data['title'], true);
+        $fp['title'] = $titleData[$lang];
+
+        $rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $res_data['id'] . "")->fetch_assoc();
+        $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+
+        $fp['price'] = $res_data['price'];
+
+        $fp['wallet_balance'] = $balance;
+        $periods = [
+            "d" => ["ar" => "يومي", "en" => "daily"],
+            "m" => ["ar" => "شهري", "en" => "monthly"]
+        ];
+
+        $fp['period_type'] =  $periods[$res_data['period']][$lang];
+
+        $imageArray = array_filter(explode(',', $res_data['image'] ?? ''));
+
+        // Loop through each image URL and push to $vr array
+        foreach ($imageArray as $image) {
+            $vr[] = array('img' => trim($image));
+        }
+        $fp['image_list'] = $vr;
+        $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+        $created_at = $date->format('Y-m-d H:i:s');
+        $reminder_value = $book_data['reminder_value'];
+        $fp['total'] = number_format($book_data['total'], 2, '.', '');
+        $fp['guest_count'] = $res_data['plimit'];
+        $fp['book_status'] = $book_data['book_status'];
+
+        $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
+        $fp['partial_value'] =  number_format($book_data['total'] - $book_data['reminder_value'], 2, '.', '');
+        $total_90_percent_int = (int)$reminder_value;
+
+        if ($method_key == 'TRENT_BALANCE' && $balance <  $reminder_value) {
+            $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
+        } else if ($method_key == 'TRENT_BALANCE' && $balance >= $reminder_value) {
+
+            $GLOBALS['rstate']->begin_transaction();
+            $field_ = array('pay_status' => 'Completed');
+            $where = "where uid=" . '?' . " and id=" . '?' . "";
             $table = "tbl_book";
+            $created_at1 = $date->format('Y-m-d H:i:s');
 
-            $fp = array();
-            $vr = array();
-            $fp['id'] = $res_data['id'];
-            $add_user_id = $res_data['add_user_id'];
-            $user = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
-            $fp['from_date'] = $book_data['check_in'];
-            $fp['to_date'] = $book_data['check_out'];
-            $fp['days'] = $book_data['total_day'];
-            $fp['book_id'] = $booking_id;
-
-            $fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $res_data['id'] . "")->num_rows;
-
-            $titleData = json_decode($res_data['title'], true);
-            $fp['title'] = $titleData[$lang];
-
-            $rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $res_data['id'] . "")->fetch_assoc();
-            $fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
-
-            $fp['price'] = $res_data['price'];
-
-            $fp['wallet_balance'] = $balance;
-            $periods = [
-                "d" => ["ar" => "يومي", "en" => "daily"],
-                "m" => ["ar" => "شهري", "en" => "monthly"]
-            ];
-
-            $fp['period_type'] =  $periods[$res_data['period']][$lang];
-
-            $imageArray = array_filter(explode(',', $res_data['image'] ?? ''));
-
-            // Loop through each image URL and push to $vr array
-            foreach ($imageArray as $image) {
-                $vr[] = array('img' => trim($image));
+            $h = new Estate();
+            $where_conditions = [$uid, $booking_id];
+            $check = $h->restateupdateData_Api($field_, $table, $where, $where_conditions);
+            if (!$check) {
+                throw new Exception("Insert failed");
             }
-            $fp['image_list'] = $vr;
-            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
-            $created_at = $date->format('Y-m-d H:i:s');
-            $partial_value = ($book_data['total'] * 10) / 100;
-            $reminder_value = $book_data['total'] -  $partial_value;
+            $field_values1 = ["uid", 'status', 'amt', 'tdate'];
+            $data_values1  = [$uid, 'Withdraw', $reminder_value, $created_at1];
+            $table1 = 'wallet_report';
 
-            $fp['partial_value'] = number_format($partial_value, 2, '.', '');
-            $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
+            $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
+            if (!$check) {
+                throw new Exception("Insert failed");
+            }
 
-            $total_90_percent_int = (int)$reminder_value;
+            $GLOBALS['rstate']->commit();
 
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $reminder_value) {
-                $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
-            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $reminder_value) {
+            $returnArr    = generateResponse('true', "Property booking Details", 200, array(
+                "booking_details" => $fp,
+            ));
+        } else {
+
+            if (getPaymentStatus($merchant_ref_number, $booking_id,  $total_90_percent_int)) {
+
 
                 $GLOBALS['rstate']->begin_transaction();
                 $field_ = array('pay_status' => 'Completed');
                 $where = "where uid=" . '?' . " and id=" . '?' . "";
                 $table = "tbl_book";
-                $created_at1 = $date->format('Y-m-d H:i:s');
-
                 $h = new Estate();
                 $where_conditions = [$uid, $booking_id];
                 $check = $h->restateupdateData_Api($field_, $table, $where, $where_conditions);
                 if (!$check) {
                     throw new Exception("Insert failed");
                 }
-                $field_values1 = ["uid", 'status', 'amt', 'tdate'];
-                $data_values1  = [$uid, 'Withdraw', $reminder_value, $created_at1];
-                $table1 = 'wallet_report';
 
-                $check = $h->restateinsertdata_Api($field_values1, $data_values1, $table1);
-                if (!$check) {
-                    throw new Exception("Insert failed");
-                }
-               
+
                 $GLOBALS['rstate']->commit();
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
                 ));
             } else {
-
-                if (getPaymentStatus($merchant_ref_number, $booking_id,  $total_90_percent_int)) {
-
-
-                    $GLOBALS['rstate']->begin_transaction();
-                    $field_ = array('pay_status' => 'Completed');
-                    $where = "where uid=" . '?' . " and id=" . '?' . "";
-                    $table = "tbl_book";
-                    $h = new Estate();
-                    $where_conditions = [$uid, $booking_id];
-                    $check = $h->restateupdateData_Api($field_, $table, $where, $where_conditions);
-                    if (!$check) {
-                        throw new Exception("Insert failed");
-                    }
-
-                   
-                    $GLOBALS['rstate']->commit();
-
-                    $returnArr    = generateResponse('true', "Property booking Details", 200, array(
-                        "booking_details" => $fp,
-                    ));
-                } else {
-                    $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
-                }
+                $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
             }
-        
+        }
     }
     echo $returnArr;
 } catch (Exception $e) {
