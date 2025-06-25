@@ -581,7 +581,7 @@ function validatePeriod($booking_id) {
         // Case 1: Booking made more than 14 days before check-in
         // Must validate at least 14 days remaining before check-in
         $current_to_checkin = $current_time->diff($check_in);
-        $valid_cancel = ($current_to_checkin->days > 14 && $current_to_checkin->invert);
+        $valid_cancel = ($current_to_checkin->days > 14 && !$current_to_checkin->invert);
     } else {
         // Case 2: Booking made ≤14 days before check-in
         // Must validate within 24 hours of confirmation
