@@ -71,9 +71,10 @@ try {
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
             $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
-        } else if (validateBookingConflict($from_date, $to_date, $prop_id) == false) {
-            $returnArr    = generateResponse('false', $lang_["Not_allow_book_range"], 400);
-        } else {
+        } ///else if (validateBookingConflict($from_date, $to_date, $prop_id) == false) {
+            //$returnArr    = generateResponse('false', $lang_["Not_allow_book_range"], 400);
+        //} 
+        else {
             $fp = array();
             $vr = array();
             $set = $rstate->query("select owner_fees, property_manager_fees,tax ,gateway_percent_fees,gateway_money_fees from tbl_setting ")->fetch_assoc();
