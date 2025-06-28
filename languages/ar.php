@@ -389,7 +389,8 @@ return [
     'item_id_required' => 'يجب إدخال معرّف العنصر',
     'guest_limit_exceeded' => 'تجاوز عدد الضيوف الحد المسموح',
     'general_validation_error' => 'حدث خطأ ما. تأكد من صحة البيانات المرسلة',
-    'invalid_date_range' => 'التواريخ المحددة ليست ضمن الحد المسموح [%d,%d] يوم',
+    'invalid_date_range' => 'يجب اختيار مدة لا تقل عن %d يوم ولا تزيد عن %d يوم',
+
     'insufficient_wallet_balance' => 'رصيد المحفظة غير كافٍ',
     'payment_validation_failed' => 'فشل التحقق من الدفع!',
     'invalid_date_order' => 'يجب أن يكون تاريخ البداية قبل تاريخ النهاية',

@@ -432,7 +432,8 @@ return [
     'item_id_required' => 'You must enter the item id',
     'guest_limit_exceeded' => 'Guest count exceeds persons limits',
     'general_validation_error' => 'Something went wrong. Ensure that sent data are correct',
-    'invalid_date_range' => 'The selected dates are not within the allowed limit [%d,%d] days',
+    'invalid_date_range' => 'You must select at least %d days or at most %d days',
+
     'insufficient_wallet_balance' => 'Wallet balance not sufficient',
     'payment_validation_failed' => 'Payment validation failed!',
     'invalid_date_order' => 'From date must be earlier than to date',
