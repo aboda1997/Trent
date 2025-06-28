@@ -55,7 +55,7 @@ try {
 			$fp['prop_id'] = $row['prop_id'];
 			$checkQuery = "SELECT plimit  FROM tbl_property WHERE id=  " . $row['prop_id'] .  "";
 			$res_data = $rstate->query($checkQuery)->fetch_assoc();
-			$fp['guest_count'] = $res_data['plimit']??'0';
+			$fp['guest_count'] = $row['noguest'];
 
 			$imageArray = array_filter(explode(',', $row['prop_img'] ?? ''));
 

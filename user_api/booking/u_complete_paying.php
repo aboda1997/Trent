@@ -102,7 +102,7 @@ try {
         $created_at = $date->format('Y-m-d H:i:s');
         $reminder_value = $book_data['reminder_value'];
         $fp['total'] = number_format($book_data['total'], 2, '.', '');
-        $fp['guest_count'] = $res_data['plimit'];
+        $fp['guest_count'] = $book_data['noguest'];
         $fp['book_status'] = $book_data['book_status'];
 
         $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
