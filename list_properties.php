@@ -167,8 +167,8 @@ if (!in_array('Read_Property', $per)) {
                         while ($row = $result->fetch_assoc()) {
                           $title = json_decode($row['title'], true);
                           $government = $row['government'];
-                          $city = json_decode($row['city'], true);
-                          $compound_name = json_decode($row['compound_name'], true);
+                          $city = json_decode($row['city'] ?? '', true);
+                          $compound_name = json_decode($row['compound_name'] ?? "", true);
                       ?>
                           <tr>
                             <td><?php echo $i; ?></td>
