@@ -2990,7 +2990,7 @@ function downloadXLS($headers, $data)
     // Start output buffering
     ob_start();
 
-    // Set headers for Excel download
+    // Set headers for Excel download with UTF-8 encoding
     header('Content-Type: application/vnd.ms-excel; charset=utf-8');
     header('Content-Disposition: attachment; filename="export_' . date('Y-m-d') . '.xls"');
     header('Pragma: no-cache');
@@ -2999,16 +2999,23 @@ function downloadXLS($headers, $data)
     // Open output stream
     $output = fopen('php://output', 'w');
 
-    // Add UTF-8 BOM for Excel compatibility
+    // Add UTF-8 BOM for Excel compatibility (must be first characters in file)
     fputs($output, "\xEF\xBB\xBF");
 
-    // Start HTML table (Excel accepts HTML tables as XLS content)
+    // Start HTML table with XML declaration and proper meta tags
+    fputs($output, "<!DOCTYPE html>\n");
+    fputs($output, "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel'>\n");
+    fputs($output, "<head>\n");
+    fputs($output, "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>\n");
+    fputs($output, "<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Export</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->\n");
+    fputs($output, "</head>\n");
+    fputs($output, "<body>\n");
     fputs($output, "<table border='1'>\n");
 
     // Add headers
     fputs($output, "<tr>");
     foreach ($headers as $header) {
-        fputs($output, "<th>" . htmlspecialchars($header) . "</th>");
+        fputs($output, "<th>" . htmlspecialchars($header, ENT_QUOTES, 'UTF-8') . "</th>");
     }
     fputs($output, "</tr>\n");
 
@@ -3016,13 +3023,18 @@ function downloadXLS($headers, $data)
     foreach ($data as $row) {
         fputs($output, "<tr>");
         foreach ($row as $cell) {
-            fputs($output, "<td>" . htmlspecialchars($cell) . "</td>");
+            // Preserve Arabic characters without htmlspecialchars if it's causing issues
+            // Or use htmlspecialchars with UTF-8 encoding if needed for security
+            $cellValue = (is_string($cell)) ? $cell : strval($cell);
+            fputs($output, "<td>" . $cellValue . "</td>");
         }
         fputs($output, "</tr>\n");
     }
 
-    // Close table
-    fputs($output, "</table>");
+    // Close table and document
+    fputs($output, "</table>\n");
+    fputs($output, "</body>\n");
+    fputs($output, "</html>");
 
     // Flush and exit
     fclose($output);
