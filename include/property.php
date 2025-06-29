@@ -2360,7 +2360,7 @@ WHERE
             $data = [];
 
             while ($row = $sel->fetch_assoc()) {
-           
+
                 $data[] =   [
 
                     'id' => $row['id'] ?? '',
@@ -2388,7 +2388,7 @@ WHERE
                     'guest_rules_en' => getMultilingualValue($row['guest_rules'], 'en'),
                     'guest_rules_ar' => getMultilingualValue($row['guest_rules'], 'ar'),
                     'video' => $row['video'] ?? '',
-                    'period' => $row['period'] ?? '',
+                    'period' => ($row['period'] ?? '') === 'm' ? 'monthly' : 'daily',
                     'is_featured' => $row['is_featured'] ?? '',
                     'is_approved' => $row['is_approved'] ?? '',
                     'compound_name_en' => getMultilingualValue($row['compound_name'], 'en'),
