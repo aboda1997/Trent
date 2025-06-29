@@ -96,7 +96,7 @@ if (!in_array('Read_Property', $per)) {
                     <tbody>
                       <?php
                       // Pagination configuration
-                      $records_per_page = 10;
+                      $records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
                       $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                       $page = max($page, 1);
 
@@ -131,11 +131,11 @@ if (!in_array('Read_Property', $per)) {
                       if ($result->num_rows > 0) {
                         $has_records = true;
                         while ($row = $result->fetch_assoc()) {
-                          $title = json_decode($row['title'], true);
-                          $address = json_decode($row['address'], true);
+                          $title = json_decode($row['title']??'', true);
+                          $address = json_decode($row['address']??"", true);
                           $government = $row['government'];
-                          $city = json_decode($row['city'], true);
-                          $compound_name = json_decode($row['compound_name'], true);
+                          $city = json_decode($row['city']??'', true);
+                          $compound_name = json_decode($row['compound_name'] ?? '', true);
                       ?>
                           <tr>
                             <td><?php echo $i; ?></td>
@@ -226,43 +226,62 @@ if (!in_array('Read_Property', $per)) {
                   </table>
 
                   <!-- Manual Pagination Links -->
-                  <?php if ($total_records > 0 && $total_pages > 1): ?>
-                    <div class="pagination">
-                      <?php if ($page > 1): ?>
-                        <a href="?page=1<?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
-                        <a href="?page=<?php echo $page - 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
-                      <?php else: ?>
-                        <span class="disabled">First</span>
-                        <span class="disabled">Previous</span>
-                      <?php endif; ?>
+                  <?php if ($total_records > 0): ?>
+                    <div class="pagination-container">
+                      <!-- Per Page Dropdown -->
+                      <div class="per-page-selector">
+                        <label for="per_page">Items per page:</label>
+                        <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
+                          <?php
+                          $per_page_options = [ 10, 20, 25,  50, 100 ,200];
+                          $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
+                          foreach ($per_page_options as $option):
+                          ?>
+                            <option value="<?php echo $option; ?>" <?php echo $option == $current_per_page ? 'selected' : ''; ?>>
+                              <?php echo $option; ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
 
-                      <?php
-                      $start_page = max(1, $page - 2);
-                      $end_page = min($total_pages, $page + 2);
-
-                      for ($p = $start_page; $p <= $end_page; $p++):
-                      ?>
-                        <?php if ($p == $page): ?>
-                          <span class="current"><?php echo $p; ?></span>
+                      <!-- Pagination Links -->
+                      <div class="pagination">
+                        <?php if ($page > 1): ?>
+                          <a href="?page=1&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+                          <a href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
                         <?php else: ?>
-                          <a href="?page=<?php echo $p; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                          <span class="disabled">First</span>
+                          <span class="disabled">Previous</span>
                         <?php endif; ?>
-                      <?php endfor; ?>
 
-                      <?php if ($page < $total_pages): ?>
-                        <a href="?page=<?php echo $page + 1; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
-                        <a href="?page=<?php echo $total_pages; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
-                      <?php else: ?>
-                        <span class="disabled">Next</span>
-                        <span class="disabled">Last</span>
-                      <?php endif; ?>
+                        <?php
+                        $start_page = max(1, $page - 2);
+                        $end_page = min($total_pages, $page + 2);
+
+                        for ($p = $start_page; $p <= $end_page; $p++):
+                        ?>
+                          <?php if ($p == $page): ?>
+                            <span class="current"><?php echo $p; ?></span>
+                          <?php else: ?>
+                            <a href="?page=<?php echo $p; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                          <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if ($page < $total_pages): ?>
+                          <a href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+                          <a href="?page=<?php echo $total_pages; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+                        <?php else: ?>
+                          <span class="disabled">Next</span>
+                          <span class="disabled">Last</span>
+                        <?php endif; ?>
+                      </div>
                     </div>
                   <?php endif; ?>
 
                   <!-- Results Count -->
                   <?php if ($total_records > 0): ?>
                     <div class="results-count">
-                      Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $records_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                      Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $current_per_page, $total_records); ?> of <?php echo $total_records; ?> records
                       <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
                         (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
                       <?php endif; ?>
@@ -489,6 +508,14 @@ require 'include/footer.php';
       });
     });
   });
+
+  function updatePerPage(value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', value);
+    // Reset to first page when changing items per page
+    url.searchParams.set('page', 1);
+    window.location.href = url.toString();
+  }
 </script>
 
 <!-- Same CSS as users table -->
@@ -496,6 +523,23 @@ require 'include/footer.php';
   .search-container .input-group {
     max-width: 600px;
     margin: 0 auto;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+  }
+
+  .per-page-selector {
+    margin-right: 20px;
+  }
+
+  .per-page-selector select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
   }
 
   .pagination {
