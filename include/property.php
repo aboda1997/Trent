@@ -2347,9 +2347,9 @@ WHERE
                 $references['facilities'][$fac['id']] = $fac['title']; // JSON string
             }
             $query = "SELECT 
-            id , title , image , price ,status
+            id , title , image , price ,status,
             address ,description , beds , bathroom , sqrft , city	, created_at , plimit	, floor,
-            security_deposit ,min_days	 ,max_days , guest_rules, video ,period ,is_featured,is_approved
+            security_deposit ,min_days	 ,max_days , guest_rules, video ,period ,is_featured,is_approved,
             compound_name,longitude ,latitude,map_url, cancellation_policy_id,cancel_reason , is_need_review , updated_at,is_deleted,
             ptype,facility,government
         FROM 
@@ -2360,6 +2360,7 @@ WHERE
             $data = [];
 
             while ($row = $sel->fetch_assoc()) {
+           
                 $data[] =   [
 
                     'id' => $row['id'] ?? '',
