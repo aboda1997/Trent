@@ -2323,9 +2323,150 @@ WHERE
                 ],
                 $data
             );
+        } elseif ($_POST["type"] == "export_properties_data") {
+            $references = [];
+
+            // 1. Get all categories
+            $categoryQuery = "SELECT id, title FROM tbl_category";
+            $categoryResult = $rstate->query($categoryQuery);
+            while ($cat = $categoryResult->fetch_assoc()) {
+                $references['categories'][$cat['id']] = $cat['title']; // JSON string
+            }
+
+            // 2. Get all governments
+            $governmentQuery = "SELECT id, name FROM tbl_government";
+            $governmentResult = $rstate->query($governmentQuery);
+            while ($gov = $governmentResult->fetch_assoc()) {
+                $references['governments'][$gov['id']] = $gov['name']; // JSON string
+            }
+
+            // 3. Get all facilities
+            $facilityQuery = "SELECT id, title FROM tbl_facility";
+            $facilityResult = $rstate->query($facilityQuery);
+            while ($fac = $facilityResult->fetch_assoc()) {
+                $references['facilities'][$fac['id']] = $fac['title']; // JSON string
+            }
+            $query = "SELECT 
+            id , title , image , price ,status
+            address ,description , beds , bathroom , sqrft , city	, created_at , plimit	, floor,
+            security_deposit ,min_days	 ,max_days , guest_rules, video ,period ,is_featured,is_approved
+            compound_name,longitude ,latitude,map_url, cancellation_policy_id,cancel_reason , is_need_review , updated_at,is_deleted,
+            ptype,facility,government
+        FROM 
+            tbl_property 
+            ";
+            $sel = $rstate->query($query);
+
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] =   [
+
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'], 'en'),
+                    'title_ar' => getMultilingualValue($row['title'], 'ar'),
+                    'image' => $row['image'] ?? '',
+                    'price' => $row['price'] ?? '',
+                    'status' => $row['status'] ?? '',
+                    'address_en' => getMultilingualValue($row['address'], 'en'),
+                    'address_ar' => getMultilingualValue($row['address'], 'ar'),
+                    'description_en' => getMultilingualValue($row['description'], 'en'),
+                    'description_ar' => getMultilingualValue($row['description'], 'ar'),
+                    'beds' => $row['beds'] ?? '',
+                    'bathroom' => $row['bathroom'] ?? '',
+                    'sqrft' => $row['sqrft'] ?? '',
+                    'city_en' => getMultilingualValue($row['city'], 'en'),
+                    'city_ar' => getMultilingualValue($row['city'], 'ar'),
+                    'created_at' => $row['created_at'] ?? '',
+                    'plimit' => $row['plimit'] ?? '',
+                    'floor_en' => getMultilingualValue($row['floor'], 'en'),
+                    'floor_ar' => getMultilingualValue($row['floor'], 'ar'),
+                    'security_deposit' => $row['security_deposit'] ?? '',
+                    'min_days' => $row['min_days'] ?? '',
+                    'max_days' => $row['max_days'] ?? '',
+                    'guest_rules_en' => getMultilingualValue($row['guest_rules'], 'en'),
+                    'guest_rules_ar' => getMultilingualValue($row['guest_rules'], 'ar'),
+                    'video' => $row['video'] ?? '',
+                    'period' => $row['period'] ?? '',
+                    'is_featured' => $row['is_featured'] ?? '',
+                    'is_approved' => $row['is_approved'] ?? '',
+                    'compound_name_en' => getMultilingualValue($row['compound_name'], 'en'),
+                    'compound_name_ar' => getMultilingualValue($row['compound_name'], 'ar'),
+                    'longitude' => $row['longitude'] ?? '',
+                    'latitude' => $row['latitude'] ?? '',
+                    'map_url' => $row['map_url'] ?? '',
+                    'cancellation_policy_id' => $row['cancellation_policy_id'] ?? '',
+                    'cancel_reason' => $row['cancel_reason'] ?? '',
+                    'is_need_review' => $row['is_need_review'] ?? '',
+                    'updated_at' => $row['updated_at'] ?? '',
+                    'is_deleted' => $row['is_deleted'] ?? '',
+                    'facilities' => getFacilityNames($row['facility'] ?? '', $references),
+                    'property_type_en' => getMultilingualReference($row['ptype'], 'categories', $references, 'en'),
+                    'property_type_ar' => getMultilingualReference($row['ptype'], 'categories', $references, 'ar'),
+                    'government_en' => getMultilingualReference($row['government'], 'governments', $references, 'en'),
+                    'government_ar' => getMultilingualReference($row['government'], 'governments', $references, 'ar')
+                ];
+            }
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "template Exported Successfully!!",
+                "message" => "APProval section!",
+                "action" => "campings.php",
+            ];
+            downloadXLS(
+
+                // Updated headers
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Image URL',
+                    'Price',
+                    'Status',
+                    'Address (English)',
+                    'Address (Arabic)',
+                    'Description (English)',
+                    'Description (Arabic)',
+                    'Number of Beds',
+                    'Number of Bathrooms',
+                    'Square Footage',
+                    'City (English)',
+                    'City (Arabic)',
+                    'Created Date',
+                    'Price Limit',
+                    'Floor (English)',
+                    'Floor (Arabic)',
+                    'Security Deposit',
+                    'Minimum Stay (Days)',
+                    'Maximum Stay (Days)',
+                    'Guest Rules (English)',
+                    'Guest Rules (Arabic)',
+                    'Video URL',
+                    'Rental Period',
+                    'Is Featured?',
+                    'Is Approved?',
+                    'Compound Name (English)',
+                    'Compound Name (Arabic)',
+                    'Longitude',
+                    'Latitude',
+                    'Map URL',
+                    'Cancellation Policy ID',
+                    'Cancellation Reason',
+                    'Needs Review?',
+                    'Updated Date',
+                    'Is Deleted?',
+                    'Facilities',
+                    'Property Type (English)',
+                    'Property Type (Arabic)',
+                    'Government (English)',
+                    'Government (Arabic)'
+                ],
+                $data
+            );
         } else if ($_POST["type"] == "upload_whats-up-campings") {
             $h = new Estate();
-            $h->restateDeleteData_Api('' , 'tbl_uploaded_excel_data');
+            $h->restateDeleteData_Api('', 'tbl_uploaded_excel_data');
             $rows = parseExcelFile();
             // Get all rows and remove header (first row)
             $header = array_shift($rows); // Remove and discard header row
@@ -2902,4 +3043,35 @@ function parseExcelFile()
     } catch (Exception $e) {
         throw new Exception("Error reading file: " . $e->getMessage());
     }
+}
+// Function to decode JSON multilingual fields
+function getMultilingualValue($jsonString, $lang)
+{
+    if (empty($jsonString)) return '';
+    if (is_array($jsonString)) return $jsonString[$lang] ?? reset($jsonString);
+    $decoded = json_decode($jsonString, true);
+    return $decoded[$lang] ?? (is_array($decoded) ? reset($decoded) : $jsonString);
+}
+
+// Function to get multilingual names from reference IDs
+function getMultilingualReference($id, $referenceType, $references, $lang)
+{
+    if (empty($id)) return '';
+    $refData = $references[$referenceType][$id] ?? null;
+    return $refData ? getMultilingualValue($refData, $lang) : '';
+}
+
+// Function to get facility names from comma-separated IDs
+function getFacilityNames($facilityIds, $references)
+{
+    if (empty($facilityIds)) return '';
+    $ids = explode(',', $facilityIds);
+    $names = [];
+    foreach ($ids as $id) {
+        $id = trim($id);
+        if (isset($references['facilities'][$id])) {
+            $names[] = getMultilingualValue($references['facilities'][$id], 'en');
+        }
+    }
+    return implode(', ', $names);
 }
