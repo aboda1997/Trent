@@ -2325,7 +2325,7 @@ WHERE
             );
         } elseif ($_POST["type"] == "export_properties_data") {
             $references = [];
-
+            $approved = $_POST["approved"];
             // 1. Get all categories
             $categoryQuery = "SELECT id, title FROM tbl_category";
             $categoryResult = $rstate->query($categoryQuery);
@@ -2354,6 +2354,8 @@ WHERE
             ptype,facility,government
         FROM 
             tbl_property 
+        where 
+            is_approved = $approved
             ";
             $sel = $rstate->query($query);
 

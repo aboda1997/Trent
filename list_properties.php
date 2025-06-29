@@ -56,6 +56,7 @@ if (!in_array('Read_Property', $per)) {
                   <form id="exportForm" method="get" class="col-sm-12">
                     <div class="row justify-content-end align-items-start">
                       <input type="hidden" name="type" value="export_properties_data" />
+                      <input type="hidden" name="approved" value="1" />
 
                       <!-- Export Button -->
                       <div class="col-md-2">
