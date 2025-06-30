@@ -2256,8 +2256,8 @@ WHERE
                     $row['name'],
                     $row['ccode'] . $row['mobile'],
                     $row['booking_count'],
-                    $row['booking_total']
-                ];
+number_format($row['booking_total'] ?? 0, 2, '.', '')         
+       ];
             }
             $returnArr = [
                 "ResponseCode" => "200",
