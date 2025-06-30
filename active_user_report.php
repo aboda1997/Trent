@@ -156,7 +156,7 @@ if (!in_array('Read_Report', $per)) {
                                                         <td><?php echo htmlspecialchars($row['name']); ?></td>
                                                         <td><?php echo htmlspecialchars($row['ccode'] . htmlspecialchars($row['mobile'])); ?></td>
                                                         <td><?php echo htmlspecialchars($row['booking_count']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['booking_total']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['booking_total'] ?? ''); ?></td>
                                                     </tr>
                                             <?php
                                                     $i++;
