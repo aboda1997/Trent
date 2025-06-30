@@ -163,7 +163,7 @@ try {
 	}
 			$query .= " ORDER  BY p.visibility ASC   ";
 
-	var_dump($query);
+	//var_dump($query);
 
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
