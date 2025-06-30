@@ -26,10 +26,16 @@ try {
 		$imageArray = array_filter( explode(',', $sel['image'] ?? '') );
 
 		// Loop through each image URL and push to $vr array
-		foreach ($imageArray as $image) {
-			$vr[] = array('img' => trim($image), 'is_panorama' => 0);
-		}
+		
+	foreach ($imageArray as $index => $image) {
+			// First image gets is_panorama = 1, others get 0
+			$is_panorama = ($index === 0) ? 1 : 0;
 
+			$vr[] = array(
+				'img' => trim($image),
+				'is_panorama' => $is_panorama
+			);
+		}
 		$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
 		while ($rk = $get_extra->fetch_assoc()) {
 			array_push($vr, array('img' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
