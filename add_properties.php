@@ -352,7 +352,7 @@ if (isset($_GET['id'])) {
 														<input type="file" class="form-control" id="prop_img_upload_edit" name="prop_img[]" accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="edit_property" />
 														<input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
-
+														<input type="hidden" name="default_image" id="default_image">
 														<!-- Hidden input to track remaining existing images -->
 														<input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
 														<!-- Hidden input to track new image URLs -->
@@ -824,14 +824,14 @@ if (isset($_GET['id'])) {
 												<?= $lang_en['Edit_Property'] ?>
 											</button>
 
-												<!-- Show Approve button if not approved (status = 0) -->
-												<button type="submit" onclick="handleApprove()" id = 'approve_property' name="approve_property" class="btn btn-success ml-2">
-													<?= $lang_en['Approve'] ?>
-												</button>
-												<!-- Show Reject button if already approved (status = 1) -->
-												<button type="submit" onclick="return handleReject();" id = 'reject_property' name="reject_property" class="btn btn-danger ml-2">
-													<?= $lang_en['Reject'] ?>
-												</button>
+											<!-- Show Approve button if not approved (status = 0) -->
+											<button type="submit" onclick="handleApprove()" id='approve_property' name="approve_property" class="btn btn-success ml-2">
+												<?= $lang_en['Approve'] ?>
+											</button>
+											<!-- Show Reject button if already approved (status = 1) -->
+											<button type="submit" onclick="return handleReject();" id='reject_property' name="reject_property" class="btn btn-danger ml-2">
+												<?= $lang_en['Reject'] ?>
+											</button>
 											<input type="hidden" name="approved" id="approvedInput" value="">
 
 										</div>
@@ -1061,6 +1061,7 @@ if (isset($_GET['id'])) {
 														<input type="file" class="form-control" id="prop_img_upload_add" name="prop_img[]" required accept=".jpg, .jpeg, .png, .gif" multiple />
 														<input type="hidden" name="type" value="add_property" />
 														<input type="hidden" id="existing_images" name="existing_images" value="<?= htmlspecialchars($data['image'] ?? '') ?>">
+														<input type="hidden" name="default_image" id="default_image">
 
 														<div id="upload-preview-container" style="margin-top:15px; display:none;">
 															<div class="slides-container" style="height:120px; position:relative; overflow:hidden;">
@@ -1694,7 +1695,7 @@ if (isset($_GET['id'])) {
 			isValid = false;
 		}
 
-	
+
 
 		if (!plimit) {
 			document.getElementById('limit_feedback').style.display = 'block';
@@ -1765,7 +1766,7 @@ if (isset($_GET['id'])) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
 		document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
 		document.getElementById('cancel_reason').textContent = langData.cancel_reason;
-		
+
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
 		document.getElementById('status_feedback').textContent = langData.property_status;
@@ -1808,12 +1809,12 @@ if (isset($_GET['id'])) {
 
 		} else {
 			document.querySelector('button[type="submit"]').textContent = langData.Edit_Property;
-		document.getElementById('approve_property').textContent = langData.Approve;
-		document.getElementById('reject_property').textContent = langData.Reject;
+			document.getElementById('approve_property').textContent = langData.Approve;
+			document.getElementById('reject_property').textContent = langData.Reject;
 
 		}
 
-		
+
 		const statusSelect = document.getElementById('inputGroupSelect01');
 		statusSelect.querySelector('option[value=""]').textContent = langData.Select_property_Status;
 		statusSelect.querySelector('option[value="1"]').textContent = langData.Publish;
@@ -1864,7 +1865,6 @@ if (isset($_GET['id'])) {
 
 	}
 </script>
-
 <script>
 	class ImageSlider {
 		constructor(options) {
@@ -1878,6 +1878,7 @@ if (isset($_GET['id'])) {
 			this.fileInput = options.fileInput || null;
 			this.slideWidth = options.slideWidth || 150;
 			this.previewModal = null; // Reference to the preview modal
+			this.defaultImageIndex = 0; // Track the default image index
 
 			this.initialize();
 		}
@@ -1894,6 +1895,7 @@ if (isset($_GET['id'])) {
 
 			if (reset) {
 				this.images = []; // Clear existing images if reset is true
+				this.defaultImageIndex = 0;
 			}
 
 			const newImages = [];
@@ -1945,14 +1947,29 @@ if (isset($_GET['id'])) {
 				slide.style.padding = '5px';
 				slide.style.position = 'relative';
 
+				// Add blue border wrapper if this is the default image
+				if (index === this.defaultImageIndex) {
+					slide.style.border = '3px solid #007bff';
+					slide.style.borderRadius = '5px';
+				}
+
+				const imgWrapper = document.createElement('div');
+				imgWrapper.style.width = '100%';
+				imgWrapper.style.height = '100px';
+				imgWrapper.style.position = 'relative';
+				imgWrapper.style.overflow = 'hidden';
+
 				const img = document.createElement('img');
 				img.src = image.url;
 				img.className = 'img-thumbnail';
 				img.style.width = '100%';
-				img.style.height = '100px';
+				img.style.height = '100%';
 				img.style.objectFit = 'cover';
 				img.style.cursor = 'pointer';
-				img.addEventListener('click', () => this.showImagePreview(image.url));
+				img.addEventListener('click', () => {
+					// Show preview when clicked in slider view
+					this.showImagePreview(image.url, index);
+				});
 
 				const removeBtn = document.createElement('button');
 				removeBtn.type = 'button';
@@ -1967,7 +1984,8 @@ if (isset($_GET['id'])) {
 					this.removeImage(index);
 				});
 
-				slide.appendChild(img);
+				imgWrapper.appendChild(img);
+				slide.appendChild(imgWrapper);
 				slide.appendChild(removeBtn);
 				this.slidesWrapper.appendChild(slide);
 			});
@@ -1976,13 +1994,46 @@ if (isset($_GET['id'])) {
 			this.updateFileInput();
 		}
 
+		setDefaultImage(index) {
+			if (index < 0 || index >= this.images.length) return;
+
+			// Get the image that will become default
+			const imageToMakeDefault = this.images[index];
+		
+			// Remove the image from its current position
+			this.images.splice(index, 1);
+
+			// Add it to the beginning of the array
+			this.images.unshift(imageToMakeDefault);
+
+			// Update the default image index (now it's 0)
+			this.defaultImageIndex = 0;
+
+			this.renderSlides();
+
+		}
+
+		handleDefaultImageChange() {
+			// This can be overridden in child classes if needed
+			console.log('Default image changed to index:', this.defaultImageIndex);
+		}
+
 		removeImage(index) {
+			// Adjust defaultImageIndex if we're removing the current default
+			if (index < this.defaultImageIndex) {
+				this.defaultImageIndex--;
+			} else if (index === this.defaultImageIndex) {
+				// If we're removing the default, set the first image as default
+				this.defaultImageIndex = 0;
+			}
+
 			this.images.splice(index, 1);
 			this.renderSlides();
 
 			if (this.images.length === 0) {
 				this.slidesWrapper.innerHTML = '';
 				if (this.fileInput) this.fileInput.value = '';
+				this.defaultImageIndex = 0;
 			}
 		}
 
@@ -1994,12 +2045,17 @@ if (isset($_GET['id'])) {
 			this.fileInput.files = dataTransfer.files;
 		}
 
-		showImagePreview(imageUrl) {
+		showImagePreview(imageUrl, imageIndex) {
 			if (!this.previewModal) {
 				this.createPreviewModal();
 			}
 
-			this.previewModal.querySelector('img').src = imageUrl;
+			const modalImg = this.previewModal.querySelector('img');
+			modalImg.src = imageUrl;
+
+			// Store the current image index in the modal
+			this.previewModal.dataset.currentIndex = imageIndex;
+
 			this.showModal();
 		}
 
@@ -2019,7 +2075,10 @@ if (isset($_GET['id'])) {
                         </button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="" style="max-width: 100%; max-height: 80vh;">
+                        <img src="" style="max-width: 100%; max-height: 80vh; cursor: pointer;">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary set-default-btn">Set as Default</button>
                     </div>
                 </div>
             </div>
@@ -2029,6 +2088,16 @@ if (isset($_GET['id'])) {
 			// Add close event listener
 			const closeBtn = this.previewModal.querySelector('.close');
 			closeBtn.addEventListener('click', () => this.hideModal());
+
+
+
+			// Add click handler for the "Set as Default" button
+			const setDefaultBtn = this.previewModal.querySelector('.set-default-btn');
+			setDefaultBtn.addEventListener('click', () => {
+				const currentIndex = parseInt(this.previewModal.dataset.currentIndex);
+				this.setDefaultImage(currentIndex);
+				this.hideModal();
+			});
 		}
 
 		showModal() {
@@ -2145,17 +2214,65 @@ if (isset($_GET['id'])) {
 			this.existingImagesInput = document.getElementById('existing_images');
 			this.existingImages = this.existingImagesInput.value ? this.existingImagesInput.value.split(',') : [];
 			this.newUploads = []; // Stores File objects of new uploads
-			this.newImageUrls = []; // Stores data URLs of new images
+			this.defaultImageInput = document.getElementById('default_image'); // Hidden input for default image
 
 			// Initialize with existing images
 			if (this.existingImages.length > 0) {
 				this.images = this.existingImages.map((url, index) => ({
 					url: url,
 					isNew: false,
-					originalIndex: index
+					file: null // No file object for existing images
 				}));
 				this.renderSlides();
+
+				// Initialize default image if not set
+				if (this.defaultImageInput.value && this.defaultImageInput.value !== '') {
+					const defaultIndex = this.images.findIndex(img => img.url === this.defaultImageInput.value);
+					if (defaultIndex !== -1) {
+						this.defaultImageIndex = defaultIndex;
+					}
+				}
 			}
+		}
+
+		handleDefaultImageChange() {
+			if (this.images.length > 0 && this.defaultImageInput) {
+				const defaultImage = this.images[this.defaultImageIndex];
+				// Set the default image URL in the hidden input
+				this.defaultImageInput.value = defaultImage.url;
+
+				// Optional: You can make an API call here to update the default image on the server
+				// this.updateDefaultImageOnServer(defaultImage.url);
+			}
+		}
+
+		setDefaultImage(index) {
+			if (index < 0 || index >= this.images.length) return;
+
+			// Get the image that will become default
+			const imageToMakeDefault = this.images[index];
+			// If it's an existing image (not new), remove it from existingImages array
+			if (!imageToMakeDefault.isNew) {
+				const existingIndex = this.existingImages.indexOf(imageToMakeDefault.url);
+				if (existingIndex !== -1) {
+					this.existingImages.splice(existingIndex, 1);
+				}
+			}else {
+				this.defaultImageInput.value = "";
+
+			}
+			// Remove the image from its current position
+			this.images.splice(index, 1);
+
+			// Add it to the beginning of the array
+			this.images.unshift(imageToMakeDefault);
+
+			// Update the default image index (now it's 0)
+			this.defaultImageIndex = 0;
+
+			this.renderSlides();
+			this.handleDefaultImageChange();
+			this.updateHiddenInputs();
 		}
 
 		updateSlides(files) {
@@ -2163,6 +2280,8 @@ if (isset($_GET['id'])) {
 
 			// Filter out duplicates
 			const newFiles = Array.from(files).filter(file => {
+				if (!file.type.match('image.*')) return false;
+
 				// Check against new uploads
 				const isNewDuplicate = this.newUploads.some(
 					f => f.name === file.name && f.size === file.size
@@ -2174,7 +2293,7 @@ if (isset($_GET['id'])) {
 					url => url.toLowerCase().includes(existingFilename)
 				);
 
-				return file.type.match('image.*') && !isNewDuplicate && !isExistingDuplicate;
+				return !isNewDuplicate && !isExistingDuplicate;
 			});
 
 			if (newFiles.length === 0) return;
@@ -2194,14 +2313,17 @@ if (isset($_GET['id'])) {
 						file: file
 					};
 
-					// PREPEND new images (add to beginning)
+					// Add new images to the beginning
 					this.images.unshift(newImage);
-					this.newImageUrls.unshift(e.target.result);
-
 					loadedCount++;
 
 					if (loadedCount === newFiles.length) {
-						// Force full re-render to maintain proper order
+						// If this is the first image being added, set it as default
+						if (this.images.length === newFiles.length) {
+							this.defaultImageIndex = 0;
+							this.handleDefaultImageChange();
+						}
+
 						this.renderSlides();
 						this.updateHiddenInputs();
 
@@ -2220,22 +2342,59 @@ if (isset($_GET['id'])) {
 				.filter(img => !img.isNew)
 				.map(img => img.url);
 			this.existingImagesInput.value = remainingExisting.join(',');
-
-			// Update new images input
-			const newImageUrls = this.images
-				.filter(img => img.isNew)
-				.map(img => img.url);
-			// You might want to add this if you need to track new image URLs separately
-			// this.newImagesInput.value = newImageUrls.join(',');
 		}
 
 		renderSlides() {
 			this.slidesWrapper.innerHTML = '';
 			this.currentSlide = 0;
 
-			// Render all images (new ones will be first since we unshifted them)
 			this.images.forEach((image, index) => {
-				const slide = this.createSlideElement(image, index);
+				const slide = document.createElement('div');
+				slide.className = image.isNew ? 'slide new-image' : 'slide existing-image';
+				slide.dataset.index = index;
+				slide.style.minWidth = `${this.slideWidth}px`;
+				slide.style.padding = '5px';
+				slide.style.position = 'relative';
+
+				// Add blue border wrapper if this is the default image
+				if (index === this.defaultImageIndex) {
+					slide.style.border = '3px solid #007bff';
+					slide.style.borderRadius = '5px';
+				}
+
+				const imgWrapper = document.createElement('div');
+				imgWrapper.style.width = '100%';
+				imgWrapper.style.height = '100px';
+				imgWrapper.style.position = 'relative';
+				imgWrapper.style.overflow = 'hidden';
+
+				const img = document.createElement('img');
+				img.src = image.url;
+				img.className = 'img-thumbnail';
+				img.style.width = '100%';
+				img.style.height = '100%';
+				img.style.objectFit = 'cover';
+				img.style.cursor = 'pointer';
+				img.addEventListener('click', () => {
+					this.showImagePreview(image.url, index);
+				});
+
+				const removeBtn = document.createElement('button');
+				removeBtn.type = 'button';
+				removeBtn.className = 'btn btn-danger btn-xs remove-image';
+				removeBtn.innerHTML = '×';
+				removeBtn.style.position = 'absolute';
+				removeBtn.style.top = '5px';
+				removeBtn.style.right = '5px';
+				removeBtn.style.padding = '0 5px';
+				removeBtn.addEventListener('click', (e) => {
+					e.stopPropagation();
+					this.removeImage(index);
+				});
+
+				imgWrapper.appendChild(img);
+				slide.appendChild(imgWrapper);
+				slide.appendChild(removeBtn);
 				this.slidesWrapper.appendChild(slide);
 			});
 
@@ -2250,56 +2409,23 @@ if (isset($_GET['id'])) {
 			this.fileInput.files = dataTransfer.files;
 		}
 
-		createSlideElement(image, index) {
-			const slide = document.createElement('div');
-			slide.className = image.isNew ? 'slide new-image' : 'slide existing-image';
-			slide.dataset.index = index;
-			slide.style.minWidth = `${this.slideWidth}px`;
-			slide.style.padding = '5px';
-			slide.style.position = 'relative';
-
-			const img = document.createElement('img');
-			img.src = image.url;
-			img.className = 'img-thumbnail';
-			img.style.width = '100%';
-			img.style.height = '100px';
-			img.style.objectFit = 'cover';
-			img.style.cursor = 'pointer';
-			img.addEventListener('click', () => this.showImagePreview(image.url));
-
-			const removeBtn = document.createElement('button');
-			removeBtn.type = 'button';
-			removeBtn.className = 'btn btn-danger btn-xs remove-image';
-			removeBtn.innerHTML = '×';
-			removeBtn.style.position = 'absolute';
-			removeBtn.style.top = '5px';
-			removeBtn.style.right = '5px';
-			removeBtn.style.padding = '0 5px';
-			removeBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				this.removeImage(index);
-			});
-			slide.appendChild(removeBtn);
-
-			slide.appendChild(img);
-			return slide;
-		}
-
 		removeImage(index) {
 			const imageToRemove = this.images[index];
 
-			if (imageToRemove.isNew) {
-				// Remove from new images tracking
-				const urlIndex = this.newImageUrls.indexOf(imageToRemove.url);
-				if (urlIndex > -1) {
-					this.newImageUrls.splice(urlIndex, 1);
-				}
+			// Adjust defaultImageIndex if needed
+			if (index < this.defaultImageIndex) {
+				this.defaultImageIndex--;
+			} else if (index === this.defaultImageIndex) {
+				// If removing the default image, set first image as default
+				this.defaultImageIndex = 0;
+				this.handleDefaultImageChange();
+			}
 
-				// Remove corresponding File object
-				const filename = imageToRemove.url.split('/').pop();
-				this.newUploads = this.newUploads.filter(file => !file.name.includes(filename));
+			if (imageToRemove.isNew) {
+				// Remove from new uploads
+				this.newUploads = this.newUploads.filter(file => file !== imageToRemove.file);
 			} else {
-				// Remove from existing images tracking
+				// Remove from existing images
 				this.existingImages = this.existingImages.filter(url => url !== imageToRemove.url);
 			}
 
@@ -2313,6 +2439,8 @@ if (isset($_GET['id'])) {
 			// Hide container if no images left
 			if (this.images.length === 0) {
 				document.getElementById('images-slider-container').style.display = 'none';
+				this.defaultImageIndex = 0;
+				this.defaultImageInput.value = ''; // Clear default image when no images left
 			}
 		}
 	}
@@ -2334,46 +2462,46 @@ if (isset($_GET['id'])) {
 		});
 	});
 </script>
-
 <script>
-function handleApprove() {
-    // 1. First validate the form
-    if (validateForm(true)) {
-        // 2. If validation passes, set approval value
-        document.getElementById('approvedInput').value = '1';
-        // 3. Submit the form
-        document.querySelector('form').submit();
-        return true;
-    }
-    // If validation fails, block submission
-    return false;
-}
-function handleReject() {
-    // First show the cancel reason if it's not visible
-    const cancelReasonContainer = document.getElementById('cancel-reason-container');
-    if (cancelReasonContainer.style.display === 'none') {
-        cancelReasonContainer.style.display = 'block';
-        return false; // Don't submit yet
-    }
-    
-    // Validate the form including the cancel reason
-    if (validateForm(true)) {
-        // Check if cancel reason is filled
-        const cancelReason = document.querySelector('input[name="cancel_reason"]').value;
-        if (!cancelReason.trim()) {
-            document.getElementById('cancel_reason_feedback').style.display = 'block';
-            return false;
-        }
-        
-        // Set approval value to 0 or whatever indicates rejection
-        document.getElementById('approvedInput').value = '0';
-        
-        // Submit the form
-        document.querySelector('form').submit();
-        return true;
-    }
-    return false;
-}
+	function handleApprove() {
+		// 1. First validate the form
+		if (validateForm(true)) {
+			// 2. If validation passes, set approval value
+			document.getElementById('approvedInput').value = '1';
+			// 3. Submit the form
+			document.querySelector('form').submit();
+			return true;
+		}
+		// If validation fails, block submission
+		return false;
+	}
+
+	function handleReject() {
+		// First show the cancel reason if it's not visible
+		const cancelReasonContainer = document.getElementById('cancel-reason-container');
+		if (cancelReasonContainer.style.display === 'none') {
+			cancelReasonContainer.style.display = 'block';
+			return false; // Don't submit yet
+		}
+
+		// Validate the form including the cancel reason
+		if (validateForm(true)) {
+			// Check if cancel reason is filled
+			const cancelReason = document.querySelector('input[name="cancel_reason"]').value;
+			if (!cancelReason.trim()) {
+				document.getElementById('cancel_reason_feedback').style.display = 'block';
+				return false;
+			}
+
+			// Set approval value to 0 or whatever indicates rejection
+			document.getElementById('approvedInput').value = '0';
+
+			// Submit the form
+			document.querySelector('form').submit();
+			return true;
+		}
+		return false;
+	}
 </script>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
