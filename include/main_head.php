@@ -155,6 +155,38 @@ $lang_en = load_specific_langauage('en');
     }
     
     </script>
+    
+<script>
+$(document).ready(function() {
+    // When "View Details" button is clicked
+    $(".preview_d").click(function() {
+        var orderId = $(this).data('id'); // Get the order ID from data-id attribute
+        var modalBody = $(".modal-body.p_data"); // Target modal body
+        
+        // Show loading spinner (optional)
+        modalBody.html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
+        
+        // Load content via AJAX
+        $.ajax({
+            url: 'order_product_data.php', // Path to your PHP file
+            type: 'Post',
+            data: { pid: orderId }, // Pass the order ID as a parameter
+            success: function(response) {
+                modalBody.html(response); // Insert the response into the modal
+            },
+            error: function(xhr, status, error) {
+                modalBody.html('<div class="alert alert-danger">Failed to load data.</div>');
+                console.error("AJAX Error:", error);
+            }
+        });
+    });
+    
+    // Optional: Clear modal content when closed
+    $('#myModal').on('hidden.bs.modal', function () {
+        $(".modal-body.p_data").html(''); // Empty the modal body
+    });
+});
+</script>
     <!-- tap on top starts-->
     <div class="tap-top"><i data-feather="chevrons-up"></i></div>
     <!-- tap on tap ends-->

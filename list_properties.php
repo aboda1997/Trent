@@ -110,6 +110,8 @@ if (!in_array('Read_Property', $per)) {
                         <th>Government</th>
                         <th>City</th>
                         <th>Compound</th>
+                        <th>Added by</th>
+                        <th> Mobile Number </th>
                         <th>Created At</th>
                         <th>Updated At</th>
                         <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
@@ -168,6 +170,9 @@ if (!in_array('Read_Property', $per)) {
                         while ($row = $result->fetch_assoc()) {
                           $title = json_decode($row['title'], true);
                           $government = $row['government'];
+                          $added_by = $row['add_user_id'];
+                          $user_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$added_by)->fetch_assoc();
+
                           $city = json_decode($row['city'] ?? '', true);
                           $compound_name = json_decode($row['compound_name'] ?? "", true);
                       ?>
@@ -236,6 +241,8 @@ if (!in_array('Read_Property', $per)) {
                             </td>
                             <td><?php echo htmlspecialchars($city[$lang_code] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($compound_name[$lang_code] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($user_data['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user_data['ccode'] .$user_data['mobile'] ); ?></td>
 
                             <td><?php echo htmlspecialchars($row['created_at']); ?></td>
                             <td><?php echo htmlspecialchars($row['updated_at']); ?></td>
@@ -296,7 +303,7 @@ if (!in_array('Read_Property', $per)) {
                         <label for="per_page">Items per page:</label>
                         <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
                           <?php
-                          $per_page_options = [ 10, 20, 25,  50, 100 ,200];
+                          $per_page_options = [10, 20, 25,  50, 100, 200];
                           $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
                           foreach ($per_page_options as $option):
                           ?>
