@@ -2185,12 +2185,27 @@ WHERE
             $data = [];
 
             while ($row = $sel->fetch_assoc()) {
-                $data[] =   [
+                $client_id = $row['uid'];
+                $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+
+                $owner_id = $row['add_user_id'];
+                $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+
+                $data[] = [
                     $row['id'],
+                    $row['prop_id'],
                     $row['trent_fees'],
+                    $row['service_fees'],
+                    $row['subtotal'],
+                    $row['total'],
                     $row['book_date'],
+                    $client_data['name'] ?? '',
+                    ($client_data['ccode'] ?? '') . ($client_data['mobile'] ?? ''),
+                    $owner_data['name'] ?? '',
+                    ($owner_data['ccode'] ?? '') . ($owner_data['mobile'] ?? ''),
                 ];
             }
+
             $returnArr = [
                 "ResponseCode" => "200",
                 "Result" => "true",
@@ -2198,18 +2213,30 @@ WHERE
                 "message" => "APProval section!",
                 "action" => "pending_payout.php",
             ];
+
             downloadXLS(
+                // Updated headers to match all data fields
                 $arabicHeaders = [
-                    'رقم الحجز',
-                    'القيمة',
-                    'تاريخ  الحجز',
+                    'رقم الحجز',         // Booking ID
+                    'رقم التعريفي للعقار',         // Booking ID
+                    'رسوم الإيجار',      // Rent fees
+                    'رسوم الخدمة',       // Service fees
+                    'المجموع الفرعي',    // Subtotal
+                    'المجموع الكلي',    // Total
+                    'تاريخ الحجز',       // Booking date
+                    'اسم العميل',        // Client name
+                    'اتصال العميل',      // Client contact
+                    'اسم المالك',       // Owner name
+                    'اتصال المالك',      // Owner contact
                 ],
                 $data
             );
         } elseif ($_POST["type"] == "Active_User_report") {
             $query = "SELECT 
                 u.*,
-                COUNT(b.id) AS booking_count
+                COUNT(b.id) AS booking_count,
+                sum(b.total) AS booking_total
+
             FROM 
                 tbl_user u
             LEFT JOIN 
@@ -2228,7 +2255,8 @@ WHERE
                     $row['id'],
                     $row['name'],
                     $row['ccode'] . $row['mobile'],
-                    $row['booking_count']
+                    $row['booking_count'],
+                    $row['booking_total']
                 ];
             }
             $returnArr = [
@@ -2244,6 +2272,7 @@ WHERE
                     'اسم المستخدم الكامل',     // User full name
                     'جوال المستخدم',           // User mobile
                     'عدد العقارات المحجوزة',   // Booking count (number of properties booked)
+                    'المجموع الكلي'
 
                 ],
                 $data
@@ -2252,13 +2281,17 @@ WHERE
             $query = "SELECT 
             u.*,
             COUNT(b.id) AS booking_count
-            ,b.prop_title AS title
+            ,b.prop_title AS title,
+            sum(b.total_day) AS days
+
         FROM 
             tbl_user u
         LEFT JOIN 
-            tbl_book b ON u.id = b.add_user_id AND b.book_status IN ('Check_in', 'Confirmed')
+            tbl_book b ON u.id = b.add_user_id 
+        where  
+             b.book_status IN ('Check_in', 'Confirmed')
         GROUP BY 
-            u.id
+             b.add_user_id
         ORDER BY 
             booking_count DESC;";
             $sel = $rstate->query($query);
@@ -2271,7 +2304,8 @@ WHERE
                     json_decode($row['title'], true)['en'] ?? '',
                     $row['name'],
                     $row['ccode'] . $row['mobile'],
-                    $row['booking_count']
+                    $row['booking_count'],
+                    $row['days'],
                 ];
             }
             $returnArr = [
@@ -2288,6 +2322,7 @@ WHERE
                     'اسم المالك',      // Owner name
                     'جوال المالك',     // Owner mobile
                     'عدد الحجوزات',    // Booking count
+                    'مجموع الايام'
                 ],
                 $data
             );
@@ -2363,14 +2398,19 @@ WHERE
 
             while ($row = $sel->fetch_assoc()) {
 
+                $owner_id = $row['add_user_id'];
+                $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+
                 $data[] =   [
 
                     'id' => $row['id'] ?? '',
+                    'owner_name' => $owner_data['name'] ?? '',
+                    'owner_contact' => ($owner_data['ccode'] ?? '') . ($owner_data['mobile'] ?? ''),
                     'title_en' => getMultilingualValue($row['title'], 'en'),
                     'title_ar' => getMultilingualValue($row['title'], 'ar'),
                     'image' => $row['image'] ?? '',
                     'price' => $row['price'] ?? '',
-                    'status' => $row['status'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
                     'address_en' => getMultilingualValue($row['address'], 'en'),
                     'address_ar' => getMultilingualValue($row['address'], 'ar'),
                     'description_en' => getMultilingualValue($row['description'], 'en'),
@@ -2422,6 +2462,8 @@ WHERE
                 // Updated headers
                 $headers = [
                     'ID',
+                    'Owner Name',
+                    'Owner Mobile',
                     'Title (English)',
                     'Title (Arabic)',
                     'Image URL',
@@ -2464,6 +2506,365 @@ WHERE
                     'Property Type (Arabic)',
                     'Government (English)',
                     'Government (Arabic)'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_booking_data") {
+            $book_status = $_POST["book_status"];
+            $query = "SELECT 
+            id, book_date, prop_id, check_in, check_out, method_key, book_status, prop_price, total_day, prop_title,
+            noguest, pay_status,total,confirmed_at, uid	 ,add_user_id ,cancel_by, cancle_reason  
+        FROM 
+            tbl_book
+        WHERE 
+            book_status = '$book_status'";
+            $sel = $rstate->query($query);
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $client_id = $row['uid'];
+                $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+
+                $owner_id = $row['add_user_id'];
+                $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+                $cancel_by = $row['cancel_by'];
+                $cancel_id = $row['cancle_reason '] ?? 0;
+                $cancel_reason = ($cancel_by == "H")
+                    ? $rstate->query("SELECT reason FROM tbl_cancel_reason WHERE id = $cancel_id")->fetch_assoc()
+                    : $rstate->query("SELECT reason FROM tbl_user_cancel_reason WHERE id = $cancel_id")->fetch_assoc();
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'book_date' => $row['book_date'] ?? '',
+                    'client_name' => $client_data['name'] ?? '',
+                    'client_contact' => ($client_data['ccode'] ?? '') . ($client_data['mobile'] ?? ''),
+                    'owner_name' => $owner_data['name'] ?? '',
+                    'owner_contact' => ($owner_data['ccode'] ?? '') . ($owner_data['mobile'] ?? ''),
+                    'book_date' => $row['book_date'] ?? '',
+                    'prop_id' => $row['prop_id'] ?? '',
+                    'check_in' => $row['check_in'] ?? '',
+                    'check_out' => $row['check_out'] ?? '',
+                    'method_key' => $row['method_key'] ?? '',
+                    'book_status' => $row['book_status'] ?? '',
+                    'prop_price' => $row['prop_price'] ?? '',
+                    'total_day' => $row['total_day'] ?? '',
+                    'noguest' => $row['noguest'] ?? '',
+                    'pay_status' => $row['pay_status'] ?? '',
+                    ...($book_status == 'Cancelled' ? [
+                        'cancel_by' => $cancel_by === 'G' ? 'guest' : 'host',
+                        'cancel_reason' => getMultilingualValue($cancel_reason ?? '', 'en'),
+                    ] : []),
+                    'title_en' => getMultilingualValue($row['prop_title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['prop_title'] ?? '', 'ar'),
+                    'total' => $row['total'] ?? '',
+                    'confirmed_at' => $row['confirmed_at'] ?? '',
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Bookings Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Updated headers with new booking fields
+                $headers = [
+                    'ID',
+                    'Booking Date',
+                    'Guest Name',
+                    'Guest Mobile',
+                    'Host Name',
+                    'Host Mobile',
+                    'Property ID',
+                    'Check-In Date',
+                    'Check-Out Date',
+                    'Payment Method',
+                    'Booking Status',
+                    'Property Price',
+                    'Total Days',
+                    'Number of Guests',
+                    'Payment Status',
+                    // Conditionally add cancel headers
+                    ...($book_status == 'Cancelled' ? [
+                        'Cancelled By',
+                        'Cancellation Reason',
+                    ] : []),
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Final Total',
+                    'Confirmed At'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_category_data") {
+            $query = "SELECT 
+            *
+        FROM 
+            tbl_category
+        ";
+            $sel = $rstate->query($query);
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['title'] ?? '', 'ar'),
+                    'status' => $row['status'] ?? '',
+                    'img' => $row['img'] ?? '',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Updated headers with new booking fields
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Status',
+                    'Image'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_coupon_data") {
+            $query = "SELECT 
+            *
+        FROM 
+            tbl_coupon
+        ";
+            $sel = $rstate->query($query);
+            $data = [];
+
+            while ($row = $sel->fetch_assoc()) {
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['ctitle'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['ctitle'] ?? '', 'ar'),
+                    'des_en' => getMultilingualValue($row['c_desc'] ?? '', 'en'),
+                    'des_ar' => getMultilingualValue($row['c_desc'] ?? '', 'ar'),
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+                    'date' => $row['cdate'] ?? '',
+                    'value' => $row['status'] ?? '',
+                    'min' => $row['min_amt'] ?? '',
+                    'max' => $row['max_amt'] ?? '',
+                    'img' => $row['c_img'] ?? '',
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Updated headers to match all fields in the data array
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Description (English)',
+                    'Description (Arabic)',
+                    'Status',
+                    'Date',
+                    'Value',
+                    'Minimum Amount',
+                    'Maximum Amount',
+                    'Image'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_payout_data") {
+            $payout_status = $_POST["payout_status"];
+
+            $query = "SELECT  p.id as pid,p.requested_at,p.profile_id,b.id, b.total, b.prop_title, b.uid ,b.add_user_id FROM 
+            tbl_payout_list p INNER JOIN tbl_book b ON FIND_IN_SET(b.id, p.book_id) > 0 WHERE p.payout_status = '$payout_status'";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+                $client_id = $row['uid'];
+                $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+
+                $owner_id = $row['add_user_id'];
+                $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+
+                $profile_id = $row['profile_id'];
+                $payment_data = $rstate->query("select pf.uid ,pf.bank_name , pf.bank_account_number , pf.wallet_number , pm.name  from tbl_payout_profiles pf LEFT JOIN tbl_payout_methods pm  on pf.method_id = pm.id   where pf.id= $profile_id")->fetch_assoc();
+
+                $data[] = [
+                    'id' => $row['pid'] ?? '',
+                    'client_name' => $client_data['name'] ?? '',
+                    'client_contact' => ($client_data['ccode'] ?? '') . ($client_data['mobile'] ?? ''),
+                    'owner_name' => $owner_data['name'] ?? '',
+                    'owner_contact' => ($owner_data['ccode'] ?? '') . ($owner_data['mobile'] ?? ''),
+                    'prop_title_en' => getMultilingualValue($row['prop_title'] ?? '', 'en'),
+                    'prop_title_ar' => getMultilingualValue($row['prop_title'] ?? '', 'ar'),
+                    'total' => $row['total'] ?? '',
+                    'date' => $row['requested_at'] ?? '',
+                    'book_id' => $row['id'] ?? '',
+                    'bank_name' => $payment_data['bank_name'] ?? '',
+                    'bank_account_number' => $payment_data['bank_account_number'] ?? '',
+                    'wallet_number' => $payment_data['wallet_number'] ?? '',
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Guest Name',
+                    'Guest Mobile',
+                    'Host Name',
+                    'Host Mobile',
+                    'Property Title (English)',
+                    'Property Title (Arabic)',
+                    'Total Amount',
+                    'Requested  at',
+                    'Booking ID',
+                    'Bank Name',
+                    'Bank Account Number',
+                    'Wallet Number'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_rating_data") {
+
+            $query = "SELECT r.*, b.prop_title, b.prop_id as property_id FROM tbl_rating r 
+                          INNER JOIN tbl_book b ON FIND_IN_SET(b.id, r.book_id) > 0";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+                $client_id = $row['uid'];
+                $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'client_name' => $client_data['name'] ?? '',
+                    'client_contact' => ($client_data['ccode'] ?? '') . ($client_data['mobile'] ?? ''),
+                    'prop_title_en' => getMultilingualValue($row['prop_title'] ?? '', 'en'),
+                    'prop_title_ar' => getMultilingualValue($row['prop_title'] ?? '', 'ar'),
+                    'book_id' => $row['book_id'] ?? '',
+                    'rating' => $row['rating'] ?? '',
+                    'comment' => $row['comment'] ?? '',
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Guest Name',
+                    'Guest Mobile',
+                    'Property Title (English)',
+                    'Property Title (Arabic)',
+                    'Booking ID',
+                    'Rating',
+                    'Comment'
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_user_data") {
+
+            $query = "SELECT * FROM `tbl_user`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+                $check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'user_name' => $row['name'] ?? '',
+                    'user_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
+                    'join_date' => $row['reg_date'] ?? '',
+                    'Property Count' => $check_owner,
+
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'User Name',
+                    'User Mobile',
+                    'Join Date',
+                    'Property Count',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_admin_data") {
+
+            $query = "SELECT * FROM `admin`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'username' => $row['username'] ?? '',
+                    'type' => $row['type'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'UserName',
+                    'Type',
+                    'Status',
+
                 ],
                 $data
             );

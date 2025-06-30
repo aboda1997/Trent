@@ -101,6 +101,8 @@ if (!in_array('Read_Property', $per)) {
                         <th>City</th>
                         <th>Compound</th>
                         <th>Cancel Reason</th>
+                        <th>Added by</th>
+                        <th> Mobile Number </th>
                         <th>Updated At</th>
                         <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
                           <th>Property Approval</th>
@@ -149,6 +151,9 @@ if (!in_array('Read_Property', $per)) {
                           $title = json_decode($row['title'] ?? '', true);
                           $address = json_decode($row['address'] ?? "", true);
                           $government = $row['government'];
+                          $added_by = $row['add_user_id'];
+                          $user_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$added_by)->fetch_assoc();
+
                           $city = json_decode($row['city'] ?? '', true);
                           $compound_name = json_decode($row['compound_name'] ?? '', true);
                       ?>
@@ -188,6 +193,10 @@ if (!in_array('Read_Property', $per)) {
                             <td>
                               <?php echo htmlspecialchars(strlen($row["cancel_reason"]) > 100 ? substr($row["cancel_reason"], 0, 100) . '...' : $row["cancel_reason"]); ?>
                             </td>
+                            <td><?php echo htmlspecialchars($user_data['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user_data['ccode'] . $user_data['mobile']); ?></td>
+
+
                             <td><?php echo htmlspecialchars($row["updated_at"]); ?></td>
 
                             <?php if (in_array('Update_Property', $per) || in_array('Delete_Property', $per)): ?>
