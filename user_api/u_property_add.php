@@ -237,6 +237,12 @@ try {
 		echo $returnArr;
 	} else {
 		if ($check) {
+				$table = "tbl_property";
+                $field = ["visibility" => $check];
+				$where = "where id=" . '?' . "";
+				$h = new Estate();
+				$where_conditions = [$check];
+				$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
 			$returnArr    = generateResponse('true', "Property Added Successfully", 201, array("id" => $check, "title" => json_decode($title_json, true)));
 		} else {
 			$returnArr    = generateResponse('false', "Database error", 500);

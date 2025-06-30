@@ -815,6 +815,20 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
+															>
+															<div class="form-group mb-3">
+																<label id="visibility">
+																	<?= $lang_en['visibility'] ?>
+
+																</label>
+																<input
+																	value="<?php echo $data['visibility']; ?>"
+
+																	type="text" class="form-control numberonly" name="visibility">
+																
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -1766,6 +1780,7 @@ if (isset($_GET['id'])) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
 		document.getElementById('cancel_reason_feedback').textContent = langData.prop_cancel_reason;
 		document.getElementById('cancel_reason').textContent = langData.cancel_reason;
+		document.getElementById('visibility').textContent = langData.visibility;
 
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
@@ -2251,16 +2266,7 @@ if (isset($_GET['id'])) {
 
 			// Get the image that will become default
 			const imageToMakeDefault = this.images[index];
-			// If it's an existing image (not new), remove it from existingImages array
-			if (!imageToMakeDefault.isNew) {
-				const existingIndex = this.existingImages.indexOf(imageToMakeDefault.url);
-				if (existingIndex !== -1) {
-					this.existingImages.splice(existingIndex, 1);
-				}
-			}else {
-				this.defaultImageInput.value = "";
-
-			}
+			
 			// Remove the image from its current position
 			this.images.splice(index, 1);
 
