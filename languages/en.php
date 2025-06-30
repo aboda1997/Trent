@@ -444,6 +444,7 @@ return [
     'booked_already_excluded' => 'This period are booked or already excluded',
     'date_ranges_required' => 'Date ranges array are required ',
     'booking_expired' => 'The time allowed for complete payment has expired',
-    'Not_allow_book_range' => 'Not allow to book this range. try again after some period.'
+    'Not_allow_book_range' => 'Not allow to book this range. try again after some period.',
+    'visibility' =>'visibility'
 
 ];

@@ -1204,6 +1204,12 @@ try {
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
             }
             if ($check) {
+                	$table = "tbl_property";
+                $field = ["visibility" => $check];
+				$where = "where id=" . '?' . "";
+				$h = new Estate();
+				$where_conditions = [$check];
+				$check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
