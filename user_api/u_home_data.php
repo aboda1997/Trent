@@ -26,7 +26,7 @@ try {
 	$rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
 	$guest_count = isset($_GET['guest_count']) ? intval($_GET['guest_count']) : null;
 	$check_in = isset($_GET['check_in']) ? $_GET['check_in'] : null;
-    $check_out = isset($_GET['check_out']) ? $_GET['check_out'] : null;
+	$check_out = isset($_GET['check_out']) ? $_GET['check_out'] : null;
 	$facilitiesArray = json_decode($facilities, true);
 	$usersArray = json_decode($users_list, true);
 
@@ -106,12 +106,12 @@ try {
 		and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) IS NOT NULL
     )";
 	}
-	if ($facilities !== '' ) {
+	if ($facilities !== '') {
 		$facilityConditions = [];
 		foreach ($facilitiesArray as $facility) {
 			$facilityConditions[] = "FIND_IN_SET(" . intval($facility) . ", p.facility)";
 		}
-		if(count($facilityConditions)){
+		if (count($facilityConditions)) {
 			$query .= " AND (" . implode(' OR ', $facilityConditions) . ")";
 		}
 	}
@@ -150,8 +150,8 @@ try {
 		foreach ($usersArray as $user) {
 			$userConditions[] = "FIND_IN_SET(" . intval($user) . ", p.add_user_id)";
 		}
-		if(count($userConditions)){
-		$query .= " AND (" . implode(' OR ', $userConditions) . ")";
+		if (count($userConditions)) {
+			$query .= " AND (" . implode(' OR ', $userConditions) . ")";
 		}
 	}
 	// Add minimum rate condition
@@ -169,12 +169,16 @@ try {
 	while ($row = $sel->fetch_assoc()) {
 		$vr = array();
 		$f = array();
-		$imageArray = array_filter (explode(',', $row['image'] ?? ''));
+		$imageArray = array_filter(explode(',', $row['image'] ?? ''));
 
-		// Loop through each image URL and push to $vr array
-		foreach ($imageArray as $image) {
-			// 'is_panorama' => 0
-			$vr[] = array('img' => trim($image));
+		foreach ($imageArray as $index => $image) {
+			// First image gets is_panorama = 1, others get 0
+			$is_panorama = ($index === 0) ? 1 : 0;
+
+			$vr[] = array(
+				'img' => trim($image),
+				'is_panorama' => $is_panorama
+			);
 		}
 
 		$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
@@ -185,13 +189,13 @@ try {
 		$pol['id'] = $row['id'];
 
 		//$pol['user_id'] = $row['add_user_id'];
-		$titleData = json_decode($row['title']??'', true)[$lang] ?? '';
+		$titleData = json_decode($row['title'] ?? '', true)[$lang] ?? '';
 		$pol['title'] = $titleData;
 
 		$prop = $rstate->query("select title from tbl_category where id=" . $row['ptype'] . "");
 		if ($prop->num_rows > 0) {
 			$propData = $prop->fetch_assoc();
-			$pol['category_type'] = json_decode($propData['title']??'', true)[$lang]??'';
+			$pol['category_type'] = json_decode($propData['title'] ?? '', true)[$lang] ?? '';
 		} else {
 			$pol['category_type'] = null;
 		}
@@ -210,7 +214,7 @@ try {
 		];
 		$pol['period_name'] = $periods[$row['period']][$lang];
 
-		$pol['compound_name'] = json_decode($row['compound_name']??'', true)[$lang]??'';
+		$pol['compound_name'] = json_decode($row['compound_name'] ?? '', true)[$lang] ?? '';
 
 
 		if (is_null($row['government'])) {
@@ -224,7 +228,7 @@ try {
 
 			if ($gov->num_rows > 0) {
 				$tit = $gov->fetch_assoc();
-				$pol['government_name'] = json_decode($tit['name']??'', true)[$lang] ?? '';
+				$pol['government_name'] = json_decode($tit['name'] ?? '', true)[$lang] ?? '';
 			} else {
 				// Handle case when the query fails
 				$pol['government_name'] = null;
@@ -238,7 +242,7 @@ try {
 		$pol['is_approved'] = (bool)$row['is_approved'];
 		$pol['is_need_review'] = (bool)$row['is_need_review'];
 		//$pol['address'] = json_decode($row['address'], true);
-		$pol['city_name'] = json_decode($row['city']??'', true)[$lang]??'';
+		$pol['city_name'] = json_decode($row['city'] ?? '', true)[$lang] ?? '';
 		if ($uid) {
 			$pol['IS_FAVOURITE'] =  (int) $row['IS_FAVOURITE'];
 		} else {
