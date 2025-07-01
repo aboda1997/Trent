@@ -149,7 +149,7 @@ if (!in_array('Read_Booking', $per)) {
                           $host = $rstate->query("SELECT name, mobile,ccode FROM tbl_user WHERE id = $host_id")->fetch_assoc();
                           $guest = $rstate->query("SELECT name, mobile ,ccode FROM tbl_user WHERE id = $guest_id")->fetch_assoc();
 
-                          $cancel_reason = ($cancel_by == "H")
+                          $cancel_reason = ($cancel_by == "Host")
                             ? $rstate->query("SELECT reason FROM tbl_cancel_reason WHERE id = $cancel_id")->fetch_assoc()
                             : $rstate->query("SELECT reason FROM tbl_user_cancel_reason WHERE id = $cancel_id")->fetch_assoc();
                       ?>

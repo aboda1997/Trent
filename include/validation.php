@@ -19,7 +19,7 @@ function validateIdAndDatabaseExistance($id, $table,  $additionalCondition = '')
         }
         // Build and execute the query
         $query = "SELECT id FROM " . $table . " WHERE " . $condition;
-        
+
         //var_dump($query);
         $result = $GLOBALS['rstate']->query($query)->num_rows;
         return $result === 1;
@@ -329,12 +329,12 @@ function validateCheckInDate($booking_id, $timestamp)
     if (strlen($check_in_str) <= 10) {
         $check_in_str .= ' 12:00:00'; // Add default time
     }
-        $check_out_str =  $data['check_out'];
+    $check_out_str =  $data['check_out'];
 
     $check_in = new DateTime($check_in_str, $cairoTimezone);
     $check_out = new DateTime($check_out_str, $cairoTimezone);
     $timestamp = new DateTime($timestamp, $cairoTimezone);
-    
+
     return ($timestamp >= $check_in && $timestamp <= $check_out);
 }
 
@@ -391,6 +391,67 @@ function validateCoupon($cid, $orderTotal)
     // All checks passed → coupon is valid
     return ['status' => true, 'value' => $value];
 }
+
+
+function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges)
+{
+    $lang_ = load_specific_langauage($lang);
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $timestamp = $date->format('Y-m-d');
+
+    if ($uid == '') {
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
+    } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } else if (!in_array($lang, ['en', 'ar'])) {
+        $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
+    } else if ($prop_id  == null) {
+        $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', 'is_deleted =0') === false) {
+        $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
+    } else if ($date_ranges === null || !is_array($date_ranges) || empty($date_ranges)) {
+        $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
+    } else {
+        // Validate each date range in the array
+        [$valid, $message] = validateDateRanges($date_ranges);
+        if (!$valid) {
+            $returnArr = generateResponse('false', $message, 400);
+        } else {
+            // Insert each date range separately
+            $success_count = 0;
+            $h = new Estate();
+            $table = "tbl_increased_value";
+            $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id", $table);
+            foreach ($date_ranges as $range) {
+                $from_date = $range[0];
+                $to_date = $range[1];
+                $value = $range[2];
+
+                $field_values = ["prop_id", "from_date", "to_date", 'increase_value'];
+                $data_values = [$prop_id, $from_date, $to_date, $value];
+
+                $res_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                if ($res_id) {
+                    $success_count++;
+                }
+            }
+
+            if ($success_count == 0) {
+                throw new Exception("Insert failed for all date ranges");
+            }
+
+            $returnArr = generateResponse('true', "increased value Ranges Added Successfully", 200, array(
+                "increased_value_ranges_added" => $date_ranges,
+                "count" => $success_count
+            ));
+        }
+    }
+
+    return   $returnArr;
+}
+
 
 function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
 {
@@ -470,12 +531,14 @@ function validateDateRanges(array $date_ranges): array
 
     foreach ($date_ranges as $range) {
         // Check if range has exactly 2 elements
-        if (!is_array($range) || count($range) != 2) {
+        if (!is_array($range) || count($range) < 2) {
             return [false, "Each date range must be an array with exactly 2 dates [from_date, to_date]"];
         }
 
-        [$from_date, $to_date] = $range;
-
+        // Extract dates + optional value
+        $from_date = $range[0];
+        $to_date   = $range[1];
+        $value     = $range[2] ?? null; // Optional
         // Check presence
         if (empty($from_date) || empty($to_date)) {
             return [false, "Both from_date and to_date are required in each range"];
@@ -489,6 +552,10 @@ function validateDateRanges(array $date_ranges): array
         // Validate date order
         if (strtotime($from_date) >= strtotime($to_date)) {
             return [false, "from_date must be before  to to_date in each range"];
+        }
+        // Validate value if provided (must be integer)
+        if ($value !== null && !is_int($value)) {
+            return [false, " the value must be an integer"];
         }
     }
 
@@ -552,10 +619,11 @@ function getDatesFromRange($start, $end)
     return $dates;
 }
 
-function validatePeriod($booking_id) {
+function validatePeriod($booking_id)
+{
     // Set the timezone to Cairo, Egypt
     $cairoTimezone = new DateTimeZone('Africa/Cairo');
-    
+
     // Database query to get booking information
     $sql = "SELECT confirmed_at, check_in FROM tbl_book WHERE id = " . $booking_id;
     $booking = $GLOBALS['rstate']->query($sql)->fetch_assoc();
@@ -596,25 +664,26 @@ function validatePeriod($booking_id) {
                       SET book_status = 'Cancelled',
                       cancel_by = 'H'
                       WHERE id = $booking_id";
-                      $GLOBALS['rstate']->query($updateSql);
+        $GLOBALS['rstate']->query($updateSql);
     }
     return $valid_cancel;
 }
 
-function validateBookingConflict($from_date, $to_date, $prop_id) {
+function validateBookingConflict($from_date, $to_date, $prop_id)
+{
     // Connect to database (assuming you have a connection already)
     // $db = your database connection;
-    
+
     // Set timezone to Cairo
     date_default_timezone_set('Africa/Cairo');
-    
+
     // Convert input dates to proper format for comparison
     $from_date = date('Y-m-d H:i:s', strtotime($from_date));
     $to_date = date('Y-m-d H:i:s', strtotime($to_date));
-    
+
     // Calculate the timestamp 30 minutes ago in Cairo time
     $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
-    
+
     // Build the SQL query (using mysqli for modern PHP)
     $sql = "SELECT COUNT(*) as conflict_count 
         FROM tbl_non_completed 
@@ -634,20 +703,68 @@ function validateBookingConflict($from_date, $to_date, $prop_id) {
     try {
         // Execute the query
         $result = $GLOBALS['rstate']->query($sql);
-        
+
         if (!$result) {
             throw new Exception("Query failed: " . $GLOBALS['rstate']->error);
         }
-        
+
         // Fetch the result
         $row = $result->fetch_assoc();
 
         // If conflict_count > 0, there's a conflict
         return ($row['conflict_count'] == 0);
-        
     } catch (Exception $e) {
         // Handle errors
         error_log("Error in validateBookingConflict: " . $e->getMessage());
         return false; // Assume conflict exists if there's an error
     }
+}
+
+function get_property_price($period, $price, $prop_id, $from_date, $to_date) {
+    $price_ranges = array();
+    
+    // Fetch increased value ranges from database
+    $inc_ranges = $GLOBALS['rstate']->query("SELECT * FROM tbl_increased_value WHERE prop_id = " . $prop_id);
+    while ($row = $inc_ranges->fetch_assoc()) {
+        array_push($price_ranges, array(
+            'from_date' => $row['from_date'],
+            'to_date' => $row['to_date'],
+            'value' => $row['increase_value']
+        ));
+    }
+
+    // Convert input dates to DateTime objects
+    $current_date = new DateTime($from_date);
+    $end_date = new DateTime($to_date);
+    $end_date->modify('-1 day'); // Adjust to_date to be inclusive
+    
+    $total_price = 0;
+
+    // Process each day in the range
+    while ($current_date <= $end_date) {
+        $daily_price = $price; // Base price
+        $current_date_str = $current_date->format('Y-m-d');
+        // Check if current day falls in any increased price range
+        foreach ($price_ranges as $range) {
+            $range_start = new DateTime($range['from_date']);
+            $range_end = new DateTime($range['to_date']);
+            
+            if ($current_date >= $range_start && $current_date <= $range_end) {
+                $daily_price += $range['value']; // Apply specific increase for this day
+
+                break; // Stop checking other ranges once we find a match
+            }
+        }
+
+        // Add to total based on period type
+        if ($period == 'd') {
+            $total_price += $daily_price;
+        } elseif ($period == 'm') {
+            $total_price += $daily_price / 30; // Daily portion of monthly price
+        }
+
+        $current_date->modify('+1 day');
+    }
+
+    return $total_price;
 }
