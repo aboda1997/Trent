@@ -2,7 +2,7 @@
 require dirname(dirname(__FILE__)) . '/include/reconfig.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
-require_once dirname(dirname(__FILE__) ) . '/user_api/error_handler.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
 header('Content-Type: application/json');
 try {
@@ -10,11 +10,12 @@ try {
 
 	$pol = array();
 	$c = array();
+	$arr = array();
 	$pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : null;
 	if ($pro_id == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
-	} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property' ,  ' is_deleted =0') === false) {
+	} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property',  ' is_deleted =0') === false) {
 		$returnArr = generateResponse('false', "this property not exist!", 400);
 	} else {
 		$fp = array();
@@ -23,11 +24,15 @@ try {
 		$vr = array();
 		$po = array();
 		$sel = $rstate->query("select * from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
-		$imageArray = array_filter( explode(',', $sel['image'] ?? '') );
+		$inc_ranges = $rstate->query("select * from tbl_increased_value where  prop_id=" . $pro_id .  "");
+		while ($row = $inc_ranges->fetch_assoc()) {
+			array_push($arr, array('form_date' => $row['from_date'], 'to_date' => $row['to_date'], 'value' => $row['increase_value']));
+		}
+		$imageArray = array_filter(explode(',', $sel['image'] ?? ''));
 
 		// Loop through each image URL and push to $vr array
-		
-	foreach ($imageArray as $index => $image) {
+
+		foreach ($imageArray as $index => $image) {
 			// First image gets is_panorama = 1, others get 0
 			$is_panorama = ($index === 0) ? 1 : 0;
 
@@ -42,7 +47,7 @@ try {
 		}
 		$fp['id'] = $sel['id'];
 		$fp['owner_id'] = $sel['add_user_id'];
-		$titleData = json_decode($sel['title']??'', true);
+		$titleData = json_decode($sel['title'] ?? '', true);
 		$fp['title'] = $titleData;
 		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['id'] . "")->fetch_assoc();
 		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
@@ -59,7 +64,7 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['category'] = [
 						'id' => $tit['id'],
-						'type' => json_decode($tit['title']??'', true),
+						'type' => json_decode($tit['title'] ?? '', true),
 						'img' => $tit['img'],
 					];
 				}
@@ -103,13 +108,13 @@ try {
 		$fp['min_days'] = $sel['min_days'];
 
 
-		$fp['floor'] = json_decode($sel['floor']??'', true);
-		$fp['guest_rules'] = json_decode($sel['guest_rules']??'', true);
+		$fp['floor'] = json_decode($sel['floor'] ?? '', true);
+		$fp['guest_rules'] = json_decode($sel['guest_rules'] ?? '', true);
 
 
-		$fp['description'] = json_decode($sel['description']??'', true);
-		$fp['address'] = json_decode($sel['address']??'', true);
-		$fp['city'] = json_decode($sel['city']??'', true);
+		$fp['description'] = json_decode($sel['description'] ?? '', true);
+		$fp['address'] = json_decode($sel['address'] ?? '', true);
+		$fp['city'] = json_decode($sel['city'] ?? '', true);
 
 		$fp['guest_count'] = $sel['plimit'];
 
@@ -128,7 +133,7 @@ try {
 			'name' => $periods[$sel['period']]
 		];
 
-		$fp['compound'] = json_decode($sel['compound_name']??'', true);
+		$fp['compound'] = json_decode($sel['compound_name'] ?? '', true);
 
 
 		if (is_null($sel['government'])) {
@@ -147,7 +152,7 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['government'] = [
 						'id' => $tit['id'],
-						'name' => json_decode($tit['name']??'', true)
+						'name' => json_decode($tit['name'] ?? '', true)
 					];
 				}
 			} else {
@@ -171,8 +176,8 @@ try {
 					// Combine the id and name into a single associative array
 					$fp['cancellation_policy'] = [
 						'id' => $tit['id'],
-						'title' => json_decode($tit['title']??'', true),
-						'description' => json_decode($tit['description']??'', true),
+						'title' => json_decode($tit['title'] ?? '', true),
+						'description' => json_decode($tit['description'] ?? '', true),
 						'is_recommended' => (bool)$tit['is_recommended']
 					];
 				}
@@ -186,7 +191,7 @@ try {
 	 from tbl_facility where id IN(" . $sel['facility'] . ")");
 
 		while ($row = $fac->fetch_assoc()) {
-			$row['title'] = json_decode($row['title']??'', true);
+			$row['title'] = json_decode($row['title'] ?? '', true);
 			$f[] = $row;
 		}
 
@@ -211,6 +216,7 @@ try {
 		$returnArr    = generateResponse('true', "Property Details Founded!", 200, array(
 			"property_details" => $fp,
 			"facility_list" => $f,
+			'inc_value_ranges'=>$arr,
 			"gallery" => $v,
 			"is_gallery_enabled" => $is_gallery_enabled,
 		));

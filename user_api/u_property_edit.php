@@ -48,6 +48,7 @@ try {
 	$guest_rules_ar = $rstate->real_escape_string(isset($_POST['guest_rules_ar']) ? $_POST['guest_rules_ar'] : '');
 	$compound_ar = $rstate->real_escape_string(isset($_POST['compound_en']) ? $_POST['compound_ar'] : '');
 	$date_ranges = isset($_POST['date_ranges']) ? json_decode($_POST['date_ranges'], true) : null;
+	$inc_value_ranges = isset($_POST['inc_value_ranges']) ? json_decode($_POST['inc_value_ranges'], true) : null;
 
 
 	$floor_json = json_encode([
@@ -255,11 +256,27 @@ try {
 
 			if ($check_owner_  >= AppConstants::Property_Count) {
 				$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $user_id);
-			} 
-			
-			if (is_array($date_ranges) && !empty($date_ranges)) {
-				$res   =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
 			}
+
+		
+
+			if (is_array($inc_value_ranges) && !empty($inc_value_ranges) && !isset($returnArr)) {
+				$jsonResponse    =  add_specific_ranges_increased_value('en', $user_id, $prop_id, $inc_value_ranges);
+				$response = json_decode($jsonResponse, true); // true for associative array
+				$result = $response['result']; // "true" or "false"
+				if ($result == 'false') {
+					$returnArr  = $jsonResponse;
+				}
+			}
+			if (is_array($date_ranges) && !empty($date_ranges) && !isset($returnArr)) {
+				$jsonResponse   =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
+				$response = json_decode($jsonResponse, true); // true for associative array
+				$result = $response['result']; // "true" or "false"
+				if ($result == 'false') {
+					$returnArr  = $jsonResponse;
+				}
+			}
+
 			if (!isset($returnArr)) {
 
 				$table = "tbl_property";

@@ -27,6 +27,7 @@ try {
 	$is_featured = isset($_POST['is_featured']) ? intval($_POST['is_featured']) : 0;
 	$cancellation_policy_id = isset($_POST['cancellation_policy_id']) ? intval($_POST['cancellation_policy_id']) : '';
 	$date_ranges = isset($_POST['date_ranges']) ? json_decode($_POST['date_ranges'], true) : null;
+	$inc_value_ranges = isset($_POST['inc_value_ranges']) ? json_decode($_POST['inc_value_ranges'], true) : null;
 
 	$decodedIds = json_decode($facility, true);
 	$ids = array_filter(array_map('trim', $decodedIds));
@@ -214,16 +215,25 @@ try {
 
 			$h = new Estate();
 			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-			if ( is_array($date_ranges) && !empty($date_ranges) && $check) {
-				$jsonResponse    =  exclude_ranges('en', $user_id, $check, $date_ranges);
-				$response = json_decode($jsonResponse, true); // true for associative array
-				$result = $response['result']; // "true" or "false"
-				if($result == 'false'){
-				$rstate->query("Delete from  tbl_property  WHERE id=" . $check);
-				$returnArr  = $jsonResponse;
-
+			if ($check) {
+				if (is_array($date_ranges) && !empty($date_ranges)) {
+					$jsonResponse    =  exclude_ranges('en', $user_id, $check, $date_ranges);
+					$response = json_decode($jsonResponse, true); // true for associative array
+					$result = $response['result']; // "true" or "false"
+					if ($result == 'false') {
+						$rstate->query("Delete from  tbl_property  WHERE id=" . $check);
+						$returnArr  = $jsonResponse;
+					}
 				}
-
+				if (is_array($inc_value_ranges) && !empty($inc_value_ranges)) {
+					$jsonResponse    =  add_specific_ranges_increased_value('en', $user_id, $check, $inc_value_ranges);
+					$response = json_decode($jsonResponse, true); // true for associative array
+					$result = $response['result']; // "true" or "false"
+					if ($result == 'false') {
+						$rstate->query("Delete from  tbl_property  WHERE id=" . $check);
+						$returnArr  = $jsonResponse;
+					}
+				}
 			}
 		}
 		$check_owner = $rstate->query("select * from tbl_property where  status =1 and  add_user_id=" . $user_id . " and is_deleted =0")->num_rows;
@@ -237,12 +247,12 @@ try {
 		echo $returnArr;
 	} else {
 		if ($check) {
-				$table = "tbl_property";
-                $field = ["visibility" => $check];
-				$where = "where id=" . '?' . "";
-				$h = new Estate();
-				$where_conditions = [$check];
-				$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+			$table = "tbl_property";
+			$field = ["visibility" => $check];
+			$where = "where id=" . '?' . "";
+			$h = new Estate();
+			$where_conditions = [$check];
+			$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
 			$returnArr    = generateResponse('true', "Property Added Successfully", 201, array("id" => $check, "title" => json_decode($title_json, true)));
 		} else {
 			$returnArr    = generateResponse('false', "Database error", 500);

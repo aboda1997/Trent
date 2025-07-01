@@ -127,8 +127,7 @@ try {
             }
             $fp['image_list'] = $vr;
 
-            $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
-            $sub_total =  $days * $price;
+            $sub_total = get_property_price($res_data['period'], $res_data['price'] ,$prop_id, $from_date  , $to_date );
             $coupon_value = 0;
             $Coupon_data = validateCoupon($coupon_code, $sub_total);
             if ($Coupon_data['status'] === true) {
@@ -205,7 +204,7 @@ try {
                         throw new Exception("Insert failed");
                     }
                 $GLOBALS['rstate']->commit();
-                $whatsapp = sendMessage([$ccode . $mobile], $message);
+               // $whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(

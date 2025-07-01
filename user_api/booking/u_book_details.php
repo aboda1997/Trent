@@ -104,9 +104,24 @@ try {
 		$fp['item_id'] = $book_id;
 
 		$fp['book_status'] = $sel['book_status'];
+		
 		$fp['noguest'] = $sel['noguest'];
 		$fp['prop_price'] = $sel['prop_price'];
-		$fp['cancle_reason'] = empty($sel['cancle_reason']) ? '' : $sel['cancle_reason'];
+		if ($fp['book_status'] == 'Cancelled') {
+
+		$cancel_id = $sel['cancle_reason'] ?? 0;
+		$cancel_by = $sel['cancel_by'] == "H" ? "Host" : "Guest";
+        $fp['cancel_by'] = $cancel_by;
+
+		$cancel_reason = ($cancel_by == "Host")
+			? $rstate->query("SELECT reason FROM tbl_cancel_reason WHERE id = $cancel_id")->fetch_assoc()
+			: $rstate->query("SELECT reason FROM tbl_user_cancel_reason WHERE id = $cancel_id")->fetch_assoc();
+
+		$fp['cancle_reason'] = json_decode($cancel_reason['reason']??"", true)[$lang] ??"";
+		}
+		if ($fp['book_status'] == 'Confirmed') {
+			validatePeriod($book_id);
+		}
 		$returnArr    = generateResponse('true', "My Booking details Founded!", 200, array("Booking_details" => $fp));
 	}
 	echo $returnArr;

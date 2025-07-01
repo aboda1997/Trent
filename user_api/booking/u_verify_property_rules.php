@@ -111,8 +111,7 @@ try {
                 $vr[] = array('img' => trim($image));
             }
             $fp['image_list'] = $vr;
-            $price = ($res_data['period'] == 'd') ? $res_data['price'] : ($res_data['price'] / 30);
-            $sub_total =  $days * $price;
+            $sub_total = get_property_price($res_data['period'], $res_data['price'] ,$prop_id, $from_date  , $to_date );
             $deposit_fees = $res_data["security_deposit"];
             $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total) / 100  : ($set["owner_fees"] * $sub_total) / 100;
             $taxes = ($trent_fess * $set['tax']) / 100;

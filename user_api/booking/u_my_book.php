@@ -95,7 +95,13 @@ try {
 			$fp['item_id'] = $row['id'];
 
 			$fp['book_status'] = $row['book_status'];
-
+            if($fp['book_status'] == 'Confirmed'){
+				$flag = validatePeriod($row['id']);
+				if($flag == false){
+				$fp['book_status'] = 'Cancelled';
+	
+				}
+			}
 
 			$wow[] = $fp;
 		}
