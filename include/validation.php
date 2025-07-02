@@ -398,7 +398,9 @@ function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges
     $lang_ = load_specific_langauage($lang);
     $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
     $timestamp = $date->format('Y-m-d');
-
+    $h = new Estate();
+    $table = "tbl_increased_value";
+    $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id", $table);
     if ($uid == '') {
         $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
@@ -411,7 +413,7 @@ function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges
         $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', 'is_deleted =0') === false) {
         $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
-    } else if ($date_ranges === null || !is_array($date_ranges) || empty($date_ranges)) {
+    } else if ($date_ranges === null || !is_array($date_ranges)) {
         $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
     } else {
         // Validate each date range in the array
@@ -421,9 +423,7 @@ function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges
         } else {
             // Insert each date range separately
             $success_count = 0;
-            $h = new Estate();
-            $table = "tbl_increased_value";
-            $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id", $table);
+
             foreach ($date_ranges as $range) {
                 $from_date = $range[0];
                 $to_date = $range[1];

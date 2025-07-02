@@ -148,6 +148,7 @@ if (!in_array('Read_User_List', $per)) {
 											if ($total_records > 0) {
 												while ($row = $stmt->fetch_assoc()) {
 													if ($row !== null && isset($row['id'])) $user_id = (int)$row['id'];
+													$flag = isset($row['status']) && $row['status'] == '1';
 
 											?>
 													<tr>
@@ -191,7 +192,7 @@ if (!in_array('Read_User_List', $per)) {
 														<?php
 														if (
 															(isset($per) && is_array($per) && (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per))) &&
-															isset($row['status']) && $row['status'] == '1'
+															$flag
 														):
 														?> <td style="white-space: nowrap; width: 15%;">
 																<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">

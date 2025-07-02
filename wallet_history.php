@@ -145,12 +145,12 @@ if (!in_array('Read_Wallet', $per)) {
                                                         <td>
                                                             <?php echo $i; ?>
                                                         </td>
-                                                        <td><?php echo htmlspecialchars($row['name']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['name'] ??''); ?></td>
                                                         <td><?php echo htmlspecialchars($row['ccode'] . $row['mobile']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['message']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['amt']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['tdate']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['admin_username']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['message'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['amt'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['tdate'] ?? ''); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['admin_username'] ?? ''); ?></td>
 
 
                                                     </tr>
