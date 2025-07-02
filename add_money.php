@@ -77,9 +77,12 @@ if (!in_array('Create_Wallet', $per)) {
                                                     $zone = $rstate->query("select * from tbl_user where status = 1 ");
                                                     while ($row = $zone->fetch_assoc()) {
                                                         $title = $row['name'];
-
+                                                        $id = $row['id'];
+                                                        $ccode = $row['ccode'];
+                                                        $mobile = $row['mobile'];
+                                                        $display_text = "$title (ID: $id) | Mobile: $ccode$mobile";
                                                     ?>
-                                                        <option value="<?php echo $row['id']; ?>" ><?php echo $title ?></option>
+                                                        <option value="<?php echo $row['id']; ?>"><?php echo $display_text ?></option>
                                                     <?php
                                                     }
                                                     ?>
@@ -110,7 +113,7 @@ if (!in_array('Create_Wallet', $per)) {
                                                 <input type="text" class="form-control " placeholder="Enter Notes To Owner " name="notes" required="">
                                                 <input type="hidden" name="type" value="add_money" />
                                                 <div class="invalid-feedback" id="note_feedback" style="display: none;">
-                                                    please Enter Notes to Owner 
+                                                    please Enter Notes to Owner
                                                 </div>
                                             </div>
                                         </div>
@@ -183,25 +186,25 @@ if (!in_array('Create_Wallet', $per)) {
     }
 </script>
 <script>
-$(document).on('input', '.money-input', function() {
-    // Allow: numbers, single decimal point, and single minus at start
-    this.value = this.value.replace(/[^0-9\.\-]/g, '');
-    
-    // Only allow minus at the start
-    if (this.value.indexOf('-') > 0) {
-        this.value = this.value.replace('-', '');
-    }
-    
-    // Only allow one minus
-    if ((this.value.match(/-/g) || []).length > 1) {
-        this.value = '-' + this.value.replace(/-/g, '');
-    }
-    
-    // Only allow one decimal point
-    if ((this.value.match(/\./g) || []).length > 1) {
-        this.value = this.value.substring(0, this.value.lastIndexOf('.'));
-    }
-});
+    $(document).on('input', '.money-input', function() {
+        // Allow: numbers, single decimal point, and single minus at start
+        this.value = this.value.replace(/[^0-9\.\-]/g, '');
+
+        // Only allow minus at the start
+        if (this.value.indexOf('-') > 0) {
+            this.value = this.value.replace('-', '');
+        }
+
+        // Only allow one minus
+        if ((this.value.match(/-/g) || []).length > 1) {
+            this.value = '-' + this.value.replace(/-/g, '');
+        }
+
+        // Only allow one decimal point
+        if ((this.value.match(/\./g) || []).length > 1) {
+            this.value = this.value.substring(0, this.value.lastIndexOf('.'));
+        }
+    });
 </script>
 <!-- latest jquery-->
 <?php

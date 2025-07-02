@@ -3,7 +3,7 @@ require 'include/main_head.php';
 $per = $_SESSION['permissions'];
 
 if (isset($_GET['id'])) {
-  if ( !in_array('Update_Payout_Method', $per)) {
+  if (!in_array('Update_Payout_Method', $per)) {
 
 ?>
     <style>
@@ -86,10 +86,10 @@ if (isset($_GET['id'])) {
                 $name = json_decode($data['name'], true);
 
               ?>
-                <form 
-                onsubmit="return submitform(true)" 
+                <form
+                  onsubmit="return submitform(true)"
 
-                method="post" enctype="multipart/form-data">
+                  method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
                     <div id="alert-container" class="mb-3" style="display: none;">
@@ -156,6 +156,19 @@ if (isset($_GET['id'])) {
                       </div>
                     </div>
 
+                    <div class="form-group mb-3">
+                      <label id='Payout-Image'>
+                        <?= $lang_en['payout_Image'] ?>
+
+                      </label>
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="slider_img">
+                      <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
+                        <?= $lang_en['payout_img'] ?>
+                      </div>
+                      <br>
+                      <img src="<?php echo $data['img'] ?>" width="100px" />
+
+                    </div>
 
                   </div>
                   <div class="card-footer text-left">
@@ -168,10 +181,10 @@ if (isset($_GET['id'])) {
               <?php
               } else {
               ?>
-                <form 
-                onsubmit="return submitform(true)" 
+                <form
+                  onsubmit="return submitform(true)"
 
-                method="post" enctype="multipart/form-data">
+                  method="post" enctype="multipart/form-data">
 
                   <div class="card-body">
                     <div id="alert-container" class="mb-3" style="display: none;">
@@ -213,7 +226,7 @@ if (isset($_GET['id'])) {
                       </div>
                     </div>
 
-                    
+
 
 
                     <input type="hidden" name="type" value="add_payout_method" />
@@ -235,6 +248,18 @@ if (isset($_GET['id'])) {
                       <div class="invalid-feedback" id="status_feedback" style="display: none;">
                         <?= $lang_en['Payout_Method_status'] ?>
                       </div>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label id='Payout-Image'>
+                        <?= $lang_en['payout_Image'] ?>
+
+                      </label>
+                      <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="slider_img">
+                      <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
+                        <?= $lang_en['payout_img'] ?>
+                      </div>
+                      <br>
+
                     </div>
                     <div class="card-footer text-left">
                       <button onclick="return validateForm()" id="add-payout-method" type="submit" class="btn btn-primary">
@@ -271,7 +296,7 @@ if (isset($_GET['id'])) {
     const activeTab = document.querySelector('.nav-link.active').getAttribute('href').substring(1);
     return activeTab === 'en' ? 'en' : 'ar';
   }
-  
+
 
   function validateForm(edit = false) {
     // Clear previous feedback
@@ -282,6 +307,7 @@ if (isset($_GET['id'])) {
     const nameEn = document.querySelector('input[name="name_en"]').value;
     const nameAr = document.querySelector('input[name="name_ar"]').value;
     const status = document.querySelector('select[name="status"]').value;
+    const sliderImage = document.querySelector('input[name="slider_img"]').value;
 
     let isValid = true;
     let isArabicValid = true;
@@ -299,8 +325,17 @@ if (isset($_GET['id'])) {
       isArabicValid = false;
 
     }
-   
 
+    if (!sliderImage) {
+
+      if (edit) {
+        isValid = true;
+
+      } else {
+        document.getElementById('slider_img_feedback').style.display = 'block';
+        isValid = false;
+      }
+    }
 
     if (!status) {
       document.getElementById('status_feedback').style.display = 'block';
@@ -353,6 +388,7 @@ if (isset($_GET['id'])) {
     var langData = (lang === "ar") ? langDataAR : langDataEN;
     document.getElementById('status_feedback').textContent = langData.Payout_Method_status;
     document.getElementById('Payout_Method_Status').textContent = langData.Payout_Method_Status;
+    document.getElementById('Payout-Image').textContent = langData.payout_Image;
 
     if (document.getElementById('add-payout-method')) {
       document.querySelector('button[type="submit"]').textContent = langData.Add_Payout_Method;

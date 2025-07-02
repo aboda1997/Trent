@@ -445,6 +445,8 @@ return [
     'date_ranges_required' => 'Date ranges array are required ',
     'booking_expired' => 'The time allowed for complete payment has expired',
     'Not_allow_book_range' => 'Not allow to book this range. try again after some period.',
-    'visibility' =>'visibility'
+    'visibility' =>'visibility',
+    'payout_Image' => 'Payout Method Image',
+    'payout_img' => 'Please upload a Payout Method Image.',
 
 ];

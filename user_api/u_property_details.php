@@ -24,6 +24,13 @@ try {
 		$vr = array();
 		$po = array();
 		$sel = $rstate->query("select * from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
+		$fp['view_count'] = $sel['view_count'];
+
+		if( $sel['add_user_id'] != $uid){
+			$view_c = $sel['view_count'] +1 ;
+			 $rstate->query("update tbl_property  set view_count = $view_c   where  id=" . $pro_id .  "");
+			$fp['view_count'] = $view_c;
+			}
 		$inc_ranges = $rstate->query("select * from tbl_increased_value where  prop_id=" . $pro_id .  "");
 		while ($row = $inc_ranges->fetch_assoc()) {
 			array_push($arr, array('form_date' => $row['from_date'], 'to_date' => $row['to_date'], 'value' => $row['increase_value']));

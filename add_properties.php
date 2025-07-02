@@ -751,11 +751,15 @@ if (isset($_GET['id'])) {
 																	$zone = $rstate->query("select * from tbl_user where status = 1 and verified =1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = $row['name'];
+																		$id = $row['id'];
+																		$ccode = $row['ccode'];
+																		$mobile = $row['mobile'];
+																		$display_text = "$title (ID: $id) | Mobile: $ccode$mobile";
 																		$isSelected = in_array($row['id'],  explode(',', $data['add_user_id'])) ? 'selected' : '';
 
 																	?>
 																		<option value="<?php echo $row['id']; ?>"
-																			<?php echo $isSelected; ?>><?php echo $title ?></option>
+																			<?php echo $isSelected; ?>><?php echo $display_text ?></option>
 																	<?php
 																	}
 																	?>
@@ -815,8 +819,7 @@ if (isset($_GET['id'])) {
 																</div>
 															</div>
 														</div>
-														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12"
-															>
+														<div class="col-md-4 col-lg-4 col-xs-12 col-sm-12">
 															<div class="form-group mb-3">
 																<label id="visibility">
 																	<?= $lang_en['visibility'] ?>
@@ -826,7 +829,7 @@ if (isset($_GET['id'])) {
 																	value="<?php echo $data['visibility']; ?>"
 
 																	type="text" class="form-control numberonly" name="visibility">
-																
+
 															</div>
 														</div>
 													</div>
@@ -1410,9 +1413,12 @@ if (isset($_GET['id'])) {
 																	$zone = $rstate->query("select * from tbl_user where status =1 and verified=1");
 																	while ($row = $zone->fetch_assoc()) {
 																		$title = $row['name'];
-
+																		$id = $row['id'];
+																		$ccode = $row['ccode'];
+																		$mobile = $row['mobile'];
+																		$display_text = "$title (ID: $id) | Mobile: $ccode$mobile";
 																	?>
-																		<option value="<?php echo $row['id']; ?>"><?php echo $title ?></option>
+																		<option value="<?php echo $row['id']; ?>"><?php echo $display_text ?></option>
 																	<?php
 																	}
 																	?>
@@ -2014,7 +2020,7 @@ if (isset($_GET['id'])) {
 
 			// Get the image that will become default
 			const imageToMakeDefault = this.images[index];
-		
+
 			// Remove the image from its current position
 			this.images.splice(index, 1);
 
@@ -2266,7 +2272,7 @@ if (isset($_GET['id'])) {
 
 			// Get the image that will become default
 			const imageToMakeDefault = this.images[index];
-			
+
 			// Remove the image from its current position
 			this.images.splice(index, 1);
 

@@ -775,11 +775,19 @@ try {
             $field = array(
                 'name',
 
-                'status'
+                'status', 
+                'img'
             );
+            $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
+            $url = "images/website/";
+            $temp = explode(".", $_FILES["slider_img"]["name"]);
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $target_file = $target_dir . basename($newfilename);
+            $url = $url . basename($newfilename);
 
+            move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_payout_methods";
-            $data_values = array("$name_json",  "$status");
+            $data_values = array("$name_json",  "$status" , "$url");
 
             $h = new Estate();
             $check = $h->restateinsertdata($field, $data_values,  $table);
@@ -798,20 +806,45 @@ try {
                 "en" => $name_en,
                 "ar" => $name_ar
             ], JSON_UNESCAPED_UNICODE);
+            $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
+            $url = "images/website/";
+            $temp = explode(".", $_FILES["slider_img"]["name"]);
+            $newfilename = round(microtime(true)) . '.' . end($temp);
+            $target_file = $target_dir . basename($newfilename);
+            $url = $url . basename($newfilename);
+            if ($_FILES["slider_img"]["name"] != '') {
 
-            $table = "tbl_payout_methods";
-            $field = array(
+                move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
+                $table = "tbl_payout_methods";
+                $field = array(
 
-                'name' => $name_json,
+                    'name' => $name_json,
 
-                'status' => $status,
+                    'status' => $status,
+                    'img' => $url,
 
-            );
-            $where = "where id=" . $id . "";
-            $h = new Estate();
-            $check = $h->restateupdateData($field, $table, $where);
-            if ($check == 1) {
-                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payout Method  Updated Successfully!!", "message" => "Payout Method section!", "action" => "list_payout_method.php");
+                );
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($field, $table, $where);
+                if ($check == 1) {
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payout Method  Updated Successfully!!", "message" => "Payout Method section!", "action" => "list_payout_method.php");
+                }
+            } else {
+                $table = "tbl_payout_methods";
+                $field = array(
+
+                    'name' => $name_json,
+
+                    'status' => $status,
+
+                );
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateData($field, $table, $where);
+                if ($check == 1) {
+                    $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Payout Method  Updated Successfully!!", "message" => "Payout Method section!", "action" => "list_payout_method.php");
+                }
             }
         } elseif ($_POST["type"] == "add_category") {
             $okey = $_POST["status"];
@@ -1204,12 +1237,12 @@ try {
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
             }
             if ($check) {
-                	$table = "tbl_property";
+                $table = "tbl_property";
                 $field = ["visibility" => $check];
-				$where = "where id=" . '?' . "";
-				$h = new Estate();
-				$where_conditions = [$check];
-				$check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+                $where = "where id=" . '?' . "";
+                $h = new Estate();
+                $where_conditions = [$check];
+                $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -2262,8 +2295,8 @@ WHERE
                     $row['name'],
                     $row['ccode'] . $row['mobile'],
                     $row['booking_count'],
-number_format($row['booking_total'] ?? 0, 2, '.', '')         
-       ];
+                    number_format($row['booking_total'] ?? 0, 2, '.', '')
+                ];
             }
             $returnArr = [
                 "ResponseCode" => "200",

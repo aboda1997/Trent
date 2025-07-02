@@ -206,6 +206,8 @@ try {
 
 		$pol['image_list'] = $vr;
 		$pol['price'] = $row['price'];
+		$pol['view_count'] = $row['view_count'];
+
 		$pol['beds_count'] = $row['beds'];
 		$pol['guest_count'] = $row['plimit'];
 		$pol['bathrooms_count'] = $row['bathroom'];

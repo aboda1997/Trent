@@ -98,6 +98,7 @@ try {
             if($fp['book_status'] == 'Confirmed'){
 				$flag = validatePeriod($row['id']);
 				if($flag == false){
+					cancel_booking($book_id);
 				$fp['book_status'] = 'Cancelled';
 	
 				}

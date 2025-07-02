@@ -649,24 +649,88 @@ function validatePeriod($booking_id)
         // Case 1: Booking made more than 14 days before check-in
         // Must validate at least 14 days remaining before check-in
         $current_to_checkin = $current_time->diff($check_in);
-        $valid_cancel = ($current_to_checkin->days > 14 && !$current_to_checkin->invert);
+        $valid_period = ($current_to_checkin->days > 14 && !$current_to_checkin->invert);
     } else {
         // Case 2: Booking made ≤14 days before check-in
         // Must validate within 24 hours of confirmation
         $current_to_confirmation = $current_time->diff($confirmed_at);
         $current_to_confirmation_hours = $current_to_confirmation->h + ($current_to_confirmation->days * 24);
-        $valid_cancel = ($current_to_confirmation_hours < 24 && $current_to_confirmation->invert);
+        $valid_period = ($current_to_confirmation_hours < 24 && $current_to_confirmation->invert);
     }
 
 
-    if (!$valid_cancel) {
-        $updateSql = "UPDATE tbl_book 
-                      SET book_status = 'Cancelled',
-                      cancel_by = 'H'
+    return $valid_period;
+}
+
+
+function cancel_booking($booking_id)
+{
+    $h = new Estate();
+    $where_conditions = [$booking_id];
+    $field = array('book_status' => 'Cancelled');
+    $where = "where  id=" . '?' . "";
+
+    $check = $h->restateupdateData_Api($field, 'tbl_book', $where, $where_conditions);
+    return $check > 0;
+}
+function refundMoney($uid, $booking_id)
+{
+    $updateSql = "Select total ,reminder_value  from  tbl_book 
                       WHERE id = $booking_id";
-        $GLOBALS['rstate']->query($updateSql);
+    $data = $GLOBALS['rstate']->query($updateSql)->fetch_assoc();
+    if (!$data) {
+        return false; // Booking not found
     }
-    return $valid_cancel;
+    $where_conditions = [$booking_id];
+    $field = array('book_status' => 'Cancelled');
+    $where = "where  id=" . '?' . "";
+
+    $partial_value =  number_format($data['total'] - $data['reminder_value'], 2, '.', '');
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $updated_at = $date->format('Y-m-d H:i:s');
+
+    $notes = "Refund Added successfully!!";
+    $status = 'Adding';
+    $field_values = array("uid", "EmployeeId", "message", "status", "amt", "tdate");
+    $h = new Estate();
+
+    $data_values = array("$uid", "0", "$notes", "$status", "$partial_value", "$updated_at");
+    $GLOBALS['rstate']->begin_transaction();
+    $check = $h->restateupdateData_Api($field, 'tbl_book', $where, $where_conditions);
+    if (!$check) {
+        throw new Exception("update failed");
+    }
+    $wallet_id = $h->restateinsertdata_Api($field_values, $data_values, 'wallet_report');
+    if (!$wallet_id) {
+        throw new Exception("Insert failed");
+    }
+    $GLOBALS['rstate']->commit();
+
+    return $wallet_id > 0;
+}
+
+function validateCancelBooking($booking_id)
+{
+    $cairoTimezone = new DateTimeZone('Africa/Cairo');
+
+    // Database query to get booking information
+    $sql = "SELECT check_in FROM tbl_book WHERE id = " . $booking_id;
+    $booking = $GLOBALS['rstate']->query($sql)->fetch_assoc();
+
+    if (!$booking) {
+        return false; // Booking not found
+    }
+
+    $check_in_str = $booking['check_in'];
+    if (strlen($check_in_str) <= 10) {
+        $check_in_str .= ' 12:00:00'; // Add default time
+    }
+
+    $check_in = new DateTime($check_in_str, $cairoTimezone);
+    $current_time = new DateTime('now', $cairoTimezone);
+
+    // Check if check_in time has passed or is equal to current time
+    return ($check_in <= $current_time);
 }
 
 function validateBookingConflict($from_date, $to_date, $prop_id)
@@ -720,9 +784,10 @@ function validateBookingConflict($from_date, $to_date, $prop_id)
     }
 }
 
-function get_property_price($period, $price, $prop_id, $from_date, $to_date) {
+function get_property_price($period, $price, $prop_id, $from_date, $to_date)
+{
     $price_ranges = array();
-    
+
     // Fetch increased value ranges from database
     $inc_ranges = $GLOBALS['rstate']->query("SELECT * FROM tbl_increased_value WHERE prop_id = " . $prop_id);
     while ($row = $inc_ranges->fetch_assoc()) {
@@ -737,7 +802,7 @@ function get_property_price($period, $price, $prop_id, $from_date, $to_date) {
     $current_date = new DateTime($from_date);
     $end_date = new DateTime($to_date);
     $end_date->modify('-1 day'); // Adjust to_date to be inclusive
-    
+
     $total_price = 0;
 
     // Process each day in the range
@@ -748,7 +813,7 @@ function get_property_price($period, $price, $prop_id, $from_date, $to_date) {
         foreach ($price_ranges as $range) {
             $range_start = new DateTime($range['from_date']);
             $range_end = new DateTime($range['to_date']);
-            
+
             if ($current_date >= $range_start && $current_date <= $range_end) {
                 $daily_price += $range['value']; // Apply specific increase for this day
 
