@@ -193,8 +193,8 @@ if (!in_array('Read_Property', $per)) {
                             <td>
                               <?php echo htmlspecialchars(strlen($row["cancel_reason"]) > 100 ? substr($row["cancel_reason"], 0, 100) . '...' : $row["cancel_reason"]); ?>
                             </td>
-                            <td><?php echo htmlspecialchars($user_data['name']); ?></td>
-                            <td><?php echo htmlspecialchars($user_data['ccode'] . $user_data['mobile']); ?></td>
+                            <td><?php echo htmlspecialchars($user_data['name'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars(($user_data['ccode'] ?? '') . ($user_data['mobile']??'')); ?></td>
 
 
                             <td><?php echo htmlspecialchars($row["updated_at"]); ?></td>

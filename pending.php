@@ -179,16 +179,16 @@ if (!in_array('Read_Booking', $per)) {
                                 <?php echo $row['total_day'] . ' Days'; ?>
                               </td>
                                <td class="align-middle">
-                                <?php echo $owner_data['name']  ?>
+                                <?php echo $owner_data['name'] ?? ''  ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
+                                <?php echo ($owner_data['ccode']??'') . ($owner_data['mobile']??'')  ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo $client_data['name']  ?>
+                                <?php echo $client_data['name'] ?? '' ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
+                                <?php echo ($client_data['ccode']??'') . ($client_data['mobile']??'')  ?>
                               </td>
                               <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                                 <td style="white-space: nowrap; width: 15%;">
