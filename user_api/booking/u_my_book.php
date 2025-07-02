@@ -12,7 +12,6 @@ try {
 	$pol = array();
 	$c = array();
 	$vr = array();
-
 	$status  =  isset($_GET['status']) ? $_GET['status'] : '';
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
 	$lang = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
