@@ -225,7 +225,7 @@ try {
 						$returnArr  = $jsonResponse;
 					}
 				}
-				if (is_array($inc_value_ranges) && !empty($inc_value_ranges)) {
+				if (is_array($inc_value_ranges)) {
 					$jsonResponse    =  add_specific_ranges_increased_value('en', $user_id, $check, $inc_value_ranges);
 					$response = json_decode($jsonResponse, true); // true for associative array
 					$result = $response['result']; // "true" or "false"

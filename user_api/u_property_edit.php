@@ -260,7 +260,7 @@ try {
 
 		
 
-			if (is_array($inc_value_ranges) && !empty($inc_value_ranges) && !isset($returnArr)) {
+			if (is_array($inc_value_ranges) &&  !isset($returnArr)) {
 				$jsonResponse    =  add_specific_ranges_increased_value('en', $user_id, $prop_id, $inc_value_ranges);
 				$response = json_decode($jsonResponse, true); // true for associative array
 				$result = $response['result']; // "true" or "false"
