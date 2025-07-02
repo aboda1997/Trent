@@ -12,6 +12,7 @@ try {
 	$pol = array();
 	$c = array();
 	$vr = array();
+	
 
 	$status  =  isset($_GET['status']) ? $_GET['status'] : '';
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : '';
