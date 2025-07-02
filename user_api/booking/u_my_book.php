@@ -4,6 +4,7 @@ require dirname(dirname(__FILE__), 2) . '/include/validation.php';
 require dirname(dirname(__FILE__), 2) . '/include/helper.php';
 require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/constants.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 
 header('Content-Type: application/json');
 try {
