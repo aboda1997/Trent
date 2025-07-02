@@ -99,6 +99,7 @@ if (!in_array('Read_User_List', $per)) {
 												<th>Join Date</th>
 												<th>Status</th>
 												<th>IsOwner</th>
+												<th>Wallet Balance</th>
 												<th>Property Count</th>
 												<?php if (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)): ?>
 													<th><?= $lang['Action'] ?></th>
@@ -146,6 +147,8 @@ if (!in_array('Read_User_List', $per)) {
 
 											if ($total_records > 0) {
 												while ($row = $stmt->fetch_assoc()) {
+													if ($row !== null && isset($row['id'])) $user_id = (int)$row['id'];
+
 											?>
 													<tr>
 														<td>
@@ -165,13 +168,32 @@ if (!in_array('Read_User_List', $per)) {
 														</td>
 														<td>
 															<?php
-															$check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
+															$balance = '0.00';
+															$sel = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" .  $user_id . " order by id desc");
+															while ($row = $sel->fetch_assoc()) {
+
+																if ($row['status'] == 'Adding') {
+																	$balance = bcadd($balance, $row['amt'], 2);
+																} else if ($row['status'] == 'Withdraw') {
+																	$balance = bcsub($balance, $row['amt'], 2);
+																}
+															}
+															echo $balance;
+															?>
+														</td>
+														<td>
+															<?php
+															$check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . $user_id . " AND is_deleted = 0")->num_rows;
 															echo $check_owner;
 															?>
 														</td>
 
-														<?php if ((in_array('Update_User_List', $per) || in_array('Delete_User_List', $per)) && $row['status'] == '1'): ?>
-															<td style="white-space: nowrap; width: 15%;">
+														<?php
+														if (
+															(isset($per) && is_array($per) && (in_array('Update_User_List', $per) || in_array('Delete_User_List', $per))) &&
+															isset($row['status']) && $row['status'] == '1'
+														):
+														?> <td style="white-space: nowrap; width: 15%;">
 																<div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
 																	<div class="btn-group btn-group-sm" style="float: none;">
 																		<button type="button"

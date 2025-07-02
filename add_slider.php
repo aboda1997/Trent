@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
         exit();
     }
 } else {
-    if ( !in_array('Create_Slider', $per)) {
+    if (!in_array('Create_Slider', $per)) {
 
     ?>
         <style>
@@ -198,11 +198,15 @@ if (isset($_GET['id'])) {
                                                         $zone = $rstate->query("select * from tbl_user");
                                                         while ($row = $zone->fetch_assoc()) {
                                                             $title = $row['name'];
+                                                            $id = $row['id'];
+                                                            $ccode = $row['ccode'];
+                                                            $mobile = $row['mobile'];
+                                                            $display_text = "$title (ID: $id) | Mobile: $ccode$mobile";
                                                             $isSelected = in_array($row['id'],  explode(',', $data['uid'])) ? 'selected' : '';
 
                                                         ?>
                                                             <option value="<?php echo $row['id']; ?>"
-                                                                <?php echo $isSelected; ?>><?php echo $title ?></option>
+                                                                <?php echo $isSelected; ?>><?php echo $display_text ?></option>
                                                         <?php
                                                         }
                                                         ?>
@@ -380,9 +384,13 @@ if (isset($_GET['id'])) {
                                                         $zone = $rstate->query("select * from tbl_user");
                                                         while ($row = $zone->fetch_assoc()) {
                                                             $title = $row['name'];
+                                                            $id = $row['id'];
+                                                            $ccode = $row['ccode'];
+                                                            $mobile = $row['mobile'];
+                                                            $display_text = "$title (ID: $id) | Mobile: $ccode$mobile";
 
                                                         ?>
-                                                            <option value="<?php echo $row['id']; ?>"><?php echo $title ?></option>
+                                                            <option value="<?php echo $row['id']; ?>"><?php echo $display_text ?></option>
                                                         <?php
                                                         }
                                                         ?>

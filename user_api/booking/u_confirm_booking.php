@@ -96,6 +96,9 @@ try {
             $firebase_notification = sendFirebaseNotification($title_, $message, $uid,  "booking_id", $booking_id);
             $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
 
+            if($check){
+                refundMoney($uid , $booking_id);
+            }
 
             $returnArr    = generateResponse('true', $lang_["property_booking_canceled_success"], 200, array(
                 "booking_details" => [

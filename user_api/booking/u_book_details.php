@@ -119,9 +119,9 @@ try {
 
 		$fp['cancle_reason'] = json_decode($cancel_reason['reason']??"", true)[$lang] ??"";
 		}
-		if ($fp['book_status'] == 'Confirmed') {
-			validatePeriod($book_id);
-		}
+		
+
+		
 		$returnArr    = generateResponse('true', "My Booking details Founded!", 200, array("Booking_details" => $fp));
 	}
 	echo $returnArr;

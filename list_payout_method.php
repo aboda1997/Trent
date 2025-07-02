@@ -64,7 +64,11 @@ if (!in_array('Read_Payout_Method', $per)) {
 
                         <th>
                           Payout Method Name(Arabic)</th>
+ <th>
+                          <?= $lang['payout_Image'] ?>
 
+                        </th>
+                       
                         <th>
                           <?= $lang['Payout_Method_Status'] ?>
 
@@ -103,6 +107,9 @@ if (!in_array('Read_Payout_Method', $per)) {
                             <?php echo $name['ar']; ?>
                           </td>
 
+                          <td class="align-middle">
+                            <img src="<?php echo $row['img']; ?>" width="70" height="80" />
+                          </td>
                           <?php if ($row['status'] == 1) { ?>
 
                             <td><span class="badge badge-success">
