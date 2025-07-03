@@ -401,6 +401,7 @@ function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges
     $h = new Estate();
     $table = "tbl_increased_value";
     $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id", $table);
+
     if ($uid == '') {
         $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
@@ -415,7 +416,10 @@ function add_specific_ranges_increased_value($lang, $uid, $prop_id, $date_ranges
         $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
     } else if ($date_ranges === null || !is_array($date_ranges)) {
         $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
+    } else if (empty($date_ranges)) {
+        $returnArr    = generateResponse('true', '', 200);
     } else {
+
         // Validate each date range in the array
         [$valid, $message] = validateDateRanges($date_ranges);
         if (!$valid) {
