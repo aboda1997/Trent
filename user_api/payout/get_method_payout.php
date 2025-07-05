@@ -22,12 +22,13 @@ try{
     }else{
 $pol = array();
 $c = array();
-$sel = $rstate->query("SELECT id, JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) AS title FROM tbl_payout_methods WHERE status=1");
+$sel = $rstate->query("SELECT id, img,  JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) AS title FROM tbl_payout_methods WHERE status=1");
 while($row = $sel->fetch_assoc())
 {
    
 		$pol['id'] = $row['id'];
 		$pol['name'] = $row['title'];
+		$pol['img'] = $row['img'];
 		
 		$c[] = $pol;
 }
