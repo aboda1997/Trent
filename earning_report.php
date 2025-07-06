@@ -200,7 +200,7 @@ if (!in_array('Read_Report', $per)) {
                                             }
 
                                             if (!$has_records) {
-                                                echo '<tr><td colspan="4" class="text-center">No records found</td></tr>';
+                                                echo '<tr><td colspan="14" class="text-center">No records found</td></tr>';
                                             }
                                             ?>
                                         </tbody>

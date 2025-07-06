@@ -53,13 +53,27 @@ if (!in_array('Read_Chat', $per)) {
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
+                                <div class="mb-3 row">
+                                    <form id="exportForm" method="get" class="col-sm-12">
+                                        <div class="row justify-content-end align-items-start">
+                                            <input type="hidden" name="type" value="export_chat_data" />
+
+                                            <!-- Export Button -->
+                                            <div class="col-md-2">
+                                                <button type="button" id="exportExcel" class="btn btn-success w-100">
+                                                    <i class="fa fa-file-excel-o"></i> Export Excel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                                 <!-- Search Form -->
-                                <div class="row justify-content-center mb-3">
+                                <div  style="position: relative; z-index: 0;" class="row justify-content-center mb-3">
                                     <div class="col-md-8">
                                         <div class="search-container">
                                             <form method="get" action="">
                                                 <div class="input-group">
-                                                    <input type="text" name="search" class="form-control" placeholder="Search by Sender, Receiver or Message..."
+                                                    <input type="text" name="search" class="form-control" placeholder="Search by Sender, Receiver ..."
                                                         value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                                                     <div class="input-group-append">
                                                         <button class="btn btn-primary" type="submit">Search</button>
@@ -80,9 +94,10 @@ if (!in_array('Read_Chat', $per)) {
                                                 <th>Sr No.</th>
                                                 <th>Sender Name</th>
                                                 <th>Receiver Name</th>
-                                                <th>Message</th>
-                                                <th>Updated At</th>
-                                                <th>Created At</th>
+                                                <th>Sender Contact </th>
+                                                <th>Receiver Contact </th>
+                                                <th>Property Title </th>
+
                                                 <?php if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per)): ?>
                                                     <th><?= $lang['Action'] ?></th>
                                                 <?php endif; ?>
@@ -96,36 +111,42 @@ if (!in_array('Read_Chat', $per)) {
                                             $page = max($page, 1);
 
                                             // Base query
-                                            $query = "SELECT p.*, sender.name AS sender_name, receiver.name AS receiver_name 
-                          FROM tbl_messages p
-                          INNER JOIN tbl_user sender ON p.sender_id = sender.id
-                          INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
-                          where p.is_approved = 9
-                          "
-                          ;
+                                            $query = "SELECT p.*, sender.name AS sender_name, receiver.name AS receiver_name ,
+                                            sender.ccode as sender_ccode , sender.mobile  as sender_mobile , receiver.ccode as receiver_ccode , receiver.mobile as receiver_mobile
+                          FROM tbl_chat_property p
+                          INNER JOIN tbl_user sender ON p.user1 = sender.id
+                          INNER JOIN tbl_user receiver ON p.user2 = receiver.id
+                          ";
 
                                             // Add search condition if search term exists
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
                                                 $search_term = $rstate->real_escape_string($_GET['search']);
                                                 $query .= " and (sender.name LIKE '%$search_term%' 
                               OR receiver.name LIKE '%$search_term%'
-                              OR p.message LIKE '%$search_term%')";
+                            OR CONCAT(sender.ccode, sender.mobile)  LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
+                            OR CONCAT(receiver.ccode, receiver.mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
+                            
+                            )";
                                             }
 
                                             // Get total number of records
-                                            $count_query = "SELECT COUNT(*) as total FROM tbl_messages p
-                                INNER JOIN tbl_user sender ON p.sender_id = sender.id
-                                INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
-                                                          where p.is_approved = 9
+                                            $count_query = "SELECT COUNT(*) as total FROM tbl_chat_property p
+                                INNER JOIN tbl_user sender ON p.user1 = sender.id
+                                INNER JOIN tbl_user receiver ON p.user2 = receiver.id
                                 ";
                                             if (isset($_GET['search']) && !empty($_GET['search'])) {
                                                 $count_query .= " and (sender.name LIKE '%$search_term%' 
                                       OR receiver.name LIKE '%$search_term%'
-                                      OR p.message LIKE '%$search_term%')";
+       OR CONCAT(sender.ccode, sender.mobile)  LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
+                            OR CONCAT(receiver.ccode, receiver.mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
+                             
+                            )";
                                             }
-
+                                            $query .= "group by p.id";
+                                            $count_query .= "group by p.id";
                                             $count_result = $rstate->query($count_query);
-                                            $total_records = $count_result->fetch_assoc()['total'];
+                                            $total_records = $count_result->fetch_assoc()['total'] ?? 0;
+
                                             $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
                                             $page = min($page, $total_pages);
 
@@ -141,34 +162,29 @@ if (!in_array('Read_Chat', $per)) {
                                                 $has_records = true;
                                                 while ($row = $city->fetch_assoc()) {
                                                     $i++;
-                                                    $message =json_decode($row['message'], true);
+                                                    $prop_id = $row['prop_id'];
+
+                                                    $_row  = $rstate->query("select id , title from tbl_property where id=" . $prop_id . "")->fetch_assoc();
+                                                    $title = json_decode($_row['title'] ?? "", true);
 
                                             ?>
                                                     <tr>
                                                         <td><?php echo $i; ?></td>
                                                         <td class="align-middle"><?php echo $row["sender_name"] ?></td>
                                                         <td class="align-middle"><?php echo $row["receiver_name"] ?></td>
-                                                        <td class="align-middle"><?php echo $message["message"] ?></td>
-                                                        <td class="align-middle"><?php echo $row["updated_at"] ?></td>
-                                                        <td class="align-middle"><?php echo $row["created_at"] ?></td>
+                                                        <td class="align-middle"><?php echo $row["sender_ccode"] . $row["sender_mobile"] ?></td>
+                                                        <td class="align-middle"><?php echo $row["receiver_ccode"] . $row["receiver_mobile"] ?></td>
+                                                        <td class="align-middle"><?php echo $title['en'] ?? ""  ?></td>
+
                                                         <?php if (in_array('Update_Chat', $per) || in_array('Delete_Chat', $per)): ?>
-                                                            <td class="align-middle">
+
+                                                            <td style="white-space: nowrap; width: 15%;">
                                                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                                                     <div class="btn-group btn-group-sm" style="float: none;">
-                                                                        <button class="btn btn-success" style="float: none; margin: 5px;"
-                                                                            type="button"
-                                                                            data-toggle="modal" data-target="#approveModal"
+                                                                        <button class="btn btn-info chat_d" style="float: none; margin: 5px;"
                                                                             data-id="<?php echo $row['id']; ?>"
-                                                                            data-status="1"
-                                                                            title="Approve">
-                                                                            Approve
-                                                                        </button>
-                                                                        <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
-                                                                            data-toggle="modal" data-target="#rejectModal"
-                                                                            data-status="0"
-                                                                            data-id="<?php echo $row['id']; ?>">
-                                                                            Reject
-                                                                        </button>
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#myModal">View Details</button>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -252,185 +268,58 @@ require 'include/footer.php';
 ?>
 
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
+
+
+
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg ">
+
+
+        <div class="modal-content gray_bg_popup">
             <div class="modal-header">
-                <h5 class="modal-title" id="approveModalLabel">Confirm Approval</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4>Chat list </h4>
+                <button type="button" class="close popup_open" data-bs-dismiss="modal">&times;</button>
             </div>
-            <form id="approveForm">
+            <div class="modal-body p_data">
 
-                <input type="hidden" id="approveId" name="id">
-                <input type="hidden" id="approveStatus" name="status">
+            </div>
 
-                <input type="hidden" name="type" value="toggle_message_approval" />
-            </form>
-            <div class="modal-body">
-                Are you sure you want to approve this message?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-primary" id="confirmApproveBtn">Yes, Approve</button>
-            </div>
         </div>
+
     </div>
 </div>
-
-
-<!-- Confirmation Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="approveModalLabel">Confirm reject</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="rejectForm">
-
-                <input type="hidden" id="rejectId" name="id">
-                <input type="hidden" id="rejectStatus" name="status">
-
-                <input type="hidden" name="type" value="toggle_message_approval" />
-            </form>
-            <div class="modal-body">
-                Are you sure you want to reject this message?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-primary" id="confirmRejectBtn">Yes, Reject</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 
 <script>
-    $('#approveModal').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var status = button.data('status');
+    $(document).ready(function() {
+        // When "View Details" button is clicked
+        $(".chat_d").click(function() {
+            var orderId = $(this).data('id'); // Get the order ID from data-id attribute
+            var modalBody = $(".modal-body.p_data"); // Target modal body
 
-        var modal = $(this);
-        modal.find('#approveId').val(id);
-        modal.find('#approveStatus').val(status);
+            // Show loading spinner (optional)
+            modalBody.html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
 
-
-    });
-    $('#rejectModal').on('show.bs.modal', function(event) {
-        var button = $(event.relatedTarget);
-        var id = button.data('id');
-        var status = button.data('status');
-
-        var modal = $(this);
-        modal.find('#rejectId').val(id);
-        modal.find('#rejectStatus').val(status);
-
-
-    });
-    // When save button is clicked
-    $('#confirmApproveBtn').click(function() {
-
-        // Disable the button to prevent multiple clicks
-        var saveButton = $(this);
-        saveButton.prop('disabled', true);
-        var formData = $('#approveForm').serialize();
-
-        // Here you would typically make an AJAX call to save the data
-        $.ajax({
-            url: "include/property.php",
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                let res = JSON.parse(response); // Parse the JSON response
-
-                if (res.ResponseCode === "200" && res.Result === "true") {
-                    $('#approveModal').removeClass('show');
-                    $('#approveModal').css('display', 'none');
-                    $('.modal-backdrop').remove(); // Remove the backdrop
-
-                    // Display notification
-                    $.notify('<i class="fas fa-bell"></i>' + res.title, {
-                        type: 'theme',
-                        allow_dismiss: true,
-                        delay: 2000,
-                        showProgressbar: true,
-                        timer: 300,
-                        animate: {
-                            enter: 'animated fadeInDown',
-                            exit: 'animated fadeOutUp',
-                        },
-                    });
-                    // Redirect after a delay if an action URL is provided
-                    if (res.action) {
-                        setTimeout(function() {
-                            window.location.href = res.action;
-                        }, 2000);
-                    }
-
-                } else {
-                    alert("'Error saving  Approval.");
+            // Load content via AJAX
+            $.ajax({
+                url: 'view_chat.php', // Path to your PHP file
+                type: 'Post',
+                data: {
+                    pid: orderId
+                }, // Pass the order ID as a parameter
+                success: function(response) {
+                    modalBody.html(response); // Insert the response into the modal
+                },
+                error: function(xhr, status, error) {
+                    modalBody.html('<div class="alert alert-danger">Failed to load data.</div>');
+                    console.error("AJAX Error:", error);
                 }
-            },
-            complete: function() {
-                saveButton.prop('disabled', false); // Re-enable button on success/fail
-            }
+            });
         });
-    });
 
-    // When save button is clicked
-    $('#confirmRejectBtn').click(function() {
-
-        // Disable the button to prevent multiple clicks
-        var saveButton = $(this);
-        saveButton.prop('disabled', true);
-        var formData = $('#rejectForm').serialize();
-
-        // Here you would typically make an AJAX call to save the data
-        $.ajax({
-            url: "include/property.php",
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                let res = JSON.parse(response); // Parse the JSON response
-
-                if (res.ResponseCode === "200" && res.Result === "true") {
-                    $('#rejectModal').removeClass('show');
-                    $('#rejectModal').css('display', 'none');
-                    $('.modal-backdrop').remove(); // Remove the backdrop
-
-                    // Display notification
-                    $.notify('<i class="fas fa-bell"></i>' + res.title, {
-                        type: 'theme',
-                        allow_dismiss: true,
-                        delay: 2000,
-                        showProgressbar: true,
-                        timer: 300,
-                        animate: {
-                            enter: 'animated fadeInDown',
-                            exit: 'animated fadeOutUp',
-                        },
-                    });
-                    // Redirect after a delay if an action URL is provided
-                    if (res.action) {
-                        setTimeout(function() {
-                            window.location.href = res.action;
-                        }, 2000);
-                    }
-
-                } else {
-                    alert("'Error saving rejection .");
-                }
-            },
-            complete: function() {
-                saveButton.prop('disabled', false); // Re-enable button on success/fail
-            }
+        // Optional: Clear modal content when closed
+        $('#myModal').on('hidden.bs.modal', function() {
+            $(".modal-body.p_data").html(''); // Empty the modal body
         });
     });
 </script>

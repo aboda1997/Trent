@@ -1555,6 +1555,34 @@ try {
 
             $check = $h->restateupdateData($field, $table, $where);
             if ($okey ==  '1') {
+                $title =  "Messages Approved Successfully!!";
+            } else {
+                $title =  "Messages rejected Successfully!!";
+            }
+            if ($check == 1) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => $title,
+                    "message" => "APProval section!",
+                    "action" => "pending_chat.php",
+                ];
+            }
+        }
+        elseif ($_POST["type"] == "toggle_all_message_approval") {
+            $okey = $_POST["status"];
+            $id = $_POST["id"];
+
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $updated_at = $date->format('Y-m-d H:i:s');
+
+            $table = "tbl_messages";
+            $field = ["is_approved" => $okey, 'updated_at' => $updated_at];
+            $where = "where chat_id=" . $id . "";
+            $h = new Estate();
+
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($okey ==  '1') {
                 $title =  "Message Approved Successfully!!";
             } else {
                 $title =  "Message rejected Successfully!!";
@@ -1568,7 +1596,8 @@ try {
                     "action" => "pending_chat.php",
                 ];
             }
-        } elseif ($_POST["type"] == "approve_payout") {
+        }
+        elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
             $table = "tbl_payout_list";
             $field = ["payout_status" => "Completed"];

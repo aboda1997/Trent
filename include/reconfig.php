@@ -1,5 +1,6 @@
 <?php
 require_once  dirname( dirname(__FILE__) ).'/include/load_language.php';
+require_once dirname( dirname(__FILE__) ).  '/logs/request_logger.php';
 
 if (session_status() == PHP_SESSION_NONE) {
     session_start();

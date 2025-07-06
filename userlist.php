@@ -69,7 +69,7 @@ if (!in_array('Read_User_List', $per)) {
 								</div>
 								<div class="table-responsive">
 									<!-- Centered Search Form -->
-									<div class="row justify-content-center">
+									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
 										<div class="col-md-8">
 											<div class="search-container" style="margin-bottom: 20px;">
 												<form method="get" action="">
@@ -128,7 +128,7 @@ if (!in_array('Read_User_List', $per)) {
 													// For other searches, use LIKE with wildcards
 													$query .= " where (name LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci 
                                                   OR email LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci 
-                                                  OR mobile LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
+                                                  OR CONCAT(ccode, mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
 												}
 											}
 

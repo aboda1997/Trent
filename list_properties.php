@@ -242,7 +242,7 @@ if (!in_array('Read_Property', $per)) {
                             <td><?php echo htmlspecialchars($city[$lang_code] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($compound_name[$lang_code] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($user_data['name'] ?? ""); ?></td>
-                            <td><?php echo htmlspecialchars(($user_data['ccode']??'') .($user_data['mobile'] ??"") ); ?></td>
+                            <td><?php echo htmlspecialchars(($user_data['ccode'] ?? '') . ($user_data['mobile'] ?? "")); ?></td>
 
                             <td><?php echo htmlspecialchars($row['created_at']); ?></td>
                             <td><?php echo htmlspecialchars($row['updated_at']); ?></td>

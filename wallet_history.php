@@ -117,7 +117,7 @@ if (!in_array('Read_Wallet', $per)) {
 
                                                 // For other searches, use LIKE with wildcards
                                                 $query .= " WHERE (u.name LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci 
-               OR u.mobile LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
+               OR CONCAT(u.ccode, u.mobile) LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci
                OR a.username LIKE '%$search_term%' COLLATE utf8mb4_unicode_ci)";
                                             }
 
