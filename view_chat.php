@@ -61,7 +61,7 @@ $lang_code = load_language_code()["language_code"];
                                  FROM tbl_messages p
                                  INNER JOIN tbl_user sender ON p.sender_id = sender.id
                           INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
-                                 where p.chat_id = $pid ORDER BY p.id DESC");
+                                 where p.chat_id = $pid ORDER BY p.id ASC");
                                 $i = 0;
                                 while ($row = $city->fetch_assoc()) {
                                     $message = json_decode($row['message'], true);
