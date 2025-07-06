@@ -27,6 +27,9 @@ function load_language_code(){
      
     if(!isset($_GET['lang'])){
         $_SESSION['lang'] = "en";
+    } 
+    if(!isset($_SESSION['permissions'])){
+        $_SESSION['permissions'] = [];
     }
     $language_code = $_SESSION['lang'] ?? 'en';
     $dir = 'ltr'; 

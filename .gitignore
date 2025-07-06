@@ -4,6 +4,7 @@
 wordpress/
 images/ 
 videos/ 
+logs/logs 
 assets/ 
 /vendor/*
 !vendor/autoload.php

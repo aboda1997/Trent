@@ -1,19 +1,6 @@
 <?php
 require 'include/main_head.php';
-if ($_SESSION['restatename'] == 'Staff') {
-    header('HTTP/1.1 401 Unauthorized');
 
-
-?>
-    <style>
-        .loader-wrapper {
-            display: none;
-        }
-    </style>
-<?php
-    require 'auth.php';
-    exit();
-}
 ?>
 <!-- Loader ends-->
 <!-- page-wrapper Start-->
