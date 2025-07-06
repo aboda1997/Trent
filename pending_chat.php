@@ -142,10 +142,9 @@ if (!in_array('Read_Chat', $per)) {
                              
                             )";
                                             }
-                                            $query .= "group by p.id";
-                                            $count_query .= "group by p.id";
+                                         
                                             $count_result = $rstate->query($count_query);
-                                            $total_records = $count_result->fetch_assoc()['total'] ?? 0;
+                                            $total_records = $count_result->fetch_assoc()['total'] ;
 
                                             $total_pages = ceil($total_records / $records_per_page) == 0 ? 1 : ceil($total_records / $records_per_page);
                                             $page = min($page, $total_pages);

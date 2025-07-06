@@ -47,7 +47,7 @@ $lang_code = load_language_code()["language_code"];
                                     <th><?= $lang['Sr_No'] ?></th>
                                     <th>Message</th>
                                     <th>image</th>
-                                    
+
                                     <th>Sender Contact</th>
                                     <th>Receiver Contact</th>
                                     <th> Message Status </th>
@@ -176,7 +176,10 @@ $lang_code = load_language_code()["language_code"];
 
         // Get the button that was clicked
         var button = $(this);
-
+        // Check if button is already disabled (prevent multiple clicks)
+        if (button.prop('disabled')) {
+            return false;
+        }
         // Disable the button to prevent multiple clicks
         button.prop('disabled', true);
         var formData = {
@@ -221,6 +224,9 @@ $lang_code = load_language_code()["language_code"];
                 // button.prop('disabled', false); // Re-enable button on success/fail
             }
         });
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
     });
 
 
@@ -229,7 +235,10 @@ $lang_code = load_language_code()["language_code"];
 
         // Get the button that was clicked
         var button = $(this);
-
+        // Check if button is already disabled (prevent multiple clicks)
+        if (button.prop('disabled')) {
+            return false;
+        }
         // Disable the button to prevent multiple clicks
         button.prop('disabled', true);
         var formData = {
@@ -277,6 +286,10 @@ $lang_code = load_language_code()["language_code"];
             complete: function() {
                 //button.prop('disabled', false); // Re-enable button on success/fail
             }
+
         });
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
     });
 </script>
