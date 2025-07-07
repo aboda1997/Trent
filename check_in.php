@@ -70,7 +70,7 @@ if (!in_array('Read_Booking', $per)) {
                 </div>
                 <div class="table-responsive">
                   <!-- Search Form -->
-                  <div class="row justify-content-center mb-3">
+									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
                     <div class="col-md-8">
                       <div class="search-container">
                         <form method="get" action="">

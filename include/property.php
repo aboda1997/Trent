@@ -775,7 +775,7 @@ try {
             $field = array(
                 'name',
 
-                'status', 
+                'status',
                 'img'
             );
             $target_dir = dirname(dirname(__FILE__)) . "/images/website/";
@@ -787,7 +787,7 @@ try {
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_payout_methods";
-            $data_values = array("$name_json",  "$status" , "$url");
+            $data_values = array("$name_json",  "$status", "$url");
 
             $h = new Estate();
             $check = $h->restateinsertdata($field, $data_values,  $table);
@@ -1568,8 +1568,7 @@ try {
                     "action" => "pending_chat.php",
                 ];
             }
-        }
-        elseif ($_POST["type"] == "toggle_all_message_approval") {
+        } elseif ($_POST["type"] == "toggle_all_message_approval") {
             $okey = $_POST["status"];
             $id = $_POST["id"];
 
@@ -1596,8 +1595,7 @@ try {
                     "action" => "pending_chat.php",
                 ];
             }
-        }
-        elseif ($_POST["type"] == "approve_payout") {
+        } elseif ($_POST["type"] == "approve_payout") {
             $id = $_POST["id"];
             $table = "tbl_payout_list";
             $field = ["payout_status" => "Completed"];
@@ -2936,6 +2934,392 @@ WHERE
                 ],
                 $data
             );
+        } else if ($_POST["type"] == "export_payout_method_data") {
+
+            $query = "SELECT * FROM `tbl_payout_methods`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'payout_title_en' => getMultilingualValue($row['name'] ?? '', 'en'),
+                    'payout_title_ar' => getMultilingualValue($row['name'] ?? '', 'ar'),
+                    'img' => $row['img'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Payout title (English)',
+                    'Payout title (Arabic)',
+                    'Image',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_facility_data") {
+
+            $query = "SELECT * FROM `tbl_facility`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['title'] ?? '', 'ar'),
+                    'img' => $row['img'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    ' Title (English)',
+                    ' Title (Arabic)',
+                    'Image',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_faq_data") {
+
+            $query = "SELECT * FROM `tbl_faq`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'question_en' => getMultilingualValue($row['question'] ?? '', 'en'),
+                    'question_ar' => getMultilingualValue($row['question'] ?? '', 'ar'),
+                    'answer_en' => getMultilingualValue($row['answer'] ?? '', 'en'),
+                    'answer_ar' => getMultilingualValue($row['answer'] ?? '', 'ar'),
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Question (English)',
+                    'Question (Arabic)',
+                    'Answer (English)',
+                    'Answer (Arabic)',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_cancellation_policy_data") {
+
+            $query = "SELECT * FROM `tbl_cancellation_policy`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['title'] ?? '', 'ar'),
+                    'des_en' => getMultilingualValue($row['description'] ?? '', 'en'),
+                    'des_ar' => getMultilingualValue($row['description'] ?? '', 'ar'),
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+                    'is_recommended' => ($row['is_recommended'] ?? '') == 1 ? 'Yes' : 'No',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Description (English)',
+                    'Description (Arabic)',
+                    'Status',
+                    'Is Recommended',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_wallet_data") {
+
+            $query = "SELECT 
+                                                wr.*,
+                                                u.mobile, u.ccode, u.name,
+                                                a.username AS admin_username
+                                            FROM 
+                                                wallet_report wr
+                                            LEFT JOIN 
+                                                tbl_user u ON wr.uid = u.id
+                                            LEFT JOIN 
+                                                admin a ON wr.EmployeeId = a.id";;
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'message' => $row['message'] ?? '',
+                    'status' => $row['status'] ?? '',
+                    'amount' => $row['amt'] ?? '',
+                    'admin_name' => $row['admin_username'] ?? '',
+                    'user_name' => $row['name'] ?? '',
+                    'user_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
+
+                    'created_at' => $row['tdate'] ?? '',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Message',
+                    'Status',
+                    'Amount',
+                    'Admin name',
+                    'User name',
+                    'User Contact',
+                    'Created At'
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_chat_data") {
+
+            $query = "SELECT p.*, sender.name AS sender_name, receiver.name AS receiver_name ,
+                                            sender.ccode as sender_ccode , sender.mobile  as sender_mobile , receiver.ccode as receiver_ccode , receiver.mobile as receiver_mobile
+                          FROM tbl_messages p
+                          INNER JOIN tbl_user sender ON p.sender_id = sender.id
+                          INNER JOIN tbl_user receiver ON p.receiver_id = receiver.id
+                          ";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'chat_id' => $row['chat_id'] ?? '',
+                    'message' => getMultilingualValue($row['message'] ?? '', 'message'),
+                    'img' => $row['img'] ?? '',
+                    'sender_name' => $row['name'] ?? '',
+                    'sender_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
+                    'receiver_name' => $row['name'] ?? '',
+                    'receiver_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
+
+                    'approved' => ($row['is_approved'] ?? '') == 1 ? 'Approved' : 'Not Approved',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'Chat ID',
+                    'Message',
+                    'Image',
+                    'Sender name',
+                    'Sender Contact',
+                    'Receiver name',
+                    'Receiver Contact',
+                    'Is Approved',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_cancel_reason_data") {
+
+            $query = "SELECT * FROM `tbl_cancel_reason`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'reason_en' => getMultilingualValue($row['reason'] ?? '', 'en'),
+                    'reason_ar' => getMultilingualValue($row['reason'] ?? '', 'ar'),
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Reason (English)',
+                    'Reason (Arabic)',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_slider_data") {
+
+            $query = "SELECT s.* , c.title as c_title , g.name as g_name FROM `tbl_slider`  s
+            inner join tbl_category c on s.cat_id = c.id 
+            inner join tbl_government g on s.government_id = g.id 
+            ";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['title'] ?? '', 'ar'),
+
+                    'category_title_en' => getMultilingualValue($row['c_title'] ?? '', 'en'),
+                    'category_title_ar' => getMultilingualValue($row['c_title'] ?? '', 'ar'),
+
+                    'gov_title_en' => getMultilingualValue($row['g_name'] ?? '', 'en'),
+                    'gov_title_ar' => getMultilingualValue($row['g_name'] ?? '', 'ar'),
+                    'img' => $row['img'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Category Title (English)',
+                    'Category  Title (Arabic)',
+                    'Government Title (English)',
+                    'Government  Title (Arabic)',
+                    'Image',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_why_choose_data") {
+
+            $query = "SELECT * FROM `tbl_why_choose_us`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'title_en' => getMultilingualValue($row['title'] ?? '', 'en'),
+                    'title_ar' => getMultilingualValue($row['title'] ?? '', 'ar'),
+                    'des_en' => getMultilingualValue($row['description'] ?? '', 'en'),
+                    'des_ar' => getMultilingualValue($row['description'] ?? '', 'ar'),
+                    'background_color' => $row['background_color'] ?? '',
+                    'img' => $row['img'] ?? '',
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+                    'header' => ($row['is_header'] ?? '') == 1 ? 'Yes' : 'No',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Title (English)',
+                    'Title (Arabic)',
+                    'Description (English)',
+                    'Description (Arabic)',
+                    'Background Color',
+                    'Image',
+                    'Status',
+                    'Is Header'
+
+                ],
+                $data
+            );
         } else if ($_POST["type"] == "upload_whats-up-campings") {
             $h = new Estate();
             $h->restateDeleteData_Api('', 'tbl_uploaded_excel_data');
@@ -3103,232 +3487,6 @@ WHERE
                         "action" => "userlist.php",
                     ];
                 }
-            } elseif ($coll_type == "proper_sell") {
-                $table = "tbl_property";
-                $field = "is_sell=" . $status . "";
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData_single($field, $table, $where);
-                if ($check == 1) {
-                    $returnArr = [
-                        "ResponseCode" => "200",
-                        "Result" => "true",
-                        "title" => "Property Selled Successfully!!",
-                        "message" => "User section!",
-                        "action" => "list_properties.php",
-                    ];
-                }
-            } elseif ($coll_type == "confirmed_book") {
-                $table = "tbl_book";
-                $field = "book_status='" . $status . "'";
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData_single($field, $table, $where);
-                if ($check == 1) {
-                    $returnArr = [
-                        "ResponseCode" => "200",
-                        "Result" => "true",
-                        "title" => "Booking Confirmed  Successfully!!",
-                        "message" => "Booking section!",
-                        "action" => "approved.php",
-                    ];
-                }
-
-                $bdata = $rstate->query("select * from tbl_book where id=" . $id . "")->fetch_assoc();
-                $udata = $rstate->query("select * from tbl_user where id=" . $bdata['uid'] . "")->fetch_assoc();
-                $name = $udata['name'];
-                $uid = $bdata['uid'];
-
-
-
-                $content = array(
-                    "en" => $name . ', Your Booking #' . $id . ' Has Been Confirmed Successfully.'
-                );
-                $heading = array(
-                    "en" => "Confirmed Successfully!!"
-                );
-
-                $fields = array(
-                    'app_id' => $set['one_key'],
-                    'included_segments' =>  array("Active Users"),
-                    'data' => array("order_id" => $id, "type" => 'normal'),
-                    'filters' => array(array('field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $bdata['uid'])),
-                    'contents' => $content,
-                    'headings' => $heading
-                );
-                $fields = json_encode($fields);
-
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                curl_setopt(
-                    $ch,
-                    CURLOPT_HTTPHEADER,
-                    array(
-                        'Content-Type: application/json; charset=utf-8',
-                        'Authorization: Basic ' . $set['one_hash']
-                    )
-                );
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-
-                $response = curl_exec($ch);
-                curl_close($ch);
-
-                $timestamp = date("Y-m-d H:i:s");
-
-                $title_mains = "Confirmed Successfully!!";
-                $descriptions = 'Booking #' . $id . ' Has Been Confirmed Successfully.';
-
-                $table = "tbl_notification";
-                $field_values = array("uid", "datetime", "title", "description");
-                $data_values = array("$uid", "$timestamp", "$title_mains", "$descriptions");
-
-                $h = new Estate();
-                $h->restateinsertdata_Api($field_values, $data_values, $table);
-            } elseif ($coll_type == "Check_in") {
-                $table = "tbl_book";
-                $field = "book_status='" . $status . "'";
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData_single($field, $table, $where);
-                if ($check == 1) {
-                    $returnArr = [
-                        "ResponseCode" => "200",
-                        "Result" => "true",
-                        "title" => "Booking Check In  Successfully!!",
-                        "message" => "Booking section!",
-                        "action" => "check_in.php",
-                    ];
-                }
-                $bdata = $rstate->query("select * from tbl_book where id=" . $id . "")->fetch_assoc();
-                $udata = $rstate->query("select * from tbl_user where id=" . $bdata['uid'] . "")->fetch_assoc();
-                $name = $udata['name'];
-                $uid = $bdata['uid'];
-
-
-
-                $content = array(
-                    "en" => $name . ', Your Booking #' . $id . ' Has Been Check In Successfully.'
-                );
-                $heading = array(
-                    "en" => "Check In Successfully!!"
-                );
-
-                $fields = array(
-                    'app_id' => $set['one_key'],
-                    'included_segments' =>  array("Active Users"),
-                    'data' => array("order_id" => $id, "type" => 'normal'),
-                    'filters' => array(array('field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $uid)),
-                    'contents' => $content,
-                    'headings' => $heading
-                );
-                $fields = json_encode($fields);
-
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                curl_setopt(
-                    $ch,
-                    CURLOPT_HTTPHEADER,
-                    array(
-                        'Content-Type: application/json; charset=utf-8',
-                        'Authorization: Basic ' . $set['one_hash']
-                    )
-                );
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-
-                $response = curl_exec($ch);
-                curl_close($ch);
-
-                $timestamp = date("Y-m-d H:i:s");
-
-                $title_mains = "Check In Successfully!!";
-                $descriptions = 'Booking #' . $id . ' Has Been Check In Successfully.';
-
-                $table = "tbl_notification";
-                $field_values = array("uid", "datetime", "title", "description");
-                $data_values = array("$uid", "$timestamp", "$title_mains", "$descriptions");
-
-                $h = new Estate();
-                $h->restateinsertdata_Api($field_values, $data_values, $table);
-            } elseif ($coll_type == "Check_out") {
-                $table = "tbl_book";
-                $field = "book_status='" . $status . "'";
-                $where = "where id=" . $id . "";
-                $h = new Estate();
-                $check = $h->restateupdateData_single($field, $table, $where);
-                if ($check == 1) {
-                    $returnArr = [
-                        "ResponseCode" => "200",
-                        "Result" => "true",
-                        "title" => "Booking Check Out  Successfully!!",
-                        "message" => "Booking section!",
-                        "action" => "completed.php",
-                    ];
-                }
-                $bdata = $rstate->query("select * from tbl_book where id=" . $id . "")->fetch_assoc();
-                $udata = $rstate->query("select * from tbl_user where id=" . $bdata['uid'] . "")->fetch_assoc();
-                $name = $udata['name'];
-                $uid = $bdata['uid'];
-
-
-
-                $content = array(
-                    "en" => $name . ', Your Booking #' . $id . ' Has Been Check Out Successfully.'
-                );
-                $heading = array(
-                    "en" => "Check Out Successfully!!"
-                );
-
-                $fields = array(
-                    'app_id' => $set['one_key'],
-                    'included_segments' =>  array("Active Users"),
-                    'data' => array("order_id" => $id, "type" => 'normal'),
-                    'filters' => array(array('field' => 'tag', 'key' => 'user_id', 'relation' => '=', 'value' => $uid)),
-                    'contents' => $content,
-                    'headings' => $heading
-                );
-                $fields = json_encode($fields);
-
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
-                curl_setopt(
-                    $ch,
-                    CURLOPT_HTTPHEADER,
-                    array(
-                        'Content-Type: application/json; charset=utf-8',
-                        'Authorization: Basic ' . $set['one_hash']
-                    )
-                );
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-
-                $response = curl_exec($ch);
-                curl_close($ch);
-
-                $timestamp = date("Y-m-d H:i:s");
-
-                $title_mains = "Check Out Successfully!!";
-                $descriptions = 'Booking #' . $id . ' Has Been Check Out Successfully.';
-
-                $table = "tbl_notification";
-                $field_values = array("uid", "datetime", "title", "description");
-                $data_values = array("$uid", "$timestamp", "$title_mains", "$descriptions");
-
-                $h = new Estate();
-                $h->restateinsertdata_Api($field_values, $data_values, $table);
             } elseif ($coll_type == "dark_mode") {
                 $table = "tbl_setting";
                 $field = "show_dark=" . $status . "";

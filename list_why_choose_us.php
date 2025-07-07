@@ -56,6 +56,20 @@ if (!in_array('Read_Why_Choose_Us', $per)) {
                     <div class="col-sm-12">
                         <div class="card">
                             <div class="card-body">
+                                <div class="mb-3 row">
+                                    <form id="exportForm" method="get" class="col-sm-12">
+                                        <div class="row justify-content-end align-items-start">
+                                            <input type="hidden" name="type" value="export_why_choose_data" />
+
+                                            <!-- Export Button -->
+                                            <div class="col-md-2">
+                                                <button type="button" id="exportExcel" class="btn btn-success w-100">
+                                                    <i class="fa fa-file-excel-o"></i> Export Excel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                                 <div class="table-responsive">
                                     <table class="display" id="basic-1">
                                         <thead>
@@ -127,15 +141,15 @@ if (!in_array('Read_Why_Choose_Us', $per)) {
                                                         </span>
                                                     </td>
                                                     <?php
-                                                if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per)) {
+                                                    if (in_array('Update_Why_Choose_Us', $per) || in_array('Delete_Why_Choose_Us', $per)) {
                                                     ?>
 
-                                                            <td style="white-space: nowrap; width: 15%;">
-                                                                <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-                                                                    <div class="btn-group btn-group-sm" style="float: none;">
+                                                        <td style="white-space: nowrap; width: 15%;">
+                                                            <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
+                                                                <div class="btn-group btn-group-sm" style="float: none;">
                                                                     <?php
-                                                if (in_array('Update_Why_Choose_Us', $per) ) {
-                                                    ?>
+                                                                    if (in_array('Update_Why_Choose_Us', $per)) {
+                                                                    ?>
                                                                         <!-- Update Button -->
                                                                         <a href="add_why_choose_us.php?id=<?php echo $row['id']; ?>" class="tabledit-edit-button" style="float: none; margin: 5px;">
                                                                             <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -144,26 +158,26 @@ if (!in_array('Read_Why_Choose_Us', $per)) {
                                                                             </svg>
                                                                         </a>
 
-                                                                        <?php } ?>
-                                                                        <?php
-                                                if ( in_array('Delete_Why_Choose_Us', $per)) {
-                                                    ?>
-                                                                            <button type="button"
-                                                                        style="background: none; border: none; padding: 0; cursor: pointer;"
-                                                                        data-toggle="modal"
-                                                                        data-target="#approveModal"
-                                                                        data-id="<?php echo $row['id']; ?>"
-                                                                        title="Delete">
-                                                                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <rect width="30" height="30" rx="15" fill="#FF6B6B" />
-                                                                            <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
-                                                                        </svg>
-                                                                    </button>
+                                                                    <?php } ?>
+                                                                    <?php
+                                                                    if (in_array('Delete_Why_Choose_Us', $per)) {
+                                                                    ?>
+                                                                        <button type="button"
+                                                                            style="background: none; border: none; padding: 0; cursor: pointer;"
+                                                                            data-toggle="modal"
+                                                                            data-target="#approveModal"
+                                                                            data-id="<?php echo $row['id']; ?>"
+                                                                            title="Delete">
+                                                                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <rect width="30" height="30" rx="15" fill="#FF6B6B" />
+                                                                                <path d="M10 10L20 20M20 10L10 20" stroke="#FFFFFF" stroke-width="2" />
+                                                                            </svg>
+                                                                        </button>
 
-                                                                        <?php } ?>
-                                                                    </div>
+                                                                    <?php } ?>
                                                                 </div>
-                                                            </td>
+                                                            </div>
+                                                        </td>
 
                                                     <?php } ?>
 
@@ -220,6 +234,69 @@ if (!in_array('Read_Why_Choose_Us', $per)) {
     </div>
 </div>
 <!-- latest jquery-->
+<script>
+    $('#exportExcel').click(function() {
+
+        // Disable the button to prevent multiple clicks
+        var saveButton = $(this);
+        saveButton.prop('disabled', true);
+        var formData = $('#exportForm').serialize();
+
+        // Here you would typically make an AJAX call to save the data
+        $.ajax({
+            url: "include/property.php",
+            type: "POST",
+            data: formData,
+            xhrFields: {
+                responseType: 'blob' // Important for binary response
+            },
+            success: function(blob, status, xhr) {
+                // Check for filename in headers
+                var filename = '';
+                var disposition = xhr.getResponseHeader('Content-Disposition');
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    var matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) {
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+
+                // Create download link
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = filename || 'download.csv';
+                document.body.appendChild(a);
+                a.click();
+
+
+                $.notify('<i class="fas fa-bell"></i> Export completed successfully!', {
+                    type: 'theme',
+                    allow_dismiss: true,
+                    delay: 2000,
+                    showProgressbar: true,
+                    timer: 300,
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp',
+                    },
+                });
+                saveButton.removeAttr('disabled');
+
+            },
+            error: function() {
+                $.notify('<i class="fas fa-exclamation-circle"></i> Error Export Excel Sheet ', {
+                    type: 'danger',
+                    allow_dismiss: true,
+                    delay: 5000
+                });
+                saveButton.removeAttr('disabled');
+
+            }
+        });
+    });
+</script>
 <script>
     $('#approveModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
