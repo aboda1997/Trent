@@ -68,7 +68,7 @@ if (!in_array('Read_Property', $per)) {
                   </form>
                 </div>
                 <!-- Search Form -->
-                <div class="row justify-content-center">
+									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
                   <div class="col-md-8">
                     <div class="search-container" style="margin-bottom: 20px;">
                       <form method="get" action="">

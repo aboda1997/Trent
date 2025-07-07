@@ -75,7 +75,7 @@ require 'include/main_head.php';
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <!-- Centered Search Form -->
-                                    <div class="row justify-content-center">
+									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
                                         <div class="col-md-6 text-center">
                                             <div class="search-container" style="margin-bottom: 20px;">
                                                 <button id="sendWhatsAppBtn" class="btn btn-primary" type="button">Send Whatsup Message</button>
