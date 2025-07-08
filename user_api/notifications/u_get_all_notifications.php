@@ -42,7 +42,7 @@ try {
             if ($row['name'] == "booking_id") {
                 $data = $rstate->query("SELECT id, book_status , uid , add_user_id FROM tbl_book WHERE id=" . $row['value'])->fetch_assoc();
                 $book_status =  $data['book_status'] ?? '';
-                if ($data['uid'] == $uid){
+                if (isset($data['uid'])&&($data['uid'] == $uid)){
                 $pol['is_owner'] = false;
  
                 }else{
