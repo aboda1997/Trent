@@ -29,7 +29,7 @@ try {
 		if( $sel['add_user_id'] != $uid){
 			$view_c = $sel['view_count'] +1 ;
 			 $rstate->query("update tbl_property  set view_count = $view_c   where  id=" . $pro_id .  "");
-			$fp['view_count'] = $view_c;
+			$fp['view_count'] = (string) $view_c;
 			}
 		$inc_ranges = $rstate->query("select * from tbl_increased_value where  prop_id=" . $pro_id .  "");
 		while ($row = $inc_ranges->fetch_assoc()) {
