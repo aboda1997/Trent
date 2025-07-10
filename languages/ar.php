@@ -405,4 +405,16 @@ return [
     'visibility' => 'الرؤية',
     'payout_Image' => 'صورة طريقة السداد',
     'payout_img' => 'يرجى رفع صورة لطريقة السداد.',
+
+    'premium_date_pricing' => 'تسعير التواريخ المميزة',
+    'select_date_range' => 'اختر نطاق التاريخ',
+    'additional_price' => 'السعر الإضافي',
+    'add_price_range' => 'إضافة نطاق سعر',
+    'date_range' => 'نطاق التاريخ',
+    'price' => 'السعر',
+    
+    // Excluded Dates Section
+    'excluded_dates' => 'التواريخ المستثناة',
+    'select_dates_exclude' => 'اختر التواريخ لاستثناءها',
+    'exclude_dates' => 'استثناء التواريخ'
 ];

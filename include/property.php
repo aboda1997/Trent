@@ -11,7 +11,7 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/user_api/notifications/send_notification.php';
 
 try {
-    if (isset($_POST["type"])) {
+    if (isset($_POST["type"]) && ((!isset($_SESSION['restatename'])  && $_POST['type'] == 'login') || (isset($_SESSION['restatename'])  && $_POST['type'] != 'login'))) {
 
         if ($_POST['type'] == 'login') {
             $username = $_POST['username'];
@@ -1134,6 +1134,8 @@ try {
                 "ar" => $title_ar
             ], JSON_UNESCAPED_UNICODE);
 
+            $date_ranges = isset($_POST['excluded_dates']) ? json_decode($_POST['excluded_dates'], true) : null;
+            $inc_value_ranges = isset($_POST['priced_ranges']) ? json_decode($_POST['priced_ranges'], true) : null;
 
             // Allowed file types for images and videos
             $allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
@@ -1228,21 +1230,6 @@ try {
             $imageUrlsString = implode(',', $imageUrls);
             $videoUrlsString = implode(',', $videoUrls);
             if (!isset($returnArr)) {
-
-                $table = "tbl_property";
-                $field_values = ["created_at", "is_need_review", "updated_at", "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
-                $data_values = ["$updated_at", "0", "$updated_at", "$imageUrlsString", "",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "0", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
-
-                $h = new Estate();
-                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-            }
-            if ($check) {
-                $table = "tbl_property";
-                $field = ["visibility" => $check];
-                $where = "where id=" . '?' . "";
-                $h = new Estate();
-                $where_conditions = [$check];
-                $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
                 $returnArr = [
                     "ResponseCode" => "200",
                     "Result" => "true",
@@ -1250,6 +1237,51 @@ try {
                     "message" => "Property section!",
                     "action" => "list_properties.php",
                 ];
+                $table = "tbl_property";
+                $field_values = ["created_at", "is_need_review", "updated_at", "image", "cancel_reason", "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "is_approved",  "latitude", "longitude", "video", "guest_rules", "compound_name", "floor", "status", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
+                $data_values = ["$updated_at", "0", "$updated_at", "$imageUrlsString", "",  "$policy",  "$period", "$featured", "$security_deposit", "$government", "$google_maps_url", "0", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_name_json", "$floor_json", "$status", "$title_json", "$price", "$address_json", "$facility", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype",  "$city_json",  "$propowner", "$pbuysell", "$plimit", "$max_days", "$min_days"];
+
+                $h = new Estate();
+                $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+
+                if ($check) {
+                    $table = "tbl_property";
+                    $field = ["visibility" => $check];
+                    $where = "where id=" . '?' . "";
+                    $h = new Estate();
+                    $where_conditions = [$check];
+                    $new_res = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+                    if (is_array($date_ranges) && !empty($date_ranges)) {
+                        $jsonResponse    =  exclude_ranges('en', $propowner, $check, $date_ranges);
+                        $response = json_decode($jsonResponse, true); // true for associative array
+                        $result = $response['result']; // "true" or "false"
+                        if ($result == 'false') {
+                            $rstate->query("Delete from  tbl_property  WHERE id=" . $check);
+                            http_response_code(200);
+
+                            $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
+                        }
+                    }
+                    if (is_array($inc_value_ranges)) {
+                        $jsonResponse    =  add_specific_ranges_increased_value('en', $propowner, $check, $inc_value_ranges);
+                        $response = json_decode($jsonResponse, true); // true for associative array
+                        $result = $response['result']; // "true" or "false"
+                        if ($result == 'false') {
+                            $rstate->query("Delete from  tbl_property  WHERE id=" . $check);
+                            http_response_code(200);
+
+                            $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
+                        }
+                    }
+                } else {
+                    $returnArr = [
+                        "ResponseCode" => "200",
+                        "Result" => "false",
+                        "title" => "Something went wrong!!",
+                        "message" => "Property section!",
+                        "action" => "list_properties.php",
+                    ];
+                }
             }
         } elseif ($_POST["type"] == "edit_property") {
 
@@ -1297,6 +1329,8 @@ try {
             $city_ar = $rstate->real_escape_string($_POST["city_ar"]);
             $cancel_reason = $rstate->real_escape_string($_POST["cancel_reason"]) ?? '';
             $need_review = 0;
+            $date_ranges = isset($_POST['excluded_dates']) ? json_decode($_POST['excluded_dates'], true) : null;
+            $inc_value_ranges = isset($_POST['priced_ranges']) ? json_decode($_POST['priced_ranges'], true) : null;
 
             if ($is_approved == '0' && $cancel_reason != '') {
                 deny_property($cancel_reason,  $id, $propowner, $address_ar, $rstate);
@@ -1483,21 +1517,47 @@ try {
 
                 $field_values["video"] =  "";
             }
-
+            if (is_array($inc_value_ranges) &&  !isset($returnArr)) {
+                $jsonResponse    =  add_specific_ranges_increased_value('en', $propowner, $id, $inc_value_ranges);
+                $response = json_decode($jsonResponse, true); // true for associative array
+                $result = $response['result']; // "true" or "false"
+                if ($result == 'false') {
+                    http_response_code(200);
+                    $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
+                }
+            }
+            if (is_array($date_ranges) && !empty($date_ranges) && !isset($returnArr)) {
+                $jsonResponse   =  exclude_ranges('en', $propowner, $id, $date_ranges);
+                $response = json_decode($jsonResponse, true); // true for associative array
+                $result = $response['result']; // "true" or "false"
+                if ($result == 'false') {
+                    http_response_code(200);
+                    $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
+                }
+            }
             if (!isset($returnArr)) {
                 $where = "where id=" . '?' . "";
                 $where_conditions  = [$id];
                 $h = new Estate();
                 $check = $h->restateupdateData_Api($field_values, $table, $where, $where_conditions);
-            }
-            if ($check) {
-                $returnArr = [
-                    "ResponseCode" => "200",
-                    "Result" => "true",
-                    "title" => "Property Update Successfully!!",
-                    "message" => "Property section!",
-                    "action" => "list_properties.php",
-                ];
+
+                if ($check) {
+                    $returnArr = [
+                        "ResponseCode" => "200",
+                        "Result" => "true",
+                        "title" => "Property Update Successfully!!",
+                        "message" => "Property section!",
+                        "action" => "list_properties.php",
+                    ];
+                } else {
+                    $returnArr = [
+                        "ResponseCode" => "200",
+                        "Result" => "false",
+                        "title" => "Something went wrong!!",
+                        "message" => "Property section!",
+                        "action" => "list_properties.php",
+                    ];
+                }
             }
         } elseif ($_POST["type"] == "toggle_status") {
             $okey = $_POST["status"];
@@ -2867,13 +2927,23 @@ WHERE
             $data = [];
             while ($row = $sel->fetch_assoc()) {
                 $check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
+                $balance = '0.00';
+                $sel = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$row['id']  . " order by id desc");
+                while ($row = $sel->fetch_assoc()) {
 
+                    if ($row['status'] == 'Adding') {
+                        $balance = bcadd($balance, $row['amt'], 2);
+                    } else if ($row['status'] == 'Withdraw') {
+                        $balance = bcsub($balance, $row['amt'], 2);
+                    }
+                }
                 $data[] = [
                     'id' => $row['id'] ?? '',
                     'user_name' => $row['name'] ?? '',
                     'user_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
                     'join_date' => $row['reg_date'] ?? '',
                     'Property Count' => $check_owner,
+                    'Wallet Balance' => $balance
 
 
                 ];
@@ -2895,6 +2965,7 @@ WHERE
                     'User Mobile',
                     'Join Date',
                     'Property Count',
+                    'Wallet Balance',
 
                 ],
                 $data

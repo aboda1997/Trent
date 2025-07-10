@@ -98,95 +98,102 @@ $lang_en = load_specific_langauage('en');
 
 <body>
     <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <!-- Include Required Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.min.js"></script>
 
     <script>
         var langDataAR = <?php echo json_encode(load_specific_langauage('ar'), JSON_UNESCAPED_UNICODE); ?>;
         var langDataEN = <?php echo json_encode(load_specific_langauage('en'), JSON_UNESCAPED_UNICODE); ?>;
-       function submitform(isValid){
 
-        $(document).on('submit', 'form', function(event) {
-            // Disable all submit buttons to prevent multiple submissions
-            $(':input[type="submit"]').prop('disabled', true);
-            event.preventDefault(); // Prevent default form submission
-            if(!isValid){
+        function submitform(isValid) {
+
+            $(document).on('submit', 'form', function(event) {
+                // Disable all submit buttons to prevent multiple submissions
+                $(':input[type="submit"]').prop('disabled', true);
+                event.preventDefault(); // Prevent default form submission
+                if (!isValid) {
+                    return false;
+                }
+                // Create a FormData object from the submitted form
+                var formData = new FormData(this);
+
+                // Send the form data via AJAX
+                $.ajax({
+                    url: 'include/property.php',
+                    method: 'POST',
+                    async: false,
+                    cache: false,
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        // Parse the JSON response
+                        const resultData = JSON.parse(response);
+
+                        // Display notification
+                        $.notify('<i class="fas fa-bell"></i>' + resultData.title, {
+                            type: 'theme',
+                            allow_dismiss: true,
+                            delay: 2000,
+                            showProgressbar: true,
+                            timer: 300,
+                            animate: {
+                                enter: 'animated fadeInDown',
+                                exit: 'animated fadeOutUp',
+                            },
+                        });
+
+                        // Redirect after a delay if an action URL is provided
+                        if (resultData.action) {
+                            setTimeout(function() {
+                                window.location.href = resultData.action;
+                            }, 2000);
+                        }
+                    },
+                });
+
+                // Prevent the default form submission behavior
                 return false;
-            }
-            // Create a FormData object from the submitted form
-            var formData = new FormData(this);
-        
-            // Send the form data via AJAX
-            $.ajax({
-                url: 'include/property.php',
-                method: 'POST',
-                async: false,
-                cache: false,
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    // Parse the JSON response
-                    const resultData = JSON.parse(response);
+            });
+        }
+    </script>
 
-                    // Display notification
-                    $.notify('<i class="fas fa-bell"></i>' + resultData.title, {
-                        type: 'theme',
-                        allow_dismiss: true,
-                        delay: 2000,
-                        showProgressbar: true,
-                        timer: 300,
-                        animate: {
-                            enter: 'animated fadeInDown',
-                            exit: 'animated fadeOutUp',
-                        },
-                    });
+    <script>
+        $(document).ready(function() {
+            // When "View Details" button is clicked
+            $(".preview_d").click(function() {
+                var orderId = $(this).data('id'); // Get the order ID from data-id attribute
+                var modalBody = $(".modal-body.p_data"); // Target modal body
 
-                    // Redirect after a delay if an action URL is provided
-                    if (resultData.action) {
-                        setTimeout(function() {
-                            window.location.href = resultData.action;
-                        }, 2000);
+                // Show loading spinner (optional)
+                modalBody.html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
+
+                // Load content via AJAX
+                $.ajax({
+                    url: 'order_product_data.php', // Path to your PHP file
+                    type: 'Post',
+                    data: {
+                        pid: orderId
+                    }, // Pass the order ID as a parameter
+                    success: function(response) {
+                        modalBody.html(response); // Insert the response into the modal
+                    },
+                    error: function(xhr, status, error) {
+                        modalBody.html('<div class="alert alert-danger">Failed to load data.</div>');
+                        console.error("AJAX Error:", error);
                     }
-                },
+                });
             });
 
-            // Prevent the default form submission behavior
-            return false;
+            // Optional: Clear modal content when closed
+            $('#myModal').on('hidden.bs.modal', function() {
+                $(".modal-body.p_data").html(''); // Empty the modal body
+            });
         });
-    }
-    
     </script>
-    
-<script>
-$(document).ready(function() {
-    // When "View Details" button is clicked
-    $(".preview_d").click(function() {
-        var orderId = $(this).data('id'); // Get the order ID from data-id attribute
-        var modalBody = $(".modal-body.p_data"); // Target modal body
-        
-        // Show loading spinner (optional)
-        modalBody.html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
-        
-        // Load content via AJAX
-        $.ajax({
-            url: 'order_product_data.php', // Path to your PHP file
-            type: 'Post',
-            data: { pid: orderId }, // Pass the order ID as a parameter
-            success: function(response) {
-                modalBody.html(response); // Insert the response into the modal
-            },
-            error: function(xhr, status, error) {
-                modalBody.html('<div class="alert alert-danger">Failed to load data.</div>');
-                console.error("AJAX Error:", error);
-            }
-        });
-    });
-    
-    // Optional: Clear modal content when closed
-    $('#myModal').on('hidden.bs.modal', function () {
-        $(".modal-body.p_data").html(''); // Empty the modal body
-    });
-});
-</script>
     <!-- tap on top starts-->
     <div class="tap-top"><i data-feather="chevrons-up"></i></div>
     <!-- tap on tap ends-->

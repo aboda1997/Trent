@@ -154,4 +154,12 @@ class Estate
     $result = $GLOBALS['rstate']->query($sql);
     return $result;
   }
+
+   function restateDeleteData_Api_fav($where, $table)
+  {
+
+    $sql = "Delete From $table $where";
+    $result = $GLOBALS['rstate']->query($sql);
+    return $result;
+  }
 }

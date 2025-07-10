@@ -467,7 +467,7 @@ if (isset($_GET['id'])) {
 
                                     </div>
                                     <div class="card-footer text-left">
-                                        <button onclick="return validateForm()" id="add-slider" type="submit" class="btn btn-primary"><?= $lang_en['Add_Facility'] ?></button>
+                                        <button onclick="return validateForm()" id="add-slider" type="submit" class="btn btn-primary"><?= $lang_en['Add_Slider'] ?></button>
                                     </div>
                                 </form>
                             <?php } ?>
