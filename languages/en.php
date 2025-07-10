@@ -449,4 +449,17 @@ return [
     'payout_Image' => 'Payout Method Image',
     'payout_img' => 'Please upload a Payout Method Image.',
 
+       // Premium Date Pricing Section
+    'premium_date_pricing' => 'Premium Date Pricing',
+    'select_date_range' => 'Select Date Range',
+    'additional_price' => 'Additional Price',
+    'add_price_range' => 'Add Price Range',
+    'date_range' => 'Date Range',
+    'price' => 'Price',
+    
+    // Excluded Dates Section
+    'excluded_dates' => 'Excluded Dates',
+    'select_dates_exclude' => 'Select Dates to Exclude',
+    'exclude_dates' => 'Exclude Dates'
+
 ];

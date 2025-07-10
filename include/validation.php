@@ -556,7 +556,7 @@ function validateDateRanges(array $date_ranges): array
         }
 
         // Validate date order
-        if (strtotime($from_date) >= strtotime($to_date)) {
+        if (strtotime($from_date) > strtotime($to_date)) {
             return [false, "from_date must be before  to to_date in each range"];
         }
         // Validate value if provided (must be integer)
