@@ -2955,6 +2955,8 @@ WHERE
                     'user_contact' => ($row['ccode'] ?? '') . ($row['mobile'] ?? ''),
                     'join_date' => $row['reg_date'] ?? '',
                     'Property Count' => $check_owner,
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
                     'Wallet Balance' => $balance
 
 
@@ -2977,6 +2979,7 @@ WHERE
                     'User Mobile',
                     'Join Date',
                     'Property Count',
+                    'Status',
                     'Wallet Balance',
 
                 ],
