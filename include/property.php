@@ -2940,13 +2940,13 @@ WHERE
             while ($row = $sel->fetch_assoc()) {
                 $check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
                 $balance = '0.00';
-                $sel = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$row['id']  . " order by id desc");
-                while ($row = $sel->fetch_assoc()) {
+                $sell = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$row['id']  . " order by id desc");
+                while ($dat = $sell->fetch_assoc()) {
 
-                    if ($row['status'] == 'Adding') {
-                        $balance = bcadd($balance, $row['amt'], 2);
-                    } else if ($row['status'] == 'Withdraw') {
-                        $balance = bcsub($balance, $row['amt'], 2);
+                    if ($dat['status'] == 'Adding') {
+                        $balance = bcadd($balance, $dat['amt'], 2);
+                    } else if ($dat['status'] == 'Withdraw') {
+                        $balance = bcsub($balance, $dat['amt'], 2);
                     }
                 }
                 $data[] = [
