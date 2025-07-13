@@ -2,6 +2,7 @@
 require "reconfig.php";
 require "estate.php";
 require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
+require dirname(dirname(__FILE__)) . '/include/constants.php';
 
 use Shuchkin\SimpleXLSX;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -1243,7 +1244,11 @@ try {
 
                 $h = new Estate();
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
+                $check_owner = $rstate->query("select * from tbl_property where  is_approved =1 and  add_user_id=" . $propowner . " and is_deleted =0")->num_rows;
 
+                if ($check_owner  >= AppConstants::Property_Count) {
+                    $rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $propowner);
+                }
                 if ($check) {
                     $table = "tbl_property";
                     $field = ["visibility" => $check];
@@ -2055,8 +2060,8 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? null;
             $pgov = $_POST['pgov'] ?? null;
-            $city_name= $rstate->real_escape_string($_POST["pcity"]??null) ?? null  ;
-            $compound_name = $rstate->real_escape_string($_POST["pcompound"]??null) ?? null;
+            $city_name = $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null;
+            $compound_name = $rstate->real_escape_string($_POST["pcompound"] ?? null) ?? null;
 
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
@@ -2070,8 +2075,8 @@ WHERE
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_slider";
-            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id", "compound_name","city_name"];
-            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype ,$city_name ,  $compound_name];
+            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id", "compound_name", "city_name"];
+            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype, $city_name,  $compound_name];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -2248,7 +2253,7 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? Null;
             $pgov = $_POST['pgov'] ?? Null;
-            $city_name= $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null ;
+            $city_name = $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null;
             $compound_name = $rstate->real_escape_string($_POST["pcompound"] ?? null) ?? null;
 
             $newfilename = round(microtime(true)) . "." . end($temp);
@@ -2266,10 +2271,16 @@ WHERE
                     $target_file
                 );
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json, 
-                "compound_name" =>$compound_name ,
-                "city_name" =>$city_name , 
-                "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
+                $field = [
+                    "status" => $okey,
+                    "img" => $url,
+                    "title" => $title_json,
+                    "compound_name" => $compound_name,
+                    "city_name" => $city_name,
+                    "cat_id" => $ptype,
+                    "government_id" => $pgov,
+                    "uid" => "$propowner"
+                ];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateDatanull_Api($field, $table, $where);
@@ -2285,10 +2296,16 @@ WHERE
                 }
             } else {
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json, 
-                "compound_name" =>$compound_name ,
-                "city_name" =>$city_name , 
-                "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
+                $field = [
+                    "status" => $okey,
+                    "img" => $url,
+                    "title" => $title_json,
+                    "compound_name" => $compound_name,
+                    "city_name" => $city_name,
+                    "cat_id" => $ptype,
+                    "government_id" => $pgov,
+                    "uid" => "$propowner"
+                ];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
                 $check = $h->restateupdateDatanull_Api($field, $table, $where);
@@ -2956,6 +2973,7 @@ WHERE
                     'join_date' => $row['reg_date'] ?? '',
                     'Property Count' => $check_owner,
                     'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+                    'IS_Owner' => ($row['is_owner'] ?? '') == 1 ? 'Owner' : 'Property Manager',
 
                     'Wallet Balance' => $balance
 
@@ -2980,6 +2998,7 @@ WHERE
                     'Join Date',
                     'Property Count',
                     'Status',
+                    'Is Owner',
                     'Wallet Balance',
 
                 ],

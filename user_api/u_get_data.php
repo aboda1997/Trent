@@ -19,7 +19,7 @@ try{
 		$data = array();
 
 		$count = $rstate->query("select * from tbl_user where status= 1 and verified =1 and id=" . $uid . "")->num_rows;
-		$check_count = $rstate->query("select * from tbl_property where  status = 1 and  add_user_id=" . $uid . " and is_deleted = 0")->num_rows;
+		$check_count = $rstate->query("select * from tbl_property where  is_approved = 1 and  add_user_id=" . $uid . " and is_deleted = 0")->num_rows;
 
 		if ($check_count  >= AppConstants::Property_Count) {
 			$rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $uid);
