@@ -165,7 +165,7 @@ if (!in_array('Read_User_List', $per)) {
 														<td><span data-id="<?php echo $row['id']; ?>" class="badge badge-success">Active</span></td>
 
 														<td>
-															<?php echo ($row['is_owner'] == 1) ? 'Owner' : 'Property'; ?>
+															<?php echo ($row['is_owner'] == 1) ? 'Owner' : 'Property Manager'; ?>
 														</td>
 														<td>
 															<?php
