@@ -10,6 +10,7 @@ $pol = array();
 $c = array();
 $sel = $rstate->query("select JSON_UNQUOTE(JSON_EXTRACT(name, '$.$lang_code')) as name ,id from tbl_government
           WHERE status=1
+		   ORDER BY name
 ");
 while ($row = $sel->fetch_assoc()) {
 

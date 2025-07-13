@@ -10,9 +10,9 @@ try {
     $compound_name = isset($_GET['compound_name']) ? $rstate->real_escape_string($_GET['compound_name']) : null;
     $city_name = isset($_GET['city_name']) ? $rstate->real_escape_string($_GET['city_name']) : null;
     $government_id = isset($_GET['government_id']) ? $rstate->real_escape_string($_GET['government_id']) : null;
-    $compound_list= array();
-    $city_list= array();
-    $cat_list= array();
+    $compound_list = array();
+    $city_list = array();
+    $cat_list = array();
     $c = array();
     $ccc = array();
     $period = array();
@@ -74,19 +74,19 @@ try {
         // Process results
         while ($row = $sel->fetch_assoc()) {
             // Collect distinct values
-            if (!in_array($row['compound_name'], $compounds) && $row['compound_name'] !='' ) {
+            if (!in_array($row['compound_name'], $compounds) && $row['compound_name'] != '') {
                 $compounds[] = $row['compound_name'];
-                $compound_list[] = ['name'=>$row['compound_name'] ];
+                $compound_list[] = ['name' => $row['compound_name']];
             }
 
             if (!in_array($row['city_name'], $cities)) {
                 $cities[] =  $row['city_name'];
-                $city_list[] = ['name'=>$row['city_name'] ];
+                $city_list[] = ['name' => $row['city_name']];
             }
 
             if (!in_array($row['title'], $ptypes)) {
                 $ptypes[] = $row['title'];
-                $cat_list[] = ['title'=>$row['title'] , 'id' =>$row['ptype'] ,'img'=> $row['img'] ];
+                $cat_list[] = ['title' => $row['title'], 'id' => $row['ptype'], 'img' => $row['img']];
             }
 
             // Collect all prices for min/max calculation
@@ -97,8 +97,23 @@ try {
         $minPrice = !empty($prices) ? min($prices) : "0";
         $maxPrice = !empty($prices) ? max($prices) : "0";
 
-        $c['min_price']  =  $minPrice ;
+        $c['min_price']  =  $minPrice;
         $c['max_price']  = $maxPrice;
+
+        // Sort compound_list by name
+        usort($compound_list, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        // Sort city_list by name
+        usort($city_list, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        // Sort category_list by title
+        usort($cat_list, function ($a, $b) {
+            return strcmp($a['title'], $b['title']);
+        });
         $returnArr    = generateResponse('true', "Filters Founded!", 200, array(
 
             "price_range" => $c,
