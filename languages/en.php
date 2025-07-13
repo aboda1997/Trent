@@ -445,21 +445,26 @@ return [
     'date_ranges_required' => 'Date ranges array are required ',
     'booking_expired' => 'The time allowed for complete payment has expired',
     'Not_allow_book_range' => 'Not allow to book this range. try again after some period.',
-    'visibility' =>'visibility',
+    'visibility' => 'visibility',
     'payout_Image' => 'Payout Method Image',
     'payout_img' => 'Please upload a Payout Method Image.',
 
-       // Premium Date Pricing Section
+    // Premium Date Pricing Section
     'premium_date_pricing' => 'Premium Date Pricing',
     'select_date_range' => 'Select Date Range',
     'additional_price' => 'Additional Price',
     'add_price_range' => 'Add Price Range',
     'date_range' => 'Date Range',
     'price' => 'Price',
-    
+
     // Excluded Dates Section
     'excluded_dates' => 'Excluded Dates',
     'select_dates_exclude' => 'Select Dates to Exclude',
-    'exclude_dates' => 'Exclude Dates'
+    'exclude_dates' => 'Exclude Dates',
+    
+    'Select_City' => 'Select City',
+    'Select_Compound' => 'Select Compound',
+    'Select_Government_First' => 'Please select government first',
+    'Select_City_First' => 'Please select city first',
 
 ];

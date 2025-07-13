@@ -412,9 +412,14 @@ return [
     'add_price_range' => 'إضافة نطاق سعر',
     'date_range' => 'نطاق التاريخ',
     'price' => 'السعر',
-    
+
     // Excluded Dates Section
     'excluded_dates' => 'التواريخ المستثناة',
     'select_dates_exclude' => 'اختر التواريخ لاستثناءها',
-    'exclude_dates' => 'استثناء التواريخ'
+    'exclude_dates' => 'استثناء التواريخ',
+
+    'Select_City' => 'اختر المدينة',
+    'Select_Compound' => 'اختر الكومباوند',
+    'Select_Government_First' => 'الرجاء اختيار المحافظة أولاً',
+    'Select_City_First' => 'الرجاء اختيار المدينة أولاً'
 ];
