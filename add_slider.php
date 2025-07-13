@@ -570,7 +570,7 @@ if (isset($_GET['id'])) {
         // Function to load cities
         function loadCities(govId, cityNameToSelect = null) {
             if (govId) {
-                $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
+                $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
                     if (response.result === "true") {
                         const citySelect = $('#city');
                         citySelect.empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>');
@@ -604,7 +604,7 @@ if (isset($_GET['id'])) {
         // Function to load compounds
         function loadCompounds(govId, cityName, compoundNameToSelect = null) {
             if (govId && cityName) {
-                $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId + '&city_name=' + encodeURIComponent(cityName), function(response) {
+                $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId + '&city_name=' + encodeURIComponent(cityName), function(response) {
                     if (response.result === "true") {
                         const compoundSelect = $('#compound');
                         compoundSelect.empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>');
