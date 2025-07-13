@@ -2053,8 +2053,11 @@ WHERE
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $target_dir = dirname(dirname(__FILE__)) . "/images/slider/";
             $propowner = implode(',', $_POST['propowner'] ?? []);
-            $ptype = $_POST['ptype'] ?? Null;
+            $ptype = $_POST['ptype'] ?? null;
             $pgov = $_POST['pgov'] ?? null;
+            $city_name= $rstate->real_escape_string($_POST["pcity"]??null) ?? null  ;
+            $compound_name = $rstate->real_escape_string($_POST["pcompound"]??null) ?? null;
+
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
@@ -2067,8 +2070,8 @@ WHERE
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
             $table = "tbl_slider";
-            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id"];
-            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype];
+            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id", "compound_name","city_name"];
+            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype ,$city_name ,  $compound_name];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -2245,6 +2248,9 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? Null;
             $pgov = $_POST['pgov'] ?? Null;
+            $city_name= $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null ;
+            $compound_name = $rstate->real_escape_string($_POST["pcompound"] ?? null) ?? null;
+
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
             $url = $url . basename($newfilename);
@@ -2260,10 +2266,13 @@ WHERE
                     $target_file
                 );
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json,  "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json, 
+                "compound_name" =>$compound_name ,
+                "city_name" =>$city_name , 
+                "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
-                $check = $h->restateupdateData($field, $table, $where);
+                $check = $h->restateupdateDatanull_Api($field, $table, $where);
 
                 if ($check == 1) {
                     $returnArr = [
@@ -2276,10 +2285,13 @@ WHERE
                 }
             } else {
                 $table = "tbl_slider";
-                $field = ["status" => $okey, "img" => $url, "title" => $title_json,  "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
+                $field = ["status" => $okey, "img" => $url, "title" => $title_json, 
+                "compound_name" =>$compound_name ,
+                "city_name" =>$city_name , 
+                "cat_id" => $ptype,  "government_id" => $pgov,  "uid" => "$propowner"];
                 $where = "where id=" . $id . "";
                 $h = new Estate();
-                $check = $h->restateupdateData($field, $table, $where);
+                $check = $h->restateupdateDatanull_Api($field, $table, $where);
                 if ($check == 1) {
                     $returnArr = [
                         "ResponseCode" => "200",
@@ -2928,13 +2940,13 @@ WHERE
             while ($row = $sel->fetch_assoc()) {
                 $check_owner = $rstate->query("SELECT * FROM tbl_property WHERE add_user_id=" . (int)$row['id'] . " AND is_deleted = 0")->num_rows;
                 $balance = '0.00';
-                $sel = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$row['id']  . " order by id desc");
-                while ($row = $sel->fetch_assoc()) {
+                $sell = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$row['id']  . " order by id desc");
+                while ($dat = $sell->fetch_assoc()) {
 
-                    if ($row['status'] == 'Adding') {
-                        $balance = bcadd($balance, $row['amt'], 2);
-                    } else if ($row['status'] == 'Withdraw') {
-                        $balance = bcsub($balance, $row['amt'], 2);
+                    if ($dat['status'] == 'Adding') {
+                        $balance = bcadd($balance, $dat['amt'], 2);
+                    } else if ($dat['status'] == 'Withdraw') {
+                        $balance = bcsub($balance, $dat['amt'], 2);
                     }
                 }
                 $data[] = [

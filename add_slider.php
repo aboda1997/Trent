@@ -85,6 +85,8 @@ if (isset($_GET['id'])) {
                             if (isset($_GET['id'])) {
                                 $data = $rstate->query("select * from tbl_slider where id=" . $_GET['id'] . "")->fetch_assoc();
                                 $title = json_decode($data['title'], true);
+                                $city_name = $data['city_name'];
+                                $compound_name = $data['compound_name'];
 
                             ?>
                                 <form
@@ -280,6 +282,52 @@ if (isset($_GET['id'])) {
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- City Dropdown -->
+                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                                                <div class="form-group mb-3">
+                                                    <label id="prop_city">
+                                                        <?= $lang_en['Select_City'] ?>
+                                                    </label>
+                                                    <select name="pcity" id="city" class="form-control" disabled
+                                                        title="<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>">
+                                                        <option value="" disabled selected>
+                                                            <?= $lang_en['Select_City'] ?>
+                                                        </option>
+                                                        <?php if ($city_name): ?>
+                                                            <option value="<?= $city_name ?>" selected>
+                                                                <?= $city_name ?>
+                                                            </option>
+                                                        <?php endif; ?>
+                                                    </select>
+                                                    <div class="invalid-feedback" id="city_feedback" style="display: none;">
+                                                        <?= $lang_en['prop_city'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Compound Dropdown -->
+                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                                                <div class="form-group mb-3">
+                                                    <label id="prop_compound">
+                                                        <?= $lang_en['Select_Compound'] ?>
+                                                    </label>
+                                                    <select name="pcompound" id="compound" class="form-control" disabled
+                                                        title="<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>">
+                                                        <option value="" disabled selected>
+                                                            <?= $lang_en['Select_Compound'] ?>
+                                                        </option>
+                                                        <?php if ($compound_name): ?>
+                                                            <option value="<?= $compound_name ?>" selected>
+                                                                <?= $compound_name ?>
+                                                            </option>
+                                                        <?php endif; ?>
+                                                    </select>
+                                                    <div class="invalid-feedback" id="compound_feedback" style="display: none;">
+                                                        <?= $lang_en['prop_compound_name'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
 
@@ -462,7 +510,42 @@ if (isset($_GET['id'])) {
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                                                <div class="form-group mb-3">
+                                                    <label id="prop_city">
+                                                        <?= $lang_en['Select_City'] ?>
+                                                    </label>
+                                                    <select name="pcity" id="city" class="form-control" disabled
+                                                        title="<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>">
+                                                        <option value="" disabled selected>
 
+                                                            <?= $lang_en['Select_City'] ?>
+                                                        </option>
+                                                        <!-- Cities will be populated dynamically -->
+                                                    </select>
+                                                    <div class="invalid-feedback" id="city_feedback" style="display: none;">
+                                                        <?= $lang_en['prop_city'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                                                <div class="form-group mb-3">
+                                                    <label id="prop_compound">
+                                                        <?= $lang_en['Select_Compound'] ?>
+                                                    </label>
+                                                    <select name="pcompound" id="compound" class="form-control" disabled
+                                                        title="<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>">
+                                                        <option value="" disabled selected>
+                                                            <?= $lang_en['Select_Compound'] ?>
+                                                        </option>
+                                                        <!-- Compounds will be populated dynamically -->
+                                                    </select>
+                                                    <div class="invalid-feedback" id="compound_feedback" style="display: none;">
+                                                        <?= $lang_en['prop_compound_name'] ?>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -481,6 +564,137 @@ if (isset($_GET['id'])) {
 
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Function to load cities
+        function loadCities(govId, cityNameToSelect = null) {
+            if (govId) {
+                $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
+                    if (response.result === "true") {
+                        const citySelect = $('#city');
+                        citySelect.empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>');
+
+                        if (response.data.city_list && response.data.city_list.length > 0) {
+                            let foundMatch = false;
+
+                            response.data.city_list.forEach(function(city) {
+                                const isSelected = cityNameToSelect && city.name === cityNameToSelect;
+                                if (isSelected) foundMatch = true;
+
+                                citySelect.append($('<option>', {
+                                    value: city.name,
+                                    text: city.name,
+                                    selected: isSelected
+                                }));
+                            });
+
+                            // If we didn't find a match, ensure empty selection
+                            if (cityNameToSelect && !foundMatch) {
+                                citySelect.val('');
+                            }
+
+                            citySelect.prop('disabled', false).removeAttr('title');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Function to load compounds
+        function loadCompounds(govId, cityName, compoundNameToSelect = null) {
+            if (govId && cityName) {
+                $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId + '&city_name=' + encodeURIComponent(cityName), function(response) {
+                    if (response.result === "true") {
+                        const compoundSelect = $('#compound');
+                        compoundSelect.empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>');
+
+                        if (response.data.compound_list && response.data.compound_list.length > 0) {
+                            let foundMatch = false;
+
+                            response.data.compound_list.forEach(function(compound) {
+                                const isSelected = compoundNameToSelect && compound.name === compoundNameToSelect;
+                                if (isSelected) foundMatch = true;
+
+                                compoundSelect.append($('<option>', {
+                                    value: compound.name,
+                                    text: compound.name,
+                                    selected: isSelected
+                                }));
+                            });
+
+                            // If we didn't find a match, ensure empty selection
+                            if (compoundNameToSelect && !foundMatch) {
+                                compoundSelect.val('');
+                            }
+
+                            compoundSelect.prop('disabled', false).removeAttr('title');
+                        }
+                    }
+                });
+            } else {
+                // Ensure compound is empty if no city selected
+                $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
+                    .prop('disabled', true);
+            }
+        }
+
+        // Government change handler
+        $('#government').change(function() {
+            const govId = $(this).val();
+            $('#city').empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>')
+                .prop('disabled', !govId)
+                .attr('title', govId ? '' : '<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>');
+
+            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
+                .prop('disabled', true)
+                .attr('title', '<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>');
+
+            if (govId) {
+                loadCities(govId);
+            }
+        });
+
+        // City change handler
+        $('#city').change(function() {
+            const cityName = $(this).val();
+            const govId = $('#government').val();
+
+            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
+                .prop('disabled', !cityName)
+                .attr('title', cityName ? '' : '<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>');
+
+            if (cityName && govId) {
+                loadCompounds(govId, cityName);
+            }
+        });
+
+        // Initialize form
+        const initialGovId = $('#government').val();
+        if (initialGovId) {
+            // Get current values if in edit mode
+            const initialCityName = $('#city').val();
+            const initialCompoundName = $('#compound').val();
+
+            // Load cities and try to match existing city name
+            loadCities(initialGovId, initialCityName);
+
+            // If city was set, load compounds and try to match existing compound name
+            if (initialCityName) {
+                // Use small delay to ensure cities are loaded first
+                setTimeout(function() {
+                    loadCompounds(initialGovId, initialCityName, initialCompoundName);
+                }, 100);
+            }
+        } else {
+            // Ensure all selects are empty and disabled if no government selected
+            $('#city').empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>')
+                .prop('disabled', true);
+            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
+                .prop('disabled', true);
+        }
+    });
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -506,7 +720,17 @@ if (isset($_GET['id'])) {
             allowClear: true
         });
 
+        const $selectcity = $('#city');
+        $selectcity.select2({
+            placeholder: langDataEN.Select_City,
+            allowClear: true
+        });
 
+        const $selectcompound = $('#compound');
+        $selectcompound.select2({
+            placeholder: langDataEN.Select_Compound,
+            allowClear: true
+        });
 
     });
 
@@ -626,6 +850,8 @@ if (isset($_GET['id'])) {
         document.getElementById('prop_governemnt').textContent = langData.Select_Government;
         document.getElementById('prop_owner').textContent = langData.Select_Owner;
         document.getElementById('prop_type').textContent = langData.Select_Property_Type;
+        document.getElementById('prop_city').textContent = langData.Select_City;
+        document.getElementById('prop_compound').textContent = langData.Select_Compound;
 
         if (document.getElementById('add-slider')) {
             document.querySelector('button[type="submit"]').textContent = langData.Add_Slider;
@@ -657,6 +883,19 @@ if (isset($_GET['id'])) {
             placeholder: langData.Select_Owner,
             allowClear: true
         });
+        $('#city').select2('destroy');
+
+        $('#city').select2({
+            placeholder: langDataEN.Select_City,
+            allowClear: true
+        });
+        $('#compound').select2('destroy');
+
+        $('#compound').select2({
+            placeholder: langDataEN.Select_Compound,
+            allowClear: true
+        });
+
 
     }
 </script>

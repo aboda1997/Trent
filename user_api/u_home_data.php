@@ -176,7 +176,7 @@ try {
 
 		foreach ($imageArray as $index => $image) {
 			// First image gets is_panorama = 1, others get 0
-			$is_panorama = ($index === 0) ? 1 : 0;
+			$is_panorama = ($index === 0) ? True : False;
 
 			$vr[] = array(
 				'img' => trim($image),
