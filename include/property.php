@@ -1244,11 +1244,7 @@ try {
 
                 $h = new Estate();
                 $check = $h->restateinsertdata_Api($field_values, $data_values, $table);
-                $check_owner = $rstate->query("select * from tbl_property where  is_approved =1 and  add_user_id=" . $propowner . " and is_deleted =0")->num_rows;
-
-                if ($check_owner  >= AppConstants::Property_Count) {
-                    $rstate->query("UPDATE tbl_user SET is_owner = 0 WHERE id=" . $propowner);
-                }
+                
                 if ($check) {
                     $table = "tbl_property";
                     $field = ["visibility" => $check];
