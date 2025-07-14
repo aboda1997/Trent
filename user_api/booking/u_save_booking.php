@@ -127,7 +127,7 @@ try {
             }
             $fp['image_list'] = $vr;
 
-            $sub_total = get_property_price($res_data['period'], $res_data['price'] ,$prop_id, $from_date  , $to_date );
+            $sub_total = get_property_price($res_data['period'], $res_data['price'], $prop_id, $from_date, $to_date);
             $coupon_value = 0;
             $Coupon_data = validateCoupon($coupon_code, $sub_total);
             if ($Coupon_data['status'] === true) {
@@ -161,15 +161,19 @@ try {
             // $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
             $user1 = $rstate->query("select is_owner , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
-
             $message = "عزيزي المالك،
-يسعدنا إخبارك بوجود حجز جديد لعقارك  [$propertytitle].
-الخطوات التالية: • راجع تفاصيل المستأجر من خلال التطبيق • تواصل مع المستأجر لتنسيق المعاينة • أكد أو ارفض الحجز خلال 24 ساعة
-شكراً لاختيارك ت-رينت فريق ت-رينت 🏡";
+            حابين نبلغك إن في حجز جديد على عقارك [$propertytitle] 🎉🎉🎉
+
+            علشان تكمل الخطوات:
+            * راجع بيانات المستأجر من خلال التطبيق
+            * وافق أو ارفض الحجز خلال 24 ساعة
+
+            شكراً إنك جزء من عائلة Trent 🏡
+            فريق Trent دايمًا في خدمتك ✅";
             $title_ = 'لديك حجز جديد! 🔔';
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
-           
+
 
             if ($method_key == 'TRENT_BALANCE' && $balance <  $partial_value) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
@@ -177,7 +181,7 @@ try {
 
                 $GLOBALS['rstate']->begin_transaction();
 
-                $field_values = ["prop_id", 'method_key' , 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $field_values = ["prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
                 $data_values = [$res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
@@ -200,9 +204,9 @@ try {
                     throw new Exception("Insert failed");
                 }
                 $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
-                    if (!$check) {
-                        throw new Exception("Insert failed");
-                    }
+                if (!$check) {
+                    throw new Exception("Insert failed");
+                }
                 $GLOBALS['rstate']->commit();
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
@@ -218,7 +222,7 @@ try {
                     $GLOBALS['rstate']->begin_transaction();
 
                     $field_values = ["prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                    $data_values = [$res_data['id'], $method_key ,$reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                    $data_values = [$res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
                     $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
