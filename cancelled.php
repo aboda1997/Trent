@@ -107,7 +107,7 @@ if (!in_array('Read_Booking', $per)) {
                     <tbody>
                       <?php
                       // Pagination configuration
-                        $records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+                      $records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
                       $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                       $page = max($page, 1);
 
