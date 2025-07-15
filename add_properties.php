@@ -90,7 +90,7 @@ if (isset($_GET['id'])) {
 								$address = json_decode($data['address'], true);
 								$description = json_decode($data['description'], true);
 								$guest_rules = json_decode($data['guest_rules'], true);
-								$compound_name = json_decode($data['compound_name'], true);
+								$compound_name = json_decode($data['compound_name']??'', true);
 								$city = json_decode($data['city'], true);
 								$floor = json_decode($data['floor'], true);
 								$arr_ = array();
