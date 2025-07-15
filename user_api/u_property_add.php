@@ -216,7 +216,7 @@ try {
 			$h = new Estate();
 			$check = $h->restateinsertdata_Api($field_values, $data_values, $table);
 			if ($check) {
-				if (is_array($date_ranges) && !empty($date_ranges)) {
+				if (is_array($date_ranges)) {
 					$jsonResponse    =  exclude_ranges('en', $user_id, $check, $date_ranges);
 					$response = json_decode($jsonResponse, true); // true for associative array
 					$result = $response['result']; // "true" or "false"
