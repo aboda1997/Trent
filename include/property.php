@@ -2060,9 +2060,8 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? null;
             $pgov = $_POST['pgov'] ?? null;
-            $city_name = $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null;
-            $compound_name = $rstate->real_escape_string($_POST["pcompound"] ?? null) ?? null;
-
+            $city_name = isset($_POST["pcity"]) ? $rstate->real_escape_string($_POST["pcity"]) : null;
+            $compound_name = isset($_POST["pcompound"]) ? $rstate->real_escape_string($_POST["pcompound"]) : null;
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
@@ -2253,9 +2252,7 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? Null;
             $pgov = $_POST['pgov'] ?? Null;
-            $city_name = $rstate->real_escape_string($_POST["pcity"] ?? null) ?? null;
-            $compound_name = $rstate->real_escape_string($_POST["pcompound"] ?? null) ?? null;
-
+            $city_name = isset($_POST["pcity"]) ? $rstate->real_escape_string($_POST["pcity"]) : null;            $compound_name = isset($_POST["pcompound"]) ? $rstate->real_escape_string($_POST["pcompound"]) : null;
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
             $url = $url . basename($newfilename);
