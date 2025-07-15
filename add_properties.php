@@ -1612,7 +1612,6 @@ if (isset($_GET['id'])) {
 																		<div class="excluded-dates mt-3">
 																			<div class="d-flex justify-content-between small text-muted mb-2">
 																				<span>
-																					<?= $lang_en['Add_Property'] ?>
 																					Excluded Dates</span>
 																			</div>
 																			<div class="exclusion-list"></div>
@@ -2919,7 +2918,7 @@ if (isset($_GET['id'])) {
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0) {
 				try {
-					const response = await fetch(`/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
+					const response = await fetch(`/trent/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
 					const data = await response.json();
 
 					if (data.result === "true" && data.data && data.data.date_list) {
