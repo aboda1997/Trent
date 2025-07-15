@@ -1256,7 +1256,7 @@ try {
                     $h = new Estate();
                     $where_conditions = [$check];
                     $new_res = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-                    if (is_array($date_ranges) && !empty($date_ranges)) {
+                    if (is_array($date_ranges)) {
                         $jsonResponse    =  exclude_ranges('en', $propowner, $check, $date_ranges);
                         $response = json_decode($jsonResponse, true); // true for associative array
                         $result = $response['result']; // "true" or "false"
@@ -1531,7 +1531,7 @@ try {
                     $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
                 }
             }
-            if (is_array($date_ranges) && !empty($date_ranges) && !isset($returnArr)) {
+            if (is_array($date_ranges) && !isset($returnArr)) {
                 $jsonResponse   =  exclude_ranges('en', $propowner, $id, $date_ranges);
                 $response = json_decode($jsonResponse, true); // true for associative array
                 $result = $response['result']; // "true" or "false"

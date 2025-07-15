@@ -268,7 +268,7 @@ try {
 					$returnArr  = $jsonResponse;
 				}
 			}
-			if (is_array($date_ranges) && !empty($date_ranges) && !isset($returnArr)) {
+			if (is_array($date_ranges)  && !isset($returnArr)) {
 				$jsonResponse   =  exclude_ranges('en', $user_id, $prop_id, $date_ranges);
 				$response = json_decode($jsonResponse, true); // true for associative array
 				$result = $response['result']; // "true" or "false"

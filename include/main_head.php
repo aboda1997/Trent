@@ -113,6 +113,7 @@ $lang_en = load_specific_langauage('en');
             $(document).on('submit', 'form', function(event) {
                 // Disable all submit buttons to prevent multiple submissions
                 $(':input[type="submit"]').prop('disabled', true);
+                
                 event.preventDefault(); // Prevent default form submission
                 if (!isValid) {
                     return false;

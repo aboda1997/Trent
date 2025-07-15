@@ -90,7 +90,7 @@ if (isset($_GET['id'])) {
 								$address = json_decode($data['address'], true);
 								$description = json_decode($data['description'], true);
 								$guest_rules = json_decode($data['guest_rules'], true);
-								$compound_name = json_decode($data['compound_name']??'', true);
+								$compound_name = json_decode($data['compound_name'] ?? '', true);
 								$city = json_decode($data['city'], true);
 								$floor = json_decode($data['floor'], true);
 								$arr_ = array();
@@ -98,7 +98,11 @@ if (isset($_GET['id'])) {
 								while ($row = $inc_ranges->fetch_assoc()) {
 									array_push($arr_, array('form_date' => $row['from_date'], 'to_date' => $row['to_date'], 'value' => $row['increase_value']));
 								}
-
+								$arr_exclude = array();
+								$exclude_ranges = $rstate->query("select check_in , check_out from tbl_book where book_status= 'Excluded' and  prop_id=" . $_GET['id'] .  "");
+								while ($row = $exclude_ranges->fetch_assoc()) {
+									array_push($arr_exclude, array('form_date' => $row['check_in'], 'to_date' => $row['check_out']));
+								}
 							?>
 								<form
 									onsubmit="return submitform(true)"
@@ -908,7 +912,7 @@ if (isset($_GET['id'])) {
 																				<span>Excluded Dates</span>
 																			</div>
 																			<div class="exclusion-list"></div>
-																			<input type="hidden" name="excluded_dates" id="excludedDatesData">
+																			<input type="hidden" name="excluded_dates" id="excludedDatesData" value='<?= json_encode($arr_exclude) ?>'>
 																		</div>
 																	</div>
 																</div>
@@ -1615,7 +1619,7 @@ if (isset($_GET['id'])) {
 																					Excluded Dates</span>
 																			</div>
 																			<div class="exclusion-list"></div>
-																			<input type="hidden" name="excluded_dates" id="excludedDatesData">
+																			<input type="hidden" name="excluded_dates" id="excludedDatesData" value=''>
 																		</div>
 																	</div>
 																</div>
@@ -1947,7 +1951,7 @@ if (isset($_GET['id'])) {
 
 	function changeLanguage(lang) {
 		var langData = (lang === "ar") ? langDataAR : langDataEN;
-		
+
 		document.getElementById('prop_img_feedback').textContent = langData.prop_img;
 		document.getElementById('prop_video_feedback').textContent = langData.prop_video;
 		document.getElementById('status_feedback').textContent = langData.property_status;
@@ -2830,19 +2834,25 @@ if (isset($_GET['id'])) {
 
 <script>
 	$(document).ready(function() {
-		// Initialize with existing priced ranges from database
+		// Initialize with existing data from database
 		const initialPricedRanges = JSON.parse($('#pricedRangesData').val() || '[]');
 		const pricedRanges = initialPricedRanges.map(range => [
-			range.form_date || range.from_date, // handle both form_date and from_date
-			range.to_date,
-			parseFloat(range.value) || 0
+			range.form_date || range.from_date || range[0],
+			range.to_date || range[1],
+			parseFloat(range.value || range[2]) || 0
 		]);
 
-		const excludedRanges = [];
+		// Initialize excluded dates from database
+		const initialExcludedRanges = JSON.parse($('#excludedDatesData').val() || '[]');
+		const excludedRanges = initialExcludedRanges.map(range => [
+			range.form_date || range.from_date || range[0],
+			range.to_date || range[1]
+		]);
+
 		let unavailableDates = [];
 		let priceDatePicker, excludeDatePicker;
 
-		// Function to initialize date pickers (works for both add and edit)
+		// Function to initialize date pickers
 		function initializeDatePickers() {
 			// Price date picker
 			priceDatePicker = $('#dateRangePicker').daterangepicker({
@@ -2854,21 +2864,27 @@ if (isset($_GET['id'])) {
 					format: 'YYYY-MM-DD'
 				},
 				isInvalidDate: function(date) {
-					return pricedRanges.some(range => {
-						const start = moment(range[0]);
-						const end = moment(range[1]);
-						return date.isBetween(start, end, null, '[]');
-					});
+					// Block if in any priced range
+					if (pricedRanges.some(range => 
+						date.isBetween(range[0], range[1], null, '[]'))) {
+						return true;
+					}
+					
+					// Block if in any excluded range (excluding the to_date)
+					return excludedRanges.some(range => 
+						date.isSameOrAfter(moment(range[0])) && 
+						date.isBefore(moment(range[1]))
+					);
 				}
 			}).on('apply.daterangepicker', function(ev, picker) {
 				$(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
 			});
 
-			// Exclude date picker with enhanced validation
+			// Exclude date picker
 			excludeDatePicker = $('#excludeDatePicker').daterangepicker({
 				opens: 'right',
 				autoUpdateInput: true,
-				minDate: moment().startOf('day'), // Prevent selecting past dates
+				minDate: moment().startOf('day'),
 				locale: {
 					cancelLabel: 'Clear',
 					applyLabel: 'Apply',
@@ -2876,26 +2892,21 @@ if (isset($_GET['id'])) {
 				},
 				isInvalidDate: function(date) {
 					const dateString = date.format('YYYY-MM-DD');
-
-					// Check if date is in unavailable dates or excluded ranges
-					const isUnavailable = unavailableDates.includes(dateString) ||
-						excludedRanges.some(range => {
-							const start = moment(range[0]);
-							const end = moment(range[1]);
-							return date.isBetween(start, end, null, '[]');
-						});
-
-					// Check if date is in any priced range
-					const isInPricedRange = pricedRanges.some(range => {
-						const start = moment(range[0]);
-						const end = moment(range[1]);
-						return date.isBetween(start, end, null, '[]');
-					});
-
-					return isUnavailable || isInPricedRange;
+					
+					// Check unavailable dates
+					if (unavailableDates.includes(dateString)) return true;
+					
+					// Check priced ranges
+					if (pricedRanges.some(r => 
+						date.isBetween(r[0], r[1], null, '[]'))) return true;
+					
+					// Check excluded ranges (excluding the to_date)
+					return excludedRanges.some(r => 
+						date.isSameOrAfter(moment(r[0])) && 
+						date.isBefore(moment(r[1]))
+					);
 				}
 			}).on('apply.daterangepicker', function(ev, picker) {
-				// Prevent same date selection by automatically adding 1 day
 				if (picker.startDate.isSame(picker.endDate, 'day')) {
 					picker.endDate.add(1, 'day');
 					$(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
@@ -2909,11 +2920,10 @@ if (isset($_GET['id'])) {
 				$(this).val('');
 			});
 
-			// Initialize displays
 			updateDisplays();
 		}
 
-		// Fetch unavailable dates from API - only if prop_id > 0 (edit mode)
+		// Fetch unavailable dates from API
 		async function fetchUnavailableDates() {
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0) {
@@ -2931,7 +2941,7 @@ if (isset($_GET['id'])) {
 			initializeDatePickers();
 		}
 
-		// Add price range - works for both add and edit
+		// Add price range
 		$('.add-range-btn').click(function() {
 			const dateRange = $('#dateRangePicker').val();
 			const price = parseFloat($('.price-input').val()) || 0;
@@ -2953,12 +2963,17 @@ if (isset($_GET['id'])) {
 				return;
 			}
 
+			if (checkOverlap(startDate, endDate, excludedRanges)) {
+				alert('This date range overlaps with an excluded range');
+				return;
+			}
+
 			pricedRanges.push([startDate, endDate, price]);
 			updateDisplays();
 			$('#dateRangePicker, .price-input').val('');
 		});
 
-		// Add exclusion range - works for both add and edit
+		// Add exclusion range
 		$('.add-exclusion-btn').click(function() {
 			const dateRange = $('#excludeDatePicker').val();
 
@@ -2977,7 +2992,7 @@ if (isset($_GET['id'])) {
 
 			const selectedDates = getDatesBetween(startDate, endDate);
 
-			// Check for unavailable dates (only in edit mode)
+			// Check for unavailable dates
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0 && selectedDates.some(date => unavailableDates.includes(date))) {
 				alert('Some selected dates are already unavailable');
@@ -2986,6 +3001,11 @@ if (isset($_GET['id'])) {
 
 			if (checkOverlap(startDate, endDate, excludedRanges)) {
 				alert('These dates overlap with an existing exclusion');
+				return;
+			}
+
+			if (checkOverlap(startDate, endDate, pricedRanges)) {
+				alert('These dates overlap with an existing price range');
 				return;
 			}
 
@@ -3010,17 +3030,17 @@ if (isset($_GET['id'])) {
 
 		// Helper function to check for date range overlaps
 		function checkOverlap(newStart, newEnd, ranges) {
-			const newStartDate = new Date(newStart);
-			const newEndDate = new Date(newEnd);
+			const newStartDate = moment(newStart);
+			const newEndDate = moment(newEnd);
 
 			return ranges.some(range => {
-				const rangeStart = new Date(range[0]);
-				const rangeEnd = new Date(range[1]);
+				const rangeStart = moment(range[0]);
+				const rangeEnd = moment(range[1]);
 
 				return (
-					(newStartDate >= rangeStart && newStartDate <= rangeEnd) ||
-					(newEndDate >= rangeStart && newEndDate <= rangeEnd) ||
-					(newStartDate <= rangeStart && newEndDate >= rangeEnd)
+					(newStartDate.isSameOrBefore(rangeEnd) && newStartDate.isSameOrAfter(rangeStart)) ||
+					(newEndDate.isSameOrAfter(rangeStart) && newEndDate.isSameOrBefore(rangeEnd)) ||
+					(newStartDate.isBefore(rangeStart) && newEndDate.isAfter(rangeEnd))
 				);
 			});
 		}
@@ -3049,21 +3069,20 @@ if (isset($_GET['id'])) {
 
 			pricedRanges.forEach((range, index) => {
 				const rangeElement = $(`
-        <div class="range-item d-flex justify-content-between align-items-center py-2">
-          <div>
-            <i class="fas fa-calendar-day text-primary me-2"></i>
-            <span>${range[0]} to ${range[1]}</span>
-          </div>
-          <div>
-            <span class="badge bg-success me-2">+${range[2].toFixed(2)} EGP</span>
-            <button class="btn btn-sm btn-outline-danger remove-priced-range" data-index="${index}">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-      `);
+					<div class="range-item d-flex justify-content-between align-items-center py-2">
+						<div>
+							<i class="fas fa-calendar-day text-primary me-2"></i>
+							<span>${range[0]} to ${range[1]}</span>
+						</div>
+						<div>
+							<span class="badge bg-success me-2">+${range[2].toFixed(2)} EGP</span>
+							<button class="btn btn-sm btn-outline-danger remove-priced-range" data-index="${index}">
+								<i class="fas fa-times"></i>
+							</button>
+						</div>
+					</div>
+				`);
 
-				// Add edit functionality
 				rangeElement.find('span:first').click(function() {
 					$('#dateRangePicker').val(`${range[0]} - ${range[1]}`);
 					$('.price-input').val(range[2].toFixed(2));
@@ -3091,17 +3110,26 @@ if (isset($_GET['id'])) {
 			}
 
 			excludedRanges.forEach((range, index) => {
-				$exclusionList.append(`
-        <div class="exclusion-item d-flex justify-content-between align-items-center py-2">
-          <div>
-            <i class="fas fa-calendar-times text-danger me-2"></i>
-            <span>${range[0]} to ${range[1]}</span>
-          </div>
-          <button class="btn btn-sm btn-outline-danger remove-excluded-range" data-index="${index}">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      `);
+				const exclusionElement = $(`
+					<div class="exclusion-item d-flex justify-content-between align-items-center py-2">
+						<div>
+							<i class="fas fa-calendar-times text-danger me-2"></i>
+							<span>${range[0]} to ${range[1]}</span>
+							<small class="text-muted">(available from ${range[1]})</small>
+						</div>
+						<button class="btn btn-sm btn-outline-danger remove-excluded-range" data-index="${index}">
+							<i class="fas fa-times"></i>
+						</button>
+					</div>
+				`);
+
+				exclusionElement.find('span:first').click(function() {
+					$('#excludeDatePicker').val(`${range[0]} - ${range[1]}`);
+					excludedRanges.splice(index, 1);
+					updateDisplays();
+				});
+
+				$exclusionList.append(exclusionElement);
 			});
 
 			$('.remove-excluded-range').click(function() {
@@ -3114,39 +3142,36 @@ if (isset($_GET['id'])) {
 		function refreshDatePickers() {
 			if (priceDatePicker && priceDatePicker.data('daterangepicker')) {
 				priceDatePicker.data('daterangepicker').isInvalidDate = function(date) {
-					return pricedRanges.some(range => {
-						const start = moment(range[0]);
-						const end = moment(range[1]);
-						return date.isBetween(start, end, null, '[]');
-					});
+					if (pricedRanges.some(range => 
+						date.isBetween(range[0], range[1], null, '[]'))) {
+						return true;
+					}
+					
+					return excludedRanges.some(range => 
+						date.isSameOrAfter(moment(range[0])) && 
+						date.isBefore(moment(range[1]))
+					);
 				};
 			}
 
 			if (excludeDatePicker && excludeDatePicker.data('daterangepicker')) {
 				excludeDatePicker.data('daterangepicker').isInvalidDate = function(date) {
 					const dateString = date.format('YYYY-MM-DD');
-
-					// Check if date is in unavailable dates or excluded ranges
-					const isUnavailable = unavailableDates.includes(dateString) ||
-						excludedRanges.some(range => {
-							const start = moment(range[0]);
-							const end = moment(range[1]);
-							return date.isBetween(start, end, null, '[]');
-						});
-
-					// Check if date is in any priced range
-					const isInPricedRange = pricedRanges.some(range => {
-						const start = moment(range[0]);
-						const end = moment(range[1]);
-						return date.isBetween(start, end, null, '[]');
-					});
-
-					return isUnavailable || isInPricedRange;
+					
+					if (unavailableDates.includes(dateString)) return true;
+					
+					if (pricedRanges.some(r => 
+						date.isBetween(r[0], r[1], null, '[]'))) return true;
+					
+					return excludedRanges.some(r => 
+						date.isSameOrAfter(moment(r[0])) && 
+						date.isBefore(moment(r[1]))
+					);
 				};
 			}
 		}
 
-		// Initialize everything when page loads
+		// Initialize everything
 		fetchUnavailableDates();
 	});
 </script>

@@ -464,6 +464,8 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
     $lang_ = load_specific_langauage($lang);
     $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
     $timestamp = $date->format('Y-m-d');
+    $h = new Estate();
+    $table = "tbl_book";
 
     if ($uid == '') {
         $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
@@ -477,10 +479,15 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
         $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', 'is_deleted =0') === false) {
         $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
-    } else if ($date_ranges === null || !is_array($date_ranges) || empty($date_ranges)) {
+    } else if ($date_ranges === null || !is_array($date_ranges) ) {
         $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
+    }else if (empty($date_ranges)) {
+        $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id and book_status = 'Excluded'", $table);
+
+        $returnArr    = generateResponse('true', '', 200);
     } else {
-        // Validate each date range in the array
+        $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id and book_status = 'Excluded'", $table);
+
         [$valid, $message] = validateDateRanges($date_ranges);
         if (!$valid) {
             $returnArr = generateResponse('false', $message, 400);
@@ -493,7 +500,7 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
             } else {
                 // Insert each date range separately
                 $success_count = 0;
-                $h = new Estate();
+                
 
                 foreach ($date_ranges as $range) {
                     $from_date = $range[0];

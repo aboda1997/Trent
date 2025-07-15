@@ -11,6 +11,7 @@ try {
 	$pol = array();
 	$c = array();
 	$arr = array();
+	$arr_exclude = array();
 	$pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
 	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : null;
 	if ($pro_id == '') {
@@ -26,14 +27,20 @@ try {
 		$sel = $rstate->query("select * from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
 		$fp['view_count'] = $sel['view_count'];
 
-		if( $sel['add_user_id'] != $uid){
-			$view_c = $sel['view_count'] +1 ;
-			 $rstate->query("update tbl_property  set view_count = $view_c   where  id=" . $pro_id .  "");
+		if ($sel['add_user_id'] != $uid) {
+			$view_c = $sel['view_count'] + 1;
+			$rstate->query("update tbl_property  set view_count = $view_c   where  id=" . $pro_id .  "");
 			$fp['view_count'] = (string) $view_c;
-			}
+		}
 		$inc_ranges = $rstate->query("select * from tbl_increased_value where  prop_id=" . $pro_id .  "");
 		while ($row = $inc_ranges->fetch_assoc()) {
 			array_push($arr, array('form_date' => $row['from_date'], 'to_date' => $row['to_date'], 'value' => $row['increase_value']));
+		}
+
+		$arr_exclude = array();
+		$exclude_ranges = $rstate->query("select check_in , check_out from tbl_book where  prop_id=" . $pro_id .  "");
+		while ($row = $exclude_ranges->fetch_assoc()) {
+			array_push($arr_exclude, array('form_date' => $row['check_in'], 'to_date' => $row['check_out']));
 		}
 		$imageArray = array_filter(explode(',', $sel['image'] ?? ''));
 
@@ -223,7 +230,8 @@ try {
 		$returnArr    = generateResponse('true', "Property Details Founded!", 200, array(
 			"property_details" => $fp,
 			"facility_list" => $f,
-			'inc_value_ranges'=>$arr,
+			'inc_value_ranges' => $arr,
+			'exclude_ranges' => $arr_exclude,
 			"gallery" => $v,
 			"is_gallery_enabled" => $is_gallery_enabled,
 		));
