@@ -32,10 +32,8 @@ if (!$fpf) {
 if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
     if ($wouldBlock) {
         // Lock is held by another process
-        fclose($fpf);
         throw new Exception("Another operation is already processing this property. Please try again later.");
     } else {
-        fclose($fpf);
         throw new Exception("Could not acquire lock");
     }
 }
