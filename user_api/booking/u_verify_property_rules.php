@@ -14,10 +14,12 @@ try {
         http_response_code(200);
         exit();
     }
+        $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
+
+
     $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
-    $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
     $from_date = isset($_POST['from_date']) ? $_POST['from_date'] : null;
     $to_date = isset($_POST['to_date']) ? $_POST['to_date'] : null;
     $confirm_guest_rules = isset($_POST['confirm_guest_rules']) ? $_POST['confirm_guest_rules'] : 'false';
@@ -44,7 +46,7 @@ try {
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
-        $date_list = get_dates($prop_id, $rstate);
+        $date_list = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
@@ -72,7 +74,7 @@ try {
         ) {
             $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
         } ///else if (validateBookingConflict($from_date, $to_date, $prop_id) == false) {
-            //$returnArr    = generateResponse('false', $lang_["Not_allow_book_range"], 400);
+        //$returnArr    = generateResponse('false', $lang_["Not_allow_book_range"], 400);
         //} 
         else {
             $fp = array();
@@ -111,7 +113,7 @@ try {
                 $vr[] = array('img' => trim($image));
             }
             $fp['image_list'] = $vr;
-            $sub_total = get_property_price($res_data['period'], $res_data['price'] ,$prop_id, $from_date  , $to_date );
+            $sub_total = get_property_price($res_data['period'], $res_data['price'], $prop_id, $from_date, $to_date);
             $deposit_fees = $res_data["security_deposit"];
             $trent_fess = ($user['is_owner'] == 0) ? ($set["property_manager_fees"] * $sub_total) / 100  : ($set["owner_fees"] * $sub_total) / 100;
             $taxes = ($trent_fess * $set['tax']) / 100;
@@ -138,12 +140,23 @@ try {
 
             // $fp['total_int'] = $total_as_int;
 
-            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total"];
-            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'],  $fp['sub_total']];
+            $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total", 'uid'];
+            $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'],  $fp['sub_total'], $uid];
 
             $h = new Estate();
+            if($uid == 67){
+            sleep(50);
+            var_dump('test');
+            }
+
             $GLOBALS['rstate']->begin_transaction();
 
+            // Sanitize the prop_id to prevent SQL injection
+            $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
+
+            // Lock query without prepared statement
+            $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
+            $GLOBALS['rstate']->query($lockQuery);
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
                 throw new Exception("Insert failed");
@@ -164,7 +177,6 @@ try {
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
 }
-
 
 function validateDates(?string $from_date, ?string $to_date): array
 {
