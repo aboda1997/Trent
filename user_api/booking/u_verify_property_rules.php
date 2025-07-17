@@ -47,6 +47,13 @@ try {
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
+        // Sanitize the prop_id to prevent SQL injection
+        $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
+
+        // Lock query without prepared statement
+
+        $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
+        $GLOBALS['rstate']->query($lockQuery);
         $date_list = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
@@ -67,13 +74,6 @@ try {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
-             // Sanitize the prop_id to prevent SQL injection
-            $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
-
-            // Lock query without prepared statement
-
-            $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
-                                    $GLOBALS['rstate']->query($lockQuery);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
@@ -152,23 +152,23 @@ try {
             $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'],  $fp['sub_total'], $uid];
 
             $h = new Estate();
-            
-    $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
+
+            $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
             $GLOBALS['rstate']->begin_transaction();
 
-           
 
-            if($uid == 67){
-            sleep(50);
-            var_dump('test');
+
+            if ($uid == 67) {
+                sleep(50);
+                var_dump('test');
             }
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
                 throw new Exception("Insert failed");
             }
             $GLOBALS['rstate']->commit();
-            
+
 
             $fp['item_id'] = $check;
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
@@ -183,7 +183,7 @@ try {
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
-} 
+}
 
 
 function validateDates(?string $from_date, ?string $to_date): array
