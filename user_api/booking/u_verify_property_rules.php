@@ -146,6 +146,7 @@ try {
 
             $h = new Estate();
             
+    $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
 
             $GLOBALS['rstate']->begin_transaction();
 
@@ -154,7 +155,10 @@ try {
 
             // Lock query without prepared statement
             $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
-          
+            if($uid == 67){
+            sleep(50);
+            var_dump('test');
+            }
             $GLOBALS['rstate']->query($lockQuery);
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
