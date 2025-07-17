@@ -154,12 +154,13 @@ try {
             $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
 
             // Lock query without prepared statement
+                        $GLOBALS['rstate']->query($lockQuery);
+
             $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
             if($uid == 67){
             sleep(50);
             var_dump('test');
             }
-            $GLOBALS['rstate']->query($lockQuery);
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
                 throw new Exception("Insert failed");
