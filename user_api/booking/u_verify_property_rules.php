@@ -14,31 +14,11 @@ try {
         http_response_code(200);
         exit();
     }
-        $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
 
-    $lockDir = dirname(dirname(__FILE__), 2)  . '/property_locks/';
-if (!file_exists($lockDir)) {
-    mkdir($lockDir, 0777, true);
-}
-$lockFile = $lockDir . 'prop_lock_' . $prop_id . '.lock';
 
-// Open the lock file
-$fpf = fopen($lockFile, 'w+');
-if (!$fpf) {
-    throw new Exception("Could not create lock file");
-}
-
-// Try to acquire an exclusive lock (wait up to 5 seconds)
-if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
-    if ($wouldBlock) {
-        // Lock is held by another process
-        throw new Exception("Another operation is already processing this property. Please try again later.");
-    } else {
-        throw new Exception("Could not acquire lock");
-    }
-}
 
     $lang = isset($_POST['lang']) ? $rstate->real_escape_string($_POST['lang']) : 'en';
+    $prop_id = isset($_POST['prop_id']) ? $_POST['prop_id'] : null;
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : null;
     $from_date = isset($_POST['from_date']) ? $_POST['from_date'] : null;
@@ -165,10 +145,7 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
             $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'],  $fp['sub_total'], $uid];
 
             $h = new Estate();
-            if($uid == 67){
-            sleep(50);
-            var_dump('test');
-            }
+            
 
             $GLOBALS['rstate']->begin_transaction();
 
@@ -177,6 +154,10 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
 
             // Lock query without prepared statement
             $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
+            if($uid == 67){
+            sleep(50);
+            var_dump('test');
+            }
             $GLOBALS['rstate']->query($lockQuery);
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
@@ -184,6 +165,7 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
             }
             $GLOBALS['rstate']->commit();
             flock($fpf, LOCK_UN);
+            unlink($lockFile);
 
             $fp['item_id'] = $check;
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
@@ -198,13 +180,7 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
-} finally {
-    // Release the lock
-    fclose($fpf);
-    
-    // Optional: Clean up the lock file
-    unlink($lockFile);
-}
+} 
 
 
 function validateDates(?string $from_date, ?string $to_date): array
