@@ -11,6 +11,7 @@ try {
 	$c = array();
 
 	$pro_id  = $_GET['prop_id'] ?? '';
+	$uid  = $_GET['uid'] ?? 0;
 	if ($pro_id == '') {
 		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
 	} else {
@@ -26,11 +27,13 @@ try {
 			}
 
 			// Remove duplicate dates
-			$date_list = array_unique($date_list);
+			$date_hold = get_holding_property_dates($pro_id, $uid, $rstate);
+			// Remove duplicate dates
+			$combined_dates = array_unique(array_merge($date_hold, $date_list));
 			// Sort the dates
-			sort($date_list);
+			sort($combined_dates);
 			$returnArr    = generateResponse('true', "Book Date List  Founded!", 200, array(
-				"date_list" => $date_list,
+				"date_list" => $combined_dates,
 			));
 		} else {
 			$returnArr    = generateResponse('true', "Book Date List Not Founded!", 200, array(

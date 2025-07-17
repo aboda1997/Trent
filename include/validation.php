@@ -492,7 +492,7 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
         if (!$valid) {
             $returnArr = generateResponse('false', $message, 400);
         } else {
-            $date_list = get_dates($prop_id, $GLOBALS['rstate']);
+            $date_list = get_dates($prop_id,$uid, $GLOBALS['rstate']);
             [$status, $status_message] = validateDateRangesAgainstBookings($date_ranges, $date_list, $lang_);
 
             if ($status  == false) {
@@ -601,7 +601,31 @@ function validateDateRangesAgainstBookings(array $date_ranges, array $booked_dat
     return [true, "All date ranges are available"];
 }
 
-function get_dates(string $pro_id, $rstate)
+
+function get_holding_property_dates(string $pro_id,$uid , $rstate)
+{
+date_default_timezone_set('Africa/Cairo');
+
+// Calculate the timestamp 3 hours ago in Cairo time
+$three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
+
+// Build the SQL query
+$sql = "SELECT f1 as check_in , f2 as check_out
+    FROM tbl_non_completed 
+    WHERE prop_id = " . (int)$pro_id . " 
+    AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
+    AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
+    $result = $rstate->query($sql);
+
+      $date_list = [];
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
+    }
+    return $date_list; 
+}
+
+function get_dates(string $pro_id, $uid , $rstate)
 {
     $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
     $result = $rstate->query($sql);
@@ -610,12 +634,12 @@ function get_dates(string $pro_id, $rstate)
     while ($row = $result->fetch_assoc()) {
         $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
     }
-
+    $date_hold = get_holding_property_dates($pro_id , $uid , $rstate);
     // Remove duplicate dates
-    $date_list = array_unique($date_list);
+    $combined_dates = array_unique(array_merge($date_hold, $date_list));
     // Sort the dates
-    sort($date_list);
-    return $date_list;
+    sort($combined_dates);
+    return $combined_dates;
 }
 
 function getDatesFromRange($start, $end)

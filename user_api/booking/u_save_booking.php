@@ -56,7 +56,7 @@ try {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
-        $date_list = get_dates($prop_id, $rstate);
+        $date_list = get_dates($prop_id, $uid ,$rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
