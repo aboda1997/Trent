@@ -610,7 +610,7 @@ date_default_timezone_set('Africa/Cairo');
 $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
 
 // Build the SQL query
-$sql = "SELECT f1 as check_in , f2 as check_out
+$sql = "SELECT f1  , f2 
     FROM tbl_non_completed 
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
@@ -620,7 +620,7 @@ $sql = "SELECT f1 as check_in , f2 as check_out
       $date_list = [];
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
-        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
+        $date_list = array_merge($date_list, getDatesFromRange($row['f1'], $row['f2']));
     }
     return $date_list; 
 }

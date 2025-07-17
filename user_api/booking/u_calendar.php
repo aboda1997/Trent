@@ -19,27 +19,21 @@ try {
 		$result = $rstate->query($sql);
 		$date_list = [];
 
-		if ($result->num_rows > 0) {
 
-			// Output data of each row
-			while ($row = $result->fetch_assoc()) {
-				$date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
-			}
-
-			// Remove duplicate dates
-			$date_hold = get_holding_property_dates($pro_id, $uid, $rstate);
-			// Remove duplicate dates
-			$combined_dates = array_unique(array_merge($date_hold, $date_list));
-			// Sort the dates
-			sort($combined_dates);
-			$returnArr    = generateResponse('true', "Book Date List  Founded!", 200, array(
-				"date_list" => $combined_dates,
-			));
-		} else {
-			$returnArr    = generateResponse('true', "Book Date List Not Founded!", 200, array(
-				"date_list" => $date_list,
-			));
+		// Output data of each row
+		while ($row = $result->fetch_assoc()) {
+			$date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
 		}
+
+		// Remove duplicate dates
+		$date_hold = get_holding_property_dates($pro_id, $uid, $rstate);
+		// Remove duplicate dates
+		$combined_dates = array_unique(array_merge($date_hold, $date_list));
+		// Sort the dates
+		sort($combined_dates);
+		$returnArr    = generateResponse('true', "Book Date List  Founded!", 200, array(
+			"date_list" => $combined_dates,
+		));
 	}
 	echo $returnArr;
 } catch (Exception $e) {
