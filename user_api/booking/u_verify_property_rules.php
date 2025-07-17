@@ -47,13 +47,6 @@ try {
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
-        // Sanitize the prop_id to prevent SQL injection
-        $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
-
-        // Lock query without prepared statement
-
-        $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
-        $GLOBALS['rstate']->query($lockQuery);
         $date_list = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
@@ -157,12 +150,13 @@ try {
 
             $GLOBALS['rstate']->begin_transaction();
 
+            // Sanitize the prop_id to prevent SQL injection
+            $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
 
+            // Lock query without prepared statement
+            $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
 
-            if ($uid == 67) {
-                sleep(50);
-                var_dump('test');
-            }
+            $GLOBALS['rstate']->query($lockQuery);
             $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
             if (!$check) {
                 throw new Exception("Insert failed");
