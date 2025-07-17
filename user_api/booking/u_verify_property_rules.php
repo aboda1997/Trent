@@ -154,9 +154,10 @@ try {
             $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
 
             // Lock query without prepared statement
-                        $GLOBALS['rstate']->query($lockQuery);
 
             $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
+                                    $GLOBALS['rstate']->query($lockQuery);
+
             if($uid == 67){
             sleep(50);
             var_dump('test');
