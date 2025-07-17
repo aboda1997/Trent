@@ -183,6 +183,7 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
                 throw new Exception("Insert failed");
             }
             $GLOBALS['rstate']->commit();
+            flock($fpf, LOCK_UN);
 
             $fp['item_id'] = $check;
             $returnArr    = generateResponse('true', "Property booking Details", 200, array(
@@ -199,7 +200,6 @@ if (!flock($fpf, LOCK_EX | LOCK_NB, $wouldBlock)) {
     echo $returnArr;
 } finally {
     // Release the lock
-    flock($fpf, LOCK_UN);
     fclose($fpf);
     
     // Optional: Clean up the lock file
