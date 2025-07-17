@@ -67,6 +67,13 @@ try {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
+             // Sanitize the prop_id to prevent SQL injection
+            $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
+
+            // Lock query without prepared statement
+
+            $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
+                                    $GLOBALS['rstate']->query($lockQuery);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
@@ -150,13 +157,7 @@ try {
 
             $GLOBALS['rstate']->begin_transaction();
 
-            // Sanitize the prop_id to prevent SQL injection
-            $prop_id = $GLOBALS['rstate']->real_escape_string($prop_id);
-
-            // Lock query without prepared statement
-
-            $lockQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = $prop_id FOR UPDATE";
-                                    $GLOBALS['rstate']->query($lockQuery);
+           
 
             if($uid == 67){
             sleep(50);
