@@ -49,18 +49,50 @@ try {
     p.government = $government_id
     and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.$lang_code')) IS NOT NULL
     and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.$lang_code')) IS NOT NULL
-    and p.status=1 and p.is_deleted = 0
+    and p.status=1 and is_approved = 1  and p.is_deleted = 0
 ";
-        // If a search term is provided, add a LIKE condition for partial matching
+
+
+        $delimiter = "\x1F";
+
         if ($compound_name) {
-            $query .= " and 
-        (JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) LIKE '%$compound_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) LIKE '%$compound_name%')";
+            // Split using special delimiter and trim whitespace
+            $compound_terms = array_map('trim', explode($delimiter, $compound_name));
+            $compound_conditions = [];
+
+            foreach ($compound_terms as $term) {
+                if (!empty($term)) {
+                    $escaped_term = $rstate->real_escape_string($term);
+                    $compound_conditions[] = "(
+                JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) LIKE '%$escaped_term%' 
+                OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) LIKE '%$escaped_term%'
+            )";
+                }
+            }
+
+            if (!empty($compound_conditions)) {
+                $query .= " AND (" . implode(' OR ', $compound_conditions) . ")";
+            }
         }
+
         if ($city_name) {
-            $query .= " and 
-        (JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) LIKE '%$city_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) LIKE '%$city_name%')";
+            // Split using special delimiter and trim whitespace
+            $city_terms = array_map('trim', explode($delimiter, $city_name));
+            $city_conditions = [];
+
+            foreach ($city_terms as $term) {
+                if (!empty($term)) {
+                    $escaped_term = $rstate->real_escape_string($term);
+                    $city_conditions[] = "(
+                JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) LIKE '%$escaped_term%' 
+                OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) LIKE '%$escaped_term%'
+            )";
+                }
+            }
+
+            if (!empty($city_conditions)) {
+                $query .= " AND (" . implode(' OR ', $city_conditions) . ")";
+            }
         }
 
         $sel = $rstate->query($query);

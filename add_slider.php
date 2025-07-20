@@ -101,63 +101,90 @@ if (isset($_GET['id'])) {
                                         <div class="tab-content">
                                             <!-- English Tab -->
                                             <div class="tab-pane fade show active " id="en">
-                                                <div class="form-group mb-3">
-                                                    <label id="basic-addon1"><?= $lang_en['Slider_Name'] ?></label>
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        value="<?php echo $title['en']; ?>"
-                                                        placeholder="<?= $lang_en['Slider_Name'] ?>"
-                                                        name="title_en"
-                                                        required=""
-                                                        aria-describedby="basic-addon1" />
-                                                    <div class="invalid-feedback" id="slider_name_en_feedback" style="display: none;">
-                                                        <?= $lang_en['slider_name'] ?>
+                                                <div class="row">
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id="basic-addon1"><?= $lang_en['Slider_Name'] ?></label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                value="<?php echo $title['en']; ?>"
+                                                                placeholder="<?= $lang_en['Slider_Name'] ?>"
+                                                                name="title_en"
+                                                                required=""
+                                                                aria-describedby="basic-addon1" />
+                                                            <div class="invalid-feedback" id="slider_name_en_feedback" style="display: none;">
+                                                                <?= $lang_en['slider_name'] ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id='Slider-Image'>
+                                                                <?= $lang_en['Slider_Image'] ?>
+
+                                                            </label>
+                                                            <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="slider_img">
+                                                            <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
+                                                                <?= $lang_en['Slider_img'] ?>
+                                                            </div>
+                                                            <br>
+                                                            <img src="<?php echo $data['img'] ?>" width="100px" />
+                                                            <input type="hidden" name="type" value="edit_slider" />
+
+                                                            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+                                                        </div>
                                                     </div>
                                                 </div>
-
 
                                             </div>
                                             <!-- Arabic Tab -->
                                             <div class="tab-pane fade show " id="ar">
-                                                <div class="form-group mb-3">
-                                                    <label id="basic-addon1"><?= $lang_ar['Slider_Name'] ?></label>
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        value="<?php echo $title['ar']; ?>"
-                                                        placeholder="<?= $lang_ar['Slider_Name'] ?>"
-                                                        name="title_ar"
-                                                        required=""
-                                                        aria-describedby="basic-addon1" />
-                                                    <div class="invalid-feedback" id="slider_name_ar_feedback" style="display: none;">
-                                                        <?= $lang_ar['slider_name'] ?>
+                                                <div class="row">
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id="basic-addon1"><?= $lang_ar['Slider_Name'] ?></label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                value="<?php echo $title['ar']; ?>"
+                                                                placeholder="<?= $lang_ar['Slider_Name'] ?>"
+                                                                name="title_ar"
+                                                                required=""
+                                                                aria-describedby="basic-addon1" />
+                                                            <div class="invalid-feedback" id="slider_name_ar_feedback" style="display: none;">
+                                                                <?= $lang_ar['slider_name'] ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id='Slider-Image'>
+                                                                <?= $lang_ar['Slider_Image'] ?>
+
+                                                            </label>
+                                                            <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="slider_ar_img">
+                                                            <div class="invalid-feedback" id="slider_img_ar_feedback" style="display: none;">
+                                                                <?= $lang_ar['Slider_img'] ?>
+                                                            </div>
+                                                            <br>
+                                                            <img src="<?php echo $data['img_ar'] ?>" width="100px" />
+                                                            <input type="hidden" name="type" value="edit_slider" />
+
+                                                            <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+                                                        </div>
                                                     </div>
                                                 </div>
-
-
                                             </div>
                                         </div>
                                         <div class="row">
 
-                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 
-                                                <div class="form-group mb-3">
-                                                    <label id='Slider-Image'>
-                                                        <?= $lang_en['Slider_Image'] ?>
-
-                                                    </label>
-                                                    <input type="file" class="form-control" accept=".jpg, .jpeg, .png, .gif" name="slider_img">
-                                                    <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
-                                                        <?= $lang_en['Slider_img'] ?>
-                                                    </div>
-                                                    <br>
-                                                    <img src="<?php echo $data['img'] ?>" width="100px" />
-                                                    <input type="hidden" name="type" value="edit_slider" />
-
-                                                    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
-                                                </div>
-                                            </div>
 
 
                                             <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
@@ -283,21 +310,26 @@ if (isset($_GET['id'])) {
                                                 </div>
                                             </div>
 
-                                            <!-- City Dropdown -->
                                             <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
                                                 <div class="form-group mb-3">
                                                     <label id="prop_city">
                                                         <?= $lang_en['Select_City'] ?>
                                                     </label>
-                                                    <select name="pcity" id="city" class="form-control" disabled
+                                                    <select name="pcity[]" id="city" class="form-control" disabled multiple
                                                         title="<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>">
-                                                        <option value="" disabled selected>
-                                                            <?= $lang_en['Select_City'] ?>
-                                                        </option>
-                                                        <?php if ($city_name): ?>
-                                                            <option value="<?= $city_name ?>" selected>
-                                                                <?= $city_name ?>
-                                                            </option>
+                                                        <?php if (isset($city_name)): ?>
+                                                            <?php
+                                                            // Split city names by the special delimiter and clean the array
+                                                            $selected_cities = array_filter(explode("x1F", $city_name));
+                                                            ?>
+
+                                                            <?php if (!empty($selected_cities)): ?>
+                                                                <?php foreach ($selected_cities as $city): ?>
+                                                                    <option value="<?= htmlspecialchars($city) ?>" selected>
+                                                                        <?= htmlspecialchars($city) ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
                                                     </select>
                                                     <div class="invalid-feedback" id="city_feedback" style="display: none;">
@@ -312,15 +344,22 @@ if (isset($_GET['id'])) {
                                                     <label id="prop_compound">
                                                         <?= $lang_en['Select_Compound'] ?>
                                                     </label>
-                                                    <select name="pcompound" id="compound" class="form-control" disabled
+                                                    <select name="pcompound[]" id="compound" class="form-control" disabled multiple
                                                         title="<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>">
-                                                        <option value="" disabled selected>
-                                                            <?= $lang_en['Select_Compound'] ?>
-                                                        </option>
-                                                        <?php if ($compound_name): ?>
-                                                            <option value="<?= $compound_name ?>" selected>
-                                                                <?= $compound_name ?>
-                                                            </option>
+
+                                                        <?php if (isset($compound_name)): ?>
+                                                            <?php
+                                                            // Split compound names by the special delimiter and clean the array
+                                                            $selected_compounds = array_filter(explode("x1F", $compound_name));
+                                                            ?>
+
+                                                            <?php if (!empty($selected_compounds)): ?>
+                                                                <?php foreach ($selected_compounds as $compound): ?>
+                                                                    <option value="<?= htmlspecialchars($compound) ?>" selected>
+                                                                        <?= htmlspecialchars($compound) ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
                                                     </select>
                                                     <div class="invalid-feedback" id="compound_feedback" style="display: none;">
@@ -328,16 +367,15 @@ if (isset($_GET['id'])) {
                                                     </div>
                                                 </div>
                                             </div>
+
+
                                         </div>
+                                        <div class="card-footer text-left">
+                                            <button onclick="return validateForm(true)" type="submit" id="edit-slider" class="btn btn-primary">
+                                                <?= $lang_en['Edit_Slider'] ?>
 
-
-                                    </div>
-                                    <div class="card-footer text-left">
-                                        <button onclick="return validateForm(true)" type="submit" id="edit-slider" class="btn btn-primary">
-                                            <?= $lang_en['Edit_Slider'] ?>
-
-                                        </button>
-                                    </div>
+                                            </button>
+                                        </div>
                                 </form>
                             <?php
                             } else {
@@ -354,17 +392,38 @@ if (isset($_GET['id'])) {
                                         <div class="tab-content">
                                             <!-- English Tab -->
                                             <div class="tab-pane fade show active " id="en">
-                                                <div class="form-group mb-3">
-                                                    <label id="basic-addon1"><?= $lang_en['Slider_Name'] ?></label>
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        placeholder="<?= $lang_en['Slider_Name'] ?>"
-                                                        name="title_en"
-                                                        required=""
-                                                        aria-describedby="basic-addon1" />
-                                                    <div class="invalid-feedback" id="slider_name_en_feedback" style="display: none;">
-                                                        <?= $lang_en['slider_name'] ?>
+                                                <div class="row">
+
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id="basic-addon1"><?= $lang_en['Slider_Name'] ?></label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder="<?= $lang_en['Slider_Name'] ?>"
+                                                                name="title_en"
+                                                                required=""
+                                                                aria-describedby="basic-addon1" />
+                                                            <div class="invalid-feedback" id="slider_name_en_feedback" style="display: none;">
+                                                                <?= $lang_en['slider_name'] ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id='Slider-Image'>
+                                                                <?= $lang_en['Slider_Image'] ?>
+
+                                                            </label>
+                                                            <input type="file" class="form-control" name="slider_img" accept=".jpg, .jpeg, .png, .gif" required="">
+                                                            <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
+                                                                <?= $lang_en['slider_img'] ?>
+                                                            </div>
+                                                            <input type="hidden" name="type" value="add_slider" />
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -372,39 +431,44 @@ if (isset($_GET['id'])) {
                                             </div>
                                             <!-- Arabic Tab -->
                                             <div class="tab-pane fade show " id="ar">
-                                                <div class="form-group mb-3">
-                                                    <label id="basic-addon1"><?= $lang_ar['Slider_Name'] ?></label>
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        placeholder="<?= $lang_ar['Slider_Name'] ?>"
-                                                        name="title_ar"
-                                                        required=""
-                                                        aria-describedby="basic-addon1" />
-                                                    <div class="invalid-feedback" id="slider_name_ar_feedback" style="display: none;">
-                                                        <?= $lang_ar['slider_name'] ?>
+                                                <div class="row">
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id="basic-addon1"><?= $lang_ar['Slider_Name'] ?></label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                placeholder="<?= $lang_ar['Slider_Name'] ?>"
+                                                                name="title_ar"
+                                                                required=""
+                                                                aria-describedby="basic-addon1" />
+                                                            <div class="invalid-feedback" id="slider_name_ar_feedback" style="display: none;">
+                                                                <?= $lang_ar['slider_name'] ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+
+                                                        <div class="form-group mb-3">
+                                                            <label id='Slider-Image'>
+                                                                <?= $lang_ar['Slider_Image'] ?>
+
+                                                            </label>
+                                                            <input type="file" class="form-control" name="slider_ar_img" accept=".jpg, .jpeg, .png, .gif" required="">
+                                                            <div class="invalid-feedback" id="slider_img_ar_feedback" style="display: none;">
+                                                                <?= $lang_ar['slider_img'] ?>
+                                                            </div>
+                                                            <input type="hidden" name="type" value="add_slider" />
+                                                        </div>
                                                     </div>
                                                 </div>
-
 
                                             </div>
                                         </div>
                                         <div class="row">
 
-                                            <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 
-                                                <div class="form-group mb-3">
-                                                    <label id='Slider-Image'>
-                                                        <?= $lang_en['Slider_Image'] ?>
-
-                                                    </label>
-                                                    <input type="file" class="form-control" name="slider_img" accept=".jpg, .jpeg, .png, .gif" required="">
-                                                    <div class="invalid-feedback" id="slider_img_feedback" style="display: none;">
-                                                        <?= $lang_en['slider_img'] ?>
-                                                    </div>
-                                                    <input type="hidden" name="type" value="add_slider" />
-                                                </div>
-                                            </div>
                                             <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
 
                                                 <div class="form-group mb-3">
@@ -515,12 +579,9 @@ if (isset($_GET['id'])) {
                                                     <label id="prop_city">
                                                         <?= $lang_en['Select_City'] ?>
                                                     </label>
-                                                    <select name="pcity" id="city" class="form-control" disabled
+                                                    <select multiple name="pcity[]" id="city" class="form-control" disabled
                                                         title="<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>">
-                                                        <option value="" disabled selected>
 
-                                                            <?= $lang_en['Select_City'] ?>
-                                                        </option>
                                                         <!-- Cities will be populated dynamically -->
                                                     </select>
                                                     <div class="invalid-feedback" id="city_feedback" style="display: none;">
@@ -534,11 +595,9 @@ if (isset($_GET['id'])) {
                                                     <label id="prop_compound">
                                                         <?= $lang_en['Select_Compound'] ?>
                                                     </label>
-                                                    <select name="pcompound" id="compound" class="form-control" disabled
+                                                    <select multiple name="pcompound[]" id="compound" class="form-control" disabled
                                                         title="<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>">
-                                                        <option value="" disabled selected>
-                                                            <?= $lang_en['Select_Compound'] ?>
-                                                        </option>
+
                                                         <!-- Compounds will be populated dynamically -->
                                                     </select>
                                                     <div class="invalid-feedback" id="compound_feedback" style="display: none;">
@@ -564,138 +623,131 @@ if (isset($_GET['id'])) {
 
     </div>
 </div>
-
 <script>
     $(document).ready(function() {
-        // Function to load cities
-        function loadCities(govId, cityNameToSelect = null) {
-            if (govId) {
-                $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
-                    if (response.result === "true") {
-                        const citySelect = $('#city');
-                        citySelect.empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>');
+        // Function to load cities - clears existing and loads fresh options
+        function loadCities(govId, cityNamesToSelect = null) {
+            if (!govId) return;
 
-                        if (response.data.city_list && response.data.city_list.length > 0) {
-                            let foundMatch = false;
+            const citySelect = $('#city');
+            citySelect.empty(); // Clear all existing options
 
-                            response.data.city_list.forEach(function(city) {
-                                const isSelected = cityNameToSelect && city.name === cityNameToSelect;
-                                if (isSelected) foundMatch = true;
+            $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
+                if (response.result !== "true" || !response.data.city_list) return;
 
-                                citySelect.append($('<option>', {
-                                    value: city.name,
-                                    text: city.name,
-                                    selected: isSelected
-                                }));
-                            });
+                const selectedCities = cityNamesToSelect ?
+                    (Array.isArray(cityNamesToSelect) ? cityNamesToSelect : cityNamesToSelect.split('x1F')) : [];
 
-                            // If we didn't find a match, ensure empty selection
-                            if (cityNameToSelect && !foundMatch) {
-                                citySelect.val('');
-                            }
-
-                            citySelect.prop('disabled', false).removeAttr('title');
-                        }
-                    }
+                // Add new options from API
+                response.data.city_list.forEach(city => {
+                    const isSelected = selectedCities.includes(city.name);
+                    citySelect.append($('<option>', {
+                        value: city.name,
+                        text: city.name,
+                        selected: isSelected
+                    }));
                 });
-            }
+
+                citySelect.prop('disabled', false)
+                    .removeAttr('title')
+                    .trigger('change'); // Trigger change to update compounds
+            });
         }
 
-        // Function to load compounds
-        function loadCompounds(govId, cityName, compoundNameToSelect = null) {
-            if (govId && cityName) {
-                $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId + '&city_name=' + encodeURIComponent(cityName), function(response) {
-                    if (response.result === "true") {
-                        const compoundSelect = $('#compound');
-                        compoundSelect.empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>');
-
-                        if (response.data.compound_list && response.data.compound_list.length > 0) {
-                            let foundMatch = false;
-
-                            response.data.compound_list.forEach(function(compound) {
-                                const isSelected = compoundNameToSelect && compound.name === compoundNameToSelect;
-                                if (isSelected) foundMatch = true;
-
-                                compoundSelect.append($('<option>', {
-                                    value: compound.name,
-                                    text: compound.name,
-                                    selected: isSelected
-                                }));
-                            });
-
-                            // If we didn't find a match, ensure empty selection
-                            if (compoundNameToSelect && !foundMatch) {
-                                compoundSelect.val('');
-                            }
-
-                            compoundSelect.prop('disabled', false).removeAttr('title');
-                        }
-                    }
-                });
-            } else {
-                // Ensure compound is empty if no city selected
-                $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
-                    .prop('disabled', true);
+        function loadCompounds(govId, cityName, compoundNamesToSelect = null) {
+            if (!govId || !cityName) {
+                $('#compound').prop('disabled', true);
+                return;
             }
-        }
 
-        // Government change handler
+            const compoundSelect = $('#compound');
+
+            $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId +
+                '&city_name=' + encodeURIComponent(cityName),
+                function(response) {
+                    if (response.result !== "true" || !response.data.compound_list) {
+                        compoundSelect.empty().prop('disabled', false);
+                        return;
+                    }
+
+                    // Get current valid compound names from API
+                    const validCompounds = new Set(response.data.compound_list.map(c => c.name));
+                    // Process selections - only keep those that exist in the new data
+
+
+                    const selectedCompounds = compoundNamesToSelect ?
+                        (Array.isArray(compoundNamesToSelect) ? compoundNamesToSelect : compoundNamesToSelect.split('x1F')) : [];
+
+                    // Clear and rebuild options
+                    compoundSelect.empty();
+
+                    // Add new options
+                    response.data.compound_list.forEach(compound => {
+                        const isSelected = selectedCompounds.includes(compound.name);
+                        debugger;
+
+                        compoundSelect.append($('<option>', {
+                            value: compound.name,
+                            text: compound.name,
+                            selected: isSelected
+                        }));
+                    });
+
+                    compoundSelect.prop('disabled', false)
+                        .removeAttr('title')
+
+                });
+        }
+        // Government change handler - clears cities and compounds
         $('#government').change(function() {
             const govId = $(this).val();
-            $('#city').empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>')
-                .prop('disabled', !govId)
+
+            // Clear and disable dependent selects
+            $('#city').empty().prop('disabled', !govId)
                 .attr('title', govId ? '' : '<?= $lang_en['Select_Government_First'] ?? 'Please select government first' ?>');
 
-            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
-                .prop('disabled', true)
+            $('#compound').empty().prop('disabled', true)
                 .attr('title', '<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>');
 
             if (govId) {
-                loadCities(govId);
+                loadCities(govId); // Load fresh cities for new government
             }
         });
 
         // City change handler
         $('#city').change(function() {
-            const cityName = $(this).val();
+            const selectedCities = $(this).val();
+            const cityName = selectedCities ? selectedCities.join('\x1F') : null;
+            
             const govId = $('#government').val();
-
-            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
+            debugger;
+            $('#compound')
                 .prop('disabled', !cityName)
-                .attr('title', cityName ? '' : '<?= $lang_en['Select_City_First'] ?? 'Please select city first' ?>');
+                .attr('title', cityName ? '' : 'Please select city first');
 
             if (cityName && govId) {
-                loadCompounds(govId, cityName);
+                loadCompounds(govId, cityName ,  $('#compound').val());
+            } else {
+                $('#compound').empty();
             }
         });
 
-        // Initialize form
+
+
+        // Initialize form for edit mode
         const initialGovId = $('#government').val();
         if (initialGovId) {
-            // Get current values if in edit mode
-            const initialCityName = $('#city').val();
-            const initialCompoundName = $('#compound').val();
+            const initialCityNames = $('#city').val();
+            loadCities(initialGovId, initialCityNames);
 
-            // Load cities and try to match existing city name
-            loadCities(initialGovId, initialCityName);
+            if (initialCityNames && initialCityNames.length > 0) {
+                const initialCompoundNames = $('#compound').val();
 
-            // If city was set, load compounds and try to match existing compound name
-            if (initialCityName) {
-                // Use small delay to ensure cities are loaded first
-                setTimeout(function() {
-                    loadCompounds(initialGovId, initialCityName, initialCompoundName);
-                }, 100);
+                loadCompounds(initialGovId, cityName, initialCompoundNames);
             }
-        } else {
-            // Ensure all selects are empty and disabled if no government selected
-            $('#city').empty().append('<option value="" selected><?= $lang_en['Select_City'] ?></option>')
-                .prop('disabled', true);
-            $('#compound').empty().append('<option value="" selected><?= $lang_en['Select_Compound'] ?></option>')
-                .prop('disabled', true);
         }
     });
 </script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -723,13 +775,18 @@ if (isset($_GET['id'])) {
         const $selectcity = $('#city');
         $selectcity.select2({
             placeholder: langDataEN.Select_City,
-            allowClear: true
+            allowClear: true,
+            mutiple: true,
+
+
         });
 
         const $selectcompound = $('#compound');
         $selectcompound.select2({
             placeholder: langDataEN.Select_Compound,
-            allowClear: true
+            allowClear: true,
+            mutiple: true,
+
         });
 
     });
@@ -757,10 +814,21 @@ if (isset($_GET['id'])) {
                 }
             }
         });
+        document.querySelector('input[name="slider_ar_img"]').addEventListener('change', function() {
+            const file = this.files[0];
+
+            if (file) {
+                // Check if the file type is valid
+                if (!allowedTypes.includes(file.type)) {
+                    this.value = ''; // Clear invalid file
+                }
+            }
+        });
 
         const titleEn = document.querySelector('input[name="title_en"]').value;
         const titleAr = document.querySelector('input[name="title_ar"]').value;
         const sliderImage = document.querySelector('input[name="slider_img"]').value;
+        const sliderArImage = document.querySelector('input[name="slider_ar_img"]').value;
         const status = document.querySelector('select[name="status"]').value;
 
         let isValid = true;
@@ -786,6 +854,16 @@ if (isset($_GET['id'])) {
 
             } else {
                 document.getElementById('slider_img_feedback').style.display = 'block';
+                isValid = false;
+            }
+        }
+        if (!sliderArImage) {
+
+            if (edit) {
+                isValid = true;
+
+            } else {
+                document.getElementById('slider_img_ar_feedback').style.display = 'block';
                 isValid = false;
             }
         }
@@ -841,8 +919,8 @@ if (isset($_GET['id'])) {
 
         document.getElementById('slider_name_ar_feedback').textContent = langData.slider_name;
         document.getElementById('slider_img_feedback').textContent = langData.slider_img;
+        document.getElementById('slider_img_ar_feedback').textContent = langData.slider_img;
         document.getElementById('status_feedback').textContent = langData.slider_status;
-        document.getElementById('Slider-Image').textContent = langData.Slider_Image;
         document.getElementById('status-label').textContent = langData.Select_Status;
         document.getElementById('government_feedback').textContent = langData.prop_governemnt;
         document.getElementById('owner_feedback').textContent = langData.prop_owner;
@@ -887,13 +965,18 @@ if (isset($_GET['id'])) {
 
         $('#city').select2({
             placeholder: langDataEN.Select_City,
-            allowClear: true
+            allowClear: true,
+            mutiple: true,
+
+
         });
         $('#compound').select2('destroy');
 
         $('#compound').select2({
             placeholder: langDataEN.Select_Compound,
-            allowClear: true
+            allowClear: true,
+            mutiple: true,
+
         });
 
 

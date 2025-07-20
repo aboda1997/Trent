@@ -12,7 +12,7 @@ try {
     $pol = array();
     $c = array();
 
-    $query = "SELECT government_id, uid , cat_id , id, img, JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) AS title 
+    $query = "SELECT government_id, uid , cat_id , id, img_ar ,img, JSON_UNQUOTE(JSON_EXTRACT(title, '$.$lang_code')) AS title 
         ,city_name ,compound_name
           FROM tbl_slider
           WHERE status=1
@@ -34,9 +34,14 @@ try {
 
         $pol['id'] = $row['id'];
         $pol['title'] = $row['title'];
-        $pol['city_name'] = $row['city_name']??'';
-        $pol['compound_name'] = $row['compound_name']??'';
-        $pol['img'] = $row['img'];
+        $pol['city_name'] = isset($row['city_name'])
+            ? explode("x1F", $row['city_name'])  // Split into array
+            : [];
+
+        $pol['compound_name'] = isset($row['compound_name'])
+            ? explode("x1F", $row['compound_name'])  // Split into array
+            : [];
+        $pol['img'] = ($lang_code == 'en') ? $row['img'] : $row['img_ar'];
         $pol['category_id'] = $row['cat_id'] == 0 ? null : $row['cat_id'];
         $pol['government_id'] = $row['government_id'] == 0 ? null : $row['government_id'];
         $pol['user_list'] = getUserListFromIds($rstate, $row['uid']);

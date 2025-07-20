@@ -17,8 +17,8 @@ try {
 	$min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
 	$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 	$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
-	$compound_name = isset($_GET['compound_name']) ? $_GET['compound_name'] : null;
-	$city_name = isset($_GET['city_name']) ? $_GET['city_name'] : null;
+	$compound_names = isset($_GET['compound_name']) ? $_GET['compound_name'] : '';
+	$city_names = isset($_GET['city_name']) ? $_GET['city_name'] : '';
 	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : '';
 	$users_list = isset($_GET['users_list']) ? $_GET['users_list'] : '';
 	$beds_count = isset($_GET['beds_count']) ? intval($_GET['beds_count']) : null;
@@ -29,7 +29,8 @@ try {
 	$check_out = isset($_GET['check_out']) ? $_GET['check_out'] : null;
 	$facilitiesArray = json_decode($facilities, true);
 	$usersArray = json_decode($users_list, true);
-
+	$cityArray = json_decode($city_names, true);
+	$compoundArray = json_decode($compound_names, true);
 	// Get pagination parameters
 	$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
 	$itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
@@ -88,23 +89,38 @@ try {
 	if ($government_id !== null) {
 		$query .= " AND p.government = " . $government_id;
 	}
-	if ($compound_name !== null) {
-		$compound_name = $rstate->real_escape_string($compound_name);
-		$query .= " AND (
-        JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en'))   LIKE '%$compound_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar'))    LIKE '%$compound_name%'
-		and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) IS NOT NULL
-		and JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) IS NOT NULL
-    )";
+	if (!empty($compoundArray)) {
+		$compound_conditions = [];
+		
+		foreach ($compoundArray as $name) {
+			$name = $rstate->real_escape_string($name);
+			$compound_conditions[] = "(
+            JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) LIKE '%$name%' 
+            OR JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) LIKE '%$name%'
+        )";
+		}
+		if (!empty($compound_conditions)) {
+			$query .= " AND (" . implode(' OR ', $compound_conditions) . ")
+        AND JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.en')) IS NOT NULL
+        AND JSON_UNQUOTE(JSON_EXTRACT(p.compound_name, '$.ar')) IS NOT NULL";
+		}
 	}
-	if ($city_name !== null) {
-		$city_name = $rstate->real_escape_string($city_name);
-		$query .= " AND (
-        JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en'))   LIKE '%$city_name%' 
-        OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar'))    LIKE '%$city_name%'
-		and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) IS NOT NULL
-		and JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) IS NOT NULL
-    )";
+
+	if (!empty($cityArray)) {
+		$city_conditions = [];
+
+		foreach ($cityArray as $name) {
+			$name = $rstate->real_escape_string($name);
+			$city_conditions[] = "(
+            JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) LIKE '%$name%' 
+            OR JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) LIKE '%$name%'
+        )";
+		}
+		if (!empty($city_conditions)) {
+			$query .= " AND (" . implode(' OR ', $city_conditions) . ")
+        AND JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.en')) IS NOT NULL
+        AND JSON_UNQUOTE(JSON_EXTRACT(p.city, '$.ar')) IS NOT NULL";
+		}
 	}
 	if ($facilities !== '') {
 		$facilityConditions = [];
@@ -159,11 +175,10 @@ try {
 		$query .= " GROUP BY p.id HAVING  total_avg_rate >= " . intval($rate);
 	} else {
 		$query .= " GROUP BY p.id  ";
-		
 	}
-			$query .= " ORDER  BY p.visibility ASC   ";
+	$query .= " ORDER  BY p.visibility ASC   ";
 
-	//var_dump($query);
+    //var_dump($query);
 
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;

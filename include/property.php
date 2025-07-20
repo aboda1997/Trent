@@ -2060,8 +2060,8 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? null;
             $pgov = $_POST['pgov'] ?? null;
-            $city_name = isset($_POST["pcity"]) ? $rstate->real_escape_string($_POST["pcity"]) : null;
-            $compound_name = isset($_POST["pcompound"]) ? $rstate->real_escape_string($_POST["pcompound"]) : null;
+            $city_name = isset($_POST["pcity"]) ? implode('\x1F', $_POST["pcity"] ?? []) : '';
+            $compound_name = isset($_POST["pcompound"]) ? implode('\x1F', $_POST["pcompound"] ?? []) : '';
             $url = "images/slider/";
             $temp = explode(".", $_FILES["slider_img"]["name"]);
             $newfilename = round(microtime(true)) . "." . end($temp);
@@ -2073,9 +2073,19 @@ WHERE
             ], JSON_UNESCAPED_UNICODE);
 
             move_uploaded_file($_FILES["slider_img"]["tmp_name"], $target_file);
+
+            $url_ar = "images/slider/";
+            $temp_ar = explode(".", $_FILES["slider_ar_img"]["name"]);
+            $newfilename_ar = 'ar_' . round(microtime(true)) . "." . end($temp_ar);
+            $target_file_ar = $target_dir . basename($newfilename_ar);
+            $url_ar = $url_ar . basename($newfilename_ar);
+
+            move_uploaded_file($_FILES["slider_ar_img"]["tmp_name"], $target_file_ar);
+
+
             $table = "tbl_slider";
-            $field_values = ["img", "status", "title", "uid", "government_id", "cat_id", "compound_name", "city_name"];
-            $data_values = ["$url", "$okey", "$title_json", $propowner, $pgov, $ptype, $city_name,  $compound_name];
+            $field_values = ["img", "img_ar", "status", "title", "uid", "government_id", "cat_id", "compound_name", "city_name"];
+            $data_values = ["$url", "$url_ar", "$okey", "$title_json", $propowner, $pgov, $ptype, $city_name,  $compound_name];
 
             $h = new Estate();
             $check = $h->restateinsertdata($field_values, $data_values, $table);
@@ -2252,7 +2262,8 @@ WHERE
             $propowner = implode(',', $_POST['propowner'] ?? []);
             $ptype = $_POST['ptype'] ?? Null;
             $pgov = $_POST['pgov'] ?? Null;
-            $city_name = isset($_POST["pcity"]) ? $rstate->real_escape_string($_POST["pcity"]) : null;            $compound_name = isset($_POST["pcompound"]) ? $rstate->real_escape_string($_POST["pcompound"]) : null;
+            $city_name = isset($_POST["pcity"]) ? implode('\x1F', $_POST["pcity"] ?? []) : '';
+            $compound_name = isset($_POST["pcompound"]) ? implode('\x1F', $_POST["pcompound"] ?? []) : '';
             $newfilename = round(microtime(true)) . "." . end($temp);
             $target_file = $target_dir . basename($newfilename);
             $url = $url . basename($newfilename);
@@ -2260,8 +2271,47 @@ WHERE
                 "en" => $title_en,
                 "ar" => $title_ar
             ], JSON_UNESCAPED_UNICODE);
+            $url_ar = "images/slider/";
+            $temp_ar = explode(".", $_FILES["slider_ar_img"]["name"]);
+            $newfilename_ar = 'ar_' . round(microtime(true)) . "." . end($temp_ar);
+            $target_file_ar = $target_dir . basename($newfilename_ar);
+            $url_ar = $url_ar . basename($newfilename_ar);
 
-            if ($_FILES["slider_img"]["name"] != "") {
+
+            if ($_FILES["slider_ar_img"]["name"] != "" && $_FILES["slider_ar_img"]["name"] != "") {
+
+                move_uploaded_file($_FILES["slider_ar_img"]["tmp_name"], $target_file_ar);
+                move_uploaded_file(
+                    $_FILES["slider_img"]["tmp_name"],
+                    $target_file
+                );
+                $table = "tbl_slider";
+                $field = [
+                    "status" => $okey,
+                    "img" => $url,
+
+                    "img_ar" => $url_ar,
+                    "title" => $title_json,
+                    "compound_name" => $compound_name,
+                    "city_name" => $city_name,
+                    "cat_id" => $ptype,
+                    "government_id" => $pgov,
+                    "uid" => "$propowner"
+                ];
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateDatanull_Api($field, $table, $where);
+
+                if ($check == 1) {
+                    $returnArr = [
+                        "ResponseCode" => "200",
+                        "Result" => "true",
+                        "title" => "Slider Update Successfully!!",
+                        "message" => "Slider section!",
+                        "action" => "list_slider.php",
+                    ];
+                }
+            } else if ($_FILES["slider_img"]["name"] != "") {
 
                 move_uploaded_file(
                     $_FILES["slider_img"]["tmp_name"],
@@ -2271,6 +2321,34 @@ WHERE
                 $field = [
                     "status" => $okey,
                     "img" => $url,
+                    "title" => $title_json,
+                    "compound_name" => $compound_name,
+                    "city_name" => $city_name,
+                    "cat_id" => $ptype,
+                    "government_id" => $pgov,
+                    "uid" => "$propowner"
+                ];
+                $where = "where id=" . $id . "";
+                $h = new Estate();
+                $check = $h->restateupdateDatanull_Api($field, $table, $where);
+
+                if ($check == 1) {
+                    $returnArr = [
+                        "ResponseCode" => "200",
+                        "Result" => "true",
+                        "title" => "Slider Update Successfully!!",
+                        "message" => "Slider section!",
+                        "action" => "list_slider.php",
+                    ];
+                }
+            } else if ($_FILES["slider_ar_img"]["name"] != "") {
+
+                move_uploaded_file($_FILES["slider_ar_img"]["tmp_name"], $target_file_ar);
+
+                $table = "tbl_slider";
+                $field = [
+                    "status" => $okey,
+                    "img_ar" => $url_ar,
                     "title" => $title_json,
                     "compound_name" => $compound_name,
                     "city_name" => $city_name,
