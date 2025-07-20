@@ -73,7 +73,7 @@ function getUserListFromIds($rstate, $uidString)
     $user_list = [];
 
     // Check if string is not empty (after trimming)
-    if (!empty(trim($uidString))) {
+    if (!empty($uidString) &&  !empty(trim($uidString))) {
 
 
         $result = $rstate->query("SELECT id, name FROM tbl_user WHERE id IN ($uidString)");
