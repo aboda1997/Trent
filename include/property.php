@@ -2373,7 +2373,6 @@ WHERE
                 $table = "tbl_slider";
                 $field = [
                     "status" => $okey,
-                    "img" => $url,
                     "title" => $title_json,
                     "compound_name" => $compound_name,
                     "city_name" => $city_name,
