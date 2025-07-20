@@ -632,7 +632,7 @@ if (isset($_GET['id'])) {
             const citySelect = $('#city');
             citySelect.empty(); // Clear all existing options
 
-            $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
+            $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId, function(response) {
                 if (response.result !== "true" || !response.data.city_list) return;
 
                 const selectedCities = cityNamesToSelect ?
@@ -662,7 +662,7 @@ if (isset($_GET['id'])) {
 
             const compoundSelect = $('#compound');
 
-            $.get('/user_api/u_cascade_filters_api.php?government_id=' + govId +
+            $.get('/trent/user_api/u_cascade_filters_api.php?government_id=' + govId +
                 '&city_name=' + encodeURIComponent(cityName),
                 function(response) {
                     if (response.result !== "true" || !response.data.compound_list) {
