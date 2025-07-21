@@ -34,17 +34,18 @@ try {
 
         $pol['id'] = $row['id'];
         $pol['title'] = $row['title'];
-        $pol['city_name'] = isset($row['city_name'])
+        $pol['city_name'] = isset($row['city_name'])&& !empty($row['city_name'])
             ? explode("x1F", $row['city_name'])  // Split into array
             : [];
 
-        $pol['compound_name'] = isset($row['compound_name'])
+        $pol['compound_name'] = isset($row['compound_name'])  && !empty($row['compound_name'])
             ? explode("x1F", $row['compound_name'])  // Split into array
             : [];
         $pol['img'] = ($lang_code == 'en') ? $row['img'] : $row['img_ar'];
         $pol['category_id'] = $row['cat_id'] == 0 ? null : $row['cat_id'];
         $pol['government_id'] = $row['government_id'] == 0 ? null : $row['government_id'];
         $pol['user_list'] = getUserListFromIds($rstate, $row['uid']);
+        $pol['is_clickable'] =  !(empty($pol['user_list']) &&   empty($pol['government_id']) &&   empty($pol['category_id'])  &&  empty($pol['compound_name'])&&  empty($pol['city_name'])) ;
 
 
 
