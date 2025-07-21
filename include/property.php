@@ -762,6 +762,58 @@ try {
             if ($check == 1) {
                 $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Booking Cancel Reason Updated Successfully!!", "message" => "'Booking Cancel Reason section!", "action" => "list_cancel_reason.php");
             }
+        } else if ($_POST['type'] == 'add_user_cancel_reason') {
+
+            $status = $_POST['status'];
+            $reason_en = $_POST['reason_en'];
+            $reason_ar = $_POST['reason_ar'];
+
+            $reason_json = json_encode([
+                "en" => $reason_en,
+                "ar" => $reason_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $field = array(
+                'reason',
+
+                'status'
+            );
+
+            $table = "tbl_user_cancel_reason";
+            $data_values = array("$reason_json",  "$status");
+
+            $h = new Estate();
+            $check = $h->restateinsertdata($field, $data_values,  $table);
+
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => " Booking Cancel Reason Added Successfully!!", "message" => "'Booking Cancel Reason section!", "action" => "list_user_cancel_reason.php");
+            }
+        } else if ($_POST['type'] == 'edit_user_cancel_reason') {
+            $id = $_POST['id'];
+
+            $status = $_POST['status'];
+            $reason_en = $_POST['reason_en'];
+            $reason_ar = $_POST['reason_ar'];
+
+            $reason_json = json_encode([
+                "en" => $reason_en,
+                "ar" => $reason_ar
+            ], JSON_UNESCAPED_UNICODE);
+
+            $table = "tbl_user_cancel_reason";
+            $field = array(
+
+                'reason' => $reason_json,
+
+                'status' => $status,
+
+            );
+            $where = "where id=" . $id . "";
+            $h = new Estate();
+            $check = $h->restateupdateData($field, $table, $where);
+            if ($check == 1) {
+                $returnArr = array("ResponseCode" => "200", "Result" => "true", "title" => "Booking Cancel Reason Updated Successfully!!", "message" => "'Booking Cancel Reason section!", "action" => "list_user_cancel_reason.php");
+            }
         } else if ($_POST['type'] == 'add_payout_method') {
 
             $status = $_POST['status'];
@@ -3372,6 +3424,41 @@ WHERE
         } else if ($_POST["type"] == "export_cancel_reason_data") {
 
             $query = "SELECT * FROM `tbl_cancel_reason`";
+            $sel = $rstate->query($query);
+            $data = [];
+            while ($row = $sel->fetch_assoc()) {
+
+                $data[] = [
+                    'id' => $row['id'] ?? '',
+                    'reason_en' => getMultilingualValue($row['reason'] ?? '', 'en'),
+                    'reason_ar' => getMultilingualValue($row['reason'] ?? '', 'ar'),
+                    'status' => ($row['status'] ?? '') == 1 ? 'Active' : 'Not Active',
+
+                ];
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Catgories Exported Successfully!!",
+                "message" => "Booking data exported!",
+                "action" => "campings.php",
+            ];
+
+            downloadXLS(
+                // Complete headers matching all data fields
+                $headers = [
+                    'ID',
+                    'Reason (English)',
+                    'Reason (Arabic)',
+                    'Status',
+
+                ],
+                $data
+            );
+        } else if ($_POST["type"] == "export_user_cancel_reason_data") {
+
+            $query = "SELECT * FROM `tbl_user_cancel_reason`";
             $sel = $rstate->query($query);
             $data = [];
             while ($row = $sel->fetch_assoc()) {

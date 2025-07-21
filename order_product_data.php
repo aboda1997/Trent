@@ -233,21 +233,7 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
 
 
         <div class="col-12 col-md-12">
-          <?php
-          if ($c['p_method_id'] == 2) {
-          } else {
-          ?>
-            <!-- Heading -->
-            <p class="mb-2 card-title font-weight-bold">
-              Transaction Id:
-            </p>
-
-            <p class="mb-2 text-gray-500">
-              <?php echo $c['transaction_id']; ?>
-            </p>
-          <?php
-          }
-          ?>
+          
           <!-- Heading -->
           <p class="mb-2 card-title font-weight-bold">
             Booking Status:

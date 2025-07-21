@@ -34,7 +34,10 @@ try {
   } else if (!in_array(getBookingStatus($booking_id)['book_status'], ['Booked', 'Confirmed'])){
     $returnArr    = generateResponse('false', $lang_["not_allow_to_do"], 400);
   } else {
-
+ $query = "SELECT b.method_key
+    FROM tbl_book b
+    WHERE b.id = $booking_id";
+    $result = $GLOBALS['rstate']->query($query)->fetch_assoc();
     $table = "tbl_book";
     $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $cancel_id, "cancel_by" => 'G');
     $where = "where uid=" . '?' . " and id=" . '?' . "";
@@ -42,6 +45,10 @@ try {
     $h = new Estate();
     $where_conditions = [$uid, $booking_id];
     $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
+    if ($result['method_key'] == 'TRENT_BALANCE'){
+    $refund = refundMoney($uid , $booking_id);
+
+    }
     $returnArr = generateResponse("true",  "Booking  Cancelled Successfully!", 200);
   }
   echo $returnArr;

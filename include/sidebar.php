@@ -111,7 +111,7 @@ if (isset($_SESSION['restatename'])) {
           <?php
           }
           ?>
-         
+
           <?php
           if (in_array('Update_Payout', $per) || in_array('Delete_Payout', $per) || in_array('Read_Payout', $per) || in_array('Create_Payout', $per)) {
           ?>
@@ -216,7 +216,7 @@ if (isset($_SESSION['restatename'])) {
           }
           ?>
 
-          
+
           <?php
           if (in_array('Update_Facility', $per) || in_array('Delete_Facility', $per) || in_array('Read_Facility', $per) || in_array('Create_Facility', $per)) {
           ?>
@@ -387,12 +387,11 @@ if (isset($_SESSION['restatename'])) {
             <li class="sidebar-list">
               <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Circle with X mark - universal cancel symbol -->
-                  <circle cx="12" cy="12" r="9" stroke="#130F26" stroke-width="1.5" />
-                  <path d="M15 9L9 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
-                  <path d="M9 9L15 15" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
+                  <!-- Crown icon for owner -->
+                  <path d="M5 16L3 9L7 11L12 4L17 11L21 9L19 16H5Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M5 16H19V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V16Z" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                <span>Cancel Reason</span>
+                <span>Owner Reasons</span>
               </a>
               <ul class="sidebar-submenu">
                 <?php
@@ -412,6 +411,32 @@ if (isset($_SESSION['restatename'])) {
               </ul>
             </li>
 
+            <li class="sidebar-list">
+              <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- User icon for user reasons -->
+                  <circle cx="12" cy="7" r="4" stroke="#130F26" stroke-width="1.5" />
+                  <path d="M5 21V19C5 16.7909 6.79086 15 9 15H15C17.2091 15 19 16.7909 19 19V21" stroke="#130F26" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                <span>User Reasons</span>
+              </a>
+              <ul class="sidebar-submenu">
+                <?php
+                if (in_array('Create_Cancel_Reason', $per)) {
+                ?>
+                  <li><a href="add_user_cancel_reason.php">Add Cancel Reason</a></li>
+                <?php
+                }
+                ?>
+                <?php
+                if (in_array('Read_Cancel_Reason', $per)) {
+                ?>
+                  <li><a href="list_user_cancel_reason.php">List Cancel Reason</a></li>
+                <?php
+                }
+                ?>
+              </ul>
+            </li>
           <?php
           }
           ?>
@@ -555,10 +580,10 @@ if (isset($_SESSION['restatename'])) {
                   </g>
                 </svg><span>Setting</span></a>
               <ul class="sidebar-submenu">
-                                <?php if ((in_array('Read_Setting', $per) && in_array('Delete_Setting', $per))): ?>
+                <?php if ((in_array('Read_Setting', $per) && in_array('Delete_Setting', $per))): ?>
 
-                <li><a href="setting.php">Edit Setting</a></li>
-                                <?php endif; ?>
+                  <li><a href="setting.php">Edit Setting</a></li>
+                <?php endif; ?>
 
                 <li><a href="add_privacy_policy.php">Edit Privacy Policy</a></li>
                 <li><a href="add_terms_and_conditions.php">Edit Guest Terms And Conditions</a></li>
