@@ -17,6 +17,7 @@ try {
 	$min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
 	$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
 	$government_id = isset($_GET['government_id']) ? intval($_GET['government_id']) : null;
+	$slider_id = isset($_GET['slider_id']) ? intval($_GET['slider_id']) : null;
 	$compound_names = isset($_GET['compound_name']) ? $_GET['compound_name'] : '';
 	$city_names = isset($_GET['city_name']) ? $_GET['city_name'] : '';
 	$facilities = isset($_GET['facilities']) ? $_GET['facilities'] : '';
@@ -31,6 +32,28 @@ try {
 	$usersArray = json_decode($users_list, true);
 	$cityArray = [$city_names];
 	$compoundArray = [$compound_names];
+
+	if ($slider_id) {
+		$query = "SELECT government_id, uid , cat_id , status
+        ,city_name ,compound_name
+          FROM tbl_slider
+          WHERE status=1 and id = $slider_id
+        ";
+		$sel = $rstate->query($query);
+		$row =  $sel->fetch_assoc();
+		$cityArray  = isset($row['city_name'])&& !empty($row['city_name'])
+			? explode("x1F", $row['city_name'])  // Split into array
+			: [];
+
+		$compoundArray = isset($row['compound_name']) && !empty($row['compound_name'])
+			? explode("x1F", $row['compound_name'])  // Split into array
+			: [];
+
+		$category_id  = $row['cat_id'] == 0 ? null : $row['cat_id'];
+		$government_id = $row['government_id'] == 0 ? null : $row['government_id'];
+		$usersArray = !empty($row['uid']) ? array_map('intval', explode(',', $row['uid'])) : [];
+
+	}
 	// Get pagination parameters
 	$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
 	$itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
@@ -91,7 +114,7 @@ try {
 	}
 	if (!empty($compoundArray)) {
 		$compound_conditions = [];
-		
+
 		foreach ($compoundArray as $name) {
 			$name = $rstate->real_escape_string($name);
 			$compound_conditions[] = "(
@@ -161,7 +184,7 @@ try {
 	if ($only_featured) {
 		$query .= " AND p.is_featured = 1 ";
 	}
-	if ($users_list !== '') {
+	if (!empty($usersArray)) {
 		$userConditions = [];
 		foreach ($usersArray as $user) {
 			$userConditions[] = "FIND_IN_SET(" . intval($user) . ", p.add_user_id)";
@@ -178,7 +201,7 @@ try {
 	}
 	$query .= " ORDER  BY p.visibility ASC   ";
 
-    //var_dump($query);
+	//var_dump($query);
 
 	$sel_length  = $rstate->query($query)->num_rows;
 	$query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
