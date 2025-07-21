@@ -37,8 +37,12 @@ try {
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (!in_array($method_key, $methods)) {
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
+    } else if ($item_id == null) {
+        $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "  and book_status =  'Confirmed'") === false) {
         $returnArr    = generateResponse('false', $lang_["booking_not_available"], 400);
+    } else if (validateIdAndDatabaseExistance($booking_id, 'tbl_book', ' uid  =' . $uid . "  and book_status =  'Confirmed'" . "  and item_id =  '$item_id'" ) === false) {
+        $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
     } else if (validatePeriod($booking_id) === false) {
         $returnArr    = generateResponse('false', $lang_["booking_expired"], 400);
     } else {
@@ -114,7 +118,7 @@ try {
         } else if ($method_key == 'TRENT_BALANCE' && $balance >= $reminder_value) {
 
             $GLOBALS['rstate']->begin_transaction();
-            $field_ = array('pay_status' => 'Completed');
+            $field_ = array('pay_status' => 'Completed', 'item_id' => '');
             $where = "where uid=" . '?' . " and id=" . '?' . "";
             $table = "tbl_book";
             $created_at1 = $date->format('Y-m-d H:i:s');
@@ -141,11 +145,11 @@ try {
             ));
         } else {
 
-            if (getPaymentStatus($merchant_ref_number, $booking_id,  $total_90_percent_int)) {
+            if (getPaymentStatus($merchant_ref_number, $item_id,  $total_90_percent_int)) {
 
 
                 $GLOBALS['rstate']->begin_transaction();
-                $field_ = array('pay_status' => 'Completed');
+                $field_ = array('pay_status' => 'Completed', 'item_id' => '');
                 $where = "where uid=" . '?' . " and id=" . '?' . "";
                 $table = "tbl_book";
                 $h = new Estate();

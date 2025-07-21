@@ -90,17 +90,16 @@ try {
 				];
 			}
 			$fp['reminder_value'] = number_format($row['reminder_value'], 2, '.', '');
-			$fp['partial_value'] =  number_format($row['total'] - $row['reminder_value'], 2, '.', ''); 
+			$fp['partial_value'] =  number_format($row['total'] - $row['reminder_value'], 2, '.', '');
 			$fp['is_full_paid'] = ($row['pay_status'] === 'Completed');
-			$fp['item_id'] = $row['id'];
+			$fp['item_id'] =  $row['item_id'];
 
 			$fp['book_status'] = $row['book_status'];
-            if($fp['book_status'] == 'Confirmed'){
+			if ($fp['book_status'] == 'Confirmed') {
 				$flag = validatePeriod($row['id']);
-				if($flag == false){
+				if ($flag == false) {
 					cancel_booking($book_id);
-				$fp['book_status'] = 'Cancelled';
-	
+					$fp['book_status'] = 'Cancelled';
 				}
 			}
 
