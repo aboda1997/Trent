@@ -29,8 +29,8 @@ try {
 	$check_out = isset($_GET['check_out']) ? $_GET['check_out'] : null;
 	$facilitiesArray = json_decode($facilities, true);
 	$usersArray = json_decode($users_list, true);
-	$cityArray = json_decode($city_names, true);
-	$compoundArray = json_decode($compound_names, true);
+	$cityArray = [$city_names];
+	$compoundArray = [$compound_names];
 	// Get pagination parameters
 	$page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
 	$itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
