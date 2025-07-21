@@ -1,7 +1,7 @@
 <?php
 
 function getFawryPaymentStatus($merchantCode, $merchantRefNumber, $signature) {
-    $baseUrl = 'https://atfawry.fawrystaging.com/ECommerceWeb/Fawry/payments/status/v2';
+    $baseUrl = 'https://atfawry.com/ECommerceWeb/Fawry/payments/status/v2';
     $url = $baseUrl . '?merchantCode=' . urlencode($merchantCode) . 
            '&merchantRefNumber=' . urlencode($merchantRefNumber) . 
            '&signature=' . urlencode($signature);
