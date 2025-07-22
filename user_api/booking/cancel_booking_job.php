@@ -28,19 +28,11 @@ try {
 
     while ($row = $sel->fetch_assoc()) {
         $add_user_id = $row['add_user_id'];
-        $host = $rstate->query("select name , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
         $uid = $row['uid'];
-        $guest = $rstate->query("select name , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
-        $host_mobile = $host["mobile"];
-        $host_ccode = $host["ccode"];
-        $host_name = $host["name"];
-        $guest_mobile = $guest["mobile"];
-        $guest_ccode = $guest["ccode"];
-        $guest_name = $guest["name"];
+        
         $check_in_str = $row['check_in'];
         $check_out_str = $row['check_out'];
-        $prop_img = $row['prop_img'];
-        $propertytitle = json_decode($row['prop_title'] ?? '', true)["ar"] ?? '';
+       
         $book_id = $row['id'];
         if (validateCancelBooking($book_id)) {
             $res1 = refundMoney($uid, $book_id);
@@ -49,19 +41,10 @@ try {
 
     while ($row = $sel1->fetch_assoc()) {
         $add_user_id = $row['add_user_id'];
-        $host = $rstate->query("select name , mobile	, ccode from tbl_user where  id= $add_user_id  ")->fetch_assoc();
         $uid = $row['uid'];
-        $guest = $rstate->query("select name , mobile	, ccode from tbl_user where  id= $uid  ")->fetch_assoc();
-        $host_mobile = $host["mobile"];
-        $host_ccode = $host["ccode"];
-        $host_name = $host["name"];
-        $guest_mobile = $guest["mobile"];
-        $guest_ccode = $guest["ccode"];
-        $guest_name = $guest["name"];
+       
         $check_in_str = $row['check_in'];
         $check_out_str = $row['check_out'];
-        $prop_img = $row['prop_img'];
-        $propertytitle = json_decode($row['prop_title'] ?? '', true)["ar"] ?? '';
         $book_id = $row['id'];
         $flag = validatePeriod($book_id);
         if ($flag == false) {

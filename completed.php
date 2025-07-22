@@ -47,13 +47,13 @@ if (!in_array('Read_Booking', $per)) {
           </div>
         </div>
       </div>
-     <!-- Container-fluid starts-->
+      <!-- Container-fluid starts-->
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
-                 <div class="mb-3 row">
+                <div class="mb-3 row">
                   <form id="exportForm" method="get" class="col-sm-12">
                     <div class="row justify-content-end align-items-start">
                       <input type="hidden" name="type" value="export_booking_data" />
@@ -70,7 +70,7 @@ if (!in_array('Read_Booking', $per)) {
                 </div>
                 <div class="table-responsive">
                   <!-- Search Form -->
-									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
+                  <div style="position: relative; z-index: 0;" class="row justify-content-center">
                     <div class="col-md-8">
                       <div class="search-container">
                         <form method="get" action="">
@@ -101,9 +101,9 @@ if (!in_array('Read_Booking', $per)) {
                         <th>User Rating</th>
                         <th>User FeedBack</th>
                         <th>Host Name</th>
-                          <th>Host Contact </th>
-                          <th>Guest Name</th>
-                          <th>Guest Contact </th> 
+                        <th>Host Contact </th>
+                        <th>Guest Name</th>
+                        <th>Guest Contact </th>
                         <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                           <th><?= $lang['Action'] ?></th>
                         <?php endif; ?>
@@ -112,7 +112,7 @@ if (!in_array('Read_Booking', $per)) {
                     <tbody>
                       <?php
                       // Pagination configuration
-                        $records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+                      $records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
                       $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                       $page = max($page, 1);
 
@@ -152,7 +152,7 @@ if (!in_array('Read_Booking', $per)) {
                       if ($result->num_rows > 0) {
                         $has_records = true;
                         while ($row = $result->fetch_assoc()) {
-                               $client_id = $row['uid'];
+                          $client_id = $row['uid'];
                           $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
                           $owner_id = $row['add_user_id'];
                           $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
@@ -161,7 +161,7 @@ if (!in_array('Read_Booking', $per)) {
                           <tr>
                             <td><?php echo $i; ?></td>
                             <td><?php echo $row['prop_id']; ?></td>
-                            <td class="align-middle"><?php echo json_decode($row['prop_title']??'')->en??''; ?></td>
+                            <td class="align-middle"><?php echo json_decode($row['prop_title'] ?? '')->en ?? ''; ?></td>
                             <td class="align-middle">
                               <img src="<?php
                                         $imageArray = explode(',', $row['prop_img']);
@@ -175,7 +175,7 @@ if (!in_array('Read_Booking', $per)) {
                               if (empty($row['user_rating'])) {
                                 echo '<b>No Rating Provided</b>';
                               } else {
-                                echo str_repeat('★', $row['user_rating']);
+                                echo str_repeat('★', (int)round($row['user_rating']));
                               }
                               ?>
                             </td>
@@ -188,18 +188,18 @@ if (!in_array('Read_Booking', $per)) {
                               }
                               ?>
                             </td>
-                               <td class="align-middle">
-                                <?php echo $client_data['name']  ?>
-                              </td>
-                              <td class="align-middle">
-                                <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
-                              </td>
-                              <td class="align-middle">
-                                <?php echo $owner_data['name']  ?>
-                              </td>
-                              <td class="align-middle">
-                                <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
-                              </td>
+                            <td class="align-middle">
+                              <?php echo $client_data['name']  ?>
+                            </td>
+                            <td class="align-middle">
+                              <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
+                            </td>
+                            <td class="align-middle">
+                              <?php echo $owner_data['name']  ?>
+                            </td>
+                            <td class="align-middle">
+                              <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
+                            </td>
                             <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
@@ -222,7 +222,7 @@ if (!in_array('Read_Booking', $per)) {
                     </tbody>
                   </table>
 
-                   <!-- Manual Pagination Links -->
+                  <!-- Manual Pagination Links -->
                   <?php if ($total_records > 0): ?>
                     <div class="pagination-container">
                       <!-- Per Page Dropdown -->
@@ -284,7 +284,7 @@ if (!in_array('Read_Booking', $per)) {
                       <?php endif; ?>
                     </div>
                   <?php endif; ?>
-                                </div>
+                </div>
               </div>
             </div>
           </div>
@@ -315,10 +315,10 @@ if (!in_array('Read_Booking', $per)) {
   </div>
 </div>
 <style>
-    .search-container .input-group {
-        max-width: 600px;
-        margin: 0 auto;
-    }
+  .search-container .input-group {
+    max-width: 600px;
+    margin: 0 auto;
+  }
 
   .pagination-container {
     display: flex;
@@ -337,45 +337,45 @@ if (!in_array('Read_Booking', $per)) {
     border: 1px solid #ddd;
   }
 
-    .pagination {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin: 20px 0;
-    }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 20px 0;
+  }
 
-    .pagination a,
-    .pagination span {
-        padding: 5px 10px;
-        border: 1px solid #dee2e6;
-        text-decoration: none;
-    }
+  .pagination a,
+  .pagination span {
+    padding: 5px 10px;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+  }
 
-    .pagination .current {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
+  .pagination .current {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
 
-    .pagination .disabled {
-        color: #6c757d;
-        pointer-events: none;
-    }
+  .pagination .disabled {
+    color: #6c757d;
+    pointer-events: none;
+  }
 
-    .results-count {
-        text-align: center;
-        color: #6c757d;
-        margin-bottom: 20px;
-    }
+  .results-count {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 20px;
+  }
 
-    .text-center {
-        text-align: center;
-        padding: 20px;
-        font-size: 1.1em;
-        color: #6c757d;
-        font-style: italic;
-    }
+  .text-center {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1em;
+    color: #6c757d;
+    font-style: italic;
+  }
 </style>
 <script>
   function updatePerPage(value) {
@@ -450,16 +450,16 @@ if (!in_array('Read_Booking', $per)) {
 
 <!-- JavaScript for Excel Export -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Prevent DataTables initialization
-        if (typeof $.fn.DataTable === 'function') {
-            $('#active-users-table').DataTable({
-                paging: false,
-                searching: false,
-                info: false
-            });
-        }
-    });
+  document.addEventListener('DOMContentLoaded', function() {
+    // Prevent DataTables initialization
+    if (typeof $.fn.DataTable === 'function') {
+      $('#active-users-table').DataTable({
+        paging: false,
+        searching: false,
+        info: false
+      });
+    }
+  });
 </script>
 
 <!-- latest jquery-->
