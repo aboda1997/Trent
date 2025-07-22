@@ -128,7 +128,7 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
           <span class="card-title">Property Title?</span>
           <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><b><?php echo json_decode($c['prop_title'])->en; ?></b></span>
+    margin-left: auto!important;"><b><?php echo json_decode($c['prop_title']??'')->en??''; ?></b></span>
         </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
@@ -179,7 +179,7 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
             </p>
 
             <p class="mb-7 mb-md-0">
-              <?php echo $pro_data['address'] ?? ''; ?>
+              <?php  echo json_decode($pro_data['address']??'')->en??''; ; ?>
             </p>
           </div>
           <?php
