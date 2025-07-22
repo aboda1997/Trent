@@ -160,7 +160,7 @@ if (!in_array('Read_Booking', $per)) {
                             <td class="align-middle"><?php echo $guest['name']??''; ?></td>
                             <td class="align-middle"><?php echo  ($guest['ccode'] ??'') . ($guest['mobile']??''); ?></td>
                             <td class="align-middle"><?php echo $host['name'] ??'' ; ?></td>
-                            <td class="align-middle"><?php echo $host['ccode'].$host['mobile']; ?></td>
+                            <td class="align-middle"><?php echo ($host['ccode']??'').($host['mobile']??''); ?></td>
                             <td class="align-middle"><?php echo $cancel_by; ?></td>
                             <td class="align-middle">
                               <?php echo json_decode($cancel_reason['reason']??"", true)[$lang_code] ??""; ?>
