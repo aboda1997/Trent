@@ -19,7 +19,6 @@ if ($pro_id == ''  ) {
 	$returnArr = generateResponse('false', "This Property already deleted", 410);
 } else {
 	$fp = array();
-
 	$sel = $rstate->query("select * from tbl_property where status = 1 and  id=" . $pro_id .  "")->fetch_assoc();
 	$fp['id'] = $sel['id'];
 	$fp['owner_id'] = $sel['add_user_id'];
