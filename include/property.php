@@ -1669,8 +1669,8 @@ try {
             $uid  = $chat_data['receiver_id'];
             $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
-            $receiver_mobile   = $sel['mobile'];
-            $receiver_ccode   = $sel['ccode'];
+            $receiver_mobile   = $sel['mobile']??'';
+            $receiver_ccode   = $sel['ccode']??'';
 
             $message = 'لديك رساله جديده';
             $title_ = 'لديك رساله جديده';
