@@ -34,7 +34,9 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
             $check_push_pay_data['orderStatus'] == 'PAID' &&
             $check_push_pay_data['itemCode'] == $item_id &&
             $check_pull_pay['orderStatus'] == 'PAID' &&
-            $check_pull_pay['itemCode'] == $item_id 
+            $check_pull_pay['itemCode'] == $item_id &&
+            abs($push_amount - $total_as_int) < 2 &&
+            abs($pull_amount - $total_as_int) < 2 
         );
     }
 
