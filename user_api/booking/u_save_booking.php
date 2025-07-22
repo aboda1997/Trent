@@ -156,7 +156,7 @@ try {
             $fp['partial_value'] = number_format($partial_value, 2, '.', '');
             $fp['reminder_value'] = number_format($reminder_value, 2, '.', '');
 
-            $total_10_percent_int = (int)$partial_value;
+            $total_10_percent_int = (int) $fp['partial_value'];
 
             // $fp['total_int'] = $total_as_int;
             $fp['book_status'] = 'Booked';
