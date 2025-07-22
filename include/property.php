@@ -1664,7 +1664,16 @@ try {
 
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
+            $chat_data = $rstate->query("select * from tbl_messages where   id=" . $id .  "")->fetch_assoc();
 
+            $uid  = $chat_data['receiver_id'];
+            $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
+
+            $receiver_mobile   = $sel['mobile']??'';
+            $receiver_ccode   = $sel['ccode']??'';
+
+            $message = 'لديك رساله جديده';
+            $title_ = 'لديك رساله جديده';
             $table = "tbl_messages";
             $field = ["is_approved" => $okey, 'updated_at' => $updated_at];
             $where = "where id=" . $id . "";
@@ -1672,6 +1681,9 @@ try {
 
             $check = $h->restateupdateData($field, $table, $where);
             if ($okey ==  '1') {
+                $result = sendMessage([$receiver_ccode . $receiver_mobile], $message);
+                $firebase_notification = sendFirebaseNotification($title_, $message,  $uid, "chat_id", $chat_data['chat_id']);
+
                 $title =  "Messages Approved Successfully!!";
             } else {
                 $title =  "Messages rejected Successfully!!";
@@ -1691,6 +1703,15 @@ try {
 
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
+            $query = "
+            SELECT DISTINCT m.receiver_id, u.*  
+            FROM tbl_messages m
+            JOIN tbl_user u ON m.receiver_id = u.id
+            WHERE m.chat_id = " . $id . "
+        ";
+            $message = 'لديك رساله جديده';
+            $title_ = 'لديك رساله جديده';
+            $db = $rstate->query($query);
 
             $table = "tbl_messages";
             $field = ["is_approved" => $okey, 'updated_at' => $updated_at];
@@ -1699,6 +1720,12 @@ try {
 
             $check = $h->restateupdateData($field, $table, $where);
             if ($okey ==  '1') {
+                if ($db) {
+                    while ($row = $db->fetch_assoc()) {
+                        $result = sendMessage([$row['ccode'] . $row['mobile']], $message);
+                        $firebase_notification = sendFirebaseNotification($title_, $message, $row['id'], "chat_id", $id);
+                    }
+                }
                 $title =  "Message Approved Successfully!!";
             } else {
                 $title =  "Message rejected Successfully!!";
