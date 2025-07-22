@@ -189,16 +189,18 @@ if (!in_array('Read_Booking', $per)) {
                               ?>
                             </td>
                             <td class="align-middle">
-                              <?php echo $client_data['name']  ?>
+                              <?php echo isset($client_data['name']) ? $client_data['name'] : '' ?>
                             </td>
                             <td class="align-middle">
-                              <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
+                              <?php echo (isset($client_data['ccode']) ? $client_data['ccode'] : '') .
+                                (isset($client_data['mobile']) ? $client_data['mobile'] : '') ?>
                             </td>
                             <td class="align-middle">
-                              <?php echo $owner_data['name']  ?>
+                              <?php echo isset($owner_data['name']) ? $owner_data['name'] : '' ?>
                             </td>
                             <td class="align-middle">
-                              <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
+                              <?php echo (isset($owner_data['ccode']) ? $owner_data['ccode'] : '') .
+                                (isset($owner_data['mobile']) ? $owner_data['mobile'] : '') ?>
                             </td>
                             <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                               <td style="white-space: nowrap; width: 15%;">
