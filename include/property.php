@@ -1669,8 +1669,8 @@ try {
             $uid  = $chat_data['receiver_id'];
             $sel = $rstate->query("select * from tbl_user where   id=" . $uid .  "")->fetch_assoc();
 
-            $receiver_mobile   = $sel['mobile']??'';
-            $receiver_ccode   = $sel['ccode']??'';
+            $receiver_mobile   = $sel['mobile'] ?? '';
+            $receiver_ccode   = $sel['ccode'] ?? '';
 
             $message = 'لديك رساله جديده';
             $title_ = 'لديك رساله جديده';
@@ -3760,6 +3760,85 @@ WHERE
                 "message" => "Whatsup section!",
                 "action" => "add_money.php",
             ];
+        } elseif ($_POST["type"] == "cancel_book") {
+            $id = $_POST["id"];
+            $uid = $_POST["uid"];
+            $guest_uid = $_POST["guest_uid"];
+            $deny_id =  $_POST["reason"];
+            $title = $_POST["property_title"];
+            $table = "tbl_book";
+
+            $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $deny_id, "cancel_by" => 'A');
+            $where = "where id=" . '?' . "";
+            $where_conditions = [$id];
+            $cancel_data = $rstate->query("select  reason	 from tbl_cancel_reason where  id= $deny_id ")->fetch_assoc();
+            $cancel_text =  json_decode($cancel_data['reason'] ?? "", true)['ar'] ?? "";
+
+            $message = "عزيزي العميل،
+نأسف لإبلاغك بأنه تم إلغاء حجز العقار [$title]للسبب التالي: [$cancel_text]
+يمكنك: • مراجعة شروط الحجز والتأكد من استيفائها • إعادة حجز العقار مرة أخرى عبر تطبيق ت-رينت • التواصل معنا للحصول على المساعدة
+شكراً لثقتكم بنا فريق ت-رينت 🏠";
+            $title_ = ' تم إلغاء حجز العقار';
+            $user = $rstate->query("select  mobile, ccode	 from tbl_user where  id= $guest_uid ")->fetch_assoc();
+
+            $mobile = $user["mobile"];
+            $ccode = $user["ccode"];
+            $h = new Estate();
+
+
+            $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
+
+            if ($check) {
+                refundMoney($guest_uid, $id);
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                $firebase_notification = sendFirebaseNotification($title_, $message, $guest_uid,  "booking_id", $id);
+
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Booking Cancelled Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending.php",
+                ];
+            }
+        } elseif ($_POST["type"] == "confirm_book") {
+            $id = $_POST["id"];
+            $uid = $_POST["uid"];
+            $guest_uid = $_POST["guest_uid"];
+            $table = "tbl_book";
+            $title = $_POST["property_title"];
+            $where = "where id=" . '?' . "";
+            $where_conditions = [$id];
+            $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+            $created_at = $date->format('Y-m-d H:i:s');
+            $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at,'confirmed_by' => 'A');
+
+            $message = "مبروك!
+تم تأكيد حجز العقار  [$title] بنجاح.
+التفاصيل: • يمكنك مراجعة تفاصيل الحجز من خلال التطبيق • ستتلقى تفاصيل الاتصال بالمالك قريباً • في حالة وجود أي استفسار، لا تتردد في التواصل معنا
+نتمنى لك إقامة مريحة فريق ت-رينت 🎉";
+            $title_ = 'تهانينا! تم تأكيد حجز العقار ✅';
+            $user = $rstate->query("select  mobile, ccode	 from tbl_user where  id= $guest_uid ")->fetch_assoc();
+
+            $mobile = $user["mobile"];
+            $ccode = $user["ccode"];
+            $h = new Estate();
+
+
+            $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+
+            if ($check) {
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                $firebase_notification = sendFirebaseNotification($title_, $message, $guest_uid,  "booking_id", $id);
+
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Booking Confirmed Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "pending.php",
+                ];
+            }
         } elseif ($_POST["type"] == "update_status") {
             $id = $_POST["id"];
             $status = $_POST["status"];

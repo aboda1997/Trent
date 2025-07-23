@@ -26,7 +26,7 @@ try {
 		}
 
 		// Remove duplicate dates
-		$date_hold = get_holding_property_dates($pro_id, $uid, $rstate);
+		 [$date_hold,$new_check_list] = get_holding_property_dates($pro_id, $uid, $rstate);
 		// Remove duplicate dates
 		$combined_dates = array_unique(array_merge($date_hold, $date_list));
 		// Sort the dates

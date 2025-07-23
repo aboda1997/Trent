@@ -47,8 +47,9 @@ try {
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
-        $date_list = get_dates($prop_id, $uid, $rstate);
+       [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
+        [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
@@ -67,6 +68,8 @@ try {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
+        } else if ($status1  == false) {
+            $returnArr    = generateResponse('false', $status_message1, 400);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
@@ -275,6 +278,26 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
         }
         $current = strtotime('+1 day', $current);
     }
+
+    return [true, "Valid date range"];
+}
+
+function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_)
+{
+
+
+    // Check for conflicts with date_list
+    $current = strtotime($from_date);
+    $end = strtotime($to_date);
+
+    $current_date = date('Y-m-d', $current);
+    if (in_array($current_date, $check_in_list)) {
+        return [
+            false,
+            sprintf($lang_["date_range_conflict"], $current_date)
+        ];
+    }
+
 
     return [true, "Valid date range"];
 }

@@ -56,8 +56,9 @@ try {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
         [$days, $days_message] = processDates($from_date, $to_date, $lang_);
-        $date_list = get_dates($prop_id, $uid, $rstate);
+        [$date_list, $check_in_list]  = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
+        [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
         $checkQuery = "SELECT *  FROM tbl_property WHERE id=  " . $prop_id .  "";
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
@@ -77,6 +78,8 @@ try {
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if ($status  == false) {
             $returnArr    = generateResponse('false', $status_message, 400);
+        } else if ($status1  == false) {
+            $returnArr    = generateResponse('false', $status_message1, 400);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
@@ -181,8 +184,8 @@ try {
 
                 $GLOBALS['rstate']->begin_transaction();
 
-                $field_values = ["item_id","prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = [$generated_item_id,$res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $field_values = ["item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = [$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -221,8 +224,8 @@ try {
 
                     $GLOBALS['rstate']->begin_transaction();
 
-                    $field_values = ["item_id","prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                    $data_values = [$generated_item_id,$res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                    $field_values = ["item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                    $data_values = [$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
                     $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -351,6 +354,26 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
         }
         $current = strtotime('+1 day', $current);
     }
+
+    return [true, "Valid date range"];
+}
+
+function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_)
+{
+
+
+    // Check for conflicts with date_list
+    $current = strtotime($from_date);
+    $end = strtotime($to_date);
+
+    $current_date = date('Y-m-d', $current);
+    if (in_array($current_date, $check_in_list)) {
+        return [
+            false,
+            sprintf($lang_["date_range_conflict"], $current_date)
+        ];
+    }
+
 
     return [true, "Valid date range"];
 }

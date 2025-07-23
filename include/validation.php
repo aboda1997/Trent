@@ -479,9 +479,9 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
         $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', 'is_deleted =0') === false) {
         $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
-    } else if ($date_ranges === null || !is_array($date_ranges) ) {
+    } else if ($date_ranges === null || !is_array($date_ranges)) {
         $returnArr    = generateResponse('false', $lang_["date_ranges_required"], 400);
-    }else if (empty($date_ranges)) {
+    } else if (empty($date_ranges)) {
         $res  = $h->restateDeleteData_Api_fav(" where prop_id = $prop_id and book_status = 'Excluded'", $table);
 
         $returnArr    = generateResponse('true', '', 200);
@@ -492,15 +492,18 @@ function exclude_ranges($lang, $uid, $prop_id, $date_ranges)
         if (!$valid) {
             $returnArr = generateResponse('false', $message, 400);
         } else {
-            $date_list = get_dates($prop_id,$uid, $GLOBALS['rstate']);
+            [$date_list, $check_in_list] = get_dates($prop_id, $uid, $GLOBALS['rstate']);
             [$status, $status_message] = validateDateRangesAgainstBookings($date_ranges, $date_list, $lang_);
+            [$status1, $status_message1] = validateDateRangesAgainstBookingsCheckin($date_ranges, $check_in_list, $lang_);
 
             if ($status  == false) {
                 $returnArr    = generateResponse('false', $status_message, 400);
+            } else if ($status1  == false) {
+                $returnArr    = generateResponse('false', $status_message1, 400);
             } else {
                 // Insert each date range separately
                 $success_count = 0;
-                
+
 
                 foreach ($date_ranges as $range) {
                     $from_date = $range[0];
@@ -600,46 +603,77 @@ function validateDateRangesAgainstBookings(array $date_ranges, array $booked_dat
 
     return [true, "All date ranges are available"];
 }
-
-
-function get_holding_property_dates(string $pro_id,$uid , $rstate)
+function validateDateRangesAgainstBookingsCheckin(array $date_ranges, array $booked_dates, $lang_): array
 {
-date_default_timezone_set('Africa/Cairo');
+    foreach ($date_ranges as $range) {
+        [$from_date, $to_date] = $range;
 
-// Calculate the timestamp 3 hours ago in Cairo time
-$three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
+        $current = strtotime($from_date);
+        $end = strtotime($to_date);
 
-// Build the SQL query
-$sql = "SELECT f1  , f2 
+        $current_date = date('Y-m-d', $current);
+        if (in_array($current_date, $booked_dates)) {
+            return [
+                false,
+                sprintf($lang_["booked_already_excluded"], $current_date)
+            ];
+        }
+    }
+
+    return [true, "All date ranges are available"];
+}
+
+function get_holding_property_dates(string $pro_id, $uid, $rstate)
+{
+    date_default_timezone_set('Africa/Cairo');
+
+    // Calculate the timestamp 3 hours ago in Cairo time
+    $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
+
+    // Build the SQL query
+    $sql = "SELECT f1  , f2 
     FROM tbl_non_completed 
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
     AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
     $result = $rstate->query($sql);
+    $check_in_list = [];
 
-      $date_list = [];
+    $date_list = [];
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
+        $check_in_list[] = $row['f1'];
+
         $date_list = array_merge($date_list, getDatesFromRange($row['f1'], $row['f2']));
     }
-    return $date_list; 
+    return [$date_list,$check_in_list];
 }
 
-function get_dates(string $pro_id, $uid , $rstate)
+function get_dates(string $pro_id, $uid, $rstate)
 {
     $sql = "SELECT check_in, check_out FROM tbl_book where prop_id=" . $pro_id . " and book_status != 'Cancelled'";
     $result = $rstate->query($sql);
     $date_list = [];
+    $check_in_list = [];
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
+        $check_in_list[] = $row['check_in'];
+
         $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
     }
-    $date_hold = get_holding_property_dates($pro_id , $uid , $rstate);
+    [$date_hold,$new_check_list] = get_holding_property_dates($pro_id, $uid, $rstate);
     // Remove duplicate dates
     $combined_dates = array_unique(array_merge($date_hold, $date_list));
+    $combined_check_in = array_unique(array_merge($new_check_list, $check_in_list));
     // Sort the dates
     sort($combined_dates);
-    return $combined_dates;
+    sort($combined_check_in);
+
+    // Return both arrays
+    return [
+        $combined_dates,   // All booked & holding dates (ranges)
+        $combined_check_in // Only check-in dates
+    ];
 }
 
 function getDatesFromRange($start, $end)
@@ -647,6 +681,9 @@ function getDatesFromRange($start, $end)
     $dates = [];
     $current = strtotime($start);
     $end = strtotime($end);
+
+    // Move current to the next day to exclude the start date
+    $current = strtotime('+1 day', $current);
 
     while ($current < $end) {
         $dates[] = date('Y-m-d', $current);
