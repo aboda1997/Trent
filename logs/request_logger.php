@@ -8,6 +8,7 @@ class RequestLogger
     const LOG_DIR = __DIR__ . '/logs';
     const LOG_FILE = 'requests.log';
     const ARCHIVE_PREFIX = 'requests-';
+    const RETENTION_DAYS = 60; // 2 months retention
 
     private static $sensitiveFields = [
         'password',
@@ -22,8 +23,10 @@ class RequestLogger
     {
         self::ensureLogDirectory();
         self::rotateLogsIfNeeded();
+        self::cleanupOldArchives(); // Now called on every init to ensure cleanup
         self::logRequest();
     }
+
     protected static function getCairoDateTime()
     {
         static $cairoTz = null;
@@ -32,6 +35,7 @@ class RequestLogger
         }
         return new DateTime('now', $cairoTz);
     }
+
     protected static function logRequest()
     {
         $now = self::getCairoDateTime();
@@ -83,27 +87,34 @@ class RequestLogger
         if (file_exists($logPath)) {
             rename($logPath, $archivePath);
         }
-
-        self::cleanupOldArchives();
     }
 
     protected static function cleanupOldArchives()
     {
         $files = glob(self::LOG_DIR . '/' . self::ARCHIVE_PREFIX . '*.log');
+        $now = self::getCairoDateTime();
+        $retentionDate = $now->modify('-' . self::RETENTION_DAYS . ' days');
 
-        if (count($files) > self::MAX_LOG_FILES) {
-            // Sort by creation time (oldest first)
-            usort($files, function ($a, $b) {
-                return filemtime($a) - filemtime($b);
-            });
-
-            $filesToDelete = count($files) - self::MAX_LOG_FILES;
-            for ($i = 0; $i < $filesToDelete; $i++) {
-                if (file_exists($files[$i])) {
-                    unlink($files[$i]);
+        foreach ($files as $file) {
+            // Extract date from filename (format: requests-Y-m-d-His.log)
+            $filename = basename($file);
+            $dateStr = substr($filename, strlen(self::ARCHIVE_PREFIX), -4); // Remove prefix and .log
+            
+            try {
+                $fileDate = DateTime::createFromFormat('Y-m-d-His', $dateStr, new DateTimeZone('Africa/Cairo'));
+                
+                if ($fileDate && $fileDate < $retentionDate) {
+                    if (file_exists($file)) {
+                        unlink($file);
+                    }
                 }
+            } catch (Exception $e) {
+                error_log("RequestLogger cleanup error for file {$file}: " . $e->getMessage());
+                continue;
             }
         }
+
+        
     }
 
     protected static function ensureLogDirectory()

@@ -83,7 +83,7 @@ if (!in_array('Read_Booking', $per)) {
                 <?php } else { ?>
                   <div class="table-responsive">
                     <!-- Search Form -->
-									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
+                    <div style="position: relative; z-index: 0;" class="row justify-content-center">
                       <div class="col-md-8">
                         <div class="search-container">
                           <form method="get" action="">
@@ -114,7 +114,9 @@ if (!in_array('Read_Booking', $per)) {
                           <th>Host Name</th>
                           <th>Host Contact </th>
                           <th>Guest Name</th>
-                          <th>Guest Contact </th> 
+                          <th>Guest Contact </th>
+                          <th>Confirmed By</th>
+
                           <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                             <th><?= $lang['Action'] ?></th>
                           <?php endif; ?>
@@ -158,10 +160,10 @@ if (!in_array('Read_Booking', $per)) {
                         if ($result->num_rows > 0) {
                           $has_records = true;
                           while ($row = $result->fetch_assoc()) {
-                              $client_id = $row['uid'];
-                          $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
-                          $owner_id = $row['add_user_id'];
-                          $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+                            $client_id = $row['uid'];
+                            $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+                            $owner_id = $row['add_user_id'];
+                            $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
 
                         ?>
                             <tr>
@@ -176,19 +178,20 @@ if (!in_array('Read_Booking', $per)) {
                               </td>
                               <td class="align-middle"><?php echo $row['prop_price'] . 'EGP'; ?></td>
                               <td class="align-middle"><?php echo $row['total_day'] . ' Days'; ?></td>
-                               <td class="align-middle">
+                              <td class="align-middle">
                                 <?php echo $owner_data['name']  ?>
                               </td>
                               <td class="align-middle">
                                 <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
                               </td>
-                                 <td class="align-middle">
+                              <td class="align-middle">
                                 <?php echo $client_data['name']  ?>
                               </td>
                               <td class="align-middle">
                                 <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
                               </td>
-                             
+                              <td><?php echo $row['confirmed_by']=='H'?'Host':"Admin"; ?></td>
+
                               <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                                 <td style="white-space: nowrap; width: 15%;">
                                   <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
@@ -218,68 +221,68 @@ if (!in_array('Read_Booking', $per)) {
                       </tbody>
                     </table>
 
-                   <!-- Manual Pagination Links -->
-                  <?php if ($total_records > 0): ?>
-                    <div class="pagination-container">
-                      <!-- Per Page Dropdown -->
-                      <div class="per-page-selector">
-                        <label for="per_page">Items per page:</label>
-                        <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
-                          <?php
-                          $per_page_options = [10, 20, 25,  50, 100, 200];
-                          $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
-                          foreach ($per_page_options as $option):
-                          ?>
-                            <option value="<?php echo $option; ?>" <?php echo $option == $current_per_page ? 'selected' : ''; ?>>
-                              <?php echo $option; ?>
-                            </option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
+                    <!-- Manual Pagination Links -->
+                    <?php if ($total_records > 0): ?>
+                      <div class="pagination-container">
+                        <!-- Per Page Dropdown -->
+                        <div class="per-page-selector">
+                          <label for="per_page">Items per page:</label>
+                          <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
+                            <?php
+                            $per_page_options = [10, 20, 25,  50, 100, 200];
+                            $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
+                            foreach ($per_page_options as $option):
+                            ?>
+                              <option value="<?php echo $option; ?>" <?php echo $option == $current_per_page ? 'selected' : ''; ?>>
+                                <?php echo $option; ?>
+                              </option>
+                            <?php endforeach; ?>
+                          </select>
+                        </div>
 
-                      <!-- Pagination Links -->
-                      <div class="pagination">
-                        <?php if ($page > 1): ?>
-                          <a href="?page=1&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
-                          <a href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
-                        <?php else: ?>
-                          <span class="disabled">First</span>
-                          <span class="disabled">Previous</span>
-                        <?php endif; ?>
-
-                        <?php
-                        $start_page = max(1, $page - 2);
-                        $end_page = min($total_pages, $page + 2);
-
-                        for ($p = $start_page; $p <= $end_page; $p++):
-                        ?>
-                          <?php if ($p == $page): ?>
-                            <span class="current"><?php echo $p; ?></span>
+                        <!-- Pagination Links -->
+                        <div class="pagination">
+                          <?php if ($page > 1): ?>
+                            <a href="?page=1&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+                            <a href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
                           <?php else: ?>
-                            <a href="?page=<?php echo $p; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                            <span class="disabled">First</span>
+                            <span class="disabled">Previous</span>
                           <?php endif; ?>
-                        <?php endfor; ?>
 
-                        <?php if ($page < $total_pages): ?>
-                          <a href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
-                          <a href="?page=<?php echo $total_pages; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
-                        <?php else: ?>
-                          <span class="disabled">Next</span>
-                          <span class="disabled">Last</span>
+                          <?php
+                          $start_page = max(1, $page - 2);
+                          $end_page = min($total_pages, $page + 2);
+
+                          for ($p = $start_page; $p <= $end_page; $p++):
+                          ?>
+                            <?php if ($p == $page): ?>
+                              <span class="current"><?php echo $p; ?></span>
+                            <?php else: ?>
+                              <a href="?page=<?php echo $p; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                            <?php endif; ?>
+                          <?php endfor; ?>
+
+                          <?php if ($page < $total_pages): ?>
+                            <a href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+                            <a href="?page=<?php echo $total_pages; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+                          <?php else: ?>
+                            <span class="disabled">Next</span>
+                            <span class="disabled">Last</span>
+                          <?php endif; ?>
+                        </div>
+                      </div>
+                    <?php endif; ?>
+
+                    <!-- Results Count -->
+                    <?php if ($total_records > 0): ?>
+                      <div class="results-count">
+                        Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $current_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                        <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                          (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
                         <?php endif; ?>
                       </div>
-                    </div>
-                  <?php endif; ?>
-
-                  <!-- Results Count -->
-                  <?php if ($total_records > 0): ?>
-                    <div class="results-count">
-                      Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $current_per_page, $total_records); ?> of <?php echo $total_records; ?> records
-                      <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-                        (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
-                      <?php endif; ?>
-                    </div>
-                  <?php endif; ?>
+                    <?php endif; ?>
                   </div>
                 <?php } ?>
               </div>
@@ -398,7 +401,6 @@ if (!in_array('Read_Booking', $per)) {
   }
 </script>
 <script>
-  
   $('#exportExcel').click(function() {
 
     // Disable the button to prevent multiple clicks

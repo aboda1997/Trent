@@ -71,9 +71,9 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
     <div class="card-body">
       <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
         <li class="list-group-item d-flex">
-          <span>Subtotal</span>
+          <span>Total</span>
           <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['subtotal'] . ' ' . 'EGP'; ?></span>
+    margin-left: auto!important;"><?php echo $c['total'] . ' ' . 'EGP'; ?></span>
         </li>
 
         <li class="list-group-item d-flex">
@@ -86,6 +86,27 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
           <span>Tax</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><?php echo $c['tax'] . ' ' . 'EGP'; ?></span>
+        </li>
+           <li class="list-group-item d-flex">
+          <span>Digital Payment Fees</span>
+          <span class="ml-auto float-right" style="float: right !important;
+    margin-left: auto!important;"><?php echo $c['service_fees'] . ' ' . 'EGP'; ?></span>
+        </li>
+
+           <li class="list-group-item d-flex">
+          <span>Paid</span>
+          <span class="ml-auto float-right" style="float: right !important;
+    margin-left: auto!important;"><?php echo ($c['total'] * 10) / 100 . ' ' . 'EGP'; ?></span>
+        </li>
+            <li class="list-group-item d-flex">
+          <span>Remaining </span>
+          <span class="ml-auto float-right" style="float: right !important;
+    margin-left: auto!important;"><?php echo $c['reminder_value'] . ' ' . 'EGP'; ?></span>
+        </li>
+           <li class="list-group-item d-flex">
+          <span>Payment Status </span>
+          <span class="ml-auto float-right" style="float: right !important;
+    margin-left: auto!important;"><?php echo $c['pay_status'] ; ?></span>
         </li>
         <?php
         if ($c['cou_amt'] != 0) {
@@ -126,13 +147,13 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
 
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
-          <span class="card-title">Property Title?</span>
+          <span class="card-title">Property Title</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><b><?php echo json_decode($c['prop_title']??'')->en??''; ?></b></span>
         </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
-          <span class="card-title">Property Image?</span>
+          <span class="card-title">Property Image</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;">
             <img src="<?php
@@ -148,13 +169,13 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
         </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
-          <span class="card-title">Property Check In Date?</span>
+          <span class="card-title">Property Check In Date</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><b><?php echo $c['check_in']; ?></b> </span>
         </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
-          <span class="card-title">Property Check Out Date?</span>
+          <span class="card-title">Property Check Out Date</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><b><?php echo $c['check_out']; ?></b></span>
         </li>

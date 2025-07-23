@@ -2831,7 +2831,6 @@ if (isset($_GET['id'])) {
 		border-color: #28a745;
 	}
 </style>
-
 <script>
 	$(document).ready(function() {
 		// Initialize with existing data from database
@@ -2870,9 +2869,9 @@ if (isset($_GET['id'])) {
 						return true;
 					}
 					
-					// Block if in any excluded range (excluding the to_date)
+					// Block if between any excluded range (not including start and end dates)
 					return excludedRanges.some(range => 
-						date.isSameOrAfter(moment(range[0])) && 
+						date.isAfter(moment(range[0])) && 
 						date.isBefore(moment(range[1]))
 					);
 				}
@@ -2900,9 +2899,9 @@ if (isset($_GET['id'])) {
 					if (pricedRanges.some(r => 
 						date.isBetween(r[0], r[1], null, '[]'))) return true;
 					
-					// Check excluded ranges (excluding the to_date)
+					// Check excluded ranges (only between, not including start and end)
 					return excludedRanges.some(r => 
-						date.isSameOrAfter(moment(r[0])) && 
+						date.isAfter(moment(r[0])) && 
 						date.isBefore(moment(r[1]))
 					);
 				}
@@ -2928,7 +2927,7 @@ if (isset($_GET['id'])) {
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0) {
 				try {
-					const response = await fetch(`/trent/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
+					const response = await fetch(`/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
 					const data = await response.json();
 
 					if (data.result === "true" && data.data && data.data.date_list) {
@@ -2990,17 +2989,37 @@ if (isset($_GET['id'])) {
 				return;
 			}
 
+			// Check for exact duplicate range
+			if (excludedRanges.some(range => 
+				range[0] === startDate && range[1] === endDate)) {
+				alert('This exact date range is already excluded');
+				return;
+			}
+
+			// Check if any date in the range is already in an excluded range
+			if (isDateInExcludedRange(startDate) || isDateInExcludedRange(endDate)) {
+				alert('This range overlaps with existing excluded dates');
+				return;
+			}
+
+			// Check if start date matches any existing excluded range start
+			if (excludedRanges.some(range => range[0] === startDate)) {
+				alert('Cannot use the same start date as an existing excluded range');
+				return;
+			}
+
+			// Check if any date between start and end is in an excluded range
+			if (hasOverlapWithExcludedRanges(startDate, endDate)) {
+				alert('This range overlaps with existing excluded dates');
+				return;
+			}
+
 			const selectedDates = getDatesBetween(startDate, endDate);
 
 			// Check for unavailable dates
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0 && selectedDates.some(date => unavailableDates.includes(date))) {
 				alert('Some selected dates are already unavailable');
-				return;
-			}
-
-			if (checkOverlap(startDate, endDate, excludedRanges)) {
-				alert('These dates overlap with an existing exclusion');
 				return;
 			}
 
@@ -3013,6 +3032,43 @@ if (isset($_GET['id'])) {
 			updateDisplays();
 			$('#excludeDatePicker').val('');
 		});
+
+		// Helper function to check if a date is within any excluded range
+		function isDateInExcludedRange(date) {
+			const dateMoment = moment(date);
+			return excludedRanges.some(range => 
+				dateMoment.isAfter(moment(range[0])) && 
+				dateMoment.isBefore(moment(range[1]))
+			);
+		}
+
+		// Helper function to check for strict overlap with excluded ranges
+		function hasOverlapWithExcludedRanges(startDate, endDate) {
+			const startMoment = moment(startDate);
+			const endMoment = moment(endDate);
+			
+			return excludedRanges.some(range => {
+				const rangeStart = moment(range[0]);
+				const rangeEnd = moment(range[1]);
+				
+				// Check if new range starts within an existing excluded range
+				if (startMoment.isAfter(rangeStart) && startMoment.isBefore(rangeEnd)) {
+					return true;
+				}
+				
+				// Check if new range ends within an existing excluded range
+				if (endMoment.isAfter(rangeStart) && endMoment.isBefore(rangeEnd)) {
+					return true;
+				}
+				
+				// Check if new range completely contains an existing excluded range
+				if (startMoment.isBefore(rangeStart) && endMoment.isAfter(rangeEnd)) {
+					return true;
+				}
+				
+				return false;
+			});
+		}
 
 		// Helper function to get all dates between start and end
 		function getDatesBetween(startDate, endDate) {
@@ -3115,7 +3171,7 @@ if (isset($_GET['id'])) {
 						<div>
 							<i class="fas fa-calendar-times text-danger me-2"></i>
 							<span>${range[0]} to ${range[1]}</span>
-							<small class="text-muted">(available from ${range[1]})</small>
+							<small class="text-muted">(blocks dates between these dates)</small>
 						</div>
 						<button class="btn btn-sm btn-outline-danger remove-excluded-range" data-index="${index}">
 							<i class="fas fa-times"></i>
@@ -3148,7 +3204,7 @@ if (isset($_GET['id'])) {
 					}
 					
 					return excludedRanges.some(range => 
-						date.isSameOrAfter(moment(range[0])) && 
+						date.isAfter(moment(range[0])) && 
 						date.isBefore(moment(range[1]))
 					);
 				};
@@ -3164,7 +3220,7 @@ if (isset($_GET['id'])) {
 						date.isBetween(r[0], r[1], null, '[]'))) return true;
 					
 					return excludedRanges.some(r => 
-						date.isSameOrAfter(moment(r[0])) && 
+						date.isAfter(moment(r[0])) && 
 						date.isBefore(moment(r[1]))
 					);
 				};

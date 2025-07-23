@@ -47,7 +47,7 @@ try {
         $created_at = $date->format('Y-m-d H:i:s');
         $table = "tbl_book";
         $fp = array();
-        $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at);
+        $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at, 'confirmed_by' => 'H');
         $field_cancel = array('book_status' => 'Cancelled', 'cancle_reason' => $deny_id, "cancel_by" => 'H');
         $where = "where id=" . '?' . "";
         $where_conditions = [$booking_id];
@@ -82,7 +82,7 @@ try {
             ));
         } else {
             $cancel_data = $rstate->query("select  reason	 from tbl_cancel_reason where  id= $deny_id ")->fetch_assoc();
-            $cancel_text =  json_decode($cancel_data['reason'], true)['ar'];
+            $cancel_text =  json_decode($cancel_data['reason']??"", true)['ar']??'';
 
             $message = "عزيزي العميل،
 نأسف لإبلاغك بأنه تم إلغاء حجز العقار [$title]للسبب التالي: [$cancel_text]

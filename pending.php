@@ -51,7 +51,7 @@ if (!in_array('Read_Booking', $per)) {
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
-                 <div class="mb-3 row">
+                <div class="mb-3 row">
                   <form id="exportForm" method="get" class="col-sm-12">
                     <div class="row justify-content-end align-items-start">
                       <input type="hidden" name="type" value="export_booking_data" />
@@ -78,7 +78,7 @@ if (!in_array('Read_Booking', $per)) {
                   </form>
                 <?php } else { ?>
                   <!-- Search Form -->
-									<div   style="position: relative; z-index: 0;" class="row justify-content-center">
+                  <div style="position: relative; z-index: 0;" class="row justify-content-center">
                     <div class="col-md-8">
                       <div class="search-container">
                         <form method="get" action="">
@@ -110,7 +110,7 @@ if (!in_array('Read_Booking', $per)) {
                           <th>Host Name</th>
                           <th>Host Contact </th>
                           <th>Guest Name</th>
-                          <th>Guest Contact </th> 
+                          <th>Guest Contact </th>
                           <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                             <th><?= $lang['Action'] ?></th>
                           <?php endif; ?>
@@ -154,10 +154,10 @@ if (!in_array('Read_Booking', $per)) {
                         if ($result->num_rows > 0) {
                           $has_records = true;
                           while ($row = $result->fetch_assoc()) {
-                          $client_id = $row['uid'];
-                          $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
-                          $owner_id = $row['add_user_id'];
-                          $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
+                            $client_id = $row['uid'];
+                            $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
+                            $owner_id = $row['add_user_id'];
+                            $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
 
                         ?>
                             <tr>
@@ -178,17 +178,17 @@ if (!in_array('Read_Booking', $per)) {
                               <td class="align-middle">
                                 <?php echo $row['total_day'] . ' Days'; ?>
                               </td>
-                               <td class="align-middle">
+                              <td class="align-middle">
                                 <?php echo $owner_data['name'] ?? ''  ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo ($owner_data['ccode']??'') . ($owner_data['mobile']??'')  ?>
+                                <?php echo ($owner_data['ccode'] ?? '') . ($owner_data['mobile'] ?? '')  ?>
                               </td>
                               <td class="align-middle">
                                 <?php echo $client_data['name'] ?? '' ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo ($client_data['ccode']??'') . ($client_data['mobile']??'')  ?>
+                                <?php echo ($client_data['ccode'] ?? '') . ($client_data['mobile'] ?? '')  ?>
                               </td>
                               <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                                 <td style="white-space: nowrap; width: 15%;">
@@ -198,6 +198,27 @@ if (!in_array('Read_Booking', $per)) {
                                         data-id="<?php echo $row['id']; ?>"
                                         data-bs-toggle="modal"
                                         data-bs-target="#myModal">View Details</button>
+                                      <button class="btn btn-success" style="float: none; margin: 5px;"
+                                        type="button"
+                                        data-toggle="modal" data-target="#confirmModal"
+                                        data-id="<?php echo $row['id']; ?>"
+                                        data-uid="<?php echo $row['add_user_id']; ?>"
+                                        data-guest="<?php echo $row['uid']; ?>"
+
+                                        data-title="<?php echo htmlspecialchars(json_decode($row['prop_title'])->ar ?? ''); ?>"
+                                        title="Approve">
+                                        Confirm
+                                      </button>
+                                      <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
+                                        data-toggle="modal" data-target="#denyModal"
+                                        data-id="<?php echo $row['id']; ?>"
+                                        data-title="<?php echo htmlspecialchars(json_decode($row['prop_title'])->ar ?? ''); ?>"
+                                        data-uid="<?php echo $row['add_user_id']; ?>"
+                                        data-guest="<?php echo $row['uid']; ?>">
+                                        Cancel
+                                      </button>
+
+
                                     </div>
                                   </div>
                                 </td>
@@ -218,69 +239,69 @@ if (!in_array('Read_Booking', $per)) {
                         ?>
                       </tbody>
                     </table>
-  
-                  <!-- Manual Pagination Links -->
-                  <?php if ($total_records > 0): ?>
-                    <div class="pagination-container">
-                      <!-- Per Page Dropdown -->
-                      <div class="per-page-selector">
-                        <label for="per_page">Items per page:</label>
-                        <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
-                          <?php
-                          $per_page_options = [10, 20, 25,  50, 100, 200];
-                          $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
-                          foreach ($per_page_options as $option):
-                          ?>
-                            <option value="<?php echo $option; ?>" <?php echo $option == $current_per_page ? 'selected' : ''; ?>>
-                              <?php echo $option; ?>
-                            </option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
 
-                      <!-- Pagination Links -->
-                      <div class="pagination">
-                        <?php if ($page > 1): ?>
-                          <a href="?page=1&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
-                          <a href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
-                        <?php else: ?>
-                          <span class="disabled">First</span>
-                          <span class="disabled">Previous</span>
-                        <?php endif; ?>
+                    <!-- Manual Pagination Links -->
+                    <?php if ($total_records > 0): ?>
+                      <div class="pagination-container">
+                        <!-- Per Page Dropdown -->
+                        <div class="per-page-selector">
+                          <label for="per_page">Items per page:</label>
+                          <select id="per_page" name="per_page" onchange="updatePerPage(this.value)">
+                            <?php
+                            $per_page_options = [10, 20, 25,  50, 100, 200];
+                            $current_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $records_per_page;
+                            foreach ($per_page_options as $option):
+                            ?>
+                              <option value="<?php echo $option; ?>" <?php echo $option == $current_per_page ? 'selected' : ''; ?>>
+                                <?php echo $option; ?>
+                              </option>
+                            <?php endforeach; ?>
+                          </select>
+                        </div>
 
-                        <?php
-                        $start_page = max(1, $page - 2);
-                        $end_page = min($total_pages, $page + 2);
-
-                        for ($p = $start_page; $p <= $end_page; $p++):
-                        ?>
-                          <?php if ($p == $page): ?>
-                            <span class="current"><?php echo $p; ?></span>
+                        <!-- Pagination Links -->
+                        <div class="pagination">
+                          <?php if ($page > 1): ?>
+                            <a href="?page=1&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">First</a>
+                            <a href="?page=<?php echo $page - 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Previous</a>
                           <?php else: ?>
-                            <a href="?page=<?php echo $p; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                            <span class="disabled">First</span>
+                            <span class="disabled">Previous</span>
                           <?php endif; ?>
-                        <?php endfor; ?>
 
-                        <?php if ($page < $total_pages): ?>
-                          <a href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
-                          <a href="?page=<?php echo $total_pages; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
-                        <?php else: ?>
-                          <span class="disabled">Next</span>
-                          <span class="disabled">Last</span>
+                          <?php
+                          $start_page = max(1, $page - 2);
+                          $end_page = min($total_pages, $page + 2);
+
+                          for ($p = $start_page; $p <= $end_page; $p++):
+                          ?>
+                            <?php if ($p == $page): ?>
+                              <span class="current"><?php echo $p; ?></span>
+                            <?php else: ?>
+                              <a href="?page=<?php echo $p; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"><?php echo $p; ?></a>
+                            <?php endif; ?>
+                          <?php endfor; ?>
+
+                          <?php if ($page < $total_pages): ?>
+                            <a href="?page=<?php echo $page + 1; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Next</a>
+                            <a href="?page=<?php echo $total_pages; ?>&per_page=<?php echo $current_per_page; ?><?php echo isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>">Last</a>
+                          <?php else: ?>
+                            <span class="disabled">Next</span>
+                            <span class="disabled">Last</span>
+                          <?php endif; ?>
+                        </div>
+                      </div>
+                    <?php endif; ?>
+
+                    <!-- Results Count -->
+                    <?php if ($total_records > 0): ?>
+                      <div class="results-count">
+                        Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $current_per_page, $total_records); ?> of <?php echo $total_records; ?> records
+                        <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                          (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
                         <?php endif; ?>
                       </div>
-                    </div>
-                  <?php endif; ?>
-
-                  <!-- Results Count -->
-                  <?php if ($total_records > 0): ?>
-                    <div class="results-count">
-                      Showing <?php echo ($offset + 1); ?> to <?php echo min($offset + $current_per_page, $total_records); ?> of <?php echo $total_records; ?> records
-                      <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-                        (filtered by "<?php echo htmlspecialchars($_GET['search']); ?>")
-                      <?php endif; ?>
-                    </div>
-                  <?php endif; ?>
+                    <?php endif; ?>
                   </div>
                 <?php } ?>
               </div>
@@ -312,6 +333,73 @@ if (!in_array('Read_Booking', $per)) {
 
   </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirm Booking</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to confirm this booking?</p>
+        <form id="confirmForm">
+          <input type="hidden" id="confirmId" name="id">
+          <input type="hidden" id="confirmTitle" name="property_title">
+          <input type="hidden" id="confirmUid" name="uid">
+          <input type="hidden" id="guestUid" name="guest_uid">
+          <input type="hidden" name="type" value="confirm_book" />
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmBooking">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="denyModal" tabindex="-1" role="dialog" aria-labelledby="denyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="denyModalLabel">Reason for Cancellation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="denyForm">
+          <input type="hidden" id="denyId" name="id">
+          <input type="hidden" id="denyTitle" name="property_title">
+          <input type="hidden" id="denyUid" name="uid">
+          <input type="hidden" id="guestuid" name="guest_uid">
+          <input type="hidden" name="type" value="cancel_book" />
+
+          <div class="form-group">
+            <label for="denyReasonSelect">Select Reason:</label>
+            <select class="form-control" id="denyReasonSelect" name="reason" required>
+              <option value="">Loading reasons...</option>
+            </select>
+            <div class="invalid-feedback">Please select a reason.</div>
+          </div>
+
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveDeny">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <style>
   .search-container .input-group {
     max-width: 600px;
@@ -384,9 +472,170 @@ if (!in_array('Read_Booking', $per)) {
   }
 </style>
 
+<script>
+  $(document).ready(function() {
+     
+     $('#confirmModal').on('show.bs.modal', function(event) {
+      const button = $(event.relatedTarget); // Button that triggered the modal
+      const uid = button.data('uid'); // Extract uid from data-uid attribute
+      const guest = button.data('guest'); // Extract uid from data-uid attribute
+      const bookingId = button.data('id'); // If you need booking ID
+      const propertyTitle = button.data('title'); // If you need property title
+
+      // Set the hidden field values
+      $('#confirmUid').val(uid);
+      $('#guestUid').val(guest);
+      $('#confirmId').val(bookingId);
+      $('#confirmTitle').val(propertyTitle);
+     });
+    // When the modal is shown, load the host cancellation reasons
+    $('#denyModal').on('show.bs.modal', function(event) {
+      
+      const button = $(event.relatedTarget); // Button that triggered the modal
+      const uid = button.data('uid'); // Extract uid from data-uid attribute
+      
+      const guest = button.data('guest'); // Extract uid from data-uid attributeguest
+      debugger;
+      const bookingId = button.data('id'); // If you need booking ID
+      const propertyTitle = button.data('title'); // If you need property title
+
+      // Set the hidden field values
+      $('#denyUid').val(uid);
+      $('#guestuid').val(guest);
+      $('#denyId').val(bookingId);
+      $('#denyTitle').val(propertyTitle);
+
+      // Load host cancellation reasons
+      const reasonDropdown = $('#denyReasonSelect');
+      reasonDropdown.html('<option value="">Loading reasons...</option>');
+
+      $.getJSON(`/user_api/booking/u_book_cancel_reason.php?uid=${uid}&lang=en`, function(response) {
+        if (response.result === "true" && response.data && response.data.cancel_reason_list) {
+          const reasons = response.data.cancel_reason_list;
+          let options = '<option value="">Select a cancellation reason</option>';
+
+          reasons.forEach(function(reason) {
+            options += `<option value="${reason.id}">${reason.reason}</option>`;
+          });
+
+          reasonDropdown.html(options);
+        } else {
+          reasonDropdown.html('<option value="">No cancellation reasons available</option>');
+        }
+      }).fail(function() {
+        reasonDropdown.html('<option value="">Failed to load cancellation reasons</option>');
+      });
+    });
+    // When save button is clicked
+    $('#saveDeny').click(function() {
+      // Disable the button to prevent multiple clicks
+      var saveButton = $(this);
+      saveButton.prop('disabled', true);
+
+      const form = $('#denyForm');
+      if (form[0].checkValidity()) {
+        // Prepare form data
+
+
+        var formData = $('#denyForm').serialize();
+
+        // Here you would typically make an AJAX call to save the data
+        $.ajax({
+          url: "include/property.php",
+          type: "POST",
+          data: formData,
+          success: function(response) {
+            let res = JSON.parse(response); // Parse the JSON response
+
+            if (res.ResponseCode === "200" && res.Result === "true") {
+              $('#denyModal').removeClass('show');
+              $('#denyModal').css('display', 'none');
+              $('.modal-backdrop').remove(); // Remove the backdrop
+
+              // Display notification
+              $.notify('<i class="fas fa-bell"></i>' + res.title, {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 2000,
+                showProgressbar: true,
+                timer: 300,
+                animate: {
+                  enter: 'animated fadeInDown',
+                  exit: 'animated fadeOutUp',
+                },
+              });
+
+              // Redirect after a delay if an action URL is provided
+              if (res.action) {
+                setTimeout(function() {
+                  window.location.href = res.action;
+                }, 2000);
+              }
+            } else {
+              alert("'Error saving denial reason.");
+            }
+          }
+        });
+      } else {
+        form.addClass('was-validated');
+        saveButton.prop('disabled', false);
+
+      }
+    });
+
+    $('#confirmBooking').click(function() {
+      // Disable the button to prevent multiple clicks
+      var saveButton = $(this);
+      saveButton.prop('disabled', true);
+
+    
+
+        var formData = $('#confirmForm').serialize();
+
+        // Here you would typically make an AJAX call to save the data
+        $.ajax({
+          url: "include/property.php",
+          type: "POST",
+          data: formData,
+          success: function(response) {
+            let res = JSON.parse(response); // Parse the JSON response
+
+            if (res.ResponseCode === "200" && res.Result === "true") {
+              $('#confirmModal').removeClass('show');
+              $('#confirmModal').css('display', 'none');
+              $('.modal-backdrop').remove(); // Remove the backdrop
+
+              // Display notification
+              $.notify('<i class="fas fa-bell"></i>' + res.title, {
+                type: 'theme',
+                allow_dismiss: true,
+                delay: 2000,
+                showProgressbar: true,
+                timer: 300,
+                animate: {
+                  enter: 'animated fadeInDown',
+                  exit: 'animated fadeOutUp',
+                },
+              });
+
+              // Redirect after a delay if an action URL is provided
+              if (res.action) {
+                setTimeout(function() {
+                  window.location.href = res.action;
+                }, 2000);
+              }
+            } else {
+              alert("'Error saving denial reason.");
+            }
+          }
+        });
+      
+    });
+
+  });
+</script>
 <!-- JavaScript for Excel Export -->
 <script>
-  
   document.addEventListener('DOMContentLoaded', function() {
     // Prevent DataTables initialization
     if (typeof $.fn.DataTable === 'function') {
@@ -461,7 +710,7 @@ if (!in_array('Read_Booking', $per)) {
     });
   });
 
-   function updatePerPage(value) {
+  function updatePerPage(value) {
     const url = new URL(window.location.href);
     url.searchParams.set('per_page', value);
     // Reset to first page when changing items per page
