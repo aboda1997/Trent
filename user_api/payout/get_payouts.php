@@ -32,8 +32,8 @@ try {
             $pol['payout_status'] = $row['payout_status'];
             $pol['requested_at'] = $row['requested_at'];
             $pol['cancel_reason'] = $row['cancel_reason'];
-            $pol['total'] = $bd['total'];
-            $pol['prop_title'] = json_decode($bd['prop_title'], true)[$lang_code] ?? '';
+            $pol['total'] = $bd['total']??'';
+            $pol['prop_title'] = json_decode($bd['prop_title']??"", true)[$lang_code] ?? '';
             $imageArray = array_filter( explode(',', $bd['image'] ?? '') );
             $pol['prop_img'] = array_pop($imageArray)??'';
 
