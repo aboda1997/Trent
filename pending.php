@@ -509,7 +509,7 @@ if (!in_array('Read_Booking', $per)) {
       const reasonDropdown = $('#denyReasonSelect');
       reasonDropdown.html('<option value="">Loading reasons...</option>');
 
-      $.getJSON(`/user_api/booking/u_book_cancel_reason.php?uid=${uid}&lang=en`, function(response) {
+      $.getJSON(`/trent/user_api/booking/u_book_cancel_reason.php?uid=${uid}&lang=en`, function(response) {
         if (response.result === "true" && response.data && response.data.cancel_reason_list) {
           const reasons = response.data.cancel_reason_list;
           let options = '<option value="">Select a cancellation reason</option>';
