@@ -2735,7 +2735,7 @@ if (isset($_GET['id'])) {
 				const encodedText = encodeURIComponent(text);
 
 				// Call your translation API
-				const response = await fetch(`user_api/translate-proxy.php?sl=ar&dl=en&text=${encodedText}`
+				const response = await fetch(`/trent/user_api/translate-proxy.php?sl=ar&dl=en&text=${encodedText}`
 
 				);
 
@@ -2927,7 +2927,7 @@ if (isset($_GET['id'])) {
 			const prop_id = $('#prop_id').val();
 			if (prop_id > 0) {
 				try {
-					const response = await fetch(`/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
+					const response = await fetch(`/trent/user_api/booking/u_calendar.php?prop_id=${prop_id}`);
 					const data = await response.json();
 
 					if (data.result === "true" && data.data && data.data.date_list) {
