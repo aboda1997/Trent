@@ -8,7 +8,6 @@ require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
 
 header('Content-Type: application/json');
 try {
-    
     $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
     $uid = isset($_GET['uid']) ? $rstate->real_escape_string($_GET['uid']) : '';
 
