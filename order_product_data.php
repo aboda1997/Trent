@@ -87,26 +87,26 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><?php echo $c['tax'] . ' ' . 'EGP'; ?></span>
         </li>
-           <li class="list-group-item d-flex">
+        <li class="list-group-item d-flex">
           <span>Digital Payment Fees</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><?php echo $c['service_fees'] . ' ' . 'EGP'; ?></span>
         </li>
 
-           <li class="list-group-item d-flex">
+        <li class="list-group-item d-flex">
           <span>Paid</span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><?php echo ($c['total'] * 10) / 100 . ' ' . 'EGP'; ?></span>
         </li>
-            <li class="list-group-item d-flex">
+        <li class="list-group-item d-flex">
           <span>Remaining </span>
           <span class="ml-auto float-right" style="float: right !important;
     margin-left: auto!important;"><?php echo $c['reminder_value'] . ' ' . 'EGP'; ?></span>
         </li>
-           <li class="list-group-item d-flex">
+        <li class="list-group-item d-flex">
           <span>Payment Status </span>
           <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><?php echo $c['pay_status'] ; ?></span>
+    margin-left: auto!important;"><?php echo $c['pay_status']; ?></span>
         </li>
         <?php
         if ($c['cou_amt'] != 0) {
@@ -144,12 +144,16 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
     <div class="card-body">
       <ul class="list-group list-group-sm list-group-flush-y list-group-flush-x">
 
-
+        <li class="list-group-item d-flex font-size-lg font-weight-bold">
+          <span class="card-title">Property ID</span>
+          <span class="ml-auto float-right" style="float: right !important;
+    margin-left: auto!important;"><b><?php echo $c['prop_id']; ?></b></span>
+        </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
           <span class="card-title">Property Title</span>
           <span class="ml-auto float-right" style="float: right !important;
-    margin-left: auto!important;"><b><?php echo json_decode($c['prop_title']??'')->en??''; ?></b></span>
+    margin-left: auto!important;"><b><?php echo json_decode($c['prop_title'] ?? '')->en ?? ''; ?></b></span>
         </li>
 
         <li class="list-group-item d-flex font-size-lg font-weight-bold">
@@ -200,7 +204,7 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
             </p>
 
             <p class="mb-7 mb-md-0">
-              <?php  echo json_decode($pro_data['address']??'')->en??''; ; ?>
+              <?php echo json_decode($pro_data['address'] ?? '')->en ?? '';; ?>
             </p>
           </div>
           <?php
@@ -254,7 +258,7 @@ $pro_data = $rstate->query("select * from tbl_property where id=" . $c['prop_id'
 
 
         <div class="col-12 col-md-12">
-          
+
           <!-- Heading -->
           <p class="mb-2 card-title font-weight-bold">
             Booking Status:
