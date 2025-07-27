@@ -21,17 +21,8 @@ function sendPlainTextEmail( $subject, $body , $recipientEmail = 'trent.com2025@
         $mail->Password   = 'Trent@Info2025';
         $mail->CharSet = 'UTF-8'; // Force UTF-8 encoding
         $mail->Encoding = 'base64'; // Optional but helps with complex characters
-        $mail->SMTPSecure = 'ssl'; // Force old-style SSL (not PHPMailer::ENCRYPTION_SMTPS)
-                $mail->SMTPDebug = SMTP::DEBUG_SERVER;
-
-        $mail->SMTPOptions = [
-            'ssl' => [
-                'verify_peer'       => false,
-                'verify_peer_name'  => false,
-                'allow_self_signed' => true,
-            ]
-        ];
-        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL/TLS
+     
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL/TLS
         $mail->Port       = 465;
 
         // Sender
