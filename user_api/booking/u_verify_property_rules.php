@@ -56,9 +56,7 @@ try {
 
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
-                  if ($uid == 67) {
-                sleep(40);
-            }
+               
                 $GLOBALS['rstate']->commit();
                 $returnArr = generateResponse('false', $lang_["property_not_available"], 400);
             } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' add_user_id =' . $uid . '') === true) {
@@ -76,7 +74,9 @@ try {
 
                 $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
                 $res_data = $rstate->query($checkQuery)->fetch_assoc();
-
+   if ($uid == 67) {
+                sleep(40);
+            }
                 $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
                 $created_at = $date->format('Y-m-d H:i:s');
 
