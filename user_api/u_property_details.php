@@ -7,7 +7,6 @@ require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 header('Content-Type: application/json');
 try {
 	$data = json_decode(file_get_contents('php://input'), true);
-
 	$pol = array();
 	$c = array();
 	$arr = array();

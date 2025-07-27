@@ -8,6 +8,7 @@ require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 require  'get_pay_status.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
+require dirname(dirname(__FILE__),2) . '/user_api/notifications/Send_mail.php';
 
 header('Content-Type: application/json');
 try {
@@ -153,6 +154,7 @@ try {
             $propertytitle = json_decode($res_data['title'] ?? '', true)["ar"] ?? '';
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d H:i:s');
+            $up_at = $date->format('Y-m-d');
             $partial_value = ($fp['final_total'] * 10) / 100;
             $reminder_value = $fp['final_total'] -  $partial_value;
 
@@ -177,6 +179,8 @@ try {
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
             $generated_item_id = 'item_' . uniqid();
+            $owner = $rstate->query("select name from tbl_user where  id=" . $uid . "")->fetch_assoc();
+            $client_name = $owner['name'];
 
             if ($method_key == 'TRENT_BALANCE' && $balance <  $partial_value) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
@@ -213,6 +217,7 @@ try {
                 $GLOBALS['rstate']->commit();
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
+                send_email($book_id, $client_name, $up_at, $days);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
@@ -242,7 +247,7 @@ try {
                     $GLOBALS['rstate']->commit();
                     $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-
+                    send_email($book_id, $client_name, $up_at, $days);
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
                     ));
@@ -259,6 +264,31 @@ try {
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
+}
+
+function send_email($BookingId, $ClientName, $BookingDate, $Days)
+{
+    // Subject with emoji and Arabic text
+    $subject = '🔔 حجز جديد برقم #' . $BookingId;
+
+    // Body with placeholders using HEREDOC syntax
+    $body = <<<EMAIL
+السلام عليكم
+
+يوجد حجز جديد بالتفاصيل التالية:
+
+🆔 رقم الحجز: $BookingId
+👤 اسم العميل: $ClientName
+📅 تاريخ الحجز: $BookingDate
+📅 عدد الليالي: $Days
+
+لمراجعة تفاصيل الحجز، يرجى زيارة الرابط التالي:
+👉 https://trent.com.eg/trent/pending.php
+
+مع فائق التحيات
+TRENT
+EMAIL;
+    sendPlainTextEmail($subject, $body);
 }
 
 function validateDates(?string $from_date, ?string $to_date): array
