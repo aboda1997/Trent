@@ -171,7 +171,7 @@ try {
                     
                     $h = new Estate();
                     if($uid == 67){
-                        sleep(120);
+                        sleep(40);
                     }
                     $check = $h->restateinsertdata_Api($field_values, $data_values, 'tbl_non_completed');
                     
