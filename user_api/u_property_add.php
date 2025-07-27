@@ -282,7 +282,7 @@ try {
 			$h = new Estate();
 			$where_conditions = [$check];
 			$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-			sendPlainTextEmail( $subject, $body );
+			sendPlainTextEmail( $subject, $body ,'abdelrahmanalgendy97@gmail.com' , 'abdelrahman');
 
 			$returnArr    = generateResponse('true', "Property Added Successfully", 201, array("id" => $check, "title" => json_decode($title_json, true)));
 		} else {
