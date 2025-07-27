@@ -56,9 +56,7 @@ try {
 
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
-                if($uid = 67 ){
-                    sleep(40);
-                }
+               
                 $GLOBALS['rstate']->commit();
                 $returnArr = generateResponse('false', $lang_["property_not_available"], 400);
             } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' add_user_id =' . $uid . '') === true) {
