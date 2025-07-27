@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/user_api/notifications/send_notification.php';
+require dirname(dirname(__FILE__)) . '/user_api/notifications/Send_mail.php';
 
 try {
     if (isset($_POST["type"]) && ((!isset($_SESSION['restatename'])  && $_POST['type'] == 'login') || (isset($_SESSION['restatename'])  && $_POST['type'] != 'login'))) {
@@ -1120,6 +1121,7 @@ try {
             $policy = $_POST['propPrivacy'];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
+            $up_at = $date->format('Y-m-d ');
 
 
             $price = $_POST['prop_price'];
@@ -1308,6 +1310,7 @@ try {
                     $h = new Estate();
                     $where_conditions = [$check];
                     $new_res = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+                    $result = true;
                     if (is_array($date_ranges)) {
                         $jsonResponse    =  exclude_ranges('en', $propowner, $check, $date_ranges);
                         $response = json_decode($jsonResponse, true); // true for associative array
@@ -1329,6 +1332,35 @@ try {
 
                             $returnArr = generateDashboardResponse(200, "false", $response['response_message'], "", "list_properties.php");
                         }
+                    }
+                    $owner = $rstate->query("select name from tbl_user where  id=" . $propowner . "")->fetch_assoc();
+                    $government = $rstate->query("select name from tbl_government where  id=" . $government . "")->fetch_assoc();
+                    $gov_name = json_decode($government['name'], true)['ar'];
+                    $owner_name = $owner['name'];
+
+                    // Subject with placeholder
+                    $subject = '🏠 اضافة عقار جديد : ' . $title_ar;
+
+                    // Body with placeholders (using HEREDOC for clean multi-line text)
+                    $body = <<<EMAIL
+                        السلام عليكم
+                        تم إضافة عقار جديد ويحتاج إلى مراجعة أو تفعيل.
+                        إليك تفاصيل العقار:
+
+                        🏷️ عنوان العقار:  $address_ar
+                        🆔 رقم العقار: $check
+                        📍 الموقع: $city_ar.،. $gov_name
+                        👤 اسم المُعلن: $owner_name
+                        📅 تاريخ الإضافة: $up_at
+
+                        لمراجعة العقار، تفضل بزيارة الرابط التالي:
+                        👉 https://trent.com.eg/trent/add_properties.php?id=$check
+
+                        مع فائق التحية
+                        TRENT
+                        EMAIL;
+                    if ($result == true) {
+                        sendPlainTextEmail($subject, $body);
                     }
                 } else {
                     $returnArr = [
@@ -3811,7 +3843,7 @@ WHERE
             $where_conditions = [$id];
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $created_at = $date->format('Y-m-d H:i:s');
-            $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at,'confirmed_by' => 'A');
+            $field = array('book_status' => 'Confirmed', 'confirmed_at' => $created_at, 'confirmed_by' => 'A');
 
             $message = "مبروك!
 تم تأكيد حجز العقار  [$title] بنجاح.
@@ -3946,11 +3978,13 @@ function approve_property($rstate, $uid, $title_ar, $id)
 
     $new_mobile   = $sel['mobile'];
     $ccode   = $sel['ccode'];
-    $message = "اهلاً وسهلاً!
-تم نشر عقارك [$title_ar] بنجاح على منصة Trent
-* شارك رابط العقار مع الأصدقاء  •تحديث بيانات العقار عند الحاجة
-نتمنى لك تأجيراً سريعاً ومكسب مستمر
-فريق Trent 📈";
+  $message = "اهلاً وسهلاً!\n\n"
+         . "تم نشر عقارك [$title_ar] بنجاح على منصة Trent\n\n"
+         . "* شارك رابط العقار مع الأصدقاء\n"
+         . "* تحديث بيانات العقار عند الحاجة\n\n"
+         . "نتمنى لك تأجيراً سريعاً ومكسب مستمر\n"
+         . "فريق Trent 📈\n"
+         . "https://www.trent.com.eg/properties/$id";
     $title_ = 'تم نشر عقارك بنجاح! ';
     $result = sendMessage([$ccode . $new_mobile], $message);
     $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "property_id", $id);

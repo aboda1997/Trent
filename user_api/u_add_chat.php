@@ -5,6 +5,7 @@ require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/constants.php';
 require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__)) . '/user_api/notifications/Send_mail.php';
 
 header('Content-Type: application/json');
 try {
@@ -109,10 +110,37 @@ try {
     if (isset($returnArr)) {
         echo $returnArr;
     } else {
+        $sender = $rstate->query("select name from tbl_user where  id=" . $sender_id . "")->fetch_assoc();
+		$sender_name = $sender['name'];
+        $receiver = $rstate->query("select name from tbl_user where  id=" . $receiver_id . "")->fetch_assoc();
+		$receiver_name = $receiver['name'];
+
+                // Subject with emoji and Arabic text
+        $subject = '💬 رسالة شات جديدة من ' . $sender_name;
+
+        // Body with placeholders using HEREDOC syntax
+        $body = <<<EMAIL
+        السلام عليكم
+
+        يوجد رسالة شات معلقة:
+
+        👤 المرسل: $sender_name
+        👤 المستقبل: $receiver_name
+        ⏰ وقت الإرسال: $created_at
+        💬 محتوى الرسالة:
+         $message
+
+        لمتابعة المحادثة والقبول/الرفض، يرجى زيارة الرابط التالي:
+        👉 https://trent.com.eg/trent/pending_chat.php
+
+        مع فائق التحيات
+        TRENT
+        EMAIL;
         $returnArr    = generateResponse('true', "Chat Added Successfully", 201, array(
             "chat_id" => $chat_id,
             "message_id" => $message_id
         ));
+		sendPlainTextEmail( $subject, $body);
 
         echo $returnArr;
     }

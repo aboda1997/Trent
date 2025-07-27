@@ -4,6 +4,7 @@ require dirname(dirname(__FILE__)) . '/include/validation.php';
 require dirname(dirname(__FILE__)) . '/include/helper.php';
 require dirname(dirname(__FILE__)) . '/user_api/estate.php';
 require dirname(dirname(__FILE__)) . '/include/constants.php';
+require dirname(dirname(__FILE__)) . '/user_api/notifications/Send_mail.php';
 
 header('Content-Type: application/json');
 try {
@@ -210,6 +211,7 @@ try {
 			$table = "tbl_property";
 			$date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
 			$updated_at = $date->format('Y-m-d H:i:s');
+			$up_at = $date->format('Y-m-d');
 			$field_values = ["created_at", "updated_at", "image",  "cancellation_policy_id", "period", "is_featured", "security_deposit", "government", "map_url", "latitude", "longitude",  "video", "guest_rules", "compound_name", "floor", "status", "is_approved", "title", "price", "address", "facility", "description", "beds", "bathroom", "sqrft",  "ptype",  "city",  "add_user_id", "pbuysell",  "plimit", "max_days", "min_days"];
 			$data_values = ["$updated_at", "$updated_at", "$imageUrlsString", $cancellation_policy_id, "$period", "$is_featured", "$security_deposit", "$government", "$google_maps_url", "$latitude", "$longitude", "$videoUrlsString", "$guest_rules_json", "$compound_json", "$floor_json", "$status", "$is_approved", "$title_json", "$price", "$address_json", "$idList", "$description_json", "$beds", "$bathroom", "$sqft",  "$ptype", "$ccount_json",  "$user_id", "$pbuysell", "$plimit", "$max_days", "$min_days"];
 
@@ -247,12 +249,41 @@ try {
 		echo $returnArr;
 	} else {
 		if ($check) {
+		$owner = $rstate->query("select name from tbl_user where  id=" . $user_id . "")->fetch_assoc();
+        $government = $rstate->query("select name from tbl_government where  id=" . $government . "")->fetch_assoc();
+        $gov_name = json_decode($government['name'], true)['ar'];
+		$owner_name = $owner['name'];
+
+			// Subject with placeholder
+			$subject = '🏠 اضافة عقار جديد : ' . $title_ar;
+
+			// Body with placeholders (using HEREDOC for clean multi-line text)
+			$body = <<<EMAIL
+			السلام عليكم
+			تم إضافة عقار جديد ويحتاج إلى مراجعة أو تفعيل.
+			إليك تفاصيل العقار:
+
+			🏷️ عنوان العقار:  $address_ar
+			🆔 رقم العقار: $check
+			📍 الموقع: $ccount_ar.،. $gov_name
+			👤 اسم المُعلن: $owner_name
+			📅 تاريخ الإضافة: $up_at
+
+			لمراجعة العقار، تفضل بزيارة الرابط التالي:
+			👉 https://trent.com.eg/trent/add_properties.php?id=$check
+
+			مع فائق التحية
+			TRENT
+			EMAIL;
+
 			$table = "tbl_property";
 			$field = ["visibility" => $check];
 			$where = "where id=" . '?' . "";
 			$h = new Estate();
 			$where_conditions = [$check];
 			$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+			sendPlainTextEmail( $subject, $body );
+
 			$returnArr    = generateResponse('true', "Property Added Successfully", 201, array("id" => $check, "title" => json_decode($title_json, true)));
 		} else {
 			$returnArr    = generateResponse('false', "Database error", 500);
