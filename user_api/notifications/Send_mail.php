@@ -21,9 +21,8 @@ function sendPlainTextEmail( $subject, $body , $recipientEmail = 'trent.com2025@
         $mail->Password   = 'Trent@Info2025';
         $mail->CharSet = 'UTF-8'; // Force UTF-8 encoding
         $mail->Encoding = 'base64'; // Optional but helps with complex characters
-     
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL/TLS
-        $mail->Port       = 465;
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Or 'tls'
+$mail->Port       = 587;
 
         // Sender
         $mail->setFrom('info@Trent.com.eg', 'Trent Company');
