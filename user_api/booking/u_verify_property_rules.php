@@ -53,7 +53,11 @@ try {
           
             // Lock the property row
             $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-
+  $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
+                $res_data = $rstate->query($checkQuery)->fetch_assoc();
+   if ($uid == 67) {
+                sleep(40);
+            }
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
                
@@ -72,11 +76,7 @@ try {
                 [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
                 [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
 
-                $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
-                $res_data = $rstate->query($checkQuery)->fetch_assoc();
-   if ($uid == 67) {
-                sleep(40);
-            }
+              
                 $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
                 $created_at = $date->format('Y-m-d H:i:s');
 
