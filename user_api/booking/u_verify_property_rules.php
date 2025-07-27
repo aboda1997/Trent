@@ -50,12 +50,12 @@ try {
         try {
             // Lock the property and related booking records to prevent concurrent modifications
             $prop_id_escaped = $GLOBALS['rstate']->real_escape_string($prop_id);
-            if ($uid == 67) {
-                sleep(40);
-            }
+          
             // Lock the property row
             $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-
+  if ($uid == 67) {
+                sleep(40);
+            }
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
                 $GLOBALS['rstate']->commit();
