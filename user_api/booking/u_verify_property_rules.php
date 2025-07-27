@@ -53,7 +53,9 @@ try {
           
             // Lock the property row
             $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-  $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
+  $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id_escaped;
+                  $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
+
                 $res_data = $rstate->query($checkQuery)->fetch_assoc();
    if ($uid == 67) {
                 sleep(40);
@@ -68,7 +70,6 @@ try {
                 $returnArr = generateResponse('false', $lang_["self_booking_not_allowed"], 400);
             } else {
                 // Lock any existing non-completed bookings for this property
-                $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
 
                 // Process dates and validate availability
                 [$days, $days_message] = processDates($from_date, $to_date, $lang_);
