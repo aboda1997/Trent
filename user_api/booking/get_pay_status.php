@@ -22,20 +22,18 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
     $expectedSignature = hash('sha256', $concatenatedString);
     $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
     // Check if push payment has rows and pull payment status exists
-    if ($check_push_pay->num_rows && $check_pull_pay["status"]) {
-        $check_push_pay->data_seek(0);
-        $check_push_pay_data = $check_push_pay->fetch_assoc();
+    if ( $check_pull_pay["status"]) { //$check_push_pay->num_rows &&
+        //$check_push_pay->data_seek(0);
+        //$check_push_pay_data = $check_push_pay->fetch_assoc();
         // Convert amounts to integers for strict comparison
-        $push_amount = (int)$check_push_pay_data['orderAmount'];
+       // $push_amount = (int)$check_push_pay_data['orderAmount'];
         $pull_amount = (int)$check_pull_pay['orderAmount'];
 
         // Verify all conditions with integer comparison
         return (
-            $check_push_pay_data['orderStatus'] == 'PAID' &&
-            $check_push_pay_data['itemCode'] == $item_id &&
+           
             $check_pull_pay['orderStatus'] == 'PAID' &&
             $check_pull_pay['itemCode'] == $item_id &&
-            abs($push_amount - $total_as_int) < 2 &&
             abs($pull_amount - $total_as_int) < 2 
         );
     }
