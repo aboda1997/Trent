@@ -13,7 +13,7 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
     $decrypted_secure_key =  decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
     $decrypted_code = decryptData($merchantCode,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
 
-    $check_push_pay = $GLOBALS['rstate']->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE itemId = $item_id and merchantRefNumber = '" . $merchant_ref_number . "'");
+   // $check_push_pay = $GLOBALS['rstate']->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE itemId = $item_id and merchantRefNumber = '" . $merchant_ref_number . "'");
     // Trim all fields to avoid hidden characters
     $concatenatedString =
         trim($decrypted_code) .
