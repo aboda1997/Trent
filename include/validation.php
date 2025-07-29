@@ -591,7 +591,7 @@ function validateDateRangesAgainstBookings(array $date_ranges, array $booked_dat
 
         while ($current <= $end) {
             $current_date = date('Y-m-d', $current);
-            if (in_array($current_date, $booked_dates)) {
+            if (array_key_exists($current_date, $booked_dates)) {
                 return [
                     false,
                     sprintf($lang_["booked_already_excluded"], $current_date)
@@ -612,7 +612,7 @@ function validateDateRangesAgainstBookingsCheckin(array $date_ranges, array $boo
         $end = strtotime($to_date);
 
         $current_date = date('Y-m-d', $current);
-        if (in_array($current_date, $booked_dates)) {
+        if (array_key_exists($current_date, $booked_dates)) {
             return [
                 false,
                 sprintf($lang_["booked_already_excluded"], $current_date)
@@ -644,7 +644,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     while ($row = $result->fetch_assoc()) {
         $check_in = $row['check_in'];
         $check_out = $row['check_out'];
-        $check_in_list[strtotime($check_in)] = [
+        $check_in_list[date('Y-m-d',  strtotime($check_in))] = [
             'check_in' => $check_in,
             'check_out' => $check_out,
             'type' => 'holding' // Added type to distinguish between booking and holding
@@ -675,7 +675,7 @@ function get_dates(string $pro_id, $uid, $rstate)
     while ($row = $result->fetch_assoc()) {
         $check_in = $row['check_in'];
         $check_out = $row['check_out'];
-        $check_in_list[strtotime($check_in)] = [
+        $check_in_list[date('Y-m-d',  strtotime($check_in))] = [
             'check_in' => $check_in,
             'check_out' => $check_out,
             'type' => 'booked' // Added type to distinguish between booking and holding
