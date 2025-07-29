@@ -631,7 +631,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
 
     // Build the SQL query
-    $sql = "SELECT f1  , f2 
+    $sql = "SELECT f1 as check_in , f2 as check_out
     FROM tbl_non_completed 
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
@@ -642,11 +642,27 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     $date_list = [];
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
-        $check_in_list[] = $row['f1'];
+        $check_in = $row['check_in'];
+        $check_out = $row['check_out'];
+        $check_in_list[strtotime($check_in)] = [
+            'check_in' => $check_in,
+            'check_out' => $check_out,
+            'type' => 'holding' // Added type to distinguish between booking and holding
+        ];
 
-        $date_list = array_merge($date_list, getDatesFromRange($row['f1'], $row['f2']));
+        // Get all dates in the range (including check_in and check_out)
+        $dates_in_range = getDatesFromRange($check_in, $check_out);
+
+        // Store check_in and check_out for each date in the range
+        foreach ($dates_in_range as $date) {
+            $date_list[$date] = [
+                'check_in' => $check_in,
+                'check_out' => $check_out,
+                'type' => 'holding' // Added type to distinguish between booking and holding
+            ];
+        }
     }
-    return [$date_list,$check_in_list];
+    return [$date_list, $check_in_list];
 }
 
 function get_dates(string $pro_id, $uid, $rstate)
@@ -657,22 +673,48 @@ function get_dates(string $pro_id, $uid, $rstate)
     $check_in_list = [];
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
-        $check_in_list[] = $row['check_in'];
+        $check_in = $row['check_in'];
+        $check_out = $row['check_out'];
+        $check_in_list[strtotime($check_in)] = [
+            'check_in' => $check_in,
+            'check_out' => $check_out,
+            'type' => 'booked' // Added type to distinguish between booking and holding
+        ];
 
-        $date_list = array_merge($date_list, getDatesFromRange($row['check_in'], $row['check_out']));
+        // Get all dates in the range (including check_in and check_out)
+        $dates_in_range = getDatesFromRange($check_in, $check_out);
+
+        // Store check_in and check_out for each date in the range
+        foreach ($dates_in_range as $date) {
+            $date_list[$date] = [
+                'check_in' => $check_in,
+                'check_out' => $check_out,
+                'type' => 'booked' // Added type to distinguish between booking and holding
+            ];
+        }
     }
-    [$date_hold,$new_check_list] = get_holding_property_dates($pro_id, $uid, $rstate);
+    [$date_hold, $new_check_list] = get_holding_property_dates($pro_id, $uid, $rstate);
     // Remove duplicate dates
-    $combined_dates = array_unique(array_merge($date_hold, $date_list));
-    $combined_check_in = array_unique(array_merge($new_check_list, $check_in_list));
-    // Sort the dates
-    sort($combined_dates);
-    sort($combined_check_in);
+    // Merge the two date arrays, giving priority to booked dates over holding dates
+    foreach ($date_hold as $date => $info) {
+        if (!isset($date_list[$date])) {
+            $date_list[$date] = $info;
+        }
+    }
+    foreach ($new_check_list as $date => $info) {
+        if (!isset($check_in_list[$date])) {
+            $check_in_list[$date] = $info;
+        }
+    }
+    // Sort the dates chronologically
+    ksort($date_list);
+    ksort($check_in_list);
 
+   
     // Return both arrays
     return [
-        $combined_dates,   // All booked & holding dates (ranges)
-        $combined_check_in // Only check-in dates
+        $date_list,   // All booked & holding dates (ranges)
+        $check_in_list // Only check-in dates
     ];
 }
 
@@ -749,7 +791,7 @@ function cancel_booking($booking_id)
 }
 function refundMoney($uid, $booking_id)
 {
-    $updateSql = "Select total ,reminder_value  from  tbl_book 
+    $updateSql = "Select total ,reminder_value , method_key from  tbl_book 
                       WHERE id = $booking_id";
     $data = $GLOBALS['rstate']->query($updateSql)->fetch_assoc();
     if (!$data) {
@@ -759,7 +801,7 @@ function refundMoney($uid, $booking_id)
     $field = array('book_status' => 'Cancelled');
     $where = "where  id=" . '?' . "";
 
-    $partial_value =  number_format($data['total'] - $data['reminder_value'], 2, '.', '');
+    $partial_value = ($data['method_key'] == 'TRENT_BALANCE') ? number_format($data['total'], 2, '.', '') : number_format($data['total'] - $data['reminder_value'], 2, '.', '');
     $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
     $updated_at = $date->format('Y-m-d H:i:s');
 

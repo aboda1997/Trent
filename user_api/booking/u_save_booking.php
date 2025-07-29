@@ -8,7 +8,7 @@ require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
 require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 require  'get_pay_status.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
-require dirname(dirname(__FILE__),2) . '/user_api/notifications/Send_mail.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/notifications/Send_mail.php';
 
 header('Content-Type: application/json');
 try {
@@ -56,7 +56,7 @@ try {
     } else if ($item_id == 0) {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
-        [$days, $days_message] = processDates($from_date, $to_date, $lang_);
+        [$days, $months, $days_message] = processDates($from_date, $to_date, $lang_);
         [$date_list, $check_in_list]  = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
@@ -88,6 +88,9 @@ try {
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
             $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
+        } else if ($months >= 6) {
+            $GLOBALS['rstate']->commit();
+            $returnArr = generateResponse('false', $lang_["invalid_months_count"], 400);
         } else {
 
             $table = "tbl_book";
@@ -178,18 +181,18 @@ try {
             $title_ = 'لديك حجز جديد! 🔔';
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
-            $generated_item_id = 'item_' . uniqid();
+            $generated_item_id = 'item_' . uniqid() ;
             $owner = $rstate->query("select name from tbl_user where  id=" . $uid . "")->fetch_assoc();
             $client_name = $owner['name'];
 
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $partial_value) {
+            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
-            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $partial_value) {
+            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
 
                 $GLOBALS['rstate']->begin_transaction();
 
                 $field_values = ["item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = [$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $data_values = ['', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -202,7 +205,7 @@ try {
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
                 $field_values1 = ["uid", 'status', 'amt', 'tdate'];
-                $data_values1  = [$uid, 'Withdraw', $partial_value, $created_at1];
+                $data_values1  = [$uid, 'Withdraw', $fp['final_total'], $created_at1];
                 $table1 = 'wallet_report';
 
 
@@ -358,9 +361,11 @@ function processDates(string $from_date, string $to_date, $lang_): array
 
     $interval = $date1->diff($date2);
     $days = $interval->days;
+    $months = $interval->y * 12 + $interval->m;
 
     return [
         $days,
+        $months,
         "Successfully calculated $days days between dates"
     ];
 }
@@ -376,10 +381,12 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
 
     while ($current <= $end) {
         $current_date = date('Y-m-d', $current);
-        if (in_array($current_date, $date_list)) {
+        if (array_key_exists($current_date, $date_list)) {
+            $details = $date_list[$current_date];
+
             return [
                 false,
-                sprintf($lang_["date_range_conflict"], $current_date)
+                sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
             ];
         }
         $current = strtotime('+1 day', $current);
@@ -397,10 +404,12 @@ function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $
     $end = strtotime($to_date);
 
     $current_date = date('Y-m-d', $current);
-    if (in_array($current_date, $check_in_list)) {
+    if (array_key_exists($current_date, $check_in_list)) {
+        $details = $check_in_list[$current_date];
+
         return [
             false,
-            sprintf($lang_["date_range_conflict"], $current_date)
+            sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
         ];
     }
 
