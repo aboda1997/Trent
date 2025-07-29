@@ -3775,6 +3775,7 @@ WHERE
             if ($money < 0) {
                 $title =  "Money withdrawed successfully!!";
                 $status = 'Withdraw';
+                $money = -1 * $money;
             }
             $field_values = array("uid", "EmployeeId", "message", "status", "amt", "tdate");
 
