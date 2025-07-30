@@ -49,7 +49,9 @@ class RequestLogger
                 'body' => self::filterSensitiveData(self::getRequestBody()),
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
-                'response_status' => http_response_code()
+                'response_status' => http_response_code(),
+                'response_body' => self::filterSensitiveData(self::getResponseBody()) // Add this line
+
             ];
 
             $logEntry = json_encode($logData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL;
@@ -99,10 +101,10 @@ class RequestLogger
             // Extract date from filename (format: requests-Y-m-d-His.log)
             $filename = basename($file);
             $dateStr = substr($filename, strlen(self::ARCHIVE_PREFIX), -4); // Remove prefix and .log
-            
+
             try {
                 $fileDate = DateTime::createFromFormat('Y-m-d-His', $dateStr, new DateTimeZone('Africa/Cairo'));
-                
+
                 if ($fileDate && $fileDate < $retentionDate) {
                     if (file_exists($file)) {
                         unlink($file);
@@ -113,8 +115,6 @@ class RequestLogger
                 continue;
             }
         }
-
-        
     }
 
     protected static function ensureLogDirectory()
@@ -176,6 +176,14 @@ class RequestLogger
         });
 
         return $data;
+    }
+    private static function getResponseBody()
+    {
+        $response = ob_get_contents();
+        if ($response && json_decode($response)) {
+            return json_decode($response, true); // Converts to array (optional)
+        }
+        return $response;
     }
 }
 
