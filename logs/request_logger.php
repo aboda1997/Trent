@@ -179,6 +179,11 @@ class RequestLogger
     }
     private static function getResponseBody()
     {
+        // Force buffer creation if none exists
+        if (ob_get_level() == 0) {
+            ob_start();
+        }
+
         $response = ob_get_contents();
         if ($response && json_decode($response)) {
             return json_decode($response, true); // Converts to array (optional)
