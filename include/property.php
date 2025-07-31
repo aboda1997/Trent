@@ -1270,14 +1270,8 @@ try {
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
-                        } else {
-                            // Handle error if video couldn't be moved
-                            $returnArr = generateDashboardResponse(500, "false", "Failed to upload video.", "", "list_properties.php");
-                        }
-                    } else {
-                        // Handle invalid video type
-                        $returnArr = generateDashboardResponse(400, "false", "Invalid video type.", "", "list_properties.php");
-                    }
+                        } 
+                    } 
                 }
             }
 
