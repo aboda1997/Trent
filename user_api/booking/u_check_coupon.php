@@ -24,22 +24,29 @@ try {
 		$returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
 	} else  if ($cid  == null) {
 		$returnArr    = generateResponse('false', $lang_["coupon_id_required"], 400);
-	}  else if ($item_id == 0) {
-        $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
-    } else if ($non_completed_data == 0) {
-      $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
-    }
-	else if (validateCoupon($cid, $non_completed_data['sub_total'])['status'] === false) {
+	} else if ($item_id == 0) {
+		$returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
+	} else if ($non_completed_data == 0) {
+		$returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
+	} else if (validateCoupon($cid, $non_completed_data['sub_total'])['status'] === false) {
 		$returnArr    = generateResponse('false', $lang_["coupon_not_available"], 400);
-	}
-	 else {
+	} else {
 		$value  = validateCoupon($cid, $non_completed_data['sub_total'])['value'];
-		$final_total =  $non_completed_data['total'] - $value ; 
-		$partial_value =  ($final_total*10 )/ 100 ; 
-		$reminder_value =  $final_total - $partial_value ; 
+		$where_conditions = [$item_id];
+		$h = new Estate();
+
+		$field = array('c_code' => $cid);
+		$where = "where  id=" . '?' . "";
+
+		$check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
+
+		$final_total =  $non_completed_data['total'] - $value;
+		$partial_value =  ($final_total * 10) / 100;
+		$reminder_value =  $final_total - $partial_value;
+
 		$returnArr    = generateResponse('true', "Valid Coupon", 200, array(
-			'coupon_value' => $value ,
-			'partial_value' =>number_format($partial_value, 2, '.', '') ,
+			'coupon_value' => $value,
+			'partial_value' => number_format($partial_value, 2, '.', ''),
 			'reminder_value' => number_format($reminder_value, 2, '.', ''),
 			'final_total' => number_format($final_total, 2, '.', '')
 		));

@@ -65,6 +65,7 @@ try {
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
         $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
+        $non_completed_data_check = $rstate->query("select book_id from tbl_non_completed where id=" . $item_id . " and completed = 1 ")->num_rows;
         while ($row = $sel->fetch_assoc()) {
 
             if ($row['status'] == 'Adding') {
@@ -77,9 +78,9 @@ try {
             $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
         } elseif ($days == 0) {
             $returnArr    = generateResponse('false', $days_message, 400);
-        } else if ($status  == false) {
+        } else if (($status  == false && !$non_completed_data_check)) {
             $returnArr    = generateResponse('false', $status_message, 400);
-        } else if ($status1  == false) {
+        } else if (($status1  == false && !$non_completed_data_check)) {
             $returnArr    = generateResponse('false', $status_message1, 400);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
@@ -181,11 +182,17 @@ try {
             $title_ = 'لديك حجز جديد! 🔔';
             $mobile = $user1["mobile"];
             $ccode = $user1["ccode"];
-            $generated_item_id = 'item_' . uniqid() ;
+            $generated_item_id = 'item_' . uniqid('', true); // Adds extra entropy
             $owner = $rstate->query("select name from tbl_user where  id=" . $uid . "")->fetch_assoc();
             $client_name = $owner['name'];
+            if ($non_completed_data_check) {
+                $non_completed_data_check_data = $rstate->query("select book_id from tbl_non_completed where id=" . $item_id . " and completed = 1 ")->fetch_assoc();
+                $fp['book_id'] = $non_completed_data_check_data['book_id'];
 
-            if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
+                $returnArr    = generateResponse('true', "Property booking Details", 200, array(
+                    "booking_details" => $fp,
+                ));
+            } else if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
 
@@ -213,7 +220,11 @@ try {
                 if (!$check) {
                     throw new Exception("Insert failed");
                 }
-                $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
+                $where_conditions = [$item_id];
+                $field = array('completed' => '1', 'book_id' => $book_id);
+                $where = "where  id=" . '?' . "";
+
+                $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
                 if (!$check) {
                     throw new Exception("Insert failed");
                 }
@@ -241,9 +252,11 @@ try {
                         throw new Exception("Insert failed");
                     }
                     $fp['book_id'] = $book_id;
+                    $where_conditions = [$item_id];
+                    $field = array('completed' => '1', 'book_id' => $book_id);
+                    $where = "where  id=" . '?' . "";
 
-
-                    $check =  $h->restateDeleteData_Api_fav("where id=" . $item_id . "", 'tbl_non_completed');
+                    $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
                     if (!$check) {
                         throw new Exception("Insert failed");
                     }
@@ -386,7 +399,7 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
 
             return [
                 false,
-                sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
+                sprintf($lang_["date_range_conflict"], $details['check_in'],  $details['check_out'])
             ];
         }
         $current = strtotime('+1 day', $current);
@@ -409,7 +422,7 @@ function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $
 
         return [
             false,
-            sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
+            sprintf($lang_["date_range_conflict"], $details['check_in'],  $details['check_out'])
         ];
     }
 

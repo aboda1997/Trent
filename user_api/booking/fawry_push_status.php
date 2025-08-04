@@ -25,17 +25,25 @@ try {
     $checkKey = $rstate->query("SELECT id FROM payment WHERE merchantRefNumber = '" . $merchantRefNumber . "'");
     $get_secure_key = $rstate->query("select merchant_code ,secure_key from tbl_setting ");
     $secureKey = $get_secure_key->fetch_assoc()['secure_key'];
-    $decrypted_secure_key = decryptData($secureKey,  dirname(dirname(__FILE__),2) . '/keys/private.pem'); 
+    $decrypted_secure_key = decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem');
     $h = new Estate();
 
-    if (!verifyFawrySignature($inputData, $inputData['messageSignature'] , $decrypted_secure_key['data'])) {
+    if (!verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
         $returnArr    = generateResponse('false', "Not valid Data", 400);
     } else if ($checkKey->num_rows) {
         $field_values = ["orderStatus" => $orderStatus];
         $where = "where merchantRefNumber=" . '?' . " and itemId = ? ";
-        $where_conditions = [$merchantRefNumber ,$itemCode];
+        $where_conditions = [$merchantRefNumber, $itemCode];
         $_id = $h->restateupdateData_Api($field_values, 'payment', $where, $where_conditions);
+
         $returnArr    = generateResponse('true', "Success", 200);
+        if ($orderStatus == "PAID") {
+            if (strpos($itemCode, 'item') === 0) {
+                complete_paying($itemCode, $merchantRefNumber);
+            } else {
+                save_booking($itemCode, $merchantRefNumber, $paymentMethod);
+            }
+        }
     } else {
         // Prepare values in exact same order as field names
         $field_values = ["fawryRefNumber", "merchantRefNumber", "orderAmount", "orderStatus", "paymentMethod", "itemId"];
@@ -50,10 +58,17 @@ try {
 
         $returnArr    = generateResponse('true', "Success", 200);
         $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
+        if ($orderStatus == "PAID") {
+            if (strpos($itemCode, 'item') === 0) {
+                complete_paying($itemCode, $merchantRefNumber);
+            } else {
+                save_booking($itemCode, $merchantRefNumber, $paymentMethod);
+            }
+        }
     }
-    echo $returnArr;
+    //echo $returnArr;
 } catch (Exception $e) {
-   
+
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
@@ -80,4 +95,139 @@ function verifyFawrySignature(array $paymentData, string $receivedSignature, str
     $expectedSignature = hash('sha256', $concatenatedString);
     // Compare securely (to prevent timing attacks)
     return hash_equals($expectedSignature, $receivedSignature);
+}
+
+
+function save_booking($item_code,  $merchantRefNumber, $paymentMethod)
+{
+    $paymentMethods = [
+        'CARD' => 'CARD',
+        'Mobile Wallet' => 'MWALLET',
+        'PAYATFAWRY' => 'PayAtFawry'
+    ];
+    // Get booking details from database
+    $booking_query = $GLOBALS['rstate']->query("SELECT * FROM tbl_non_completed WHERE id = '" . $GLOBALS['rstate']->real_escape_string($item_code) . "'");
+    $method = $paymentMethods[$paymentMethod];
+    if ($booking_query->num_rows) {
+        $booking_data = $booking_query->fetch_assoc();
+
+        // Prepare form data for POST request
+        $post_fields = http_build_query([
+            'uid' => $booking_data['uid'],
+            'prop_id' => $booking_data['prop_id'],
+            'merchant_ref_number' => $merchantRefNumber,
+            'item_id' => $booking_data['id'],
+            'from_date' => $booking_data['f1'],
+            'to_date' => $booking_data['f2'],
+            'confirm_guest_rules' => 'true',
+            'method_key' => $method,
+            'guest_counts' =>  $booking_data['guest_count'],
+            'coupon_code' =>  $booking_data['c_code']
+        ]);
+
+        // Set the base URL
+        $base_url = 'https://www.trent.com.eg/trent';
+        $save_booking_url = $base_url . '/user_api/booking/u_save_booking.php';
+
+        // Initialize cURL
+        $ch = curl_init($save_booking_url);
+
+        // Set cURL options for form POST
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $post_fields,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/x-www-form-urlencoded',
+            ],
+            CURLOPT_SSL_VERIFYPEER => true, // Enable SSL verification
+            CURLOPT_TIMEOUT => 50 // Set timeout to 30 seconds
+        ]);
+
+        // Execute the request
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // Check for errors
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return false;
+        }
+
+        // Close cURL session
+        curl_close($ch);
+
+        // Check if the request was successful (2xx status codes)
+        if ($http_code >= 200 && $http_code < 300) {
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
+    return false;
+}
+
+
+function complete_paying($item_code, $merchantRefNumber)
+{
+
+    // Get booking details from database
+    $booking_query = $GLOBALS['rstate']->query("SELECT * FROM tbl_book WHERE item_id = '" . $GLOBALS['rstate']->real_escape_string($item_code) . "'");
+
+    if ($booking_query->num_rows) {
+        $booking_data = $booking_query->fetch_assoc();
+
+        // Prepare form data for POST request
+        $post_fields = http_build_query([
+            'uid' => $booking_data['uid'],
+            'booking_id' => $booking_data['id'],
+            'merchant_ref_number' => $merchantRefNumber,
+            'item_id' => $item_code,
+            'method_key' => 'CARD',
+        ]);
+
+        // Set the base URL
+        $base_url = 'https://www.trent.com.eg/trent';
+        $save_booking_url = $base_url . '/user_api/booking/u_complete_paying.php';
+
+        // Initialize cURL
+        $ch = curl_init($save_booking_url);
+
+        // Set cURL options for form POST
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $post_fields,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/x-www-form-urlencoded',
+            ],
+            CURLOPT_SSL_VERIFYPEER => true, // Enable SSL verification
+            CURLOPT_TIMEOUT => 50 // Set timeout to 30 seconds
+        ]);
+
+        // Execute the request
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // Check for errors
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return false;
+        }
+
+        // Close cURL session
+        curl_close($ch);
+
+        // Check if the request was successful (2xx status codes)
+        if ($http_code >= 200 && $http_code < 300) {
+            return true;
+        } else {
+
+            return false;
+        }
+    }
+
+    return false;
 }

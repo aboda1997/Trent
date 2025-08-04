@@ -16,6 +16,7 @@ try {
                         FROM `tbl_book` 
                         WHERE `book_status` = 'Confirmed' 
                         AND `check_in_message` != 1  
+                        AND `pay_status` = 'Completed'  
                         AND `check_in_retry` != 2  
                         ORDER BY `id` DESC");
 

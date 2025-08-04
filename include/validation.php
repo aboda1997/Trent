@@ -710,7 +710,7 @@ function get_dates(string $pro_id, $uid, $rstate)
     ksort($date_list);
     ksort($check_in_list);
 
-   
+
     // Return both arrays
     return [
         $date_list,   // All booked & holding dates (ranges)
@@ -923,7 +923,12 @@ function get_property_price($period, $price, $prop_id, $from_date, $to_date)
 
     // Process each day in the range
     while ($current_date <= $end_date) {
-        $daily_price = $price; // Base price
+        if ($period == 'd') {
+            $daily_price = $price; // Base price
+
+        } elseif ($period == 'm') {
+            $daily_price = $price / 30; // Base price
+        }
         $current_date_str = $current_date->format('Y-m-d');
         // Check if current day falls in any increased price range
         foreach ($price_ranges as $range) {
@@ -938,11 +943,9 @@ function get_property_price($period, $price, $prop_id, $from_date, $to_date)
         }
 
         // Add to total based on period type
-        if ($period == 'd') {
-            $total_price += $daily_price;
-        } elseif ($period == 'm') {
-            $total_price += $daily_price / 30; // Daily portion of monthly price
-        }
+        $total_price += $daily_price;
+
+
 
         $current_date->modify('+1 day');
     }
