@@ -18,7 +18,7 @@ try {
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
     $item_id = isset($_POST['item_id']) ? $_POST['item_id'] : 0;
-    $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id . " and status = 0 ")->num_rows;
+    $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id )->num_rows;
 
     $lang_ = load_specific_langauage($lang);
     if ($uid == '') {
@@ -49,7 +49,10 @@ try {
         $GLOBALS['rstate']->begin_transaction();
         // Lock any existing non-completed bookings for this property
         // $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
-
+        
+        if($uid == 67){
+            sleep(50);
+        }
         try {
             if ($status == false) {
                 $GLOBALS['rstate']->commit();
