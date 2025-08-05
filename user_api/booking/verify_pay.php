@@ -53,6 +53,9 @@ try {
         if($uid == 67){
             sleep(20);
         }
+          $checkQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = " . $prop_id;
+        $res_data = $rstate->query($checkQuery)->fetch_assoc();
+
         try {
             if ($status == false) {
                 $GLOBALS['rstate']->commit();
