@@ -39,16 +39,17 @@ try {
         $uid = $non_completed_data_['uid'];
         $from_date = $non_completed_data_['f1'];
         $to_date = $non_completed_data_['f2'];
-        $prop_id_escaped = $GLOBALS['rstate']->real_escape_string($prop_id);
-        [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
-        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
-        [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
-
         // Start transaction with proper isolation level
         $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
         $GLOBALS['rstate']->begin_transaction();
         // Lock any existing non-completed bookings for this property
         $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
+        
+        $prop_id_escaped = $GLOBALS['rstate']->real_escape_string($prop_id);
+        [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
+        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
+        [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
+
         
         if($uid == 67){
             sleep(20);
