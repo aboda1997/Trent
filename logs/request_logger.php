@@ -185,17 +185,17 @@ class RequestLogger
         }
 
         $response = ob_get_contents();
+
         if ($response && json_decode($response)) {
-            return json_decode($response, true); // Converts to array (optional)
-        }
-        $statusCode = http_response_code();
+            $statusCode = http_response_code();
 
-        // Only log for 400 and 500 status codes
-        if ($statusCode === 400 || $statusCode === 500) {
-                return $response;
+            // Only log for 400 and 500 status codes
+            if ($statusCode === 400 || $statusCode === 500) {
+                return json_decode($response, true); // Converts to array (optional)
 
+            }
         }
+
         return  "";
-
     }
 }
