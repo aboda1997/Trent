@@ -46,7 +46,8 @@ try {
         $GLOBALS['rstate']->begin_transaction();
         // Lock any existing non-completed bookings for this property
         $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
-        
+        $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
+
         [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
@@ -55,7 +56,7 @@ try {
         if($uid == 67){
             sleep(20);
         }
-          $checkQuery = "SELECT * FROM tbl_non_completed WHERE prop_id = " . $prop_id;
+          $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
 
         try {
