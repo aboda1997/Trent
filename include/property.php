@@ -193,7 +193,7 @@ try {
                 $data_values = array("$username", "$password", "Staff", 1);
                 $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
                  'Read_Property','Create_Slider','Update_Slider','Read_Slider',
-                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Cancel_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',
@@ -240,7 +240,7 @@ try {
                 $data_values = array("$username", "$password", "Staff");
                 $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
                  'Read_Property','Create_Slider','Update_Slider','Read_Slider',
-                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',

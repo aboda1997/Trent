@@ -64,7 +64,7 @@ try {
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
-        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
+        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id. " and status = 1 ")->num_rows;
         $non_completed_data_check = $rstate->query("select book_id from tbl_non_completed where id=" . $item_id . " and completed = 1 ")->num_rows;
         while ($row = $sel->fetch_assoc()) {
 

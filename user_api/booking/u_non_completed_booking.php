@@ -35,11 +35,12 @@ try {
 
         // Build the SQL query
         $sql = "SELECT *
-    FROM tbl_non_completed 
-    WHERE 
-    status = 1
-    and  uid = " . (int)$uid . "  
-    AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
+        FROM tbl_non_completed 
+        WHERE 
+        status = 1
+        and completed = 0 
+        and  uid = " . (int)$uid . "  
+        AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
         $result = $rstate->query($sql);
         while ($row = $result->fetch_assoc()) {
             $fp['id'] = $row['id'];

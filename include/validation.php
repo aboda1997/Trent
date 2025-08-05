@@ -635,6 +635,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     FROM tbl_non_completed 
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
+    AND status = 1
     AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
     $result = $rstate->query($sql);
     $check_in_list = [];
