@@ -48,7 +48,7 @@ try {
         $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
         $GLOBALS['rstate']->begin_transaction();
         // Lock any existing non-completed bookings for this property
-        // $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
+        $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
         
         if($uid == 67){
             sleep(50);
