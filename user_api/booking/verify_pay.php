@@ -34,7 +34,7 @@ try {
     } else if ($non_completed_data == 0) {
         $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
     } else {
-        $non_completed_data_ = $rstate->query("select * from tbl_non_completed where id=" . $item_id . " and status = 0 ")->fetch_assoc();
+        $non_completed_data_ = $rstate->query("select * from tbl_non_completed where id=" . $item_id )->fetch_assoc();
         $prop_id = $non_completed_data_['prop_id'];
         $uid = $non_completed_data_['uid'];
         $from_date = $non_completed_data_['f1'];
@@ -51,7 +51,7 @@ try {
         $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
         
         if($uid == 67){
-            sleep(50);
+            sleep(20);
         }
         try {
             if ($status == false) {
