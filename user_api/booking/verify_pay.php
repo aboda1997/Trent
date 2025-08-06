@@ -51,9 +51,7 @@ try {
         [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
-        if($uid  == 69){
-            sleep(30);
-        }
+       
 
         $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
