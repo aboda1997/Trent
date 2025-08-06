@@ -35,45 +35,23 @@ try {
         $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
     } else {
         $non_completed_data_ = $rstate->query("select * from tbl_non_completed where id=" . $item_id)->fetch_assoc();
-        $prop_id = $non_completed_data_['prop_id'];
-        $uid = $non_completed_data_['uid'];
-        $from_date = $non_completed_data_['f1'];
-        $to_date = $non_completed_data_['f2'];
-        $prop_id_escaped = $GLOBALS['rstate']->real_escape_string($prop_id);
-
+      
         // Start transaction with proper isolation level
         $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
         $GLOBALS['rstate']->begin_transaction();
-        // Lock any existing non-completed bookings for this property
-        $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
-        $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-
-        [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
-        [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
-        [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
-       
-
-        $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
-        $res_data = $rstate->query($checkQuery)->fetch_assoc();
 
         try {
-            if ($status == false) {
-                $GLOBALS['rstate']->commit();
-                $returnArr = generateResponse('false', $status_message, 400);
-            } else if ($status1 == false) {
-                $GLOBALS['rstate']->commit();
-                $returnArr = generateResponse('false', $status_message1, 400);
-            } else {
+          
                 $h = new Estate();
 
                 $table = "tbl_non_completed";
-                $field = array('status' => '1');
+                $field = array('status' => '0');
                 $where = "where id=" . '?' . "";
                 $where_conditions = [$item_id];
                 $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
                 $GLOBALS['rstate']->commit();
                 $returnArr    = generateResponse('true', 'Operation Done Successfully', 200);
-            }
+
         } catch (Exception $e) {
             $GLOBALS['rstate']->rollback();
             throw $e; // Re-throw to be caught by the outer try-catch
@@ -88,51 +66,4 @@ try {
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
-}
-
-
-function validateDateRange($from_date, $to_date, $date_list, $lang_)
-{
-
-
-    // Check for conflicts with date_list
-    $current = strtotime($from_date);
-    $end = strtotime($to_date);
-
-    while ($current <= $end) {
-        $current_date = date('Y-m-d', $current);
-        if (array_key_exists($current_date, $date_list)) {
-            $details = $date_list[$current_date];
-
-            return [
-                false,
-                sprintf($lang_["date_range_conflict"], $details['check_in'],  $details['check_out'])
-            ];
-        }
-        $current = strtotime('+1 day', $current);
-    }
-
-    return [true, "Valid date range"];
-}
-
-function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_)
-{
-
-
-    // Check for conflicts with date_list
-    $current = strtotime($from_date);
-    $end = strtotime($to_date);
-
-    $current_date = date('Y-m-d', $current);
-    if (array_key_exists($current_date, $check_in_list)) {
-        $details = $check_in_list[$current_date];
-
-        return [
-            false,
-            sprintf($lang_["date_range_conflict"], $details['check_in'],  $details['check_out'])
-        ];
-    }
-
-
-    return [true, "Valid date range"];
 }
