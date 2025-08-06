@@ -173,7 +173,7 @@ try {
                     // Create the booking record
                     $postString = http_build_query($_POST);
                     $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total", 'uid' , 'guest_count' , 'status'];
-                    $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'], $fp['sub_total'], $uid ,$guest_counts , 0];
+                    $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'], $fp['sub_total'], $uid ,$guest_counts , 1];
 
                     $h = new Estate();
 
