@@ -18,7 +18,7 @@ try {
 
     $uid = isset($_POST['uid']) ? $_POST['uid'] : '';
     $item_id = isset($_POST['item_id']) ? $_POST['item_id'] : 0;
-    $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id )->num_rows;
+    $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id)->num_rows;
 
     $lang_ = load_specific_langauage($lang);
     if ($uid == '') {
@@ -34,7 +34,7 @@ try {
     } else if ($non_completed_data == 0) {
         $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
     } else {
-        $non_completed_data_ = $rstate->query("select * from tbl_non_completed where id=" . $item_id )->fetch_assoc();
+        $non_completed_data_ = $rstate->query("select * from tbl_non_completed where id=" . $item_id)->fetch_assoc();
         $prop_id = $non_completed_data_['prop_id'];
         $uid = $non_completed_data_['uid'];
         $from_date = $non_completed_data_['f1'];
@@ -51,9 +51,11 @@ try {
         [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
         [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
         [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
+        if($uid  == 69){
+            sleep(30);
+        }
 
-
-          $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
+        $checkQuery = "SELECT * FROM tbl_property WHERE id = " . $prop_id;
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
 
         try {

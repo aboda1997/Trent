@@ -1270,8 +1270,8 @@ try {
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
-                        } 
-                    } 
+                        }
+                    }
                 }
             }
 
@@ -3729,6 +3729,34 @@ WHERE
                 "message" => "Whatsup section!",
                 "action" => "users.php",
             ];
+        } elseif ($_POST["type"] == "delete_on_hold_booking") {
+            $ids = implode(',', $_POST['user_ids']);
+
+            $query = "SELECT 
+                u.id
+            FROM 
+                tbl_non_completed u
+            WHERE 
+             u.id IN ($ids)";
+            $sel = $rstate->query($query);
+            while ($row = $sel->fetch_assoc()) {
+
+
+                $table = "tbl_non_completed";
+                $field = array('status' => '0');
+                $where = "where id=" . '?' . "";
+                $where_conditions = [$row['id']];
+                $h = new Estate();
+                $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Temporal booking Deleted successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "temporal_booking.php",
+            ];
         } elseif ($_POST["type"] == "send_owner_whatsup_message") {
             $ids = implode(',', $_POST['user_ids']);
             $message =  $_POST['message'];
@@ -3973,13 +4001,13 @@ function approve_property($rstate, $uid, $title_ar, $id)
 
     $new_mobile   = $sel['mobile'];
     $ccode   = $sel['ccode'];
-  $message = "اهلاً وسهلاً!\n\n"
-         . "تم نشر عقارك [$title_ar] بنجاح على منصة Trent\n\n"
-         . "* شارك رابط العقار مع الأصدقاء\n"
-         . "* تحديث بيانات العقار عند الحاجة\n\n"
-         . "نتمنى لك تأجيراً سريعاً ومكسب مستمر\n"
-         . "فريق Trent 📈\n"
-         . "https://www.trent.com.eg/properties/$id";
+    $message = "اهلاً وسهلاً!\n\n"
+        . "تم نشر عقارك [$title_ar] بنجاح على منصة Trent\n\n"
+        . "* شارك رابط العقار مع الأصدقاء\n"
+        . "* تحديث بيانات العقار عند الحاجة\n\n"
+        . "نتمنى لك تأجيراً سريعاً ومكسب مستمر\n"
+        . "فريق Trent 📈\n"
+        . "https://www.trent.com.eg/properties/$id";
     $title_ = 'تم نشر عقارك بنجاح! ';
     $result = sendMessage([$ccode . $new_mobile], $message);
     $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "property_id", $id);

@@ -628,7 +628,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     date_default_timezone_set('Africa/Cairo');
 
     // Calculate the timestamp 3 hours ago in Cairo time
-    $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
+    $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
 
     // Build the SQL query
     $sql = "SELECT f1 as check_in , f2 as check_out
@@ -636,7 +636,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
     AND status = 1
-    AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
+    AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
     $result = $rstate->query($sql);
     $check_in_list = [];
 

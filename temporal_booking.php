@@ -41,7 +41,7 @@ if (!in_array('Read_Booking', $per)) {
                         </div>
                         <div class="col-6">
                             <div id="sendMessageBtnContainer" style="display: none; float: right;">
-                                <?php if ( in_array('Delete_Booking', $per)): ?>
+                                <?php if (in_array('Delete_Booking', $per)): ?>
 
                                     <button class="btn btn-primary" id="sendMessageBtn">Delete Temporal Booking</button>
                                 <?php endif; ?>
@@ -93,15 +93,14 @@ if (!in_array('Read_Booking', $per)) {
                                             date_default_timezone_set('Africa/Cairo');
 
                                             // Calculate the timestamp 3 hours ago in Cairo time
-                                            $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
-
+                                            $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
                                             // Build the SQL query
                                             $sql = "SELECT *
                                             FROM tbl_non_completed 
                                             WHERE 
                                             status = 1
                                             and completed = 0 
-                                            AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
+                                            AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
                                             $result = $rstate->query($sql);
                                             $i = 0;
                                             while ($row = $result->fetch_assoc()) {
