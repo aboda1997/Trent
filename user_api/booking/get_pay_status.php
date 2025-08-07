@@ -28,17 +28,18 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
         // Convert amounts to integers for strict comparison
        // $push_amount = (int)$check_push_pay_data['orderAmount'];
         $pull_amount = (int)$check_pull_pay['orderAmount'];
+        $pull_method = $check_pull_pay['paymentMethod'];
 
         // Verify all conditions with integer comparison
-        return (
+        return ['status' => (
            
             $check_pull_pay['orderStatus'] == 'PAID' &&
             $check_pull_pay['itemCode'] == $item_id &&
             abs($pull_amount - $total_as_int) < 2 
-        );
+        ) , 'method' =>  $pull_method ] ;
     }
 
-    return false;
+    return ['status'=>false , 'method'=>''];
    
 }
 

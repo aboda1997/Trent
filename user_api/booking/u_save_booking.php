@@ -238,7 +238,7 @@ try {
                 ));
             } else {
 
-                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)) {
+                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)['status']) {
 
 
                     $GLOBALS['rstate']->begin_transaction();

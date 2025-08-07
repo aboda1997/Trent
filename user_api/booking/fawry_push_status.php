@@ -27,8 +27,14 @@ try {
     $secureKey = $get_secure_key->fetch_assoc()['secure_key'];
     $decrypted_secure_key = decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem');
     $h = new Estate();
+    $paymentMethods = [
+        'CARD' => 'CARD',
+        'Mobile Wallet' => 'MWALLET',
+        'PAYATFAWRY' => 'PayAtFawry'
+    ];
+    $method = $paymentMethods[$paymentMethod] ?? '';
 
-    if (!verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
+    if (verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
         $returnArr    = generateResponse('false', "Not valid Data", 400);
     } else if ($checkKey->num_rows) {
         $field_values = ["orderStatus" => $orderStatus];
@@ -41,15 +47,19 @@ try {
             if (strpos($itemCode, 'item') === 0) {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1');
+
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
 
-                $t = save_booking($itemCode, $merchantRefNumber, $paymentMethod);
+                $t = save_booking($itemCode, $merchantRefNumber, $method);
             }
         } else {
-            $field1 = array('ref_number' => $merchantRefNumber);
+
+            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method);
+            $where1 = "where  id=" . '?' . "";
+            $where_conditions1 = [$itemCode];
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where1, $where_conditions1);
         }
@@ -72,15 +82,17 @@ try {
             if (strpos($itemCode, 'item') === 0) {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1');
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
 
-                save_booking($itemCode, $merchantRefNumber, $paymentMethod);
+                save_booking($itemCode, $merchantRefNumber, $method);
             }
         } else {
-            $field1 = array('ref_number' => $merchantRefNumber);
+            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method);
+            $where1 = "where  id=" . '?' . "";
+            $where_conditions1 = [$itemCode];
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where1, $where_conditions1);
         }
@@ -117,16 +129,11 @@ function verifyFawrySignature(array $paymentData, string $receivedSignature, str
 }
 
 
-function save_booking($item_code,  $merchantRefNumber, $paymentMethod)
+function save_booking($item_code,  $merchantRefNumber, $method)
 {
-    $paymentMethods = [
-        'CARD' => 'CARD',
-        'Mobile Wallet' => 'MWALLET',
-        'PAYATFAWRY' => 'PayAtFawry'
-    ];
+
     // Get booking details from database
     $booking_query = $GLOBALS['rstate']->query("SELECT * FROM tbl_non_completed WHERE id = '" . $GLOBALS['rstate']->real_escape_string($item_code) . "'");
-    $method = $paymentMethods[$paymentMethod];
     if ($booking_query->num_rows) {
         $booking_data = $booking_query->fetch_assoc();
 
@@ -165,7 +172,7 @@ function save_booking($item_code,  $merchantRefNumber, $paymentMethod)
 
         // Execute the request
         $response = curl_exec($ch);
-     
+
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         // Check for errors

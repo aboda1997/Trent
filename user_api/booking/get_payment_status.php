@@ -33,16 +33,22 @@ try {
         $h = new Estate();
 
         $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
-        if ($pay_status) {
-            $field = array('ref_number' => $merchant_ref_number,  'active' => '1');
+        $paymentMethods = [
+            'CARD' => 'CARD',
+            'Mobile Wallet' => 'MWALLET',
+            'PAYATFAWRY' => 'PayAtFawry'
+        ];
+        $method = $paymentMethods[$pay_status['method']] ?? '';
+        if ($pay_status['status']) {
+            $field = array('ref_number' => $merchant_ref_number,  'active' => '1',  'method' => $method);
 
             $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
         } else {
-            $field1 = array('ref_number' => $merchant_ref_number);
+            $field1 = array('ref_number' => $merchant_ref_number,   'method' => $method);
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where, $where_conditions);
         }
-        $returnArr    = generateResponse('true', "Payment status Founded", 200, array("status" => $pay_status));
+        $returnArr    = generateResponse('true', "Payment status Founded", 200, array("status" => $pay_status['status']));
     }
     echo $returnArr;
 } catch (Exception $e) {

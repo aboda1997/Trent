@@ -57,6 +57,7 @@ try {
             $fp['ref_number'] = $skey;
             $uid = $row['uid'];
             $fp['coupon'] = $row['c_code'];
+            $fp['method_key'] = $row['method'];
 
             $wow[] = $fp;
         }
