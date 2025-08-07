@@ -58,6 +58,7 @@ try {
             $uid = $row['uid'];
             $fp['coupon'] = $row['c_code'];
             $fp['method_key'] = $row['method'];
+            $fp['fawry_number'] = $row['fawry_number'];
 
             $wow[] = $fp;
         }

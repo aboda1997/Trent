@@ -34,7 +34,7 @@ try {
     ];
     $method = $paymentMethods[$paymentMethod] ?? '';
 
-    if (!verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
+    if (verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
         $returnArr    = generateResponse('false', "Not valid Data", 400);
     } else if ($checkKey->num_rows) {
         $field_values = ["orderStatus" => $orderStatus];
@@ -48,7 +48,7 @@ try {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
 
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method);
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method,  'fawry_number' => $fawryRefNumber);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
@@ -57,7 +57,7 @@ try {
             }
         } else {
 
-            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method);
+            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method,   'fawry_number' => $fawryRefNumber);
             $where1 = "where  id=" . '?' . "";
             $where_conditions1 = [$itemCode];
 
@@ -82,7 +82,7 @@ try {
             if (strpos($itemCode, 'item') === 0) {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method);
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method, 'fawry_number' => $fawryRefNumber);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
@@ -90,7 +90,7 @@ try {
                 save_booking($itemCode, $merchantRefNumber, $method);
             }
         } else {
-            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method);
+            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method,  'fawry_number' => $fawryRefNumber);
             $where1 = "where  id=" . '?' . "";
             $where_conditions1 = [$itemCode];
 

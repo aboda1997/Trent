@@ -40,11 +40,11 @@ try {
         ];
         $method = $paymentMethods[$pay_status['method']] ?? '';
         if ($pay_status['status']) {
-            $field = array('ref_number' => $merchant_ref_number,  'active' => '1',  'method' => $method);
+            $field = array('ref_number' => $merchant_ref_number,  'active' => '1',  'method' => $method , 'fawry_number' =>$pay_status['ref']);
 
             $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
         } else {
-            $field1 = array('ref_number' => $merchant_ref_number,   'method' => $method);
+            $field1 = array('ref_number' => $merchant_ref_number,   'method' => $method , 'fawry_number' =>$pay_status['ref']);
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where, $where_conditions);
         }
