@@ -15,7 +15,7 @@ try {
     $item_id = isset($_GET['item_id']) ? $_GET['item_id'] : 0;
     $final_total = isset($_GET['final_total']) ? $_GET['final_total'] : null;
     $non_completed_data = $rstate->query("select id from tbl_non_completed where id='" .  $item_id . "'")->num_rows;
-    $book_data = $rstate->query("select id from tbl_book where item_id= '" .  $item_id . "'" )->num_rows;
+    $book_data = $rstate->query("select id from tbl_book where item_id= '" .  $item_id . "'")->num_rows;
 
     if ($final_total == null) {
         $returnArr = generateResponse('false', 'you must enter the total paid value', 400);
@@ -25,12 +25,23 @@ try {
         $returnArr = generateResponse('false', 'you must enter the merchant ref number', 400);
     } else if ($merchant_ref_number == null) {
         $returnArr = generateResponse('false', 'you must enter the merchant ref number', 400);
-    } else if ($non_completed_data == 0 && $book_data == 0 ) {
+    } else if ($non_completed_data == 0 && $book_data == 0) {
         $returnArr    = generateResponse('false', "Something Went Wrong Enure that sent data are correct", 400);
-    }else {
-       
-        $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
+    } else {
+        $where_conditions = [$item_id];
+        $where = "where  id=" . '?' . "";
+        $h = new Estate();
 
+        $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
+        if ($pay_status) {
+            $field = array('ref_number' => $merchant_ref_number,  'active' => '1');
+
+            $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
+        } else {
+            $field1 = array('ref_number' => $merchant_ref_number);
+
+            $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where, $where_conditions);
+        }
         $returnArr    = generateResponse('true', "Payment status Founded", 200, array("status" => $pay_status));
     }
     echo $returnArr;
@@ -41,5 +52,3 @@ try {
     ), $e->getFile(),  $e->getLine());
     echo $returnArr;
 }
-
-

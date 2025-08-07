@@ -64,7 +64,7 @@ try {
         $res_data = $rstate->query($checkQuery)->fetch_assoc();
         $balance = '0.00';
         $sel = $rstate->query("select message,status,amt,tdate from wallet_report where uid=" . $uid . " order by id desc");
-        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id. " and status = 1 ")->num_rows;
+        $non_completed_data = $rstate->query("select id from tbl_non_completed where id=" . $item_id . " and status = 1 ")->num_rows;
         $non_completed_data_check = $rstate->query("select book_id from tbl_non_completed where id=" . $item_id . " and completed = 1 ")->num_rows;
         while ($row = $sel->fetch_assoc()) {
 
@@ -221,7 +221,7 @@ try {
                     throw new Exception("Insert failed");
                 }
                 $where_conditions = [$item_id];
-                $field = array('completed' => '1', 'book_id' => $book_id);
+                $field = array('completed' => '1', 'active' => '0',  'book_id' => $book_id);
                 $where = "where  id=" . '?' . "";
 
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
@@ -238,7 +238,7 @@ try {
                 ));
             } else {
 
-                if (getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)) {
+                if (!getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)) {
 
 
                     $GLOBALS['rstate']->begin_transaction();
@@ -253,7 +253,7 @@ try {
                     }
                     $fp['book_id'] = $book_id;
                     $where_conditions = [$item_id];
-                    $field = array('completed' => '1', 'book_id' => $book_id);
+                    $field = array('completed' => '1', 'active' => '0',  'book_id' => $book_id);
                     $where = "where  id=" . '?' . "";
 
                     $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
@@ -261,9 +261,9 @@ try {
                         throw new Exception("Insert failed");
                     }
                     $GLOBALS['rstate']->commit();
-                    $whatsapp = sendMessage([$ccode . $mobile], $message);
+                    //$whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-                    send_email($book_id, $client_name, $up_at, $days);
+                    //send_email($book_id, $client_name, $up_at, $days);
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
                     ));

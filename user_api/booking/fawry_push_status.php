@@ -36,14 +36,24 @@ try {
         $where_conditions = [$merchantRefNumber, $itemCode];
         $_id = $h->restateupdateData_Api($field_values, 'payment', $where, $where_conditions);
 
-        $returnArr    = generateResponse('true', "Success", 200);
+
         if ($orderStatus == "PAID") {
             if (strpos($itemCode, 'item') === 0) {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
-                save_booking($itemCode, $merchantRefNumber, $paymentMethod);
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1');
+                $where1 = "where  id=" . '?' . "";
+                $where_conditions1 = [$itemCode];
+                $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
+
+                $t = save_booking($itemCode, $merchantRefNumber, $paymentMethod);
             }
+        } else {
+            $field1 = array('ref_number' => $merchantRefNumber);
+
+            $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where1, $where_conditions1);
         }
+        $returnArr    = generateResponse('true', "Success", 200);
     } else {
         // Prepare values in exact same order as field names
         $field_values = ["fawryRefNumber", "merchantRefNumber", "orderAmount", "orderStatus", "paymentMethod", "itemId"];
@@ -62,11 +72,20 @@ try {
             if (strpos($itemCode, 'item') === 0) {
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
+                $field = array('ref_number' => $merchantRefNumber,  'active' => '1');
+                $where1 = "where  id=" . '?' . "";
+                $where_conditions1 = [$itemCode];
+                $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
+
                 save_booking($itemCode, $merchantRefNumber, $paymentMethod);
             }
+        } else {
+            $field1 = array('ref_number' => $merchantRefNumber);
+
+            $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where1, $where_conditions1);
         }
     }
-    //echo $returnArr;
+    echo $returnArr;
 } catch (Exception $e) {
 
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
@@ -141,15 +160,17 @@ function save_booking($item_code,  $merchantRefNumber, $paymentMethod)
                 'Content-Type: application/x-www-form-urlencoded',
             ],
             CURLOPT_SSL_VERIFYPEER => true, // Enable SSL verification
-            CURLOPT_TIMEOUT => 50 // Set timeout to 30 seconds
+            CURLOPT_TIMEOUT => 10 // Set timeout to 30 seconds
         ]);
 
         // Execute the request
         $response = curl_exec($ch);
+     
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         // Check for errors
         if (curl_errno($ch)) {
+
             curl_close($ch);
             return false;
         }
@@ -204,7 +225,7 @@ function complete_paying($item_code, $merchantRefNumber)
                 'Content-Type: application/x-www-form-urlencoded',
             ],
             CURLOPT_SSL_VERIFYPEER => true, // Enable SSL verification
-            CURLOPT_TIMEOUT => 50 // Set timeout to 30 seconds
+            CURLOPT_TIMEOUT => 10 // Set timeout to 30 seconds
         ]);
 
         // Execute the request

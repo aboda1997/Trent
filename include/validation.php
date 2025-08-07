@@ -631,12 +631,15 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
 
     // Build the SQL query
-    $sql = "SELECT f1 as check_in , f2 as check_out
+    $sql = "SELECT f1 as check_in, f2 as check_out
     FROM tbl_non_completed 
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
-    AND status = 1
-    AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "'";
+    AND (
+        (status = 1 AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "')
+        OR 
+        (active = 1)
+    )";
     $result = $rstate->query($sql);
     $check_in_list = [];
 

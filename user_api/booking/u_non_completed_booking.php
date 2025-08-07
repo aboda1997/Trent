@@ -16,7 +16,7 @@ try {
 
     $lang_ = load_specific_langauage($lang);
 
-     if ($uid == null) {
+    if ($uid == null) {
         $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
         $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
@@ -31,16 +31,19 @@ try {
         date_default_timezone_set('Africa/Cairo');
 
         // Calculate the timestamp 3 hours ago in Cairo time
-        $three_hours_ago = date('Y-m-d H:i:s', strtotime('-3 hours'));
+        $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
 
         // Build the SQL query
         $sql = "SELECT *
         FROM tbl_non_completed 
         WHERE 
-        status = 1
-        and completed = 0 
-        and  uid = " . (int)$uid . "  
-        AND created_at > '" . $GLOBALS['rstate']->real_escape_string($three_hours_ago) . "'";
+        completed = 0 
+        AND (
+            (status = 1 AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "')
+            OR 
+            (active = 1)
+        )
+        and uid = " . (int)$uid;
         $result = $rstate->query($sql);
         while ($row = $result->fetch_assoc()) {
             $fp['id'] = $row['id'];
@@ -50,8 +53,10 @@ try {
             $fp['uid'] = $row['uid'];
             $fp['guest_count'] = $row['guest_count'];
             $fp['confirm_guest_rules'] = 'true';
+            $skey = encryptData($row['ref_number'], dirname(dirname(__FILE__),2) . '/keys/public.pem');
+            $fp['ref_number'] = $skey;
             $uid = $row['uid'];
-          
+            $coupon = $row['c_code'];
 
             $wow[] = $fp;
         }
