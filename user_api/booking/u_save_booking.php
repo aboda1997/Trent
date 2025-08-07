@@ -261,9 +261,9 @@ try {
                         throw new Exception("Insert failed");
                     }
                     $GLOBALS['rstate']->commit();
-                    //$whatsapp = sendMessage([$ccode . $mobile], $message);
+                    $whatsapp = sendMessage([$ccode . $mobile], $message);
                     $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-                    //send_email($book_id, $client_name, $up_at, $days);
+                    send_email($book_id, $client_name, $up_at, $days);
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
                     ));
