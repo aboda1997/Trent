@@ -56,7 +56,7 @@ try {
             $skey = encryptData($row['ref_number'], dirname(dirname(__FILE__),2) . '/keys/public.pem');
             $fp['ref_number'] = $skey;
             $uid = $row['uid'];
-            $coupon = $row['c_code'];
+            $fp['coupon'] = $row['c_code'];
 
             $wow[] = $fp;
         }
