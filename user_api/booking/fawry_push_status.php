@@ -34,7 +34,7 @@ try {
     ];
     $method = $paymentMethods[$paymentMethod] ?? '';
 
-    if (verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
+    if (!verifyFawrySignature($inputData, $inputData['messageSignature'], $decrypted_secure_key['data'])) {
         $returnArr    = generateResponse('false', "Not valid Data", 400);
     } else if ($checkKey->num_rows) {
         $field_values = ["orderStatus" => $orderStatus];
