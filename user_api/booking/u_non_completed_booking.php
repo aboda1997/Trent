@@ -46,7 +46,10 @@ try {
         and uid = " . (int)$uid;
         $result = $rstate->query($sql);
         while ($row = $result->fetch_assoc()) {
+
             $fp['id'] = $row['id'];
+            $set = $rstate->query("SELECT title FROM tbl_property")->fetch_assoc();
+            $fp['prop_title'] =json_decode($set['title'], true)[$lang] ?? '';
             $fp['from_date'] = $row['f1'];
             $fp['to_date'] = $row['f2'];
             $fp['prop_id'] = $row['prop_id'];
