@@ -39,7 +39,7 @@ if (!in_array('Read_Booking', $per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                Check In Booking Management</h3>
+                On Going Booking Management</h3>
             </div>
             <div class="col-6">
 
