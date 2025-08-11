@@ -62,7 +62,7 @@ try {
         $book_id = $row['id'];
         $flag = validateCheckInDate($book_id, $currentDate);
         if ($flag == false) {
-            cancel_booking($book_id);
+           // cancel_booking($book_id);
         }
     }
 } catch (Exception $e) {
