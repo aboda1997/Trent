@@ -37,7 +37,7 @@ FROM
 INNER JOIN 
     tbl_property p ON b.prop_id = p.id
 WHERE 
-    b.book_status IN ('Check_in', 'Completed' ,'Confirmed')
+    b.book_status IN ('Check_in', 'Completed')
     AND p.add_user_id = $uid
     AND NOT EXISTS (
         SELECT 1 

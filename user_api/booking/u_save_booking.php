@@ -198,8 +198,8 @@ try {
 
                 $GLOBALS['rstate']->begin_transaction();
 
-                $field_values = ["item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = ['', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $field_values = ["item_copy","item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = ['','', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -243,8 +243,8 @@ try {
 
                     $GLOBALS['rstate']->begin_transaction();
 
-                    $field_values = ["item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                    $data_values = [$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                    $field_values = ['item_copy',"item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                    $data_values = [$generated_item_id,$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
                     $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);

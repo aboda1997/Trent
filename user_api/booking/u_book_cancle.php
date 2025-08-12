@@ -46,7 +46,7 @@ try {
     $where_conditions = [$uid, $booking_id];
     $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
     if ($result['method_key'] == 'TRENT_BALANCE'){
-    $refund = refundMoney($uid , $booking_id);
+    $refund = refundMoney($uid , $booking_id , 'G',$cancel_id);
 
     }
     $returnArr = generateResponse("true",  "Booking  Cancelled Successfully!", 200);

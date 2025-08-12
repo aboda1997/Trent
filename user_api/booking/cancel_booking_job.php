@@ -41,7 +41,9 @@ try {
 
         $book_id = $row['id'];
         if (validateCancelBooking($book_id)) {
-            $res1 = refundMoney($uid, $book_id);
+
+            $res1 = refundMoney($uid, $book_id,'A' , '0');
+
         }
     }
 
@@ -54,15 +56,15 @@ try {
         $book_id = $row['id'];
         $flag = validatePeriod($book_id);
         if ($flag == false) {
-            cancel_booking($book_id);
+            cancel_booking($book_id , 'A' , '-1');
         }
     }
       while ($row = $sel2->fetch_assoc()) {
        
         $book_id = $row['id'];
-        $flag = validateCheckInDate($book_id, $currentDate);
-        if ($flag == false) {
-           // cancel_booking($book_id);
+        $flag = validateCheckIn($book_id, $currentDate);
+        if ($flag ) {
+            cancel_booking($book_id , 'A' , '-2');
         }
     }
 } catch (Exception $e) {
