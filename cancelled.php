@@ -148,7 +148,6 @@ if (!in_array('Read_Booking', $per)) {
                           $host_id = $row['uid'];
                           $guest_id = $row['add_user_id'];
                           $cancel_id = $row['cancle_reason'] ?? 0;
-                          var_dump($cancel_id == '0');
                           $cancel_by = $row['cancel_by'] == "H" ? "Host" : ($row['cancel_by'] == "A" ? "Admin" : "Guest");
                           $host = $rstate->query("SELECT name, mobile,ccode FROM tbl_user WHERE id = $host_id")->fetch_assoc();
                           $guest = $rstate->query("SELECT name, mobile ,ccode FROM tbl_user WHERE id = $guest_id")->fetch_assoc();
