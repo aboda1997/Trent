@@ -32,28 +32,49 @@ try {
     $methods  = AppConstants::getAllMethodKeys();
     $lang_ = load_specific_langauage($lang);
 
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $created_at = $date->format('Y-m-d H:i:s');
     [$valid, $message] = validateDates($from_date, $to_date);
     if ($prop_id  == null) {
+        send_failed_booking_email($prop_id, $uid, $created_at, $lang_["property_id_required"], $from_date, $to_date, $item_id);
         $returnArr    = generateResponse('false', $lang_["property_id_required"], 400);
     } else if ($uid == null) {
+        send_failed_booking_email($prop_id, $uid, $created_at, $lang_["user_id_required"], $from_date, $to_date, $item_id);
         $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
     } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        send_failed_booking_email($prop_id, $uid, $created_at, $lang_["invalid_user_id"], $from_date, $to_date, $item_id);
+
         $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
     } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["account_deleted"], $from_date, $to_date, $item_id);
+
         $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
     } else if (!in_array($lang, ['en', 'ar'])) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["unsupported_lang_key"], $from_date, $to_date, $item_id);
+
         $returnArr    = generateResponse('false', $lang_["unsupported_lang_key"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["property_not_available"], $from_date, $to_date, $item_id);
         $returnArr    = generateResponse('false', $lang_["property_not_available"], 400);
     } else if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', '  add_user_id =' . $uid . '') === true) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["self_booking_not_allowed"], $from_date, $to_date, $item_id);
+
         $returnArr    = generateResponse('false', $lang_["self_booking_not_allowed"], 400);
     } else if ($valid == false) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $message, $from_date, $to_date, $item_id);
+
         $returnArr    = generateResponse('false', $message, 400);
     } else if ($confirm_guest_rules  == 'false') {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["guest_rules_unconfirmed"], $from_date, $to_date, $item_id);
+
         $returnArr    = generateResponse('false', $lang_["guest_rules_unconfirmed"], 400);
     } else if (!in_array($method_key, $methods)) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["invalid_payment_method"], $from_date, $to_date, $item_id);
+
         $returnArr    = generateResponse('false', $lang_["invalid_payment_method"], 400);
     } else if ($item_id == 0) {
+        send_failed_booking_email($prop_id, $uid, $created_at,  $lang_["item_id_required"], $from_date, $to_date, $item_id);
+
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
         [$days, $months, $days_message] = processDates($from_date, $to_date, $lang_);
@@ -75,22 +96,36 @@ try {
             }
         }
         if ($non_completed_data == 0) {
+            send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
         } elseif ($days == 0) {
+            send_failed_booking_email($prop_id, $uid, $created_at, $days_message, $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false', $days_message, 400);
         } else if (($status  == false && !$non_completed_data_check)) {
+            send_failed_booking_email($prop_id, $uid, $created_at, $status_message, $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false', $status_message, 400);
         } else if (($status1  == false && !$non_completed_data_check)) {
+            send_failed_booking_email($prop_id, $uid, $created_at, $status_message1, $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false', $status_message1, 400);
         } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
+            send_failed_booking_email($prop_id, $uid, $created_at, $lang_["guest_limit_exceeded"], $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
         } else if (
             (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
             ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
         ) {
+            send_failed_booking_email($prop_id, $uid, $created_at, sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
         } else if ($months >= 6) {
             $GLOBALS['rstate']->commit();
+            send_failed_booking_email($prop_id, $uid, $created_at, $lang_["invalid_months_count"], $from_date, $to_date, $item_id);
+
             $returnArr = generateResponse('false', $lang_["invalid_months_count"], 400);
         } else {
 
@@ -193,13 +228,15 @@ try {
                     "booking_details" => $fp,
                 ));
             } else if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
+                send_failed_booking_email($prop_id, $uid, $created_at, $lang_["insufficient_wallet_balance"], $from_date, $to_date, $item_id);
+
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
             } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
 
                 $GLOBALS['rstate']->begin_transaction();
 
-                $field_values = ["item_copy","item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = ['','', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $field_values = ["item_copy", "item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                $data_values = ['', '', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -243,8 +280,8 @@ try {
 
                     $GLOBALS['rstate']->begin_transaction();
 
-                    $field_values = ['item_copy',"item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                    $data_values = [$generated_item_id,$generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                    $field_values = ['item_copy', "item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
+                    $data_values = [$generated_item_id, $generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                     $h = new Estate();
                     $book_id = $h->restateinsertdata_Api($field_values, $data_values, $table);
@@ -276,6 +313,14 @@ try {
     echo $returnArr;
 } catch (Exception $e) {
     // Handle exceptions and return an error response
+    $errorMessage = sprintf(
+        "Error: %s in %s on line %d",
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine()
+    );
+    send_failed_booking_email($prop_id, $uid, $created_at,   $errorMessage, $from_date, $to_date, $item_id);
+
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
         "error_message" => $e->getMessage()
     ), $e->getFile(),  $e->getLine());
@@ -428,4 +473,39 @@ function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $
 
 
     return [true, "Valid date range"];
+}
+function send_failed_booking_email($prop_id, $uid, $booking_date, $error, $from_date, $to_date, $item_id)
+{
+    $guest =  $GLOBALS['rstate']->query("SELECT name, mobile ,ccode FROM tbl_user WHERE id = '$uid'")->fetch_assoc();
+    $user_mobile = ($guest['ccode'] ?? '') . ($guest['mobile'] ?? '');
+    $prop_data =  $GLOBALS['rstate']->query("SELECT * FROM tbl_property WHERE id = '$prop_id'")->fetch_assoc();
+    $prop_title = $prop_data['title'] ?? '';
+    $prop_title_ar = json_decode($prop_title ?? "")->ar ?? '';
+
+    $failed_booking_fields = ['prop_id', 'prop_title', 'from_date', 'to_date', 'uid', 'item_id', 'error', 'created_at'];
+    $failed_booking_values = [$prop_id, $prop_title, $from_date, $to_date, $uid, $item_id, $error, $booking_date];
+    $h = new Estate();
+    $check = $h->restateinsertdata_Api($failed_booking_fields, $failed_booking_values, 'tbl_failed_book');
+
+    // Subject with emoji and Arabic text
+    $subject = '⚠️ حجز فاشل للعقار ' . $prop_title_ar;
+
+    // Body with placeholders using HEREDOC syntax
+    $body = <<<EMAIL
+السلام عليكم
+
+للأسف، فشل عملية حجز جديدة بالتفاصيل التالية:
+
+🏠 رقم العقار: $prop_id
+👤 رقم المستخدم: $uid
+📱 جوال المستخدم: $user_mobile
+📅 تاريخ محاولة الحجز: $booking_date
+❌ سبب الفشل: $error
+
+يرجى مراجعة النظام ومحاولة حل المشكلة
+
+مع فائق التحيات
+TRENT
+EMAIL;
+    sendPlainTextEmail($subject, $body);
 }

@@ -343,6 +343,7 @@ if (isset($_SESSION['restatename'])) {
                   <li><a href="cancelled.php">Cancelled Booking</a></li>
                   <li><a href="rating_list.php">Rating List</a></li>
                   <li><a href="temporal_booking.php">On Hold Booking </a></li>
+                  <li><a href="failed.php">Failed Booking </a></li>
                 <?php
                 }
                 ?>
