@@ -1533,7 +1533,6 @@ try {
                         // Generate a unique file name for the uploaded video
                         $videoName = time() . '_' . $video['name'];
                         $destination = $uploadDirVideos . $videoName;
-                        var_dump("test");
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
