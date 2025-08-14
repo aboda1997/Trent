@@ -1393,6 +1393,7 @@ try {
             $propowner = $_POST['propowner'];
 
             $period = $_POST['period'];
+            $visibility = $_POST['visibility'] ?? 0;
             $featured = $_POST['featured'];
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $address_en = $rstate->real_escape_string($_POST["address_en"]);
@@ -1585,7 +1586,8 @@ try {
                 "min_days" => "$min_days",
                 "cancel_reason" => "$cancel_reason",
                 'updated_at' => $updated_at,
-                'is_need_review' => $need_review
+                'is_need_review' => $need_review,
+                'visibility' => $visibility
             ];
             if (!empty($imageUrls)) {
                 $field_values["image"] =  $imageUrlsString . ',' . $existing_images;
