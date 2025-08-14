@@ -1533,7 +1533,7 @@ try {
                         // Generate a unique file name for the uploaded video
                         $videoName = time() . '_' . $video['name'];
                         $destination = $uploadDirVideos . $videoName;
-
+                        var_dump("test");
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
@@ -1596,10 +1596,7 @@ try {
 
             if (!empty($videoUrls)) {
                 $field_values["video"] =  $videoUrlsString;
-            } else {
-
-                $field_values["video"] =  "";
-            }
+            } 
             if (is_array($inc_value_ranges) &&  !isset($returnArr)) {
                 $jsonResponse    =  add_specific_ranges_increased_value('en', $propowner, $id, $inc_value_ranges);
                 $response = json_decode($jsonResponse, true); // true for associative array
