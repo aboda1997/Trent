@@ -96,8 +96,8 @@ try {
             }
         }
         if ($non_completed_data == 0) {
-            //send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
-            var_dump("test");    
+            send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
+
             $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
         } elseif ($days == 0) {
             send_failed_booking_email($prop_id, $uid, $created_at, $days_message, $from_date, $to_date, $item_id);
@@ -266,9 +266,9 @@ try {
                     throw new Exception("Insert failed");
                 }
                 $GLOBALS['rstate']->commit();
-                //$whatsapp = sendMessage([$ccode . $mobile], $message);
+                $whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-                //send_email($book_id, $client_name, $up_at, $days);
+                send_email($book_id, $client_name, $up_at, $days);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
