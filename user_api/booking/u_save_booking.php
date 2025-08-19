@@ -96,8 +96,8 @@ try {
             }
         }
         if ($non_completed_data == 0) {
-            send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
-
+            //send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
+            var_dump("test");    
             $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
         } elseif ($days == 0) {
             send_failed_booking_email($prop_id, $uid, $created_at, $days_message, $from_date, $to_date, $item_id);
@@ -227,16 +227,16 @@ try {
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
                 ));
-            } else if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['final_total']) {
+            } else if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['partial_value']) {
                 send_failed_booking_email($prop_id, $uid, $created_at, $lang_["insufficient_wallet_balance"], $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
-            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['final_total']) {
+            } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['partial_value']) {
 
                 $GLOBALS['rstate']->begin_transaction();
 
                 $field_values = ["item_copy", "item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
-                $data_values = ['', '', $res_data['id'], $method_key, 0, 'Completed', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
+                $data_values = ['', '', $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
 
                 $h = new Estate();
 
@@ -249,7 +249,7 @@ try {
                 $created_at1 = $date->format('Y-m-d H:i:s');
 
                 $field_values1 = ["uid", 'status', 'amt', 'tdate'];
-                $data_values1  = [$uid, 'Withdraw', $fp['final_total'], $created_at1];
+                $data_values1  = [$uid, 'Withdraw', $fp['partial_value'], $created_at1];
                 $table1 = 'wallet_report';
 
 
@@ -266,9 +266,9 @@ try {
                     throw new Exception("Insert failed");
                 }
                 $GLOBALS['rstate']->commit();
-                $whatsapp = sendMessage([$ccode . $mobile], $message);
+                //$whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-                send_email($book_id, $client_name, $up_at, $days);
+                //send_email($book_id, $client_name, $up_at, $days);
 
                 $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                     "booking_details" => $fp,
