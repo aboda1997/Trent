@@ -6,14 +6,15 @@ require_once dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
 require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
 require_once  'fawry_pull_status.php';
 
-function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
+function getPaymentStatus($merchant_ref_number, $item_id, $total_as_int)
+{
     $get_secure_key = $GLOBALS['rstate']->query("select merchant_code ,secure_key from tbl_setting ")->fetch_assoc();
     $secureKey = $get_secure_key['secure_key'];
     $merchantCode = $get_secure_key['merchant_code'];
     $decrypted_secure_key =  decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
     $decrypted_code = decryptData($merchantCode,  dirname(dirname(__FILE__), 2) . '/keys/private.pem')['data'];
 
-   // $check_push_pay = $GLOBALS['rstate']->query("SELECT orderStatus, orderAmount, itemId AS itemCode FROM payment WHERE itemId = $item_id and merchantRefNumber = '" . $merchant_ref_number . "'");
+    $check_push_pay = $GLOBALS['rstate']->query("SELECT * FROM payment WHERE itemId = $item_id and merchantRefNumber = '" . $merchant_ref_number . "'");
     // Trim all fields to avoid hidden characters
     $concatenatedString =
         trim($decrypted_code) .
@@ -22,26 +23,37 @@ function getPaymentStatus( $merchant_ref_number , $item_id ,$total_as_int) {
     $expectedSignature = hash('sha256', $concatenatedString);
     $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
     // Check if push payment has rows and pull payment status exists
-    if ( $check_pull_pay["status"]) { //$check_push_pay->num_rows &&
+    if ($check_pull_pay["status"]) { //$check_push_pay->num_rows &&
         //$check_push_pay->data_seek(0);
         //$check_push_pay_data = $check_push_pay->fetch_assoc();
         // Convert amounts to integers for strict comparison
-       // $push_amount = (int)$check_push_pay_data['orderAmount'];
+        // $push_amount = (int)$check_push_pay_data['orderAmount'];
         $pull_amount = (int)$check_pull_pay['orderAmount'];
         $pull_method = $check_pull_pay['paymentMethod'];
         $pull_ref_number = $check_pull_pay['fawryRefNumber'];
 
         // Verify all conditions with integer comparison
         return ['status' => (
-           
+
             $check_pull_pay['orderStatus'] == 'PAID' &&
             $check_pull_pay['itemCode'] == $item_id &&
-            abs($pull_amount - $total_as_int) < 2 
-        ) , 'method' =>  $pull_method ,  'ref'=>$pull_ref_number ] ;
+            abs($pull_amount - $total_as_int) < 2
+        ), 'method' =>  $pull_method,  'ref' => $pull_ref_number];
     }
+    if ($check_push_pay->num_rows && !$check_pull_pay["status"]) { //
+        $check_push_pay->data_seek(0);
+        $check_push_pay_data = $check_push_pay->fetch_assoc();
+        // $push_amount = (int)$check_push_pay_data['orderAmount'];
+        $push_amount = (int)$check_push_pay_data['orderAmount'];
+        $push_method = $check_push_pay_data['paymentMethod'];
+        $push_ref_number = $check_push_pay_data['fawryRefNumber'];
+        // Verify all conditions with integer comparison
+        return ['status' => (
 
-    return ['status'=>false , 'method'=>'' , 'ref'=>''];
-   
+            $check_push_pay_data['orderStatus'] == 'PAID' &&
+            $check_push_pay_data['itemId'] == $item_id &&
+            abs($push_amount - $total_as_int) < 2
+        ), 'method' =>  $push_method,  'ref' => $push_ref_number];
+    }
+    return ['status' => false, 'method' => '', 'ref' => ''];
 }
-
-?>
