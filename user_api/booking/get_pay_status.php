@@ -21,26 +21,43 @@ function getPaymentStatus($merchant_ref_number, $item_id, $total_as_int)
         trim($merchant_ref_number) .
         trim($decrypted_secure_key);
     $expectedSignature = hash('sha256', $concatenatedString);
+
     $check_pull_pay = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
+
+    // First call already made, now make two more with delays
+    sleep(1); // Wait 1 second
+    $check_pull_pay2 = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
+
+    sleep(2); // Wait another second
+    $check_pull_pay3 = getFawryPaymentStatus($decrypted_code, $merchant_ref_number, $expectedSignature);
     // Check if push payment has rows and pull payment status exists
-    if ($check_pull_pay["status"]) { //$check_push_pay->num_rows &&
+    $attempts = [$check_pull_pay, $check_pull_pay2, $check_pull_pay3];
+    $successfulAttempt = false;
+    foreach ($attempts as $attempt) {
+        if ($attempt["status"]) {
+            $successfulAttempt = $attempt;
+            break; // Use the first successful attempt
+        }
+    }
+
+    if ($successfulAttempt) { //$check_push_pay->num_rows &&
         //$check_push_pay->data_seek(0);
         //$check_push_pay_data = $check_push_pay->fetch_assoc();
         // Convert amounts to integers for strict comparison
         // $push_amount = (int)$check_push_pay_data['orderAmount'];
-        $pull_amount = (int)$check_pull_pay['orderAmount'];
-        $pull_method = $check_pull_pay['paymentMethod'];
-        $pull_ref_number = $check_pull_pay['fawryRefNumber'];
+        $pull_amount = (int)$successfulAttempt['orderAmount'];
+        $pull_method = $successfulAttempt['paymentMethod'];
+        $pull_ref_number = $successfulAttempt['fawryRefNumber'];
 
         // Verify all conditions with integer comparison
         return ['status' => (
 
-            $check_pull_pay['orderStatus'] == 'PAID' &&
-            $check_pull_pay['itemCode'] == $item_id &&
+            $successfulAttempt['orderStatus'] == 'PAID' &&
+            $successfulAttempt['itemCode'] == $item_id &&
             abs($pull_amount - $total_as_int) < 2
         ), 'method' =>  $pull_method,  'ref' => $pull_ref_number];
     }
-    if ($check_push_pay->num_rows && !$check_pull_pay["status"]) { //
+    if ($check_push_pay->num_rows && !$successfulAttempt) { //
         $check_push_pay->data_seek(0);
         $check_push_pay_data = $check_push_pay->fetch_assoc();
         // $push_amount = (int)$check_push_pay_data['orderAmount'];
