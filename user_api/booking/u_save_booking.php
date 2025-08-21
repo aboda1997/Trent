@@ -305,6 +305,8 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else {
+                    $error_message = $lang_["payment_validation_failed"] . " for merchant reference: " . $merchant_ref_number . ", item: " . $item_id . ". The partial value is " . $fp['partial_value'] . ".";
+                    send_failed_booking_email($prop_id, $uid, $created_at, $error_message, $from_date, $to_date, $item_id);
                     $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
                 }
             }
