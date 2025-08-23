@@ -78,6 +78,8 @@ try {
         $returnArr = generateResponse('false',  $lang_["item_id_required"], 400);
     } else {
         // Start transaction with proper isolation level
+        $GLOBALS['rstate']->autocommit(false); // This disables auto-commit
+
         $GLOBALS['rstate']->query("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
         $GLOBALS['rstate']->begin_transaction();
 
@@ -246,6 +248,7 @@ try {
                 if ($non_completed_data_check) {
                     $non_completed_data_check_data = $rstate->query("select book_id from tbl_non_completed where id=" . $item_id . " and completed = 1 ")->fetch_assoc();
                     $fp['book_id'] = $non_completed_data_check_data['book_id'];
+                    $GLOBALS['rstate']->commit();
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
@@ -289,10 +292,10 @@ try {
                     if (!$check) {
                         throw new Exception("Insert failed");
                     }
-                    $GLOBALS['rstate']->commit();
-                    $whatsapp = sendMessage([$ccode . $mobile], $message);
-                    $firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
-                    send_email($book_id, $client_name, $up_at, $days);
+                    //$GLOBALS['rstate']->commit();
+                    //$whatsapp = sendMessage([$ccode . $mobile], $message);
+                    //$firebase_notification = sendFirebaseNotification($title_, $message, $add_user_id, 'booking_id', $book_id, $res_data['image']);
+                    //send_email($book_id, $client_name, $up_at, $days);
 
                     $returnArr    = generateResponse('true', "Property booking Details", 200, array(
                         "booking_details" => $fp,
@@ -328,6 +331,8 @@ try {
                             "booking_details" => $fp,
                         ));
                     } else {
+                        $GLOBALS['rstate']->commit();
+
                         $error_message = $lang_["payment_validation_failed"] . " for merchant reference: " . $merchant_ref_number . ", item: " . $item_id . ". The partial value is " . $fp['partial_value'] . ".";
                         send_failed_booking_email($prop_id, $uid, $created_at, $error_message, $from_date, $to_date, $item_id);
                         $returnArr    = generateResponse('false', $lang_["payment_validation_failed"], 400);
