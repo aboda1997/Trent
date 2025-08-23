@@ -53,9 +53,7 @@ try {
 
             // Lock the property row
             $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-            if($uid == 81){
-                sleep(30);
-            }
+             
 
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {

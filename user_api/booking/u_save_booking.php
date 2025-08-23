@@ -107,22 +107,32 @@ try {
                 }
             }
             if ($non_completed_data == 0) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, $lang_["general_validation_error"], $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false',  $lang_["general_validation_error"], 400);
             } elseif ($days == 0) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, $days_message, $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false', $days_message, 400);
             } else if (($status  == false && !$non_completed_data_check)) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, $status_message, $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false', $status_message, 400);
             } else if (($status1  == false && !$non_completed_data_check)) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, $status_message1, $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false', $status_message1, 400);
             } else if ((int)$res_data['plimit'] !== 0 &&  $guest_counts > $res_data['plimit']) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, $lang_["guest_limit_exceeded"], $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false',  $lang_["guest_limit_exceeded"], 400);
@@ -130,6 +140,8 @@ try {
                 (int)$res_data['min_days'] !== 0 && (int)$res_data['max_days'] !== 0  &&
                 ($days < (int)$res_data['min_days'] || $days > (int)$res_data['max_days'])
             ) {
+                $GLOBALS['rstate']->commit();
+
                 send_failed_booking_email($prop_id, $uid, $created_at, sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), $from_date, $to_date, $item_id);
 
                 $returnArr    = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
@@ -239,12 +251,13 @@ try {
                         "booking_details" => $fp,
                     ));
                 } else if ($method_key == 'TRENT_BALANCE' && $balance <  $fp['partial_value']) {
+                    $GLOBALS['rstate']->commit();
+
                     send_failed_booking_email($prop_id, $uid, $created_at, $lang_["insufficient_wallet_balance"], $from_date, $to_date, $item_id);
 
                     $returnArr    = generateResponse('false', $lang_["insufficient_wallet_balance"], 400);
                 } else if ($method_key == 'TRENT_BALANCE' && $balance >= $fp['partial_value']) {
 
-                    $GLOBALS['rstate']->begin_transaction();
 
                     $field_values = ["item_copy", "item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status',  'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
                     $data_values = [$generated_item_id, $generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
@@ -289,7 +302,6 @@ try {
                     if (getPaymentStatus($merchant_ref_number, $item_id,  $total_10_percent_int)['status']) {
 
 
-                        $GLOBALS['rstate']->begin_transaction();
 
                         $field_values = ['item_copy', "item_id", "prop_id", 'method_key', 'reminder_value', 'pay_status', 'total_day', "check_in", "check_out",   "uid", "book_date", "book_status", "prop_price", "prop_img", "prop_title", "add_user_id", "noguest",  "subtotal", "tax", "trent_fees", "service_fees", "deposit_fees", "total"];
                         $data_values = [$generated_item_id, $generated_item_id, $res_data['id'], $method_key, $reminder_value, 'Partial', $days, $from_date, $to_date,   $uid, $created_at, "Booked", $res_data['price'], $res_data['image'], $res_data['title'], $res_data['add_user_id'], "$guest_counts", $fp['sub_total'],  $fp['taxes'], $trent_fess, $fp['service_fees'],  $fp['deposit_fees'],  $fp['final_total']];
