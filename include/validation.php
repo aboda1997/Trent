@@ -337,23 +337,7 @@ function validateCheckInDate($booking_id, $timestamp)
 
     return ($timestamp >= $check_in && $timestamp <= $check_out);
 }
-function validateCheckIn($booking_id, $timestamp)
-{
-    $data = getBookingStatus($booking_id);
-    $cairoTimezone = new DateTimeZone('Africa/Cairo');
-    // Convert to timestamps if they're strings
-    $check_in_str =  $data['check_in'];
-    if (strlen($check_in_str) <= 10) {
-        $check_in_str .= ' 12:00:00'; // Add default time
-    }
-    $check_out_str =  $data['check_out'];
 
-    $check_in = new DateTime($check_in_str, $cairoTimezone);
-    $check_out = new DateTime($check_out_str, $cairoTimezone);
-    $timestamp = new DateTime($timestamp, $cairoTimezone);
-
-    return ( $timestamp >= $check_out);
-}
 function getBookingStatus($booking_id)
 {
     $query = "SELECT b.id ,b.book_status ,b.check_in ,b.check_out

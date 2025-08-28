@@ -22,11 +22,7 @@ try {
                         WHERE `book_status` = 'Confirmed' 
                         and `pay_status`   = 'Partial'
                         ORDER BY `id` DESC");
-    $sel2 = $rstate->query("SELECT `id`, `check_in`, `check_out`, `prop_title`, `add_user_id`, `uid`, `prop_img` 
-                        FROM `tbl_book` 
-                        WHERE `book_status` = 'Confirmed' 
-                        and `pay_status`   = 'Completed'
-                        ORDER BY `id` DESC");
+
     $cairoTimezone = new DateTimeZone('Africa/Cairo');
 
     // Get current time in Cairo
@@ -59,14 +55,7 @@ try {
             cancel_booking($book_id , 'A' , '-1');
         }
     }
-      while ($row = $sel2->fetch_assoc()) {
-       
-        $book_id = $row['id'];
-        $flag = validateCheckIn($book_id, $currentDate);
-        if ($flag ) {
-            cancel_booking($book_id , 'A' , '-2');
-        }
-    }
+      
 } catch (Exception $e) {
     // Handle exceptions and return an error response
     $returnArr = generateResponse('false', "An error occurred!", 500, array(
