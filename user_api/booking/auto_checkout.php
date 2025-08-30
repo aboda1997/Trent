@@ -65,8 +65,8 @@ Trent.com.eg | Cairo
             $where = "where uid=" . '?' . " and id=" . '?' . "";
             $where_conditions = [$uid, $book_id];
             $_id = $h->restateupdateData_Api($field_check_out, 'tbl_book', $where, $where_conditions);
-            $whatsapp = sendMessage([$guest_ccode . $guest_mobile], $checkout_Message);
-            $firebase_notification = sendFirebaseNotification($checkout_title, $checkout_Message, $uid, 'booking_id', $book_id, $prop_img);
+            //$whatsapp = sendMessage([$guest_ccode . $guest_mobile], $checkout_Message);
+            //$firebase_notification = sendFirebaseNotification($checkout_title, $checkout_Message, $uid, 'booking_id', $book_id, $prop_img);
         }
     }
 } catch (Exception $e) {

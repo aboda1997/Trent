@@ -66,8 +66,8 @@ try {
             $where = "where uid=" . '?' . " and id=" . '?' . "";
             $where_conditions = [$uid, $book_id];
             $_id = $h->restateupdateData_Api($field_check_in, 'tbl_book', $where, $where_conditions);
-            $whatsapp = sendMessage([$guest_ccode . $guest_mobile], $checkin_Message);
-            $firebase_notification = sendFirebaseNotification($checkin_title, $checkin_Message, $uid, 'booking_id', $book_id, $prop_img);
+            //$whatsapp = sendMessage([$guest_ccode . $guest_mobile], $checkin_Message);
+            //$firebase_notification = sendFirebaseNotification($checkin_title, $checkin_Message, $uid, 'booking_id', $book_id, $prop_img);
         }
     }
 } catch (Exception $e) {
