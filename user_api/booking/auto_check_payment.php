@@ -25,7 +25,7 @@ try {
 
     // Get current time in Cairo
     $currentDateTime = new DateTime('now', $cairoTimezone);
-    $fourHoursAgo = (clone $currentDateTime)->modify('-4 hours');
+    $fourHoursAgo = (clone $currentDateTime)->modify('-1 hours');
 
 
     while ($row = $sel2->fetch_assoc()) {
