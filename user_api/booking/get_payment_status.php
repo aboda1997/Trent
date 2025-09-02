@@ -16,7 +16,8 @@ try {
     $final_total = isset($_GET['final_total']) ? $_GET['final_total'] : null;
     $non_completed_data = $rstate->query("select id from tbl_non_completed where id='" .  $item_id . "'")->num_rows;
     $book_data = $rstate->query("select id from tbl_book where item_copy= '" .  $item_id . "'")->num_rows;
-
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $created_at = $date->format('Y-m-d H:i:s');
     if ($final_total == null) {
         $returnArr = generateResponse('false', 'you must enter the total paid value', 400);
     } else if ($item_id == 0) {
@@ -30,6 +31,8 @@ try {
     } else {
         $where_conditions = [$item_id];
         $where = "where  id=" . '?' . "";
+        $where2_conditions = [$item_id];
+        $where2 = "where  item_id=" . '?' . "";
         $h = new Estate();
 
         $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
@@ -40,14 +43,17 @@ try {
         ];
         $method = $paymentMethods[$pay_status['method']] ?? '';
         if ($pay_status['status']) {
-            $field = array('ref_number' => $merchant_ref_number,  'active' => '1',  'method' => $method , 'fawry_number' =>$pay_status['ref']);
+            $field = array('order_status' => $pay_status['orderStatus'], 'ref_number' => $merchant_ref_number,  'active' => '1',  'method' => $method, 'fawry_number' => $pay_status['ref']);
 
             $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
         } else {
-            $field1 = array('ref_number' => $merchant_ref_number,   'method' => $method , 'fawry_number' =>$pay_status['ref']);
+            $field1 = array('order_status' => $pay_status['orderStatus'], 'ref_number' => $merchant_ref_number,   'method' => $method, 'fawry_number' => $pay_status['ref']);
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where, $where_conditions);
         }
+        $field2 = array('ref_number' => $merchant_ref_number, 'payment_at' => $created_at);
+
+        $check2 = $h->restateupdateData_Api($field2, 'tbl_book', $where2, $where2_conditions);
         $returnArr    = generateResponse('true', "Payment status Founded", 200, array("status" => $pay_status['status']));
     }
     echo $returnArr;

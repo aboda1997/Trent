@@ -22,11 +22,13 @@ try {
     $orderStatus = $inputData['orderStatus'] ?? '';
     $paymentMethod = $inputData['paymentMethod'] ?? '';
     $itemCode = $inputData['orderItems'][0]['itemCode'] ?? 0;
-    $checkKey = $rstate->query("SELECT id FROM payment WHERE merchantRefNumber = '" . $merchantRefNumber . "'");
+    $checkKey = $rstate->query("SELECT * FROM payment WHERE merchantRefNumber = '" . $merchantRefNumber . "'");
     $get_secure_key = $rstate->query("select merchant_code ,secure_key from tbl_setting ");
     $secureKey = $get_secure_key->fetch_assoc()['secure_key'];
     $decrypted_secure_key = decryptData($secureKey,  dirname(dirname(__FILE__), 2) . '/keys/private.pem');
     $h = new Estate();
+    $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+    $created_at = $date->format('Y-m-d H:i:s');
     $paymentMethods = [
         'CARD' => 'CARD',
         'Mobile Wallet' => 'MWALLET',
@@ -43,23 +45,30 @@ try {
         $_id = $h->restateupdateData_Api($field_values, 'payment', $where, $where_conditions);
 
 
+        $where2_conditions = [$itemCode];
+        $where2 = "where  item_id=" . '?' . "";
         if ($orderStatus == "PAID") {
             if (strpos($itemCode, 'item') === 0) {
+                $field2 = array('ref_number' => $merchantRefNumber, 'payment_at' => $created_at);
+
+                $check2 = $h->restateupdateData_Api($field2, 'tbl_book', $where2, $where2_conditions);
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
 
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method,  'fawry_number' => $fawryRefNumber);
+                $field = array('order_status' => $orderStatus, 'ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method,  'fawry_number' => $fawryRefNumber);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
-
                 $t = save_booking($itemCode, $merchantRefNumber, $method);
             }
         } else {
 
-            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method,   'fawry_number' => $fawryRefNumber);
+            $field1 = array('order_status' => $orderStatus, 'ref_number' => $merchantRefNumber,  'method' => $method,   'fawry_number' => $fawryRefNumber);
             $where1 = "where  id=" . '?' . "";
             $where_conditions1 = [$itemCode];
+            $field2 = array('ref_number' => $merchantRefNumber, 'payment_at' => $created_at);
+
+            $check2 = $h->restateupdateData_Api($field2, 'tbl_book', $where2, $where2_conditions);
 
             $check = $h->restateupdateData_Api($field1, 'tbl_non_completed', $where1, $where_conditions1);
         }
@@ -76,21 +85,28 @@ try {
             $itemCode
         ];
 
+        $where2_conditions = [$itemCode];
+        $where2 = "where  item_id=" . '?' . "";
         $returnArr    = generateResponse('true', "Success", 200);
         $check = $h->restateinsertdata_Api($field_values, $data_values, 'payment');
         if ($orderStatus == "PAID") {
             if (strpos($itemCode, 'item') === 0) {
+                $field2 = array('ref_number' => $merchantRefNumber, 'payment_at' => $created_at);
+
+                $check2 = $h->restateupdateData_Api($field2, 'tbl_book', $where2, $where2_conditions);
                 complete_paying($itemCode, $merchantRefNumber);
             } else {
-                $field = array('ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method, 'fawry_number' => $fawryRefNumber);
+                $field = array('order_status' => $orderStatus, 'ref_number' => $merchantRefNumber,  'active' => '1',  'method' => $method, 'fawry_number' => $fawryRefNumber);
                 $where1 = "where  id=" . '?' . "";
                 $where_conditions1 = [$itemCode];
                 $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where1, $where_conditions1);
-
                 save_booking($itemCode, $merchantRefNumber, $method);
             }
         } else {
-            $field1 = array('ref_number' => $merchantRefNumber,  'method' => $method,  'fawry_number' => $fawryRefNumber);
+            $field2 = array('ref_number' => $merchantRefNumber, 'payment_at' => $created_at);
+            $check2 = $h->restateupdateData_Api($field2, 'tbl_book', $where2, $where2_conditions);
+
+            $field1 = array('order_status' => $orderStatus, 'ref_number' => $merchantRefNumber,  'method' => $method,  'fawry_number' => $fawryRefNumber);
             $where1 = "where  id=" . '?' . "";
             $where_conditions1 = [$itemCode];
 

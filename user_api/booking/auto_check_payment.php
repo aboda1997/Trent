@@ -20,6 +20,14 @@ try {
                         and `status`   = '1'
                         and `ref_number`   != ''
                         ORDER BY `id` DESC");
+
+    $sel1 = $rstate->query("SELECT ref_number ,payment_at,item_id,reminder_value ,book_status
+                        FROM `tbl_book` 
+                        WHERE `ref_number` != '' 
+                        and `item_id`   != ''
+                        and `book_status`   = 'Confirmed'
+                        ORDER BY `id` DESC");
+
     $cairoTimezone = new DateTimeZone('Africa/Cairo');
 
 
@@ -38,7 +46,27 @@ try {
         if ($createdDateTime > $fourHoursAgo) {
             $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
             if ($pay_status['status']) {
+                $field = array('order_status' => $pay_status['orderStatus'],  'active' => '1');
+
+                $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
+
                 save_booking($item_id, $merchant_ref_number, $method);
+            }
+        }
+    }
+
+    while ($row = $sel1->fetch_assoc()) {
+        $created_at = $row['payment_at'];
+        $createdDateTime = new DateTime($created_at, $cairoTimezone);
+        $merchant_ref_number = $row['ref_number'];
+        $item_id = $row['item_id'];
+        $final_total = $row['reminder_value'];
+        if ($createdDateTime > $fourHoursAgo) {
+            $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
+
+            if ($pay_status['status']) {
+
+                complete_paying($item_id, $merchant_ref_number);
             }
         }
     }

@@ -629,6 +629,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
 
     // Calculate the timestamp 3 hours ago in Cairo time
     $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
+    $hour_ago = date('Y-m-d H:i:s', strtotime('-60 minutes'));
 
     // Build the SQL query
     $sql = "SELECT f1 as check_in, f2 as check_out
@@ -636,7 +637,9 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
     AND (
-        (status = 1 AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "')
+        (status = 1 AND ref_number ='' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "')
+        OR 
+        (status = 1 AND ref_number !='' AND order_status ='NEW' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "' )
         OR 
         (active = 1)
     )";
@@ -783,17 +786,17 @@ function validatePeriod($booking_id)
 }
 
 
-function cancel_booking($booking_id , $cancel_by , $cancel_id)
+function cancel_booking($booking_id, $cancel_by, $cancel_id)
 {
     $h = new Estate();
     $where_conditions = [$booking_id];
-    $field = array('book_status' => 'Cancelled','cancel_by' => $cancel_by,'cancle_reason' => $cancel_id);
+    $field = array('book_status' => 'Cancelled', 'cancel_by' => $cancel_by, 'cancle_reason' => $cancel_id);
     $where = "where  id=" . '?' . "";
 
     $check = $h->restateupdateData_Api($field, 'tbl_book', $where, $where_conditions);
     return $check > 0;
 }
-function refundMoney($uid, $booking_id , $cancel_by , $cancel_id)
+function refundMoney($uid, $booking_id, $cancel_by, $cancel_id)
 {
     $updateSql = "Select total ,reminder_value , method_key , pay_status , check_in from  tbl_book 
                       WHERE id = $booking_id";
@@ -807,9 +810,9 @@ function refundMoney($uid, $booking_id , $cancel_by , $cancel_id)
     $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
     $updated_at = $date->format('Y-m-d H:i:s');
     $check_in_str = $data['check_in'];
-   
+
     $where_conditions = [$booking_id];
-    $field = array('book_status' => 'Cancelled', 'refunded' => 1 ,'cancel_by' => $cancel_by,'cancle_reason' => $cancel_id);
+    $field = array('book_status' => 'Cancelled', 'refunded' => 1, 'cancel_by' => $cancel_by, 'cancle_reason' => $cancel_id);
     $where = "where  id=" . '?' . "";
 
     $partial_value = ($data['pay_status'] == 'Completed') ? number_format($data['total'], 2, '.', '') : number_format($data['total'] - $data['reminder_value'], 2, '.', '');

@@ -55,22 +55,8 @@ function getPaymentStatus($merchant_ref_number, $item_id, $total_as_int)
             $successfulAttempt['orderStatus'] == 'PAID' &&
             $successfulAttempt['itemCode'] == $item_id &&
             abs($pull_amount - $total_as_int) < 2
-        ), 'method' =>  $pull_method,  'ref' => $pull_ref_number];
+        ), 'method' =>  $pull_method,  'ref' => $pull_ref_number , 'orderStatus' =>  $successfulAttempt['orderStatus']];
     }
-    if ($check_push_pay->num_rows && !$successfulAttempt) { //
-        $check_push_pay->data_seek(0);
-        $check_push_pay_data = $check_push_pay->fetch_assoc();
-        // $push_amount = (int)$check_push_pay_data['orderAmount'];
-        $push_amount = (int)$check_push_pay_data['orderAmount'];
-        $push_method = $check_push_pay_data['paymentMethod'];
-        $push_ref_number = $check_push_pay_data['fawryRefNumber'];
-        // Verify all conditions with integer comparison
-        return ['status' => (
-
-            $check_push_pay_data['orderStatus'] == 'PAID' &&
-            $check_push_pay_data['itemId'] == $item_id &&
-            abs($push_amount - $total_as_int) < 2
-        ), 'method' =>  $push_method,  'ref' => $push_ref_number];
-    }
-    return ['status' => false, 'method' => '', 'ref' => ''];
+    
+    return ['status' => false, 'method' => '', 'ref' => '' , 'orderStatus' => ''];
 }

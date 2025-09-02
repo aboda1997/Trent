@@ -285,7 +285,7 @@ try {
                         throw new Exception("Insert failed");
                     }
                     $where_conditions = [$item_id];
-                    $field = array('completed' => '1', 'active' => '0',  'book_id' => $book_id);
+                    $field = array('order_status'=> 'Paid' ,'completed' => '1', 'active' => '0',  'book_id' => $book_id);
                     $where = "where  id=" . '?' . "";
 
                     $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
@@ -316,7 +316,7 @@ try {
                         }
                         $fp['book_id'] = $book_id;
                         $where_conditions = [$item_id];
-                        $field = array('completed' => '1', 'active' => '0',  'book_id' => $book_id);
+                        $field = array('order_status'=> 'Paid',  'completed' => '1', 'active' => '0',  'book_id' => $book_id);
                         $where = "where  id=" . '?' . "";
 
                         $check = $h->restateupdateData_Api($field, 'tbl_non_completed', $where, $where_conditions);
