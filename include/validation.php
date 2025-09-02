@@ -639,7 +639,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     AND (
         (status = 1 AND ref_number ='' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "')
         OR 
-        (status = 1 AND ref_number !='' AND order_status ='NEW' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "' )
+        (status = 1 AND ref_number !='' AND order_status IN ('NEW', 'UNPAID') AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "' )
         OR 
         (active = 1)
     )";
