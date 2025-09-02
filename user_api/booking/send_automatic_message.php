@@ -168,7 +168,7 @@ try {
         شكرًا لاستخدامك Trent، ونشوفك في حجز جديد قريب إن شاء الله!
         فريق Trent دايمًا معاك ✨";
         $checkout_title = "تذكير بمغادرة الوحدة - Trent";
-        if ($interval->invert == 0 && $hoursDifference <= 48) {
+        if ($interval->invert == 0 && $hoursDifference <= 24) {
             $whatsapp = sendMessage([$guest_ccode . $guest_mobile], $checkout_Message);
             $firebase_notification = sendFirebaseNotification($checkout_title, $checkout_Message, $uid, 'booking_id', $book_id, $prop_img);
             
