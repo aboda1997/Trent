@@ -637,7 +637,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
     WHERE prop_id = " . (int)$pro_id . " 
     AND uid != " . (int)$uid . "  -- Exclude records from the given user ID
     AND (
-        (status = 1 AND ref_number ='' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($thirty_minutes_ago) . "')
+        (status = 1 AND ref_number ='' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "')
         OR 
         (status = 1 AND ref_number !='' AND order_status ='NEW' AND created_at > '" . $GLOBALS['rstate']->real_escape_string($hour_ago) . "' )
         OR 
