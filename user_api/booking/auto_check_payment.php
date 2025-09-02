@@ -43,6 +43,8 @@ try {
         $item_id = $row['id'];
         $method = $row['method'];
         $final_total = $row['partial_value'];
+        $where = "where  id=" . '?' . "";
+        $where_conditions = [$item_id];
         if ($createdDateTime > $fourHoursAgo) {
             $pay_status = getPaymentStatus($merchant_ref_number, $item_id, (int)$final_total);
             if ($pay_status['status']) {

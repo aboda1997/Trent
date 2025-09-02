@@ -629,7 +629,7 @@ function get_holding_property_dates(string $pro_id, $uid, $rstate)
 
     // Calculate the timestamp 3 hours ago in Cairo time
     $thirty_minutes_ago = date('Y-m-d H:i:s', strtotime('-30 minutes'));
-    $hour_ago = date('Y-m-d H:i:s', strtotime('-36 minutes'));
+    $hour_ago = date('Y-m-d H:i:s', strtotime('-60 minutes'));
 
     // Build the SQL query
     $sql = "SELECT f1 as check_in, f2 as check_out
