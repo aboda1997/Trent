@@ -9,4 +9,4 @@ assets/
 /vendor/*
 !vendor/autoload.php
 /vendor/composer
-/keys/
+keys/
