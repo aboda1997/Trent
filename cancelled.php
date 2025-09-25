@@ -120,13 +120,13 @@ if (!in_array('Read_Booking', $per)) {
                       // Add search condition if search term exists
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
                         $search_term = $rstate->real_escape_string($_GET['search']);
-                        $query .= " AND (prop_id LIKE '%$search_term%' OR prop_title LIKE '%$search_term%')";
+                        $query .= " AND (prop_id LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_title LIKE '%$search_term%')";
                       }
 
                       // Get total number of records
                       $count_query = "SELECT COUNT(*) as total FROM tbl_book WHERE book_status='Cancelled'";
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
-                        $count_query .= " AND (prop_id LIKE '%$search_term%' OR prop_title LIKE '%$search_term%')";
+                        $count_query .= " AND (prop_id LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_title LIKE '%$search_term%')";
                       }
 
                       $count_result = $rstate->query($count_query);
@@ -152,9 +152,18 @@ if (!in_array('Read_Booking', $per)) {
                           $host = $rstate->query("SELECT name, mobile,ccode FROM tbl_user WHERE id = $host_id")->fetch_assoc();
                           $guest = $rstate->query("SELECT name, mobile ,ccode FROM tbl_user WHERE id = $guest_id")->fetch_assoc();
 
-                          $cancel_reason = ($cancel_by == "Host")
-                            ? $rstate->query("SELECT reason FROM tbl_cancel_reason WHERE id = $cancel_id")->fetch_assoc()
-                            : $rstate->query("SELECT reason FROM tbl_user_cancel_reason WHERE id = $cancel_id")->fetch_assoc();
+                          if ($cancel_id == '0') {
+                            $cancel_reason = 'passed without confirmation';
+                          } else if ($cancel_id == -'1') {
+                            $cancel_reason = 'passed without complete paying';
+                          } else if ($cancel_id == '-2') {
+                            $cancel_reason = 'passed without checkin';
+                          } else {
+                            $cancel_reason = ($cancel_by == "Host" || $cancel_by == "Admin")
+                              ? $rstate->query("SELECT reason FROM tbl_cancel_reason WHERE id = $cancel_id")->fetch_assoc()
+                              : $rstate->query("SELECT reason FROM tbl_user_cancel_reason WHERE id = $cancel_id")->fetch_assoc();
+                            $cancel_reason = json_decode($cancel_reason['reason'] ?? "", true)[$lang_code] ?? "";
+                          }
                       ?>
                           <tr>
                             <td><?php echo $i; ?></td>
@@ -166,13 +175,18 @@ if (!in_array('Read_Booking', $per)) {
                             <td class="align-middle"><?php echo ($host['ccode'] ?? '') . ($host['mobile'] ?? ''); ?></td>
                             <td class="align-middle"><?php echo $cancel_by; ?></td>
                             <td class="align-middle">
-                              <?php echo json_decode($cancel_reason['reason'] ?? "", true)[$lang_code] ?? ""; ?>
+                              <?php echo $cancel_reason; ?>
                             </td>
                             <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
                               <td style="white-space: nowrap; width: 15%;">
                                 <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
                                   <div class="btn-group btn-group-sm" style="float: none;">
                                     <button class="btn btn-info preview_d" style="float: none; margin: 5px;" data-id="<?php echo $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#myModal">View Details</button>
+                                    <button type="button" class="btn btn-danger" style="float: none; margin: 5px;"
+                                      data-toggle="modal" data-target="#confirmModal"
+                                      data-id="<?php echo $row['id']; ?>">
+                                      Revert book
+                                    </button>
                                   </div>
                                 </div>
                               </td>
@@ -265,7 +279,33 @@ if (!in_array('Read_Booking', $per)) {
 
   </div>
 </div>
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Revert Booking</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>This operation may cause booking conflict Are you sure you want to Revert this booking?</p>
 
+        <form id="confirmForm">
+          <input type="hidden" id="confirmId" name="id">
+
+          <input type="hidden" name="type" value="reset_book" />
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmBooking">Revert</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg ">
 
@@ -430,7 +470,66 @@ if (!in_array('Read_Booking', $per)) {
     }
   });
 </script>
+<script>
+  $(document).ready(function() {
 
+    $('#confirmModal').on('show.bs.modal', function(event) {
+      const button = $(event.relatedTarget); // Button that triggered the modal
+      const bookingId = button.data('id'); // If you need booking ID
+
+      $('#confirmId').val(bookingId);
+    });
+
+
+
+    $('#confirmBooking').click(function() {
+      // Disable the button to prevent multiple clicks
+      var saveButton = $(this);
+      saveButton.prop('disabled', true);
+      var formData = $('#confirmForm').serialize();
+
+      // Here you would typically make an AJAX call to save the data
+      $.ajax({
+        url: "include/property.php",
+        type: "POST",
+        data: formData,
+        success: function(response) {
+          let res = JSON.parse(response); // Parse the JSON response
+
+          if (res.ResponseCode === "200" && res.Result === "true") {
+            $('#confirmModal').removeClass('show');
+            $('#confirmModal').css('display', 'none');
+            $('.modal-backdrop').remove(); // Remove the backdrop
+
+            // Display notification
+            $.notify('<i class="fas fa-bell"></i>' + res.title, {
+              type: 'theme',
+              allow_dismiss: true,
+              delay: 2000,
+              showProgressbar: true,
+              timer: 300,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp',
+              },
+            });
+
+            // Redirect after a delay if an action URL is provided
+            if (res.action) {
+              setTimeout(function() {
+                window.location.href = res.action;
+              }, 2000);
+            }
+          } else {
+            alert("an error occurred ");
+          }
+        }
+      });
+
+    });
+
+  });
+</script>
 <!-- latest jquery-->
 <?php
 require 'include/footer.php';

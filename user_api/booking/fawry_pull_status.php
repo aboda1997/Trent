@@ -33,13 +33,17 @@ function getFawryPaymentStatus($merchantCode, $merchantRefNumber, $signature) {
 
     // Extract payment status and item code
     $orderStatus = $data['orderStatus'] ?? null;
+    $paymentMethod = $data['paymentMethod'] ?? null;
     $orderAmount = $data['orderAmount'] ?? null;
+    $fawryRefNumber = $data['fawryRefNumber'] ?? null;
     $itemCode = $data['orderItems'][0]['itemCode'] ?? null; // Assuming first item
 
     return [
         'status' => true,
         'orderStatus' => $orderStatus,
+        'paymentMethod' => $paymentMethod,
         'orderAmount' => $orderAmount,
+        'fawryRefNumber' => $fawryRefNumber,
         'itemCode' => $itemCode
     ];
 }

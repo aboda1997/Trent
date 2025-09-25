@@ -39,7 +39,7 @@ if (!in_array('Read_Booking', $per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                Check In Booking Management</h3>
+                On Going Booking Management</h3>
             </div>
             <div class="col-6">
 
@@ -120,13 +120,13 @@ if (!in_array('Read_Booking', $per)) {
                       // Add search condition if search term exists
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
                         $search_term = $rstate->real_escape_string($_GET['search']);
-                        $query .= " AND (prop_title LIKE '%$search_term%' OR prop_id LIKE '%$search_term%')";
+                        $query .= " AND (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
                       }
 
                       // Get total number of records
                       $count_query = "SELECT COUNT(*) as total FROM tbl_book WHERE book_status='Check_in'";
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
-                        $count_query .= " AND (prop_title LIKE '%$search_term%' OR prop_id LIKE '%$search_term%')";
+                        $count_query .= " AND (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
                       }
 
                       $count_result = $rstate->query($count_query);

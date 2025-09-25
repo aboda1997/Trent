@@ -125,7 +125,7 @@ if (!in_array('Read_Booking', $per)) {
                       // Add search condition if search term exists
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
                         $search_term = $rstate->real_escape_string($_GET['search']);
-                        $query .= " AND (b.prop_title LIKE '%$search_term%' OR b.prop_id LIKE '%$search_term%')";
+                        $query .= " AND (b.prop_title LIKE '%$search_term%' OR b.id LIKE '%$search_term%'  OR  b.prop_id LIKE '%$search_term%')";
                       }
 
                       // Get total number of records
@@ -133,7 +133,7 @@ if (!in_array('Read_Booking', $per)) {
                                      FROM tbl_book b
                                      WHERE b.book_status='Completed'";
                       if (isset($_GET['search']) && !empty($_GET['search'])) {
-                        $count_query .= " AND (b.prop_title LIKE '%$search_term%' OR b.id LIKE '%$search_term%')";
+                        $count_query .= " AND (b.prop_title LIKE '%$search_term%' OR b.id LIKE '%$search_term%'  OR b.id LIKE '%$search_term%')";
                       }
 
                       $count_result = $rstate->query($count_query);

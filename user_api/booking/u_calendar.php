@@ -27,8 +27,9 @@ try {
 
 		// Remove duplicate dates
 		 [$date_hold,$new_check_list] = get_holding_property_dates($pro_id, $uid, $rstate);
+		 //var_dump($date_hold);
 		// Remove duplicate dates
-		$combined_dates = array_unique(array_merge($date_hold, $date_list));
+		$combined_dates = array_unique(array_merge(array_keys($date_hold), $date_list));
 		// Sort the dates
 		sort($combined_dates);
 		$returnArr    = generateResponse('true', "Book Date List  Founded!", 200, array(

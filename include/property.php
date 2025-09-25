@@ -193,7 +193,7 @@ try {
                 $data_values = array("$username", "$password", "Staff", 1);
                 $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
                  'Read_Property','Create_Slider','Update_Slider','Read_Slider',
-                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Cancel_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',
@@ -240,7 +240,7 @@ try {
                 $data_values = array("$username", "$password", "Staff");
                 $result = $rstate->query("select id from permissions   WHERE name IN ('Create_Property', 'Update_Property',
                  'Read_Property','Create_Slider','Update_Slider','Read_Slider',
-                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking','Delete_Booking',
+                'Delete_Slider','Create_Booking','Update_Booking','Read_Booking',
                 'Create_Cancellation_Policy','Update_Cancellation_Policy','Read_Cancellation_Policy','Delete_Cancellation_Policy',
                 'Create_Chat','Update_Chat','Read_Chat','Delete_Chat',
                 'Create_Reason','Update_Cancel_Reason','Read_Cancel_Reason','Delete_Cancel_Reason',
@@ -1270,13 +1270,7 @@ try {
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
-                        } else {
-                            // Handle error if video couldn't be moved
-                            $returnArr = generateDashboardResponse(500, "false", "Failed to upload video.", "", "list_properties.php");
                         }
-                    } else {
-                        // Handle invalid video type
-                        $returnArr = generateDashboardResponse(400, "false", "Invalid video type.", "", "list_properties.php");
                     }
                 }
             }
@@ -1399,6 +1393,7 @@ try {
             $propowner = $_POST['propowner'];
 
             $period = $_POST['period'];
+            $visibility = $_POST['visibility'] ?? 0;
             $featured = $_POST['featured'];
             $title_en = $rstate->real_escape_string($_POST["title_en"]);
             $address_en = $rstate->real_escape_string($_POST["address_en"]);
@@ -1539,7 +1534,6 @@ try {
                         // Generate a unique file name for the uploaded video
                         $videoName = time() . '_' . $video['name'];
                         $destination = $uploadDirVideos . $videoName;
-
                         // Move the uploaded video to the destination folder
                         if (move_uploaded_file($video['tmp_name'], $destination)) {
                             $videoUrls[] = 'videos/property/' . $videoName;
@@ -1592,7 +1586,8 @@ try {
                 "min_days" => "$min_days",
                 "cancel_reason" => "$cancel_reason",
                 'updated_at' => $updated_at,
-                'is_need_review' => $need_review
+                'is_need_review' => $need_review,
+                'visibility' => $visibility
             ];
             if (!empty($imageUrls)) {
                 $field_values["image"] =  $imageUrlsString . ',' . $existing_images;
@@ -1602,10 +1597,7 @@ try {
 
             if (!empty($videoUrls)) {
                 $field_values["video"] =  $videoUrlsString;
-            } else {
-
-                $field_values["video"] =  "";
-            }
+            } 
             if (is_array($inc_value_ranges) &&  !isset($returnArr)) {
                 $jsonResponse    =  add_specific_ranges_increased_value('en', $propowner, $id, $inc_value_ranges);
                 $response = json_decode($jsonResponse, true); // true for associative array
@@ -3735,6 +3727,34 @@ WHERE
                 "message" => "Whatsup section!",
                 "action" => "users.php",
             ];
+        } elseif ($_POST["type"] == "delete_on_hold_booking") {
+            $ids = implode(',', $_POST['user_ids']);
+
+            $query = "SELECT 
+                u.id
+            FROM 
+                tbl_non_completed u
+            WHERE 
+             u.id IN ($ids)";
+            $sel = $rstate->query($query);
+            while ($row = $sel->fetch_assoc()) {
+
+
+                $table = "tbl_non_completed";
+                $field = array('status' => '0');
+                $where = "where id=" . '?' . "";
+                $where_conditions = [$row['id']];
+                $h = new Estate();
+                $check = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
+            }
+
+            $returnArr = [
+                "ResponseCode" => "200",
+                "Result" => "true",
+                "title" => "Temporal booking Deleted successfully!!",
+                "message" => "Whatsup section!",
+                "action" => "temporal_booking.php",
+            ];
         } elseif ($_POST["type"] == "send_owner_whatsup_message") {
             $ids = implode(',', $_POST['user_ids']);
             $message =  $_POST['message'];
@@ -3770,11 +3790,22 @@ WHERE
             $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
             $updated_at = $date->format('Y-m-d H:i:s');
 
+            $balance = '0.00';
+            $sell = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$owner  . " order by id desc");
+            while ($dat = $sell->fetch_assoc()) {
+
+                if ($dat['status'] == 'Adding') {
+                    $balance = bcadd($balance, $dat['amt'], 2);
+                } else if ($dat['status'] == 'Withdraw') {
+                    $balance = bcsub($balance, $dat['amt'], 2);
+                }
+            }
             $title = "Money Added successfully!!";
             $status = 'Adding';
             if ($money < 0) {
                 $title =  "Money withdrawed successfully!!";
                 $status = 'Withdraw';
+                $money = -1 * $money;
             }
             $field_values = array("uid", "EmployeeId", "message", "status", "amt", "tdate");
 
@@ -3782,16 +3813,26 @@ WHERE
             if (!$added_by) {
                 throw new Exception("unauthorized Operation");
             }
-            $h = new Estate();
-            $data_values = array("$owner", "$added_by", "$notes", "$status", "$money", "$updated_at");
-            $h->restateinsertdata_Api($field_values, $data_values, $table);
-            $returnArr = [
-                "ResponseCode" => "200",
-                "Result" => "true",
-                "title" => $title,
-                "message" => "Whatsup section!",
-                "action" => "add_money.php",
-            ];
+            if ($status== 'Withdraw' && $balance < $money) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => 'no sufficient balance',
+                    "message" => "Whatsup section!",
+                    "action" => "add_money.php",
+                ];
+            } else {
+                $h = new Estate();
+                $data_values = array("$owner", "$added_by", "$notes", "$status", "$money", "$updated_at");
+                $h->restateinsertdata_Api($field_values, $data_values, $table);
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => $title,
+                    "message" => "Whatsup section!",
+                    "action" => "add_money.php",
+                ];
+            }
         } elseif ($_POST["type"] == "cancel_book") {
             $id = $_POST["id"];
             $uid = $_POST["uid"];
@@ -3821,7 +3862,7 @@ WHERE
             $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
 
             if ($check) {
-                refundMoney($guest_uid, $id);
+                refundMoney($guest_uid, $id, 'A', $deny_id);
                 $whatsapp = sendMessage([$ccode . $mobile], $message);
                 $firebase_notification = sendFirebaseNotification($title_, $message, $guest_uid,  "booking_id", $id);
 
@@ -3831,6 +3872,87 @@ WHERE
                     "title" => "Booking Cancelled Successfully!!",
                     "message" => "APProval section!",
                     "action" => "pending.php",
+                ];
+            }
+        } else if ($_POST["type"] == "reset_book") {
+            $id = $_POST["id"];
+            $table = "tbl_book";
+            $where = "where id=" . '?' . "";
+            $where_conditions = [$id];
+            $query = "SELECT 
+                refunded,confirmed_at , pay_status , total ,reminder_value ,uid 
+            FROM 
+                tbl_book 
+            WHERE 
+             id = $id ";
+            $data = $rstate->query($query)->fetch_assoc();
+            $partial_value = ($data['pay_status'] == 'Completed') ? number_format($data['total'], 2, '.', '') : number_format($data['total'] - $data['reminder_value'], 2, '.', '');
+
+            $field = array('book_status' => 'Booked', 'refunded' => 0);
+
+            $uid = $data['uid'];
+            $balance = '0.00';
+            $sell = $rstate->query("select id ,message,status,amt,tdate from wallet_report where uid=" . (int)$uid  . " order by id desc");
+            while ($dat = $sell->fetch_assoc()) {
+
+                if ($dat['status'] == 'Adding') {
+                    $balance = bcadd($balance, $dat['amt'], 2);
+                } else if ($dat['status'] == 'Withdraw') {
+                    $balance = bcsub($balance, $dat['amt'], 2);
+                }
+            }
+            if ($data['refunded'] && $balance < $partial_value) {
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Wallet balance not sufficient to revert booking!!",
+                    "message" => "APProval section!",
+                    "action" => "cancelled.php",
+                ];
+            } else if ($data['refunded']  && $balance >= $partial_value) {
+                $date = new DateTime('now', new DateTimeZone('Africa/Cairo'));
+                $updated_at = $date->format('Y-m-d H:i:s');
+                $notes = "Refund Withdrawed successfully!!";
+                $status = 'Withdraw';
+                $field_values = array("uid", "EmployeeId", "message", "status", "amt", "tdate");
+                $h = new Estate();
+                $added_by = $_SESSION['id'];
+                if (!$added_by) {
+                    throw new Exception("unauthorized Operation");
+                }
+                $data_values = array("$uid", $added_by, "$notes", "$status", "$partial_value", "$updated_at");
+                $GLOBALS['rstate']->begin_transaction();
+                $check = $h->restateupdateData_Api($field, 'tbl_book', $where, $where_conditions);
+                if (!$check) {
+                    throw new Exception("update failed");
+                }
+                $wallet_id = $h->restateinsertdata_Api($field_values, $data_values, 'wallet_report');
+                if (!$wallet_id) {
+                    throw new Exception("Insert failed");
+                }
+                $GLOBALS['rstate']->commit();
+
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Booking reverted Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "cancelled.php",
+                ];
+            } else {
+                $h = new Estate();
+
+                $GLOBALS['rstate']->begin_transaction();
+                $check = $h->restateupdateData_Api($field, 'tbl_book', $where, $where_conditions);
+
+                $GLOBALS['rstate']->commit();
+
+                $returnArr = [
+                    "ResponseCode" => "200",
+                    "Result" => "true",
+                    "title" => "Booking reverted Successfully!!",
+                    "message" => "APProval section!",
+                    "action" => "cancelled.php",
                 ];
             }
         } elseif ($_POST["type"] == "confirm_book") {
@@ -3978,13 +4100,13 @@ function approve_property($rstate, $uid, $title_ar, $id)
 
     $new_mobile   = $sel['mobile'];
     $ccode   = $sel['ccode'];
-  $message = "اهلاً وسهلاً!\n\n"
-         . "تم نشر عقارك [$title_ar] بنجاح على منصة Trent\n\n"
-         . "* شارك رابط العقار مع الأصدقاء\n"
-         . "* تحديث بيانات العقار عند الحاجة\n\n"
-         . "نتمنى لك تأجيراً سريعاً ومكسب مستمر\n"
-         . "فريق Trent 📈\n"
-         . "https://www.trent.com.eg/properties/$id";
+    $message = "اهلاً وسهلاً!\n\n"
+        . "تم نشر عقارك [$title_ar] بنجاح على منصة Trent\n\n"
+        . "* شارك رابط العقار مع الأصدقاء\n"
+        . "* تحديث بيانات العقار عند الحاجة\n\n"
+        . "نتمنى لك تأجيراً سريعاً ومكسب مستمر\n"
+        . "فريق Trent 📈\n"
+        . "https://www.trent.com.eg/properties/$id";
     $title_ = 'تم نشر عقارك بنجاح! ';
     $result = sendMessage([$ccode . $new_mobile], $message);
     $firebase_notification = sendFirebaseNotification($title_, $message, $uid, "property_id", $id);

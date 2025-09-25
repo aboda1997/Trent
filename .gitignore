@@ -4,11 +4,12 @@
 wordpress/
 images/ 
 videos/ 
+keys/
 logs/logs 
 assets/ 
 /vendor/*
 !vendor/autoload.php
 /vendor/composer
-keys/
+
 # Explicitly ignore the composer folder (redundant but ensures safety)
 /vendor/composer/

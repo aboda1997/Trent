@@ -186,18 +186,9 @@ try {
 					// Move the uploaded video to the destination folder
 					if (move_uploaded_file($video['tmp_name'], $destination)) {
 						$videoUrls[] = 'videos/property/' . $videoName;
-					} else {
-						// Handle error if video couldn't be moved
-						$returnArr =  generateResponse("false", "Failed to upload video.", 500);
-					}
-				} else {
-					// Handle invalid video type
-					$returnArr =  generateResponse("false", "Invalid video type.", 400);
-				}
-			} else {
-				// Handle error during video upload
-				$returnArr =  generateResponse("false", "Error uploading video.", 400);
-			}
+					} 
+				} 
+			} 
 		}
 
 		// Convert arrays to comma-separated strings
@@ -282,7 +273,7 @@ try {
 			$h = new Estate();
 			$where_conditions = [$check];
 			$data = $h->restateupdateData_Api($field, $table, $where, $where_conditions);
-			sendPlainTextEmail( $subject, $body );
+			sendPlainTextEmail( $subject, $body  );
 			$returnArr    = generateResponse('true', "Property Added Successfully", 201, array("id" => $check, "title" => json_decode($title_json, true)));
 		} else {
 			$returnArr    = generateResponse('false', "Database error", 500);

@@ -39,7 +39,7 @@ if (!in_array('Read_Booking', $per)) {
           <div class="row">
             <div class="col-6">
               <h3>
-                Confirmed Booking Management</h3>
+                Failed Booking Management</h3>
             </div>
             <div class="col-6">
 
@@ -62,11 +62,11 @@ if (!in_array('Read_Booking', $per)) {
                       <input type="hidden" name="book_status" value="Confirmed" />
 
                       <!-- Export Button -->
-                      <div class="col-md-2">
+                      <!--<div class="col-md-2">
                         <button type="button" id="exportExcel" class="btn btn-success w-100">
                           <i class="fa fa-file-excel-o"></i> Export Excel
                         </button>
-                      </div>
+                      </div>-->
                     </div>
                   </form>
                 </div>
@@ -108,18 +108,15 @@ if (!in_array('Read_Booking', $per)) {
                           <th>Sr No.</th>
                           <th>Property ID</th>
                           <th>Property Title</th>
-                          <th>Property Image</th>
-                          <th>Property Price</th>
-                          <th>Property Total Day</th>
-                          <th>Host Name</th>
-                          <th>Host Contact </th>
+                          <th> From Date </th>
+                          <th> To Date </th>
+                          <th> Book Date </th>
                           <th>Guest Name</th>
                           <th>Guest Contact </th>
-                          <th>Confirmed By</th>
+                          <th> Error </th>
+                          <th> Item Id </th> 
 
-                          <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
-                            <th><?= $lang['Action'] ?></th>
-                          <?php endif; ?>
+                    
                         </tr>
                       </thead>
                       <tbody>
@@ -130,18 +127,18 @@ if (!in_array('Read_Booking', $per)) {
                         $page = max($page, 1);
 
                         // Base query
-                        $query = "SELECT * FROM tbl_book WHERE book_status='Confirmed'";
+                        $query = "SELECT * FROM tbl_failed_book ";
 
                         // Add search condition if search term exists
                         if (isset($_GET['search']) && !empty($_GET['search'])) {
                           $search_term = $rstate->real_escape_string($_GET['search']);
-                          $query .= " AND (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
+                          $query .= " where (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
                         }
 
                         // Get total number of records
-                        $count_query = "SELECT COUNT(*) as total FROM tbl_book WHERE book_status='Confirmed'";
+                        $count_query = "SELECT COUNT(*) as total FROM tbl_failed_book ";
                         if (isset($_GET['search']) && !empty($_GET['search'])) {
-                          $count_query .= " AND (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
+                          $count_query .= " where (prop_title LIKE '%$search_term%' OR id LIKE '%$search_term%'  OR prop_id LIKE '%$search_term%')";
                         }
 
                         $count_result = $rstate->query($count_query);
@@ -162,48 +159,27 @@ if (!in_array('Read_Booking', $per)) {
                           while ($row = $result->fetch_assoc()) {
                             $client_id = $row['uid'];
                             $client_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$client_id)->fetch_assoc();
-                            $owner_id = $row['add_user_id'];
-                            $owner_data = $rstate->query("SELECT * FROM tbl_user WHERE id=" . (int)$owner_id)->fetch_assoc();
 
                         ?>
                             <tr>
                               <td><?php echo $i; ?></td>
                               <td><?php echo $row['prop_id']; ?></td>
                               <td class="align-middle"><?php echo json_decode($row['prop_title'] ?? '')->en ?? ''; ?></td>
+                           
+                              <td class="align-middle"><?php echo $row['from_date'] ; ?></td>
+                              <td class="align-middle"><?php echo $row['to_date'] ; ?></td>
+                              <td class="align-middle"><?php echo $row['created_at'] ; ?></td>
+                             
                               <td class="align-middle">
-                                <img src="<?php
-                                          $imageArray = explode(',', $row['prop_img']);
-                                          echo !empty($imageArray[0]) ? $imageArray[0] : 'default_image.jpg';
-                                          ?>" width="70" height="80" />
-                              </td>
-                              <td class="align-middle"><?php echo $row['prop_price'] . 'EGP'; ?></td>
-                              <td class="align-middle"><?php echo $row['total_day'] . ' Days'; ?></td>
-                              <td class="align-middle">
-                                <?php echo $owner_data['name']  ?>
+                                <?php echo $client_data['name'] ?? ''  ?>
                               </td>
                               <td class="align-middle">
-                                <?php echo $owner_data['ccode'] . $owner_data['mobile']  ?>
+                                <?php echo ($client_data['ccode'] ??'') . ($client_data['mobile']??'')  ?>
                               </td>
-                              <td class="align-middle">
-                                <?php echo $client_data['name']  ?>
-                              </td>
-                              <td class="align-middle">
-                                <?php echo $client_data['ccode'] . $client_data['mobile']  ?>
-                              </td>
-                              <td><?php echo $row['confirmed_by']=='H'?'Host':"Admin"; ?></td>
+                              <td class="align-middle"><?php echo $row['error'] ; ?></td>
+                              <td class="align-middle"><?php echo $row['item_id'] ; ?></td>
 
-                              <?php if (in_array('Update_Booking', $per) || in_array('Delete_Booking', $per)): ?>
-                                <td style="white-space: nowrap; width: 15%;">
-                                  <div class="tabledit-toolbar btn-toolbar" style="text-align: left;">
-                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                      <button class="btn btn-info preview_d" style="float: none; margin: 5px;"
-                                        data-id="<?php echo $row['id']; ?>"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#myModal">View Details</button>
-                                    </div>
-                                  </div>
-                                </td>
-                              <?php endif; ?>
+                             
                             </tr>
                         <?php
                             $i++;

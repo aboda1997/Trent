@@ -92,6 +92,8 @@ if (!in_array('Read_Chat', $per)) {
                                         <thead>
                                             <tr>
                                                 <th>Sr No.</th>
+                                                <th>Property ID </th>
+
                                                 <th>Sender Name</th>
                                                 <th>Receiver Name</th>
                                                 <th>Sender Contact </th>
@@ -169,6 +171,7 @@ if (!in_array('Read_Chat', $per)) {
                                             ?>
                                                     <tr>
                                                         <td><?php echo $i; ?></td>
+                                                        <td class="align-middle"><?php echo $prop_id ?></td>
                                                         <td class="align-middle"><?php echo $row["sender_name"] ?></td>
                                                         <td class="align-middle"><?php echo $row["receiver_name"] ?></td>
                                                         <td class="align-middle"><?php echo $row["sender_ccode"] . $row["sender_mobile"] ?></td>

@@ -433,11 +433,12 @@ return [
     'guest_limit_exceeded' => 'Guest count exceeds persons limits',
     'general_validation_error' => 'Something went wrong. Ensure that sent data are correct',
     'invalid_date_range' => 'You must select at least %d days or at most %d days',
-
+    'invalid_months_count' => 'Not allow to book more than 6 months',
     'insufficient_wallet_balance' => 'Wallet balance not sufficient',
     'payment_validation_failed' => 'Payment validation failed!',
     'invalid_date_order' => 'From date must be earlier than to date',
-    'date_range_conflict' => 'Conflict from date and to date range with: %s',
+    'date_range_conflict' => 'Conflict: there are booking from %s to %s',
+
     'DATE_VALIDATION_ERROR' => 'from_date must be earlier than and not equal to to_date',
     'Approve' => 'Approve',
     'Reject' => 'Reject',
@@ -461,7 +462,7 @@ return [
     'excluded_dates' => 'Excluded Dates',
     'select_dates_exclude' => 'Select Dates to Exclude',
     'exclude_dates' => 'Exclude Dates',
-    
+
     'Select_City' => 'Select City',
     'Select_Compound' => 'Select Compound',
     'Select_Government_First' => 'Please select government first',
