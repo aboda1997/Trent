@@ -9,6 +9,6 @@ assets/
 /vendor/*
 !vendor/autoload.php
 /vendor/composer
-/keys
+keys/
 # Explicitly ignore the composer folder (redundant but ensures safety)
 /vendor/composer/
