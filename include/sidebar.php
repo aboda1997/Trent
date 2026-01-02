@@ -338,10 +338,12 @@ if (isset($_SESSION['restatename'])) {
                 ?>
                   <li><a href="pending.php">Pending Booking</a></li>
                   <li><a href="approved.php">Approved Booking</a></li>
-                  <li><a href="check_in.php">Check In Booking</a></li>
+                  <li><a href="check_in.php">On Going Booking</a></li>
                   <li><a href="completed.php">Completed Booking</a></li>
                   <li><a href="cancelled.php">Cancelled Booking</a></li>
                   <li><a href="rating_list.php">Rating List</a></li>
+                  <li><a href="temporal_booking.php">On Hold Booking </a></li>
+                  <li><a href="failed.php">Failed Booking </a></li>
                 <?php
                 }
                 ?>

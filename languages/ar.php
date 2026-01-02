@@ -390,11 +390,11 @@ return [
     'guest_limit_exceeded' => 'تجاوز عدد الضيوف الحد المسموح',
     'general_validation_error' => 'حدث خطأ ما. تأكد من صحة البيانات المرسلة',
     'invalid_date_range' => 'يجب اختيار مدة لا تقل عن %d يوم ولا تزيد عن %d يوم',
-
+    'invalid_months_count' => 'غير مسموح بالحجز لأكثر من 6 أشهر',
     'insufficient_wallet_balance' => 'رصيد المحفظة غير كافٍ',
     'payment_validation_failed' => 'فشل التحقق من الدفع!',
     'invalid_date_order' => 'يجب أن يكون تاريخ البداية قبل تاريخ النهاية',
-    'date_range_conflict' => 'تعارض في نطاق التاريخ من وإلى مع: %s',
+    'date_range_conflict' => 'تعارض: يوجد حجز من %s إلى %s',
     'DATE_VALIDATION_ERROR' => 'يجب أن يكون تاريخ البداية أقدم من تاريخ النهاية وليس مساوياً له',
     'Approve' => 'موافقة',
     'Reject' => 'رفض',

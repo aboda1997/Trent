@@ -97,7 +97,7 @@ try {
             $check = $h->restateupdateData_Api($field_cancel, $table, $where, $where_conditions);
 
             if($check){
-                refundMoney($uid , $booking_id);
+                refundMoney($uid , $booking_id , 'H' , $deny_id);
             }
 
             $returnArr    = generateResponse('true', $lang_["property_booking_canceled_success"], 200, array(

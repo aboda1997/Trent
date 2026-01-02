@@ -53,7 +53,7 @@ try {
 
             // Lock the property row
             $GLOBALS['rstate']->query("SELECT id FROM tbl_property WHERE id = $prop_id_escaped FOR UPDATE");
-          
+             
 
             // Verify property availability after acquiring lock
             if (validateIdAndDatabaseExistance($prop_id, 'tbl_property', ' status = 1 and is_approved =1 and is_deleted =0') === false) {
@@ -67,7 +67,7 @@ try {
                 $GLOBALS['rstate']->query("SELECT id FROM tbl_non_completed WHERE prop_id = $prop_id_escaped FOR UPDATE");
 
                 // Process dates and validate availability
-                [$days, $days_message] = processDates($from_date, $to_date, $lang_);
+                [$days,$months, $days_message] = processDates($from_date, $to_date, $lang_);
                 [$date_list, $check_in_list] = get_dates($prop_id, $uid, $rstate);
                 [$status, $status_message] = validateDateRange($from_date, $to_date, $date_list, $lang_);
                 [$status1, $status_message1] = validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $lang_);
@@ -108,6 +108,9 @@ try {
                 ) {
                     $GLOBALS['rstate']->commit();
                     $returnArr = generateResponse('false', sprintf($lang_["invalid_date_range"], $res_data['min_days'], $res_data['max_days']), 400);
+                }else if($months>=6){
+                      $GLOBALS['rstate']->commit();
+                    $returnArr = generateResponse('false', $lang_["invalid_months_count"], 400);
                 } else {
                     // Prepare property data for response
                     $fp = array();
@@ -169,8 +172,8 @@ try {
 
                     // Create the booking record
                     $postString = http_build_query($_POST);
-                    $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total", 'uid'];
-                    $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'], $fp['sub_total'], $uid];
+                    $field_values = ["data", "f1", "f2", "created_at", "prop_id", "total", "sub_total", 'uid' , 'guest_count' , 'status' , 'active' , 'partial_value'];
+                    $data_values = [$postString, $from_date, $to_date, $created_at, $prop_id, $fp['final_total'], $fp['sub_total'], $uid ,$guest_counts , 0 , 0 , $fp['partial_value']];
 
                     $h = new Estate();
 
@@ -277,9 +280,11 @@ function processDates(string $from_date, string $to_date, $lang_): array
 
     $interval = $date1->diff($date2);
     $days = $interval->days;
+    $months = $interval->y * 12 + $interval->m;
 
     return [
         $days,
+        $months,
         "Successfully calculated $days days between dates"
     ];
 }
@@ -294,10 +299,12 @@ function validateDateRange($from_date, $to_date, $date_list, $lang_)
 
     while ($current <= $end) {
         $current_date = date('Y-m-d', $current);
-        if (in_array($current_date, $date_list)) {
+        if (array_key_exists($current_date, $date_list)) {
+            $details = $date_list[$current_date];
+
             return [
                 false,
-                sprintf($lang_["date_range_conflict"], $current_date)
+                sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
             ];
         }
         $current = strtotime('+1 day', $current);
@@ -315,10 +322,12 @@ function validateDateRangeAganistCheckIn($from_date, $to_date, $check_in_list, $
     $end = strtotime($to_date);
 
     $current_date = date('Y-m-d', $current);
-    if (in_array($current_date, $check_in_list)) {
+    if (array_key_exists($current_date, $check_in_list)) {
+        $details = $check_in_list[$current_date];
+
         return [
             false,
-            sprintf($lang_["date_range_conflict"], $current_date)
+            sprintf($lang_["date_range_conflict"], $details['check_in'] ,  $details['check_out'])
         ];
     }
 
