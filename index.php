@@ -2,6 +2,7 @@
 require 'include/main_head.php';
 if(isset($_SESSION['restatename']))
 {
+
 	?>
 	<script>
 	window.location.href="dashboard.php";
@@ -21,7 +22,7 @@ else
             <div>
               <div><a class="logo" href="#"><img class="img-fluid for-light" src="<?php echo $set['weblogo'];?>" alt="logo image"></a></div>
               <div class="login-main"> 
-                <form class="theme-form">
+                <form onsubmit="return submitform(true);" class="theme-form">
                   <h2 class="text-center">Sign in to account</h2>
                   <p class="text-center">Enter your username & password to login</p>
                   <div class="form-group">

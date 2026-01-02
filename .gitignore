@@ -3,4 +3,12 @@
 .php.ini
 wordpress/
 images/ 
+videos/ 
+logs/logs 
 assets/ 
+/vendor/*
+!vendor/autoload.php
+/vendor/composer
+keys/
+# Explicitly ignore the composer folder (redundant but ensures safety)
+/vendor/composer/

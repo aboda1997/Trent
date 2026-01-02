@@ -1,106 +1,245 @@
-<?php 
-require dirname( dirname(__FILE__) ).'/include/reconfig.php';
-header('Content-type: text/json');
-$data = json_decode(file_get_contents('php://input'), true);
-$pol = array();
-$c = array();
-$pro_id  = $data['pro_id'];
-$uid  = $data['uid'];
-if($pro_id == '' or $uid == '')
-{
-	$returnArr = array("ResponseCode"=>"401","Result"=>"false","ResponseMsg"=>"Something Went Wrong!");
-}
-else 
-{
-$fp = array();
-$f = array();
-$v = array();
-$vr=array();
-$po = array();
-$sel = $rstate->query("select * from tbl_property where id=".$pro_id."")->fetch_assoc();
+<?php
+require dirname(dirname(__FILE__)) . '/include/reconfig.php';
+require dirname(dirname(__FILE__)) . '/include/validation.php';
+require dirname(dirname(__FILE__)) . '/include/helper.php';
+require_once dirname(dirname(__FILE__)) . '/user_api/error_handler.php';
 
-$vr[] = array('image' => $sel['image'], 'is_panorama' => "0");
-$get_extra = $rstate->query("select img,pano from tbl_extra where pid=".$sel['id']."");
-while($rk = $get_extra->fetch_assoc())
-{
-    array_push($vr,array('image' => $rk['img'], 'is_panorama' => $rk['pano']));
-}
+header('Content-Type: application/json');
+try {
+	$data = json_decode(file_get_contents('php://input'), true);
+	$pol = array();
+	$c = array();
+	$arr = array();
+	$arr_exclude = array();
+	$pro_id  =  isset($_GET['prop_id']) ? $_GET['prop_id'] : '';
+	$uid  =  isset($_GET['uid']) ? $_GET['uid'] : null;
+	if ($pro_id == '') {
+		$returnArr = generateResponse('false', "Something Went Wrong!", 400);
+	} else if (validateIdAndDatabaseExistance($pro_id, 'tbl_property',  ' is_deleted =0') === false) {
+		$returnArr = generateResponse('false', "this property not exist!", 400);
+	} else {
+		$fp = array();
+		$f = array();
+		$v = array();
+		$vr = array();
+		$po = array();
+		$sel = $rstate->query("select * from tbl_property where  id=" . $pro_id .  "")->fetch_assoc();
+		$fp['view_count'] = $sel['view_count'];
+
+		if ($sel['add_user_id'] != $uid) {
+			$view_c = $sel['view_count'] + 1;
+			$rstate->query("update tbl_property  set view_count = $view_c   where  id=" . $pro_id .  "");
+			$fp['view_count'] = (string) $view_c;
+		}
+		$inc_ranges = $rstate->query("select * from tbl_increased_value where  prop_id=" . $pro_id .  "");
+		while ($row = $inc_ranges->fetch_assoc()) {
+			array_push($arr, array('form_date' => $row['from_date'], 'to_date' => $row['to_date'], 'value' => $row['increase_value']));
+		}
+
+		$arr_exclude = array();
+		$exclude_ranges = $rstate->query("select check_in , check_out from tbl_book where  prop_id=" . $pro_id .  "");
+		while ($row = $exclude_ranges->fetch_assoc()) {
+			array_push($arr_exclude, array('form_date' => $row['check_in'], 'to_date' => $row['check_out']));
+		}
+		$imageArray = array_filter(explode(',', $sel['image'] ?? ''));
+
+		// Loop through each image URL and push to $vr array
+
+		foreach ($imageArray as $index => $image) {
+			// First image gets is_panorama = 1, others get 0
+			$is_panorama = ($index === 0) ? 1 : 0;
+
+			$vr[] = array(
+				'img' => trim($image),
+				'is_panorama' => $is_panorama
+			);
+		}
+		$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $sel['id'] . "");
+		while ($rk = $get_extra->fetch_assoc()) {
+			array_push($vr, array('img' => $rk['img'], 'is_panorama' => intval($rk['pano'])));
+		}
 		$fp['id'] = $sel['id'];
-		$fp['user_id'] = $sel['add_user_id'];
-		$fp['title'] = $sel['title'];
-		$checkrate = $rstate->query("SELECT *  FROM tbl_book where prop_id=".$sel['id']." and book_status='Completed' and total_rate !=0")->num_rows;
-		if($checkrate !=0)
-		{
-			$rdata_rest = $rstate->query("SELECT sum(total_rate)/count(*) as rate_rest FROM tbl_book where prop_id=".$sel['id']." and book_status='Completed' and total_rate !=0")->fetch_assoc();
-			$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 2, '.', '');
+		$fp['owner_id'] = $sel['add_user_id'];
+		$titleData = json_decode($sel['title'] ?? '', true);
+		$fp['title'] = $titleData;
+		$rdata_rest = $rstate->query("SELECT sum(rating)/count(*) as rate_rest FROM tbl_rating where prop_id=" . $sel['id'] . "")->fetch_assoc();
+		$fp['rate'] = number_format((float)$rdata_rest['rate_rest'], 1, '.', '');
+
+
+		$fp['image_list'] = $vr;
+		if (is_null($sel['ptype'])) {
+			$fp['category'] = null;
+		} else {
+			$title = $rstate->query("SELECT id, title,img FROM tbl_category WHERE id=" . $sel['ptype']);
+
+			if ($title->num_rows > 0) {
+				while ($tit = $title->fetch_assoc()) {
+					// Combine the id and name into a single associative array
+					$fp['category'] = [
+						'id' => $tit['id'],
+						'type' => json_decode($tit['title'] ?? '', true),
+						'img' => $tit['img'],
+					];
+				}
+			} else {
+				// Handle case when the query fails
+				$fp['category'] = null;
+			}
 		}
-		else 
-		{
-		$fp['rate'] = $sel['rate'];
-		}
-		
-		$fp['city'] = $sel['city'];
-		$fp['image'] = $vr;
-		$fp['property_type'] = $sel['ptype'];
-		$prop = $rstate->query("select title from tbl_category where id=".$sel['ptype']."")->fetch_assoc();
-		$fp['property_title'] = $prop['title'];
+		$is_gallery_enabled = (bool)$set["gallery_mode"];
+
+
 		$fp['price'] = $sel['price'];
-		$fp['buyorrent'] = $sel['pbuysell'];
-		$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=".$sel['id']." and uid=".$uid."")->num_rows;
-		$fp['address'] = $sel['address'];
-		$fp['beds'] = $sel['beds'];
-		if($sel['add_user_id'] == 0)
-		{
-			$fp['owner_image'] = 'images/property/owner.jpg';
-		$fp['owner_name'] = 'Host';
+		$fp['is_published'] = (bool) ($sel['status']);
+		$fp['buy_or_rent'] = $sel['pbuysell'];
+		$fp['is_enquiry'] = $rstate->query("select * from tbl_enquiry where prop_id=" . $sel['id'] .  "")->num_rows;
+
+		$fp['beds_count'] = $sel['beds'];
+		if ($sel['add_user_id'] == 0) {
+			$fp['owner'] = [
+				'img' => 'images/property/owner.jpg',
+				'name' => 'Host'
+			];
+		} else {
+			$udata = $rstate->query("select pro_pic,name from tbl_user where id=" . $sel['add_user_id'] . "")->fetch_assoc();
+			$fp['owner'] = [
+				'img' => (empty($udata['pro_pic'])) ? 'images/property/owner.jpg' : $udata['pro_pic'],
+				'name' =>  $udata['name']
+			];
 		}
-		else 
-		{
-		$udata = $rstate->query("select pro_pic,name from tbl_user where id=".$sel['add_user_id']."")->fetch_assoc();
-		$fp['owner_image'] = (empty($udata['pro_pic'])) ? 'images/property/owner.jpg' : $udata['pro_pic'];
-		$fp['owner_name'] = $udata['name'];
-		}
-		
-		$fp['bathroom'] = $sel['bathroom'];
+
+		$fp['bathrooms_count'] = $sel['bathroom'];
 		$fp['sqrft'] = $sel['sqrft'];
-		$fp['description'] = $sel['description'];
+
+		$fp['security_deposit'] = $sel['security_deposit'];
+		$fp['maps_url'] = $sel['map_url'];
+
 		$fp['latitude'] = $sel['latitude'];
-		$fp['mobile'] = $sel['mobile'];
-		$fp['plimit'] = $sel['plimit'];
-		$fp['longtitude'] = $sel['longtitude'];
-		$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where uid=".$uid." and property_id=".$sel['id']."")->num_rows;
-		
-	
-	$fac = $rstate->query("select img,title from tbl_facility where id IN(".$sel['facility'].")");
+		$fp['longitude'] = $sel['longitude'];
+		$fp['video'] = $sel['video'];
+		$fp['max_days'] = $sel['max_days'];
+		$fp['min_days'] = $sel['min_days'];
 
-while($row = $fac->fetch_assoc())
-	{
-		
-		$f[] = $row;
-	}
-	
-	$gal = $rstate->query("select img from tbl_gallery where pid=".$sel['id']." limit 5");
 
-while($rows = $gal->fetch_assoc())
-	{
-		
-		$v[] = $rows['img'];
+		$fp['floor'] = json_decode($sel['floor'] ?? '', true);
+		$fp['guest_rules'] = json_decode($sel['guest_rules'] ?? '', true);
+
+
+		$fp['description'] = json_decode($sel['description'] ?? '', true);
+		$fp['address'] = json_decode($sel['address'] ?? '', true);
+		$fp['city'] = json_decode($sel['city'] ?? '', true);
+
+		$fp['guest_count'] = $sel['plimit'];
+
+		if ($uid) {
+			$fp['IS_FAVOURITE'] = $rstate->query("select * from tbl_fav where  uid= $uid and property_id=" . $sel['id'] . "")->num_rows;
+		} else {
+			$pol['IS_FAVOURITE'] = 0;
+		}
+		$periods = [
+			"d" => ["ar" => "يومي", "en" => "daily"],
+			"m" => ["ar" => "شهري", "en" => "monthly"]
+		];
+
+		$fp['period'] = [
+			'id' => $sel['period'],
+			'name' => $periods[$sel['period']]
+		];
+
+		$fp['compound'] = json_decode($sel['compound_name'] ?? '', true);
+
+
+		if (is_null($sel['government'])) {
+			$fp['government'] = null;
+		} else {
+			$gov = $rstate->query("
+        SELECT id, name 
+        FROM tbl_government 
+        WHERE id=" . intval($sel['government']) . "
+    ");
+
+			if ($gov->num_rows > 0) {
+				$fp['government'] = [];
+
+				while ($tit = $gov->fetch_assoc()) {
+					// Combine the id and name into a single associative array
+					$fp['government'] = [
+						'id' => $tit['id'],
+						'name' => json_decode($tit['name'] ?? '', true)
+					];
+				}
+			} else {
+				// Handle case when the query fails
+				$fp['government'] = null;
+			}
+		}
+		if (is_null($sel['cancellation_policy_id'])) {
+			$fp['cancellation_policy'] = null;
+		} else {
+			$policies = $rstate->query("
+        SELECT *  
+        FROM tbl_cancellation_policy 
+        WHERE id=" . intval($sel['cancellation_policy_id']) . "
+    ");
+
+			if ($policies->num_rows > 0) {
+				$fp['cancellation_policy'] = [];
+
+				while ($tit = $policies->fetch_assoc()) {
+					// Combine the id and name into a single associative array
+					$fp['cancellation_policy'] = [
+						'id' => $tit['id'],
+						'title' => json_decode($tit['title'] ?? '', true),
+						'description' => json_decode($tit['description'] ?? '', true),
+						'is_recommended' => (bool)$tit['is_recommended']
+					];
+				}
+			} else {
+				// Handle case when the query fails
+				$fp['cancellation_policy'] = null;
+			}
+		}
+		$fac = $rstate->query("select img, id,
+	 JSON_UNQUOTE(title) as title 
+	 from tbl_facility where id IN(" . $sel['facility'] . ")");
+
+		while ($row = $fac->fetch_assoc()) {
+			$row['title'] = json_decode($row['title'] ?? '', true);
+			$f[] = $row;
+		}
+
+		$gal = $rstate->query("select img from tbl_gallery where pid=" . $sel['id'] . " limit 5");
+
+		while ($rows = $gal->fetch_assoc()) {
+
+			$v[] = $rows['img'];
+		}
+		$count_review =  $rstate->query("select * from tbl_book where prop_id=" . $pro_id . " and book_status='Completed' and is_rate=1 order by id desc")->num_rows;
+		$bov = array();
+		$kol = array();
+		$rev = $rstate->query("select * from tbl_book where prop_id=" . $pro_id . " and book_status='Completed' and is_rate=1 order by id desc limit 3");
+		while ($k = $rev->fetch_assoc()) {
+			$udata = $rstate->query("select * from tbl_user where id=" . $k['uid'] . "")->fetch_assoc();
+			$bov['user_img'] = $udata['pro_pic'];
+			$bov['user_title'] = $udata['name'];
+			$bov['user_rate'] = $k['total_rate'];
+			$bov['user_desc'] = $k['rate_text'];
+			$kol[] = $bov;
+		}
+		$returnArr    = generateResponse('true', "Property Details Founded!", 200, array(
+			"property_details" => $fp,
+			"facility_list" => $f,
+			'inc_value_ranges' => $arr,
+			'exclude_ranges' => $arr_exclude,
+			"gallery" => $v,
+			"is_gallery_enabled" => $is_gallery_enabled,
+		));
 	}
-	$count_review =  $rstate->query("select * from tbl_book where prop_id=".$pro_id." and book_status='Completed' and is_rate=1 order by id desc")->num_rows;
-	$bov = array();
-	$kol = array();
-	$rev = $rstate->query("select * from tbl_book where prop_id=".$pro_id." and book_status='Completed' and is_rate=1 order by id desc limit 3");
-	while($k = $rev->fetch_assoc())
-	{
-		$udata = $rstate->query("select * from tbl_user where id=".$k['uid']."")->fetch_assoc();
-		$bov['user_img'] = $udata['pro_pic'];
-		$bov['user_title'] = $udata['name'];
-		$bov['user_rate'] = $k['total_rate'];
-		$bov['user_desc'] = $k['rate_text'];
-		$kol[] = $bov;
-		
-	}
-$returnArr = array("propetydetails"=>$fp,"facility"=>$f,"gallery"=>$v,"reviewlist"=>$kol,"total_review"=>$count_review,"ResponseCode"=>"200","Result"=>"true","ResponseMsg"=>"Property Details Founded!");
+	echo $returnArr;
+} catch (Exception $e) {
+	// Handle exceptions and return an error response
+	$returnArr = generateResponse('false', "An error occurred!", 500, array(
+		"error_message" => $e->getMessage()
+	), $e->getFile(),  $e->getLine());
+	echo $returnArr;
 }
-echo json_encode($returnArr);
-?>

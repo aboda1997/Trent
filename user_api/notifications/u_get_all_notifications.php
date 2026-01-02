@@ -1,0 +1,88 @@
+<?php
+require dirname(dirname(__FILE__), 2) . '/include/reconfig.php';
+require dirname(dirname(__FILE__), 2) . '/include/helper.php';
+require_once dirname(dirname(__FILE__), 2) . '/user_api/error_handler.php';
+require dirname(dirname(__FILE__), 2) . '/include/validation.php';
+require dirname(dirname(__FILE__), 2) . '/user_api/estate.php';
+require_once dirname(dirname(__FILE__), 2) . '/include/load_language.php';
+
+header('Content-Type: application/json');
+try {
+    $lang_code = isset($_GET['lang']) ? $rstate->real_escape_string($_GET['lang']) : 'en';
+    $uid = isset($_GET['uid']) ? $rstate->real_escape_string($_GET['uid']) : '';
+
+    $lang_ = load_specific_langauage($lang_code);
+    // Get pagination parameters
+    $page = isset($_GET['page']) ? intval($_GET['page']) : 1; // Current page
+    $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10; // Items per page
+    // Calculate offset
+    $offset = ($page - 1) * $itemsPerPage;
+
+    if ($uid == '') {
+        $returnArr = generateResponse('false', $lang_["user_id_required"], 400);
+    } else if (validateIdAndDatabaseExistance($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["invalid_user_id"], 400);
+    } else if (checkTableStatus($uid, 'tbl_user') === false) {
+        $returnArr = generateResponse('false', $lang_["account_deleted"], 400);
+    } else {
+        $pol = array();
+        $c = array();
+        $query = "SELECT h.* , b.name , b.value FROM tbl_notification_head h left join tbl_notification_body b on b.head_id = h.id WHERE  uid =" . $uid . "  ORDER BY id DESC    ";
+        $sel_length  = $rstate->query($query)->num_rows;
+        $query .= " LIMIT " . $itemsPerPage . " OFFSET " . $offset;
+        $sel = $rstate->query($query);
+
+        while ($row = $sel->fetch_assoc()) {
+
+            $pol['id'] = $row['id'];
+            $pol['title'] = $row['title'];
+            $pol['created_at'] = $row['created_at'];
+            $pol['body'] = $row['body'];
+            $pol['key'] = $row['name'];
+            if ($row['name'] == "booking_id") {
+                $data = $rstate->query("SELECT id, book_status , uid , add_user_id FROM tbl_book WHERE id=" . $row['value'])->fetch_assoc();
+                $book_status =  $data['book_status'] ?? '';
+                if (isset($data['uid'])&&($data['uid'] == $uid)){
+                $pol['is_owner'] = false;
+ 
+                }else{
+                 $pol['is_owner'] = true;
+  
+                }
+                $pol['book_status'] = $book_status;
+            } else {
+                unset($pol['book_status']);
+                unset($pol['is_owner']);
+            }
+            $pol['value'] = $row['value'];
+            $pol['is_seen'] = (bool)$row['is_seen'];
+            $imageArray = array_filter(explode(',', $row['img'] ?? ''));
+            $vr = array();
+            // Loop through each image URL and push to $vr array
+            foreach ($imageArray as $image) {
+                $vr[] = array('img' => trim($image));
+            }
+            $pol['image_list'] = $vr;
+            $c[] = $pol;
+        }
+        if (empty($c)) {
+
+            $returnArr    = generateResponse('true', "Notification List Not Founded!", 200, array(
+                "notification_list" => $c,
+                "length" => $sel_length,
+            ));
+        } else {
+            $returnArr    = generateResponse('true', "Notification List Founded!", 200, array(
+                "notification_list" => $c,
+                "length" => $sel_length,
+            ));
+        }
+    }
+    echo $returnArr;
+} catch (Exception $e) {
+    // Handle exceptions and return an error response
+    $returnArr = generateResponse('false', "An error occurred!", 500, array(
+        "error_message" => $e->getMessage()
+    ), $e->getFile(),  $e->getLine());
+    echo $returnArr;
+}

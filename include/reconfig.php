@@ -1,4 +1,7 @@
 <?php
+require_once  dirname( dirname(__FILE__) ).'/include/load_language.php';
+require_once dirname( dirname(__FILE__) ).  '/logs/request_logger.php';
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -12,7 +15,6 @@ try {
 }
     
 	$set = $rstate->query("SELECT * FROM `tbl_setting`")->fetch_assoc();
-	date_default_timezone_set($set['timezone']);
 	
 	$main = $rstate->query("SELECT * FROM `tbl_prop`")->fetch_assoc();
 	

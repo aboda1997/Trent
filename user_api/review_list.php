@@ -1,6 +1,6 @@
 <?php 
 require dirname( dirname(__FILE__) ).'/include/reconfig.php';
-header('Content-type: text/json');
+header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 $orag_id = $data['orag_id'];
 if ($orag_id == '') {
