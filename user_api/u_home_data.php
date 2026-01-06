@@ -222,11 +222,7 @@ try {
 			);
 		}
 
-		$get_extra = $rstate->query("select img,pano from tbl_extra where pid=" . $row['id'] . "");
-		while ($rk = $get_extra->fetch_assoc()) {
-			//'is_panorama' => intval($rk['pano'])
-			array_push($vr, array('img' => $rk['img'],));
-		}
+
 		$pol['id'] = $row['id'];
 
 		//$pol['user_id'] = $row['add_user_id'];
